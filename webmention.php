@@ -52,8 +52,8 @@ add_action('template_redirect', 'webmention_template_redirect');
  * @param int $id The post_ID
  */
 function webmention_ping( $links, $pung, $post_ID ) {
-	foreach ( (array) $links as $pagelinkedto ) {
-		$webmention_server_url = discover_webmention_server_uri( $pagelinkedto );
+  foreach ( (array) $links as $pagelinkedto ) {
+    $webmention_server_url = discover_webmention_server_uri( $pagelinkedto );
     
     $pagelinkedfrom = get_permalink($post_ID);
     $args = array( 'body' => array( 'source' => $pagelinkedfrom, 'target' => $pagelinkedto ) );
