@@ -122,7 +122,7 @@ function discover_webmention_server_uri( $url ) {
     $webmention_server_url_len = $webmention_href_end - $webmention_href_start;
     $webmention_server_url = substr($contents, $webmention_href_start, $webmention_server_url_len);
 
-    // We may find rel="pingback" but an incomplete pingback URL
+    // We may find rel="http://webmention.org/" but an incomplete pingback URL
     if ( $webmention_server_url_len > 0 ) { // We got it!
       return $webmention_server_url;
     } 
