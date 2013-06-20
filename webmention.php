@@ -190,30 +190,30 @@ add_action( 'webmention_ping', 'webmention_to_comment', 15, 4 );
  *
  */
 function webmention_pingback_fix($comment_ID) {
-  $commentdata = get_comment($comment_ID);
+  $commentdata = get_comment($comment_ID, ARRAY_A);
   
   if (!$commentdata) {
     return false;
   }
   
-  $post = get_post($commentdata->comment_post_ID);
+  $post = get_post($commentdata['comment_post_ID'], ARRAY_A);
   
   if (!$post) {
     return false;
   }
   
-  $target = get_permalink($post->ID);
-  $response = wp_remote_get( $commentdata->comment_author_url );
+  $target = get_permalink($post['ID']);
+  $response = wp_remote_get( $commentdata['comment_author_url'] );
   
   if ( is_wp_error( $response ) ) {
     return false;
   }
 
   $contents = wp_remote_retrieve_body( $response );
-  $commentdata = webmention_mf2_to_comment( $contents, $commentdata->comment_author_url, $target, $commentdata );
+  $commentdata = webmention_mf2_to_comment( $contents, $commentdata['comment_author_url'], $target, $commentdata );
   
   if ($commentdata) {
-    $comment_ID = wp_update_comment($commentdata);
+    wp_update_comment($commentdata);
   }
 }
 add_action( 'pingback_post', 'webmention_pingback_fix', 90, 1 );
@@ -253,7 +253,7 @@ function webmention_hentry_walker( $mf_array, $target ) {
                   return $mf['properties'];
                 }
               }
-            } elseif ( isset($mf['properties']['content']) && preg_match_all("|<a[^>]+?".preg_quote($target, "|")."[^>]*>([^>]+?)</a>|", $mf['properties']['content'][0], $context) ) {
+            } elseif ( ($key == "content") && preg_match_all("|<a[^>]+?".preg_quote($target, "|")."[^>]*>([^>]+?)</a>|", $values[0], $context) ) {
               return $mf['properties'];
             }
           }
