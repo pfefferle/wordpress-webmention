@@ -21,37 +21,42 @@ function webmention_parse_query($wp_query) {
     
     header('Content-Type: application/json; charset=' . get_option('blog_charset'));
     
+    // check if source url is transmitted
     if (!isset($source)) {
       header("Status: 400 Bad Request");
       echo json_encode(array("error"=> "source_not_found"));
       exit;
     }
     
+    // check if target url is transmitted
     if (!isset($target)) {
       header("Status: 404 Not Found");
       echo json_encode(array("error"=> "target_not_found"));
       exit;
     }
     
-  	$post_ID = url_to_postid($target);
+    $post_ID = url_to_postid($target);
     
+    // check if post id exists
     if ( !$post_ID ) {
       header("Status: 404 Not Found");
       echo json_encode(array("error"=> "target_not_found"));
       exit;
-  	}
+    }
     
-		$post_ID = (int) $post_ID;
-		$post = get_post($post_ID);
+    $post_ID = (int) $post_ID;
+    $post = get_post($post_ID);
     
-  	if ( !$post ) {
+    // check if post exists
+    if ( !$post ) {
       header("Status: 404 Not Found");
       echo json_encode(array("error"=> "target_not_found"));
       exit;
-  	}
+    }
     
     $response = wp_remote_get( $source );
-  
+    
+    // check if source is accessible
     if ( is_wp_error( $response ) ) {
       header("Status: 404 Not Found");
       echo json_encode(array("error"=> "source_not_found"));
@@ -126,8 +131,8 @@ function webmention_mf2_to_comment( $html, $source, $target, $commentdata ) {
     return false;
   }
 
-	$commentdata['comment_content'] = $wpdb->escape($hentry['content'][0]);
-  
+  $commentdata['comment_content'] = $wpdb->escape($hentry['content'][0]);
+
   $author = null;
   
   // check if h-card has an author
@@ -164,7 +169,7 @@ function webmention_mf2_to_comment( $html, $source, $target, $commentdata ) {
     }
   }
   
-	$commentdata['comment_type'] = 'pingback';  
+  $commentdata['comment_type'] = 'pingback';  
   return $commentdata;
 }
 
