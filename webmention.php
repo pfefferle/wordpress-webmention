@@ -260,7 +260,7 @@ function webmention_hentry_walker( $mf_array, $target ) {
         }        
       } elseif ( in_array( "h-feed", $mf["type"]) ) {
         $temp = array("items" => $mf['children']);
-        webmention_hentry_walker($temp, $target);
+        return webmention_hentry_walker($temp, $target);
       }
     }
   }
