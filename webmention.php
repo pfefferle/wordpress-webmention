@@ -35,7 +35,7 @@ function webmention_parse_query($wp_query) {
     
   	$post_ID = url_to_postid($target);
     
-  	if ( !$post_ID ) {
+    if ( !$post_ID ) {
       header("Status: 404 Not Found");
       echo json_encode(array("error"=> "target_not_found"));
       exit;
@@ -190,11 +190,7 @@ add_action( 'webmention_ping', 'webmention_to_comment', 15, 4 );
  *
  */
 function webmention_pingback_fix($comment_ID) {
-  wp_mail(get_bloginfo('admin_email'), 'someone mentioned you', print_r($comment_ID, true));
-  
   $commentdata = get_comment($comment_ID);
-  
-  wp_mail(get_bloginfo('admin_email'), 'someone mentioned you', print_r($commentdata, true));
   
   if (!$commentdata) {
     return false;
@@ -202,31 +198,19 @@ function webmention_pingback_fix($comment_ID) {
   
   $post = get_post($commentdata->comment_post_ID);
   
-  wp_mail(get_bloginfo('admin_email'), 'someone mentioned you', print_r($post, true));
-  
   if (!$post) {
     return false;
   }
   
   $target = get_permalink($post->ID);
-  
-  wp_mail(get_bloginfo('admin_email'), 'someone mentioned you', print_r($target, true));
-  
   $response = wp_remote_get( $commentdata->comment_author_url );
   
-  wp_mail(get_bloginfo('admin_email'), 'someone mentioned you', print_r($response, true));
-
   if ( is_wp_error( $response ) ) {
     return false;
   }
 
   $contents = wp_remote_retrieve_body( $response );
-  
-  wp_mail(get_bloginfo('admin_email'), 'someone mentioned you', print_r($contents, true));
-  
   $commentdata = webmention_mf2_to_comment( $contents, $commentdata->comment_author_url, $target, $commentdata );
-  
-  wp_mail(get_bloginfo('admin_email'), 'someone mentioned you', print_r($commentdata, true));
   
   if ($commentdata) {
     $comment_ID = wp_update_comment($commentdata);
@@ -254,6 +238,10 @@ function webmention_hentry_walker( $mf_array, $target ) {
     return false;
   }
   
+  if ( count( $mf_array["items"] ) == 0 ) {
+    return false;
+  }
+  
   foreach ($mf_array["items"] as $mf) {    
     if ( isset( $mf["type"] ) ) {
       if ( in_array( "h-entry", $mf["type"] ) ) {
@@ -265,7 +253,8 @@ function webmention_hentry_walker( $mf_array, $target ) {
                   return $mf['properties'];
                 }
               }
-              return $mf;
+            } elseif ( isset($mf['properties']['content']) && preg_match_all("|<a[^>]+?".preg_quote($target, "|")."[^>]*>([^>]+?)</a>|", $mf['properties']['content'][0], $context) ) {
+              return $mf['properties'];
             }
           }
         }        
