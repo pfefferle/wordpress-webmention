@@ -66,6 +66,7 @@ function webmention_parse_query($wp_query) {
     $contents = wp_remote_retrieve_body( $response );
     
     do_action( 'webmention_ping', $contents, $source, $target, $post );
+    exit;
   }
 }
 add_action('parse_query', 'webmention_parse_query');
@@ -150,7 +151,7 @@ function webmention_mf2_to_comment( $html, $source, $target, $commentdata ) {
   
   // get representative hcard
   if (!$author) {
-    foreach ($mf_array["items"] as $mf) {    
+    foreach ($result["items"] as $mf) {    
       if ( isset( $mf["type"] ) ) {
         if ( in_array( "h-card", $mf["type"] ) ) {
           // check domain
