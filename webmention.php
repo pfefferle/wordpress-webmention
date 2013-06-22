@@ -54,7 +54,7 @@ function webmention_parse_query($wp_query) {
       exit;
     }
     
-    $response = wp_remote_get( $source );
+    $response = wp_remote_get( $source, array('timeout' => 100) );
     
     // check if source is accessible
     if ( is_wp_error( $response ) ) {
@@ -132,10 +132,10 @@ function webmention_mf2_to_comment( $html, $source, $target, $commentdata ) {
     return false;
   }
   
-  if (isset($hentry['content'])) {
-    $commentdata['comment_content'] = $wpdb->escape($hentry['content'][0]);
-  } elseif (isset($hentry['summary'])) {
+  if (isset($hentry['summary'])) {
     $commentdata['comment_content'] = $wpdb->escape($hentry['summary'][0]);
+  } elseif (isset($hentry['content'])) {
+    $commentdata['comment_content'] = $wpdb->escape($hentry['content'][0]);
   } elseif (isset($hentry['name'])) {
     $commentdata['comment_content'] = $wpdb->escape($hentry['name'][0]);
   } else {
