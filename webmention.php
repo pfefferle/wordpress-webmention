@@ -127,11 +127,19 @@ function webmention_mf2_to_comment( $html, $source, $target, $commentdata ) {
   
   $hentry = webmention_hentry_walker($result, $target);
   
-  if (!$hentry || !isset($hentry['content'])) {
+  if (!$hentry) {
     return false;
   }
-
-  $commentdata['comment_content'] = $wpdb->escape($hentry['content'][0]);
+  
+  if (isset($hentry['content'])) {
+    $commentdata['comment_content'] = $wpdb->escape($hentry['content'][0]);
+  } elseif (isset($hentry['summary'])) {
+    $commentdata['comment_content'] = $wpdb->escape($hentry['summary'][0]);
+  } elseif (isset($hentry['name'])) {
+    $commentdata['comment_content'] = $wpdb->escape($hentry['name'][0]);
+  } else {
+    return false;
+  }
 
   $author = null;
   
@@ -165,7 +173,7 @@ function webmention_mf2_to_comment( $html, $source, $target, $commentdata ) {
     }
   
     if (isset($author['url'])) {
-      $commentdata['comment_author_url'] = $wpdb->escape($author['url'][0]);
+      $commentdata['comment_author_url'] = $wpdb->escape($source);
     }
   }
   
