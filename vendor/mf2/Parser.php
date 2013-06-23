@@ -421,6 +421,8 @@ class Parser {
 	 *
 	 * 	@param DOMElement $e The element to parse
 	 * 	@return string $e’s innerHTML
+	 * 
+	 * @todo need to mark this element as e- parsed so it doesn’t get parsed as it’s parent’s e-* too
 	 */
 	public function parseE(\DOMElement $e) {
 		$classTitle = $this->parseValueClassTitle($e);
@@ -428,10 +430,23 @@ class Parser {
 		if ($classTitle !== null)
 			return $classTitle;
 		
+		// Expand relative URLs within children of this element
+		$hyperlinkChildren = $this->xpath->query('//*[@src or @href or @data]', $e);
+		
+		foreach ($hyperlinkChildren as $child) {
+			if ($child->hasAttribute('href'))
+				$child->setAttribute('href', $this->resolveUrl($child->getAttribute('href')));
+			if ($child->hasAttribute('src'))
+				$child->setAttribute('src', $this->resolveUrl($child->getAttribute('src')));
+			if ($child->hasAttribute('data'))
+				$child->setAttribute('data', $this->resolveUrl($child->getAttribute('data')));
+		}
+		
 		$return = '';
 		foreach ($e->childNodes as $node) {
 			$return .= $node->C14N();
 		}
+		
 		return $return;
 	}
 
@@ -653,7 +668,7 @@ class Parser {
 			if (in_array('alternate', $linkRels)) {
 				$alt = array(
 					'url' => $href,
-					'rel' => implode(' ', array_diff($linkRels, ['alternate']))
+					'rel' => implode(' ', array_diff($linkRels, array('alternate')))
 				);
 				if ($hyperlink->hasAttribute('media'))
 					$alt['media'] = $hyperlink->getAttribute('media');
@@ -669,16 +684,23 @@ class Parser {
 			}
 		}
 		
-		return [$rels, $alternates];
+		return array($rels, $alternates);
 	}
 	
 	/**
 	 * Kicks off the parsing routine
 	 * 
+	 * If `$htmlSafe` is set, any angle brackets in the results from non e-* properties
+	 * will be HTML-encoded, bringing all output to the same level of encoding.
+	 * 
+	 * If a DOMElement is set as the $context, only descendants of that element will
+	 * be parsed for microrformats.
+	 * 
 	 * @param bool $htmlSafe whether or not to html-encode non e-* properties. Defaults to false
+	 * @param DOMElement $context optionally an element from which to parse microformats
 	 * @return array An array containing all the µfs found in the current document
 	 */
-	public function parse($htmlSafe = null) {
+	public function parse($htmlSafe = null, DOMElement $context = null) {
 		$mfs = array();
 		
 		// Allow temporary overrides of htmlSafe
@@ -687,8 +709,12 @@ class Parser {
 			$this->htmlSafe = $htmlSafe;
 		}
 		
+		$mfElements = null === $context
+			? $this->xpath->query('//*[contains(concat(" ",	@class), " h-")]')
+			: $this->xpath->query('./*[contains(concat(" ",	@class), " h-")]', $context);
+		
 		// Parser microformats
-		foreach ($this->xpath->query('//*[contains(concat(" ",	@class), " h-")]') as $node) {
+		foreach ($mfElements as $node) {
 			// For each microformat
 			$result = $this->parseH($node);
 
@@ -706,6 +732,30 @@ class Parser {
 			'items' => array_values(array_filter($mfs)),
 			'rels' => $rels,
 			'alternates' => $alternates);
+	}
+	
+	/**
+	 * Parse From ID
+	 * 
+	 * Given an ID, parse all microformats which are children of the element with
+	 * that ID.
+	 * 
+	 * Note that rel values are still document-wide.
+	 * 
+	 * If an element with the ID is not found, an empty skeleton mf2 array structure 
+	 * will be returned.
+	 * 
+	 * @param string $id
+	 * @param bool $htmlSafe = false whether or not to HTML-encode angle brackets in non e-* properties
+	 * @return array
+	 */
+	public function parseFromId($id, $htmlSafe = false) {
+		$matches = $this->xpath->query("//*[@id='{$id}']");
+		
+		if (empty($matches))
+			return array('items' => array(), 'rels' => array(), 'alternates' => array());
+		
+		return $this->parse($htmlSafe, $matches->item(0));
 	}
 
 	/**
@@ -732,6 +782,20 @@ class Parser {
 		}
 		
 		return $this;
+	}
+	
+	/**
+	 * XPath Query
+	 * 
+	 * Runs an XPath query over the current document. Works in exactly the same
+	 * way as DOMXPath::query.
+	 * 
+	 * @param string $expression
+	 * @param DOMNode $context
+	 * @return DOMNodeList
+	 */
+	public function query($expression, $context = null) {
+		return $this->xpath->query($expression, $context);
 	}
 	
 	/**
