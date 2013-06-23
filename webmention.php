@@ -8,8 +8,31 @@
  Version: 1.0.0-dev
 */
 
-include_once 'vendor/mf2/Parser.php';
-include_once 'vendor/webignition/AbsoluteUrlDeriver/AbsoluteUrlDeriver.php';
+// Report all PHP errors (see changelog)
+error_reporting(E_ALL);
+
+// Report all PHP errors
+error_reporting(-1);
+
+// Same as error_reporting(E_ALL);
+ini_set('error_reporting', E_ALL);
+
+require_once 'vendor/mf2/Parser.php';
+require_once 'vendor/webignition/AbsoluteUrlDeriver/AbsoluteUrlDeriver.php';
+
+require_once 'vendor/webignition/Url/Url.php';
+require_once 'vendor/webignition/Url/Parser.php';
+require_once 'vendor/webignition/Url/Query/Query.php';
+require_once 'vendor/webignition/Url/Query/Parser.php';
+require_once 'vendor/webignition/Url/Path/Path.php';
+require_once 'vendor/webignition/Url/Host/Host.php';
+
+require_once 'vendor/webignition/NormalisedUrl/NormalisedUrl.php';
+require_once 'vendor/webignition/NormalisedUrl/Normaliser.php';
+require_once 'vendor/webignition/NormalisedUrl/Query/Normaliser.php';
+require_once 'vendor/webignition/NormalisedUrl/Query/Query.php';
+require_once 'vendor/webignition/NormalisedUrl/Path/Normaliser.php';
+require_once 'vendor/webignition/NormalisedUrl/Path/Path.php';
 
 use mf2\Parser;
 
