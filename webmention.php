@@ -91,7 +91,7 @@ add_action("wp_head", "webmention_add_header");
  * adds the webmention header
  */
 function webmention_template_redirect() {
-  header('Link: <'.site_url("?webmention=endpoint").'>; rel=http://webmention.org/', false);
+  header('Link: <'.site_url("?webmention=endpoint").'>; rel="http://webmention.org/"', false);
 }
 add_action('template_redirect', 'webmention_template_redirect');
 
@@ -124,7 +124,7 @@ function webmention_mf2_to_comment( $html, $source, $target, $commentdata ) {
   global $wpdb;
 
   $parser = new Parser( $html );
-  $result = $parser->parse();
+  $result = $parser->parse(true);
   
   $hentry = webmention_hentry_walker($result, $target);
   
@@ -261,13 +261,13 @@ function webmention_hentry_walker( $mf_array, $target ) {
       if ( in_array( "h-entry", $mf["type"] ) ) {
         if ( isset( $mf['properties'] ) ) {
           foreach ($mf['properties'] as $key => $values) {            
-            if ( in_array( $key, array("in-reply-to", "like", "mention") )) {
+            if ( in_array( $key, array("in-reply-to", "like", "mention", "url") )) {
               foreach ($values as $value) {
                 if ($value == $target) {
                   return $mf['properties'];
                 }
               }
-            } elseif ( ($key == "content") && preg_match_all("|<a[^>]+?".preg_quote($target, "|")."[^>]*>([^>]+?)</a>|", $values[0], $context) ) {
+            } elseif ( in_array( $key, array("content", "summary", "name")) && preg_match_all("|<a[^>]+?".preg_quote($target, "|")."[^>]*>([^>]+?)</a>|", $values[0], $context) ) {
               return $mf['properties'];
             }
           }

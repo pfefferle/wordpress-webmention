@@ -22,17 +22,19 @@ class Parser {
 	public $stringDateTimes = false;
 	
 	/** @var SplObjectStorage */
-	private $parsed;
+	protected $parsed;
 	
 	/** @var DOMDocument */
-	private $doc;
+	protected $doc;
+	
+	protected $htmlSafe;
 
 	/**
 	 * Constructor
 	 * 
 	 * @param DOMDocument|string $input The data to parse. A string of DOM or a DOMDocument
 	 */
-	public function __construct($input, $baseurl = null) {
+	public function __construct($input, $baseurl = null, $htmlSafe = false) {
 		// For the moment: assume string = string of HTML
 		if (is_string($input)) {
 			if (strtolower(mb_detect_encoding($input)) == 'utf-8') {
@@ -70,12 +72,13 @@ class Parser {
 		}
 		
 		$this->baseurl = $baseurl;
+		$this->htmlSafe = $htmlSafe;
 		
 		$this->doc = $doc;
 
 		$this->parsed = new \SplObjectStorage();
 	}
-
+	
 	// !Utility Functions
 	
 	/**
@@ -143,7 +146,7 @@ class Parser {
 	 * @param string $prefix The prefix to look for
 	 * @return mixed See return value of mf2\Parser::mfNameFromClass()
 	 */
-	static function mfNamesFromElement(\DOMElement $e, $prefix = 'h-') {
+	public static function mfNamesFromElement(\DOMElement $e, $prefix = 'h-') {
 		$class = $e->getAttribute('class');
 		return Parser::mfNamesFromClass($class, $prefix);
 	}
@@ -151,7 +154,7 @@ class Parser {
 	/**
 	 * Wraps nestedMfPropertyNamesFromClass to handle an element as input
 	 */
-	static function nestedMfPropertyNamesFromElement(\DOMElement $e) {
+	public static function nestedMfPropertyNamesFromElement(\DOMElement $e) {
 		$class = $e->getAttribute('class');
 		return self::nestedMfPropertyNamesFromClass($class);
 	}
@@ -173,7 +176,13 @@ class Parser {
 	}
 	
 	private function resolveUrl($url) {
+		// If the URL is seriously malformed it’s probably beyond the scope of this 
+		// parser to try to do anything with it.
+		if (parse_url($url) === false)
+			return $url;
+		
 		$scheme = parse_url($url, PHP_URL_SCHEME);
+		
 		if (empty($scheme) and !empty($this->baseurl)) {
 			$deriver = new AbsoluteUrlDeriver($url, $this->baseurl);
 			return (string) $deriver->getAbsoluteUrl();
@@ -232,8 +241,11 @@ class Parser {
 		$classTitle = $this->parseValueClassTitle($p, ' ');
 		
 		if ($classTitle !== null)
-			return $classTitle;
+			return $this->htmlSafe
+				? htmlspecialchars($classTitle, ENT_NOQUOTES)
+				: $classTitle;
 		
+		// TODO: remove this parsing, it’s no longer in the spec I think
 		if (in_array($p->tagName, array('br', 'hr')))
 			return '';
 		elseif ($p->tagName == 'img' and $p->getAttribute('alt') !== '') {
@@ -249,7 +261,11 @@ class Parser {
 			$pValue = trim($p->textContent);
 		}
 		
-		return self::collapseWhitespace($pValue);
+		$pValue = self::collapseWhitespace($pValue);
+		
+		return $this->htmlSafe
+			? htmlspecialchars($pValue)
+			: $pValue;
 	}
 
 	/**
@@ -263,7 +279,9 @@ class Parser {
 		$classTitle = $this->parseValueClassTitle($u);
 		
 		if ($classTitle !== null)
-			return $classTitle;
+			return $this->htmlSafe
+				? htmlspecialchars($classTitle, ENT_NOQUOTES)
+				: $classTitle;
 		
 		if (($u->tagName == 'a' or $u->tagName == 'area') and $u->getAttribute('href') !== null) {
 			$uValue = $u->getAttribute('href');
@@ -277,10 +295,14 @@ class Parser {
 			$uValue = $u->getAttribute('value');
 		} else {
 			// TODO: Check for element contents == a valid URL
-			$uValue = false;
+			$uValue = trim($u->textContent);
 		}
 		
-		return $this->resolveUrl($uValue);
+		$uValue = $this->resolveUrl($uValue);
+		
+		return $this->htmlSafe
+			? htmlspecialchars($uValue, ENT_NOQUOTES)
+			: $uValue;
 	}
 
 	/**
@@ -389,7 +411,9 @@ class Parser {
 			}
 		}
 
-		return $dtValue;
+		return $this->htmlSafe
+			? htmlspecialchars($dtValue, ENT_NOQUOTES)
+			: $dtValue;
 	}
 
 	/**
@@ -509,7 +533,7 @@ class Parser {
 			$this->elementPrefixParsed($dt, 'dt');
 		}
 
-		// TODO: Handle e-* (em)
+		// Handle e-*
 		foreach ($this->xpath->query('.//*[contains(concat(" ", @class)," e-")]', $e) as $em) {
 			if ($this->isElementParsed($e, 'e'))
 				continue;
@@ -548,7 +572,9 @@ class Parser {
 
 				throw new Exception(trim($e->nodeValue));
 			} catch (Exception $exc) {
-				$return['name'][] = $exc->getMessage();
+				$return['name'][] = $this->htmlSafe
+					? htmlspecialchars($exc->getMessage(), ENT_NOQUOTES)
+					: $exc->getMessage();
 			}
 		}
 
@@ -571,7 +597,9 @@ class Parser {
 						throw new Exception($em->getAttribute('src'));
 				}
 			} catch (Exception $exc) {
-				$return['photo'][] = $this->resolveUrl($exc->getMessage());
+				$return['photo'][] = $this->htmlSafe
+					? htmlspecialchars($this->resolveUrl($exc->getMessage()), ENT_NOQUOTES)
+					: $this->resolveUrl($exc->getMessage());
 			}
 		}
 
@@ -588,7 +616,9 @@ class Parser {
 			}
 			
 			if (!empty($url))
-				$return['url'][] = $this->resolveUrl($url);
+				$return['url'][] = $this->htmlSafe
+					? htmlspecialchars($this->resolveUrl($url), ENT_NOQUOTES)
+					: $this->resolveUrl($url);
 		}
 
 		// Make sure things are in alphabetical order
@@ -603,15 +633,61 @@ class Parser {
 			$parsed['children'] = array_values(array_filter($children));
 		return $parsed;
 	}
-
+	
+	public function parseRelsAndAlternates() {
+		$rels = array();
+		$alternates = array();
+		
+		// Iterate through all a, area and link elements with rel attributes
+		foreach ($this->xpath->query('//*[@rel and @href]') as $hyperlink) {
+			if ($hyperlink->getAttribute('rel') == '')
+				continue;
+			
+			// Resolve the href
+			$href = $this->resolveUrl($hyperlink->getAttribute('href'));
+			
+			// Split up the rel into space-separated values
+			$linkRels = array_filter(explode(' ', $hyperlink->getAttribute('rel')));
+			
+			// If alternate in rels, create alternate structure, append
+			if (in_array('alternate', $linkRels)) {
+				$alt = array(
+					'url' => $href,
+					'rel' => implode(' ', array_diff($linkRels, ['alternate']))
+				);
+				if ($hyperlink->hasAttribute('media'))
+					$alt['media'] = $hyperlink->getAttribute('media');
+				
+				if ($hyperlink->hasAttribute('hreflang'))
+					$alt['hreflang'] = $hyperlink->getAttribute('hreflang');
+				
+				$alternates[] = $alt;
+			} else {
+				foreach ($linkRels as $rel) {
+					$rels[$rel][] = $href;
+				}
+			}
+		}
+		
+		return [$rels, $alternates];
+	}
+	
 	/**
 	 * Kicks off the parsing routine
 	 * 
+	 * @param bool $htmlSafe whether or not to html-encode non e-* properties. Defaults to false
 	 * @return array An array containing all the µfs found in the current document
 	 */
-	public function parse() {
+	public function parse($htmlSafe = null) {
 		$mfs = array();
-
+		
+		// Allow temporary overrides of htmlSafe
+		if (null !== $htmlSafe) {
+			$oldHtmlSafe = $this->htmlSafe;
+			$this->htmlSafe = $htmlSafe;
+		}
+		
+		// Parser microformats
 		foreach ($this->xpath->query('//*[contains(concat(" ",	@class), " h-")]') as $node) {
 			// For each microformat
 			$result = $this->parseH($node);
@@ -619,8 +695,17 @@ class Parser {
 			// Add the value to the array for this property type
 			$mfs[] = $result;
 		}
-
-		return array('items' => array_values(array_filter($mfs)));
+		
+		// Parse rels
+		list($rels, $alternates) = $this->parseRelsAndAlternates();
+		
+		if (!empty($oldHtmlSafe))
+			$this->htmlSafe = $oldHtmlSafe;
+		
+		return array(
+			'items' => array_values(array_filter($mfs)),
+			'rels' => $rels,
+			'alternates' => $alternates);
 	}
 
 	/**
@@ -774,5 +859,3 @@ class Parser {
 	);
 
 }
-
-// EOF
