@@ -15,7 +15,6 @@ use mf2\Parser;
 
 function webmention_parse_query($wp_query) {
   if (isset($wp_query->query_vars['webmention'])) {
-    
     $content = file_get_contents('php://input');
     parse_str($content);
     
@@ -316,8 +315,10 @@ function discover_webmention_server_uri( $url ) {
   if ( is_wp_error( $response ) )
     return false;
 
-  if ( wp_remote_retrieve_header( $response, 'http://webmention.org/' ) )
-    return wp_remote_retrieve_header( $response, 'http://webmention.org/' );
+  if ( $link = wp_remote_retrieve_header( $response, 'link' ) ) {
+    if (preg_match("/<(.+)>;\s+rel\s?=\s?[\"\']?http:\/\/webmention.org\/?[\"\']?/i", $link, $result))
+      return $result[1];
+  }
 
   // Not an (x)html, sgml, or xml page, no use going further.
   if ( preg_match('#(image|audio|video|model)/#is', wp_remote_retrieve_header( $response, 'content-type' )) )
