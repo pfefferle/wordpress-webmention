@@ -173,13 +173,11 @@ function webmention_to_comment( $html, $source, $target, $post, $commentdata = n
     }
   }
   
-  var_dump($commentdata);
-  
   if ( $commentdata['comment_ID'] ) {
     wp_update_comment($commentdata);
     $comment_ID = $commentdata['comment_ID'];
   } else {
-    $comment_ID = wp_new_comment($commentdata);
+    $comment_ID = wp_insert_comment($commentdata);
   }
   
   add_comment_meta( $comment_ID, "webmention_source", $source, true );
