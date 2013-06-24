@@ -6,8 +6,8 @@
 
 ## Todos
 
-* add user-icon (u-photo of p-author)
-* support for like/in-reply-to/mention/... (see: http://www.sandeep.io/39)
-* nicer look and feel
-* permalinks for comments
-* webmention for comments (replys)
+* [x] add user-icon (u-photo of p-author)
+* [] support for like/in-reply-to/mention/... (see: http://www.sandeep.io/39)
+* [] nicer look and feel
+* [] permalinks for comments
+* [] webmention for comments (replys)
