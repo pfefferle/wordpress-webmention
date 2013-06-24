@@ -85,7 +85,13 @@ function webmention_parse_query($wp_query) {
 add_action('parse_query', 'webmention_parse_query');
 
 /**
- *
+ * merges the mf2 content into a WordPress comment
+ * 
+ * @param string $html the html source of the target url
+ * @param string $source the source url
+ * @param string $target the pinged target
+ * @param obj $post the post object
+ * @param array|null the commentmeta array
  */
 function webmention_to_comment( $html, $source, $target, $post, $commentdata = null ) {
   global $wpdb;
@@ -101,9 +107,11 @@ function webmention_to_comment( $html, $source, $target, $post, $commentdata = n
     }
   }
   
+  // parse source html
   $parser = new Parser( $html );
   $result = $parser->parse(true);
   
+  // search for a matchin h-entry
   $hentry = webmention_hentry_walker($result, $target);
   
   if (!$hentry) {
@@ -126,6 +134,7 @@ function webmention_to_comment( $html, $source, $target, $post, $commentdata = n
     exit;
   }
   
+  // set the right date
   if ($hentry['published']) {
     $time = strtotime($hentry['published'][0]);
     $commentdata['comment_date'] = date("Y-m-d H:i:s", $time);
@@ -138,7 +147,7 @@ function webmention_to_comment( $html, $source, $target, $post, $commentdata = n
     $author = $hentry['author'][0]['properties'];
   }
   
-  // get representative hcard
+  // else get representative hcard
   if (!$author) {
     foreach ($result["items"] as $mf) {    
       if ( isset( $mf["type"] ) ) {
@@ -157,6 +166,7 @@ function webmention_to_comment( $html, $source, $target, $post, $commentdata = n
     }
   }
 	
+  // if author is present use the informations for the comment
   if ($author) {
     if (isset($author['name'])) {
       $commentdata['comment_author'] = $wpdb->escape($author['name'][0]);
@@ -164,8 +174,6 @@ function webmention_to_comment( $html, $source, $target, $post, $commentdata = n
     
     if (isset($author['email'])) {
       $commentdata['comment_author_email'] = $wpdb->escape($author['email'][0]);
-    } else {
-      $commentdata['comment_author_email'] = $wpdb->escape('exampe@example.com');
     }
     
     if (isset($author['url'])) {
@@ -173,6 +181,7 @@ function webmention_to_comment( $html, $source, $target, $post, $commentdata = n
     }
   }
   
+  // check if it is a new comment or an update
   if ( $commentdata['comment_ID'] ) {
     wp_update_comment($commentdata);
     $comment_ID = $commentdata['comment_ID'];
@@ -180,17 +189,21 @@ function webmention_to_comment( $html, $source, $target, $post, $commentdata = n
     $comment_ID = wp_insert_comment($commentdata);
   }
   
+  // add source url as comment-meta
   add_comment_meta( $comment_ID, "webmention_source", $source, true );
   
   if (isset($author['photo'])) {
+    // add photo url as comment-meta
     add_comment_meta( $comment_ID, "webmention_avatar", $author['photo'][0], true );
   }
 }
 add_action( 'webmention_ping_client', 'webmention_to_comment', 15, 4 );
 
 /**
+ * replaces the classic WordPress pingback parser with 
+ * a more usefull mf2 parser
  *
- *
+ * @param int $comment_ID the id of the saved comment
  */
 function webmention_pingback_fix($comment_ID) {
   $commentdata = get_comment($comment_ID, ARRAY_A);
@@ -273,37 +286,44 @@ function webmention_ping( $links, $pung, $post_ID ) {
 add_action( 'pre_ping', 'webmention_ping', 10, 3 );
 
 /**
- *
+ * helper to find the correct h-entry node
+ * 
+ * @param array $mf_array the parsed microformats array
+ * @param string $target the target url
+ * @return array|false the h-entry node or false
  */
 function webmention_hentry_walker( $mf_array, $target ) {
-  if ( !is_array( $mf_array ) ) {
+  // some basic checks
+  if ( !is_array( $mf_array ) )
     return false;
-  }
-  
-  if ( !isset( $mf_array["items"] ) ) {
+  if ( !isset( $mf_array["items"] ) )
     return false;
-  }
-  
-  if ( count( $mf_array["items"] ) == 0 ) {
+  if ( count( $mf_array["items"] ) == 0 )
     return false;
-  }
   
+  // iterate array
   foreach ($mf_array["items"] as $mf) {    
     if ( isset( $mf["type"] ) ) {
+      // only h-entries are important
       if ( in_array( "h-entry", $mf["type"] ) ) {
         if ( isset( $mf['properties'] ) ) {
-          foreach ($mf['properties'] as $key => $values) {            
+          // check properties if target urls was mentioned
+          foreach ($mf['properties'] as $key => $values) {
+            // check u-* params at first      
             if ( in_array( $key, array("in-reply-to", "like", "mention", "url") )) {
               foreach ($values as $value) {
                 if ($value == $target) {
                   return $mf['properties'];
                 }
               }
+            // check content as fallback
             } elseif ( in_array( $key, array("content", "summary", "name")) && preg_match_all("|<a[^>]+?".preg_quote($target, "|")."[^>]*>([^>]+?)</a>|", $values[0], $context) ) {
               return $mf['properties'];
             }
           }
-        }        
+        }
+      // if root is h-feed, than hop into the "children" array to find some
+      // h-entries
       } elseif ( in_array( "h-feed", $mf["type"]) && isset($mf['children']) ) {
         $temp = array("items" => $mf['children']);
         return webmention_hentry_walker($temp, $target);
@@ -314,12 +334,22 @@ function webmention_hentry_walker( $mf_array, $target ) {
   return false;
 }
 
-
+/**
+ * replaces the default avatar with the webmention uf2 photo
+ *
+ * @param string $avatar the avatar-url
+ * @param int|string|object $id_or_email A user ID, email address, or comment object
+ * @param int $size Size of the avatar image
+ * @param string $default URL to a default image to use if no avatar is available
+ * @param string $alt Alternative text to use in image tag. Defaults to blank
+ * @return string new avatar-url
+ */
 function webmention_get_avatar($avatar, $id_or_email, $size, $default, $alt = '') {
   if (!is_object($id_or_email) || !isset($id_or_email->comment_type) || !get_comment_meta($id_or_email->comment_ID, 'webmention_avatar', true)) {
     return $avatar;
   }
   
+  // check if comment has a webfinger-avatar
   $webfinger_avatar = get_comment_meta($id_or_email->comment_ID, 'webmention_avatar', true);
     
   if (!$webfinger_avatar) {
@@ -335,6 +365,23 @@ function webmention_get_avatar($avatar, $id_or_email, $size, $default, $alt = ''
   return $avatar;
 }
 add_filter('get_avatar', 'webmention_get_avatar', 10, 5);
+
+/**
+ * replace comment url with webmention source
+ *
+ * @param string $link the link url
+ * @param obj $comment the comment object
+ * @param array $args a list of arguments to generate the final link tag
+ * @return string the webmention source or the original comment link
+ */
+function webmention_get_comment_link($link, $comment, $args) {
+  if ( $source = get_comment_meta($comment->comment_ID, 'webmention_source', true) ) {
+    return $source;
+  }
+  
+  return $link;
+}
+add_filter( 'get_comment_link', 'webmention_get_comment_link', 99, 3 );
 
 /**
  * Finds a webmention server URI based on the given URL.
