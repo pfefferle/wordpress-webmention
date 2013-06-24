@@ -387,6 +387,18 @@ function webmention_get_comment_link($link, $comment, $args) {
 }
 add_filter( 'get_comment_link', 'webmention_get_comment_link', 99, 3 );
 
+function webmention_template_include( $template ) {
+    global $wp,$wp_query;
+    
+    $path = apply_filters("webmention_comment_template", dirname(__FILE__)."/templates/comment.php");
+    
+    if (isset($wp_query->query['replytocom'])) {
+        return $path;
+    }
+    return $template;
+}
+add_filter( 'template_include', 'webmention_template_include' );
+
 /**
  * Finds a webmention server URI based on the given URL.
  *
