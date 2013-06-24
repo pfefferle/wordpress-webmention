@@ -107,6 +107,9 @@ function webmention_to_comment( $html, $source, $target, $post, $commentdata = n
     }
   }
   
+  // reset content type
+  $commentdata['comment_type'] = '';
+  
   // parse source html
   $parser = new Parser( $html );
   $result = $parser->parse(true);
@@ -225,7 +228,7 @@ function webmention_pingback_fix($comment_ID) {
     return false;
   }
 
-  $contents = wp_remote_retrieve_body( $response );
+  $html = wp_remote_retrieve_body( $response );
 
   webmention_to_comment( $html, $commentdata['comment_author_url'], $target, $post, $commentdata );
 }
@@ -242,6 +245,7 @@ add_action( 'webmention_ping', 'webmention_debug', 10, 3 );
 // adds some query vars
 function webmention_query_var($vars) {
   $vars[] = 'webmention';
+  $vars[] = 'replytocom';
 
   return $vars;
 }
