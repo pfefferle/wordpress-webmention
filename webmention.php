@@ -8,15 +8,6 @@
  Version: 1.0.0-dev
 */
 
-// Report all PHP errors (see changelog)
-error_reporting(E_ALL);
-
-// Report all PHP errors
-error_reporting(-1);
-
-// Same as error_reporting(E_ALL);
-ini_set('error_reporting', E_ALL);
-
 require_once 'vendor/mf2/Parser.php';
 require_once 'vendor/webignition/AbsoluteUrlDeriver/AbsoluteUrlDeriver.php';
 
@@ -52,7 +43,7 @@ function webmention_parse_query($wp_query) {
     
     // check if target url is transmitted
     if (!isset($target)) {
-      header("Status: 404 Not Found");
+      header("Status: 400 Not Found");
       echo json_encode(array("error"=> "target_not_found"));
       exit;
     }
@@ -61,7 +52,7 @@ function webmention_parse_query($wp_query) {
     
     // check if post id exists
     if ( !$post_ID ) {
-      header("Status: 404 Not Found");
+      header("Status: 400 Not Found");
       echo json_encode(array("error"=> "target_not_found"));
       exit;
     }
@@ -71,7 +62,7 @@ function webmention_parse_query($wp_query) {
     
     // check if post exists
     if ( !$post ) {
-      header("Status: 404 Not Found");
+      header("Status: 400 Not Found");
       echo json_encode(array("error"=> "target_not_found"));
       exit;
     }
@@ -80,18 +71,162 @@ function webmention_parse_query($wp_query) {
     
     // check if source is accessible
     if ( is_wp_error( $response ) ) {
-      header("Status: 404 Not Found");
+      header("Status: 400 Not Found");
       echo json_encode(array("error"=> "source_not_found"));
       exit;
     }
 
     $contents = wp_remote_retrieve_body( $response );
     
-    do_action( 'webmention_ping', $contents, $source, $target, $post );
+    do_action( 'webmention_ping_client', $contents, $source, $target, $post );
     exit;
   }
 }
 add_action('parse_query', 'webmention_parse_query');
+
+/**
+ *
+ */
+function webmention_to_comment( $html, $source, $target, $post, $commentdata = null ) {
+  global $wpdb;
+  
+  // check commentdata
+  if ( $commentdata == null ) {
+    $comment_post_ID = (int) $post->ID;
+    $commentdata = array('comment_post_ID' => $comment_post_ID, 'comment_author' => '', 'comment_author_url' => '', 'comment_author_email' => '', 'comment_content' => '', 'comment_type' => '', 'comment_ID' => '');
+    
+    if ( $comments = get_comments( array('meta_key' => 'webmention_source', 'meta_value' => $source) ) ) {
+      $comment = $comments[0];
+      $commentdata['comment_ID'] = $comment->comment_ID;
+    }
+  }
+  
+  $parser = new Parser( $html );
+  $result = $parser->parse(true);
+  
+  $hentry = webmention_hentry_walker($result, $target);
+  
+  if (!$hentry) {
+    header("Status: 404 Not Found");
+    echo json_encode(array("error"=> "no_link_found"));
+    exit;
+  }
+  
+  // try to find some content
+  // @link http://indiewebcamp.com/comments-presentation
+  if (isset($hentry['summary'])) {
+    $commentdata['comment_content'] = $wpdb->escape($hentry['summary'][0]);
+  } elseif (isset($hentry['content'])) {
+    $commentdata['comment_content'] = $wpdb->escape($hentry['content'][0]);
+  } elseif (isset($hentry['name'])) {
+    $commentdata['comment_content'] = $wpdb->escape($hentry['name'][0]);
+  } else {
+    header("Status: 404 Not Found");
+    echo json_encode(array("error"=> "no_content_found"));
+    exit;
+  }
+  
+  if ($hentry['published']) {
+    $time = strtotime($hentry['published'][0]);
+    $commentdata['comment_date'] = date("Y-m-d H:i:s", $time);
+  }
+
+  $author = null;
+  
+  // check if h-card has an author
+  if ( isset($hentry['author']) && isset($hentry['author'][0]['properties']) ) {
+    $author = $hentry['author'][0]['properties'];
+  }
+  
+  // get representative hcard
+  if (!$author) {
+    foreach ($result["items"] as $mf) {    
+      if ( isset( $mf["type"] ) ) {
+        if ( in_array( "h-card", $mf["type"] ) ) {
+          // check domain
+          if (isset($mf['properties']) && isset($mf['properties']['url'])) {
+            foreach ($mf['properties']['url'] as $url) {
+              if (parse_url($url, PHP_URL_HOST) == parse_url($source, PHP_URL_HOST)) {
+                $author = $mf['properties'];
+                break;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+	
+  if ($author) {
+    if (isset($author['name'])) {
+      $commentdata['comment_author'] = $wpdb->escape($author['name'][0]);
+    }
+    
+    if (isset($author['email'])) {
+      $commentdata['comment_author_email'] = $wpdb->escape($author['email'][0]);
+    } else {
+      $commentdata['comment_author_email'] = $wpdb->escape('exampe@example.com');
+    }
+    
+    if (isset($author['url'])) {
+      $commentdata['comment_author_url'] = $wpdb->escape($author['url'][0]);
+    }
+  }
+  
+  var_dump($commentdata);
+  
+  if ( $commentdata['comment_ID'] ) {
+    wp_update_comment($commentdata);
+    $comment_ID = $commentdata['comment_ID'];
+  } else {
+    $comment_ID = wp_new_comment($commentdata);
+  }
+  
+  add_comment_meta( $comment_ID, "webmention_source", $source, true );
+  
+  if (isset($author['photo'])) {
+    add_comment_meta( $comment_ID, "webmention_avatar", $author['photo'][0], true );
+  }
+}
+add_action( 'webmention_ping_client', 'webmention_to_comment', 15, 4 );
+
+/**
+ *
+ *
+ */
+function webmention_pingback_fix($comment_ID) {
+  $commentdata = get_comment($comment_ID, ARRAY_A);
+  
+  if (!$commentdata) {
+    return false;
+  }
+  
+  $post = get_post($commentdata['comment_post_ID'], ARRAY_A);
+  
+  if (!$post) {
+    return false;
+  }
+  
+  $target = get_permalink($post['ID']);
+  $response = wp_remote_get( $commentdata['comment_author_url'] );
+  
+  if ( is_wp_error( $response ) ) {
+    return false;
+  }
+
+  $contents = wp_remote_retrieve_body( $response );
+
+  webmention_to_comment( $html, $commentdata['comment_author_url'], $target, $post, $commentdata );
+}
+add_action( 'pingback_post', 'webmention_pingback_fix', 90, 1 );
+
+/**
+ * 
+ */
+function webmention_debug( $html, $source, $target ) {
+  wp_mail(get_bloginfo('admin_email'), 'someone mentioned you', print_r($source, true));
+}
+add_action( 'webmention_ping', 'webmention_debug', 10, 3 );
 
 // adds some query vars
 function webmention_query_var($vars) {
@@ -140,129 +275,6 @@ function webmention_ping( $links, $pung, $post_ID ) {
 add_action( 'pre_ping', 'webmention_ping', 10, 3 );
 
 /**
- * 
- */
-function webmention_mf2_to_comment( $html, $source, $target, $commentdata ) {
-  global $wpdb;
-
-  $parser = new Parser( $html );
-  $result = $parser->parse(true);
-  
-  $hentry = webmention_hentry_walker($result, $target);
-  
-  if (!$hentry) {
-    return false;
-  }
-  
-  if (isset($hentry['summary'])) {
-    $commentdata['comment_content'] = $wpdb->escape($hentry['summary'][0]);
-  } elseif (isset($hentry['content'])) {
-    $commentdata['comment_content'] = $wpdb->escape($hentry['content'][0]);
-  } elseif (isset($hentry['name'])) {
-    $commentdata['comment_content'] = $wpdb->escape($hentry['name'][0]);
-  } else {
-    return false;
-  }
-
-  $author = null;
-  
-  // check if h-card has an author
-  if ( isset($hentry['author']) && isset($hentry['author'][0]['properties']) ) {
-    $author = $hentry['author'][0]['properties'];
-  }
-  
-  // get representative hcard
-  if (!$author) {
-    foreach ($result["items"] as $mf) {    
-      if ( isset( $mf["type"] ) ) {
-        if ( in_array( "h-card", $mf["type"] ) ) {
-          // check domain
-          if (isset($mf['properties']) && isset($mf['properties']['url'])) {
-            foreach ($mf['properties']['url'] as $url) {
-              if (parse_url($url, PHP_URL_HOST) == parse_url($source, PHP_URL_HOST)) {
-                $author = $mf['properties'];
-                break;
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-	
-  if ($author) {
-    if (isset($author['name'])) {
-      $commentdata['comment_author'] = $wpdb->escape($author['name'][0]);
-    }
-  
-    if (isset($author['url'])) {
-      $commentdata['comment_author_url'] = $wpdb->escape($source);
-    }
-  }
-  
-  $commentdata['comment_type'] = 'pingback';  
-  return $commentdata;
-}
-
-/**
- *
- */
-function webmention_to_comment( $html, $source, $target, $post ) {
-  $comment_post_ID = (int) $post->ID;
-  $commentdata = webmention_mf2_to_comment( $html, $source, $target, array('comment_post_ID' => $comment_post_ID, 'comment_author' => '', 'comment_author_url' => '', 'comment_author_email' => '', 'comment_content' => '', 'comment_type' => '') );
-
-  if (!$commentdata) {
-    header("Status: 404 Not Found");
-    echo json_encode(array("error"=> "no_link_found"));
-    exit;
-  }
-  
-  $comment_ID = wp_new_comment($commentdata);
-}
-add_action( 'webmention_ping', 'webmention_to_comment', 15, 4 );
-
-/**
- *
- *
- */
-function webmention_pingback_fix($comment_ID) {
-  $commentdata = get_comment($comment_ID, ARRAY_A);
-  
-  if (!$commentdata) {
-    return false;
-  }
-  
-  $post = get_post($commentdata['comment_post_ID'], ARRAY_A);
-  
-  if (!$post) {
-    return false;
-  }
-  
-  $target = get_permalink($post['ID']);
-  $response = wp_remote_get( $commentdata['comment_author_url'] );
-  
-  if ( is_wp_error( $response ) ) {
-    return false;
-  }
-
-  $contents = wp_remote_retrieve_body( $response );
-  $commentdata = webmention_mf2_to_comment( $contents, $commentdata['comment_author_url'], $target, $commentdata );
-  
-  if ($commentdata) {
-    wp_update_comment($commentdata);
-  }
-}
-add_action( 'pingback_post', 'webmention_pingback_fix', 90, 1 );
-
-/**
- * 
- */
-function webmention_debug( $html, $source, $target ) {
-  wp_mail(get_bloginfo('admin_email'), 'someone mentioned you', print_r($source, true));
-}
-add_action( 'webmention_ping', 'webmention_debug', 10, 3 );
-
-/**
  *
  */
 function webmention_hentry_walker( $mf_array, $target ) {
@@ -294,7 +306,7 @@ function webmention_hentry_walker( $mf_array, $target ) {
             }
           }
         }        
-      } elseif ( in_array( "h-feed", $mf["type"]) ) {
+      } elseif ( in_array( "h-feed", $mf["type"]) && isset($mf['children']) ) {
         $temp = array("items" => $mf['children']);
         return webmention_hentry_walker($temp, $target);
       }
@@ -304,6 +316,27 @@ function webmention_hentry_walker( $mf_array, $target ) {
   return false;
 }
 
+
+function webmention_get_avatar($avatar, $id_or_email, $size, $default, $alt = '') {
+  if (!is_object($id_or_email) || !isset($id_or_email->comment_type) || !get_comment_meta($id_or_email->comment_ID, 'webmention_avatar', true)) {
+    return $avatar;
+  }
+  
+  $webfinger_avatar = get_comment_meta($id_or_email->comment_ID, 'webmention_avatar', true);
+    
+  if (!$webfinger_avatar) {
+    return $avatar;
+  }
+  
+  if ( false === $alt )
+    $safe_alt = '';
+  else
+    $safe_alt = esc_attr( $alt );
+  
+  $avatar = "<img alt='{$safe_alt}' src='{$webfinger_avatar}' class='avatar avatar-{$size} photo p-photo avatar-webmention' height='{$size}' width='{$size}' />";
+  return $avatar;
+}
+add_filter('get_avatar', 'webmention_get_avatar', 10, 5);
 
 /**
  * Finds a webmention server URI based on the given URL.
