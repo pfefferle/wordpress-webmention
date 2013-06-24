@@ -43,8 +43,8 @@ function webmention_parse_query($wp_query) {
     
     // check if target url is transmitted
     if (!isset($target)) {
-      header("Status: 400 Not Found");
-      echo json_encode(array("error"=> "target_not_found"));
+      header("Status: 400 Bad Request");
+      echo json_encode(array("error"=> "target_empty"));
       exit;
     }
     
@@ -52,7 +52,7 @@ function webmention_parse_query($wp_query) {
     
     // check if post id exists
     if ( !$post_ID ) {
-      header("Status: 400 Not Found");
+      header("Status: 400 Bad Request");
       echo json_encode(array("error"=> "target_not_found"));
       exit;
     }
@@ -62,7 +62,7 @@ function webmention_parse_query($wp_query) {
     
     // check if post exists
     if ( !$post ) {
-      header("Status: 400 Not Found");
+      header("Status: 400 Bad Request");
       echo json_encode(array("error"=> "target_not_found"));
       exit;
     }
@@ -71,8 +71,8 @@ function webmention_parse_query($wp_query) {
     
     // check if source is accessible
     if ( is_wp_error( $response ) ) {
-      header("Status: 400 Not Found");
-      echo json_encode(array("error"=> "source_not_found"));
+      header("Status: 400 Bad Request");
+      echo json_encode(array("error"=> "source_not_accessible"));
       exit;
     }
 
@@ -268,6 +268,23 @@ function webmention_template_redirect() {
 add_action('template_redirect', 'webmention_template_redirect');
 
 /**
+ * send webmentions
+ *
+ * @param string $source source url
+ * @param string $target target url
+ * @return array of results including HTTP headers
+ */
+function webmention_send_ping($source, $target) {
+  $webmention_server_url = discover_webmention_server_uri( $target );
+  
+  $args = array(
+            'body' => 'source='.urlencode($source).'&target='.urlencode($target)
+          );
+
+  return wp_remote_post( $webmention_server_url, $args );
+}
+
+/**
  * send webmention
  *
  * @param array $links Links to ping
@@ -275,19 +292,47 @@ add_action('template_redirect', 'webmention_template_redirect');
  * @param int $id The post_ID
  */
 function webmention_ping( $links, $pung, $post_ID ) {
-  foreach ( (array) $links as $pagelinkedto ) {
-    $webmention_server_url = discover_webmention_server_uri( $pagelinkedto );
-    
-    $pagelinkedfrom = get_permalink($post_ID);
-    $args = array(
-              'body' => array( 'source' => $pagelinkedfrom, 'target' => $pagelinkedto ),
-              'headers' => array( 'Content-Type' => 'application/x-www-url-form-encoded' )
-            );
-    
-    $response = wp_remote_post( $webmention_server_url, $args );
+  // get source url
+  $source = get_permalink($post_ID);
+  // get post
+  $post = get_post($post_ID);
+
+  // parse source html
+  $parser = new Parser( "<div class='h-dummy'>".$post->post_content."</div>" );
+  $mf_array = $parser->parse(true);
+  
+  // some basic checks
+  if ( !is_array( $mf_array ) )
+    return false;
+  if ( !isset( $mf_array["items"] ) )
+    return false;
+  if ( count( $mf_array["items"] ) == 0 )
+    return false;
+  
+  // load properties of dummy html
+  $dummy = $mf_array["items"][0];
+  
+  // check post for some supported urls
+  foreach ( (array) $dummy['properties'] as $key => $values ) {
+    if (in_array($key, webmention_get_supported_url_types())) {
+      $data = webmention_send_ping($source, $values[0]);
+    }
   }
 }
 add_action( 'pre_ping', 'webmention_ping', 10, 3 );
+
+function webmention_insert_comment($id, $comment) {
+  if ($comment->comment_parent) {
+    $target = get_comment_meta($comment->comment_parent, 'webmention_source', true);
+    
+    if ($target) {
+      $source = add_query_arg( 'replytocom', $comment->comment_ID, get_permalink($comment->comment_post_ID) );
+      $data = webmention_send_ping($source, $target);
+    }
+  }
+}
+add_action('wp_insert_comment', 'webmention_insert_comment', 99, 2);
+add_action('wp_update_comment', 'webmention_insert_comment', 99, 2);
 
 /**
  * helper to find the correct h-entry node
@@ -314,7 +359,7 @@ function webmention_hentry_walker( $mf_array, $target ) {
           // check properties if target urls was mentioned
           foreach ($mf['properties'] as $key => $values) {
             // check u-* params at first      
-            if ( in_array( $key, array("in-reply-to", "like", "mention", "url") )) {
+            if ( in_array( $key, webmention_get_supported_url_types() )) {
               foreach ($values as $value) {
                 if ($value == $target) {
                   return $mf['properties'];
@@ -387,17 +432,39 @@ function webmention_get_comment_link($link, $comment, $args) {
 }
 add_filter( 'get_comment_link', 'webmention_get_comment_link', 99, 3 );
 
+/**
+ * adds a special template for single comments
+ *
+ * @param string $template "old" template path
+ * @return string "new" template path
+ */
 function webmention_template_include( $template ) {
-    global $wp,$wp_query;
+  global $wp,$wp_query; 
+  $path = apply_filters("webmention_comment_template", dirname(__FILE__)."/templates/comment.php");
     
-    $path = apply_filters("webmention_comment_template", dirname(__FILE__)."/templates/comment.php");
-    
-    if (isset($wp_query->query['replytocom'])) {
-        return $path;
-    }
-    return $template;
+  if (isset($wp_query->query['replytocom'])) {
+    return $path;
+  }
+  return $template;
 }
 add_filter( 'template_include', 'webmention_template_include' );
+
+/**
+ * all supported url types
+ *
+ * @return array
+ */
+function webmention_get_supported_url_types() {
+  return apply_filters("webmention_supported_url_types", array("in-reply-to", "like", "mention", "url"));
+}
+
+function webfinger_get_parent_source_url($comment) {
+  if ($comment->comment_parent) {
+    return get_comment_meta($comment->comment_parent, 'webmention_source', true);
+  }
+  
+  return null;
+}
 
 /**
  * Finds a webmention server URI based on the given URL.
@@ -427,7 +494,7 @@ function discover_webmention_server_uri( $url ) {
   if ( 0 === strpos($url, $uploads_dir['baseurl']) )
     return false;
 
-  $response = wp_remote_head( $url, array( 'timeout' => 2, 'httpversion' => '1.0' ) );
+  $response = wp_remote_head( $url, array( 'timeout' => 100, 'httpversion' => '1.0' ) );
 
   if ( is_wp_error( $response ) )
     return false;
@@ -442,7 +509,7 @@ function discover_webmention_server_uri( $url ) {
     return false;
 
   // Now do a GET since we're going to look in the html headers (and we're sure its not a binary file)
-  $response = wp_remote_get( $url, array( 'timeout' => 2, 'httpversion' => '1.0' ) );
+  $response = wp_remote_get( $url, array( 'timeout' => 100, 'httpversion' => '1.0' ) );
 
   if ( is_wp_error( $response ) )
     return false;

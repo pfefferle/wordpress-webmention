@@ -15,21 +15,24 @@ get_header();
       <footer class="entry-meta">
         <address class="comment-author p-author author vcard hcard h-card">
           <?php echo get_avatar( $comment, 50 ); ?>
-          <?php printf( __( '%s <span class="says">says:</span>', 'sempress' ), sprintf( '<cite class="fn p-name">%s</cite>', get_comment_author_link() ) ); ?>
+          <?php printf( '<cite class="fn p-name">%s</cite>', get_comment_author_link() ); ?>
         </address><!-- .comment-author .vcard -->
         <?php if ( $comment->comment_approved == '0' ) : ?>
-          <em><?php _e( 'Your comment is awaiting moderation.', 'sempress' ); ?></em>
+          <em><?php _e( 'Your comment is awaiting moderation.', 'webmention' ); ?></em>
           <br />
         <?php endif; ?>
 
-        <div class="comment-meta commentmetadata">
-          <a href="<?php echo esc_url( get_comment_link( $comment->comment_ID ) ); ?>"><time datetime="<?php comment_time( 'c' ); ?>" class="dt-published dt-updated published updated">
-          <?php
-            /* translators: 1: date, 2: time */
-            printf( __( '%1$s at %2$s', 'sempress' ), get_comment_date(), get_comment_time() ); ?>
-          </time></a>
-          <?php edit_comment_link( __( '(Edit)', 'sempress' ), ' ' ); ?>
-        </div><!-- .comment-meta .commentmetadata -->
+        <a href="<?php echo esc_url( get_comment_link( $comment->comment_ID ) ); ?>"><time datetime="<?php comment_time( 'c' ); ?>" class="dt-published dt-updated published updated">
+        <?php
+          /* translators: 1: date, 2: time */
+          printf( __( '%1$s at %2$s', 'webmention' ), get_comment_date(), get_comment_time() ); ?>
+        </time></a>
+        
+        <?php if ($parent_source = webfinger_get_parent_source_url($comment)) { ?>
+        <span><?php printf( '<a href="%s" class="u-in-reply-to">(this is a reply)</cite>', $parent_source ); ?></span>
+        <?php } ?>
+        
+        <?php edit_comment_link( __( '(Edit)', 'sempress' ), ' ' ); ?>
       </footer>
     </article><!-- #comment-## -->
     
