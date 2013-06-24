@@ -365,7 +365,7 @@ function webmention_get_avatar($avatar, $id_or_email, $size, $default, $alt = ''
   else
     $safe_alt = esc_attr( $alt );
   
-  $avatar = "<img alt='{$safe_alt}' src='{$webfinger_avatar}' class='avatar avatar-{$size} photo p-photo avatar-webmention' height='{$size}' width='{$size}' />";
+  $avatar = "<img alt='{$safe_alt}' src='{$webfinger_avatar}' class='avatar avatar-{$size} photo avatar-webmention' height='{$size}' width='{$size}' />";
   return $avatar;
 }
 add_filter('get_avatar', 'webmention_get_avatar', 10, 5);
