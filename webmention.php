@@ -107,6 +107,14 @@ function webmention_to_comment( $html, $source, $target, $post, $commentdata = n
     }
   }
   
+  // check if there is a parent comment
+  if ( $query = parse_url($target, PHP_URL_QUERY) ) {
+    parse_str($query);
+    if (isset($replytocom) && get_comment($replytocom)) {
+      $commentdata['comment_parent'] = $replytocom;
+    }
+  }
+  
   // reset content type
   $commentdata['comment_type'] = '';
   
@@ -240,7 +248,7 @@ add_action( 'pingback_post', 'webmention_pingback_fix', 90, 1 );
 function webmention_debug( $html, $source, $target ) {
   wp_mail(get_bloginfo('admin_email'), 'someone mentioned you', print_r($source, true));
 }
-add_action( 'webmention_ping', 'webmention_debug', 10, 3 );
+add_action( 'webmention_ping_client', 'webmention_debug', 10, 3 );
 
 // adds some query vars
 function webmention_query_var($vars) {
@@ -430,7 +438,7 @@ function webmention_get_comment_link($link, $comment, $args) {
   
   return $link;
 }
-add_filter( 'get_comment_link', 'webmention_get_comment_link', 99, 3 );
+//add_filter( 'get_comment_link', 'webmention_get_comment_link', 99, 3 );
 
 /**
  * adds a special template for single comments
