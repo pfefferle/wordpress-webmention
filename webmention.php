@@ -36,23 +36,23 @@ function webmention_parse_query($wp_query) {
     
     // check if source url is transmitted
     if (!isset($source)) {
-      header("Status: 400 Bad Request");
+      header('HTTP/1.1 400 Bad Request');
       echo json_encode(array("error"=> "source_not_found"));
       exit;
     }
     
     // check if target url is transmitted
     if (!isset($target)) {
-      header("Status: 400 Bad Request");
+      header('HTTP/1.1 400 Bad Request');
       echo json_encode(array("error"=> "target_empty"));
       exit;
     }
     
-    $post_ID = url_to_postid($target);
+    $post_ID = webmention_url_to_postid($target);
     
     // check if post id exists
     if ( !$post_ID ) {
-      header("Status: 400 Bad Request");
+      header('HTTP/1.1 400 Bad Request');
       echo json_encode(array("error"=> "target_not_found"));
       exit;
     }
@@ -62,7 +62,7 @@ function webmention_parse_query($wp_query) {
     
     // check if post exists
     if ( !$post ) {
-      header("Status: 400 Bad Request");
+      header('HTTP/1.1 400 Bad Request');
       echo json_encode(array("error"=> "target_not_found"));
       exit;
     }
@@ -71,7 +71,7 @@ function webmention_parse_query($wp_query) {
     
     // check if source is accessible
     if ( is_wp_error( $response ) ) {
-      header("Status: 400 Bad Request");
+      header('HTTP/1.1 400 Bad Request');
       echo json_encode(array("error"=> "source_not_accessible"));
       exit;
     }
@@ -126,7 +126,7 @@ function webmention_to_comment( $html, $source, $target, $post, $commentdata = n
   $hentry = webmention_hentry_walker($result, $target);
   
   if (!$hentry) {
-    header("Status: 404 Not Found");
+    header('HTTP/1.1 400 Bad Request');
     echo json_encode(array("error"=> "no_link_found"));
     exit;
   }
@@ -140,14 +140,17 @@ function webmention_to_comment( $html, $source, $target, $post, $commentdata = n
   } elseif (isset($hentry['name'])) {
     $commentdata['comment_content'] = $wpdb->escape($hentry['name'][0]);
   } else {
-    header("Status: 404 Not Found");
+    header('HTTP/1.1 400 Bad Request');
     echo json_encode(array("error"=> "no_content_found"));
     exit;
   }
   
   // set the right date
-  if ($hentry['published']) {
+  if (isset($hentry['published'])) {
     $time = strtotime($hentry['published'][0]);
+    $commentdata['comment_date'] = date("Y-m-d H:i:s", $time);
+  } elseif (isset($hentry['updated'])) {
+    $time = strtotime($hentry['updated'][0]);
     $commentdata['comment_date'] = date("Y-m-d H:i:s", $time);
   }
 
@@ -299,9 +302,11 @@ function webmention_send_ping($source, $target) {
  * @param array $punk Pinged links
  * @param int $id The post_ID
  */
-function webmention_ping( $links, $pung, $post_ID ) {
+function webmention_ping( $links, $pung, $post_ID ) {  
   // get source url
   $source = get_permalink($post_ID);
+  $source = get_permalink($post_ID);
+
   // get post
   $post = get_post($post_ID);
 
@@ -323,13 +328,23 @@ function webmention_ping( $links, $pung, $post_ID ) {
   // check post for some supported urls
   foreach ( (array) $dummy['properties'] as $key => $values ) {
     if (in_array($key, webmention_get_supported_url_types())) {
-      $data = webmention_send_ping($source, $values[0]);
+      foreach ($values as $value) {
+        // @todo check response
+        $data = webmention_send_ping($source, $value);
+      }
     }
   }
 }
 add_action( 'pre_ping', 'webmention_ping', 10, 3 );
 
-function webmention_insert_comment($id, $comment) {
+/**
+ * send webmentions on new comments
+ *
+ * @param int $id the post id
+ * @param obj $comment the comment object
+ */
+function webmention_comment_post($id) {
+  $comment = get_comment($id);
   if ($comment->comment_parent) {
     $target = get_comment_meta($comment->comment_parent, 'webmention_source', true);
     
@@ -339,8 +354,18 @@ function webmention_insert_comment($id, $comment) {
     }
   }
 }
-add_action('wp_insert_comment', 'webmention_insert_comment', 99, 2);
-add_action('wp_update_comment', 'webmention_insert_comment', 99, 2);
+add_action('comment_post', 'webmention_comment_post');
+
+/**
+ * workaround because WordPress sends no pings on custom post types
+ *
+ * @param int $id the post id
+ * @param obj $post the post object
+ */
+function webmention_insert_post($id) {
+  webmention_ping(array(), array(), $id);
+}
+add_action('publish_webmention_reply', 'webmention_insert_post');
 
 /**
  * helper to find the correct h-entry node
@@ -463,7 +488,7 @@ add_filter( 'template_include', 'webmention_template_include' );
  * @return array
  */
 function webmention_get_supported_url_types() {
-  return apply_filters("webmention_supported_url_types", array("in-reply-to", "like", "mention", "url"));
+  return apply_filters("webmention_supported_url_types", array("in-reply-to", "like", "mention"));
 }
 
 function webfinger_get_parent_source_url($comment) {
@@ -473,6 +498,41 @@ function webfinger_get_parent_source_url($comment) {
   
   return null;
 }
+
+
+function webmention_create_post_types() {
+  register_post_type( 'webmention_reply',
+	  array(
+      'labels' => array(
+        'name' => __( 'Replies' ),
+        'singular_name' => __( 'Reply' )
+			),
+		  'public' => true,
+		  'has_archive' => true,
+      'hierarchical' => true,
+      'query_var' => true,
+      'rewrite' => array( 'slug' => 'replies', 'with_front' => false, 'feeds' => true, 'ep_mask' => EP_PERMALINK ),
+      'supports' => array(
+        'title', 'revisions', 'title', 'trackbacks', 'comments', 'post-formats', 'author', 'editor'
+      )
+	  )
+  );
+  
+  flush_rewrite_rules();
+}
+add_action( 'init', 'webmention_create_post_types' );
+
+/**
+ * Adds custom classes to the array of post classes.
+ */
+function webmention_post_classes( $classes ) {
+  if (get_post_type() == "webmention_reply") {
+    $classes[] = 'post';
+  }
+  
+  return $classes;
+}
+add_filter( 'post_class', 'webmention_post_classes' );
 
 /**
  * Finds a webmention server URI based on the given URL.
@@ -542,4 +602,36 @@ function discover_webmention_server_uri( $url ) {
   }
 
   return false;
+}
+
+function webmention_url_to_postid( $url ) {
+  // Try the core function
+  $post_id = url_to_postid( $url );
+  if ( $post_id == 0 ) {
+    $url = preg_replace('/\?.*/', '', $url);
+    // Try custom post types
+    $cpts = get_post_types( array(
+      'public'   => true,
+      '_builtin' => false
+    ), 'objects', 'and' );
+    // Get path from URL
+    $url_parts = explode( '/', trim( $url, '/' ) );
+    $url_parts = array_splice( $url_parts, 3 );
+    $path = implode( '/', $url_parts );
+    // Test against each CPT's rewrite slug
+    foreach ( $cpts as $cpt_name => $cpt ) {
+      $cpt_slug = $cpt->rewrite['slug'];
+      if ( strlen( $path ) > strlen( $cpt_slug ) && substr( $path, 0, strlen( $cpt_slug ) ) == $cpt_slug ) {
+        $slug = substr( $path, strlen( $cpt_slug ) );
+        $query = new WP_Query( array(
+          'post_type'         => $cpt_name,
+          'name'              => $slug,
+          'posts_per_page'    => 1
+        ));
+        if ( is_object( $query->post ) )
+          $post_id = $query->post->ID;
+      }
+    }
+  }
+  return $post_id;
 }
