@@ -305,7 +305,6 @@ function webmention_send_ping($source, $target) {
 function webmention_ping( $links, $pung, $post_ID ) {  
   // get source url
   $source = get_permalink($post_ID);
-  $source = get_permalink($post_ID);
 
   // get post
   $post = get_post($post_ID);
@@ -567,9 +566,16 @@ function discover_webmention_server_uri( $url ) {
   if ( is_wp_error( $response ) )
     return false;
 
-  if ( $link = wp_remote_retrieve_header( $response, 'link' ) ) {
-    if (preg_match("/<(.+)>;\s+rel\s?=\s?[\"\']?http:\/\/webmention.org\/?[\"\']?/i", $link, $result))
-      return $result[1];
+  if ( $links = wp_remote_retrieve_header( $response, 'link' ) ) {
+    if ( is_array($links) ) {
+      foreach ($links as $link) {
+        if (preg_match("/<(.+)>;\s+rel\s?=\s?[\"\']?http:\/\/webmention.org\/?[\"\']?/i", $link, $result))
+          return $result[1];
+      }
+    } else {
+      if (preg_match("/<(.+)>;\s+rel\s?=\s?[\"\']?http:\/\/webmention.org\/?[\"\']?/i", $links, $result))
+        return $result[1];
+    }
   }
 
   // Not an (x)html, sgml, or xml page, no use going further.
