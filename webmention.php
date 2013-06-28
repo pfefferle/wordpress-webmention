@@ -512,7 +512,7 @@ function webmention_create_post_types() {
       'query_var' => true,
       'rewrite' => array( 'slug' => 'replies', 'with_front' => false, 'feeds' => true, 'ep_mask' => EP_PERMALINK ),
       'supports' => array(
-        'title', 'revisions', 'title', 'trackbacks', 'comments', 'post-formats', 'author', 'editor'
+        'title', 'revisions', 'title', 'trackbacks', 'comments', 'post-formats', 'author', 'editor', 'custom-fields'
       )
 	  )
   );

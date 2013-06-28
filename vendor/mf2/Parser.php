@@ -127,12 +127,12 @@ class Parser {
 	 * @return string|null
 	 */
 	public static function nestedMfPropertyNamesFromClass($class) {
-		$prefixes = array('p-', 'u-', 'dt-', 'e-');
+		$prefixes = array(' p-', ' u-', ' dt-', ' e-');
 		
 		foreach (explode(' ', $class) as $classname) {
 			foreach ($prefixes as $prefix) {
-				if (stristr($classname, $prefix))
-					return self::mfNamesFromClass($classname, $prefix);
+				if (stristr(' ' . $classname, $prefix))
+					return self::mfNamesFromClass($classname, ltrim($prefix));
 			}
 		}
 		
@@ -431,6 +431,7 @@ class Parser {
 			return $classTitle;
 		
 		// Expand relative URLs within children of this element
+		// TODO: as it is this is not relative to only children, make this .// and rerun tests
 		$hyperlinkChildren = $this->xpath->query('//*[@src or @href or @data]', $e);
 		
 		foreach ($hyperlinkChildren as $child) {
@@ -472,6 +473,10 @@ class Parser {
 		foreach ($this->xpath->query('.//*[contains(concat(" ", @class)," h-")]', $e) as $subMF) {
 			// Parse
 			$result = $this->parseH($subMF);
+			
+			// If result was already parsed, skip it
+			if (null === $result)
+				continue;
 			
 			$result['value'] = $this->parseP($subMF);
 
@@ -515,7 +520,8 @@ class Parser {
 		}
 
 		// Handle u-*
-		foreach ($this->xpath->query('.//*[contains(@class,"u-")]', $e) as $u) {
+		// TODO: is this regex correct? why not concat space before?
+		foreach ($this->xpath->query('.//*[contains(concat(" ",  @class)," u-")]', $e) as $u) {
 			if ($this->isElementParsed($u, 'u'))
 				continue;
 
@@ -550,7 +556,7 @@ class Parser {
 
 		// Handle e-*
 		foreach ($this->xpath->query('.//*[contains(concat(" ", @class)," e-")]', $e) as $em) {
-			if ($this->isElementParsed($e, 'e'))
+			if ($this->isElementParsed($em, 'e'))
 				continue;
 
 			$eValue = $this->parseE($em);
@@ -562,7 +568,7 @@ class Parser {
 				}
 			}
 			// Make sure this sub-mf won’t get parsed as a top level mf
-			$em->setAttribute('data-e-parsed', 'true');
+			$this->elementPrefixParsed($em, 'e');
 		}
 
 		// !Implied Properties
@@ -694,7 +700,7 @@ class Parser {
 	 * will be HTML-encoded, bringing all output to the same level of encoding.
 	 * 
 	 * If a DOMElement is set as the $context, only descendants of that element will
-	 * be parsed for microrformats.
+	 * be parsed for microformats.
 	 * 
 	 * @param bool $htmlSafe whether or not to html-encode non e-* properties. Defaults to false
 	 * @param DOMElement $context optionally an element from which to parse microformats
@@ -711,7 +717,7 @@ class Parser {
 		
 		$mfElements = null === $context
 			? $this->xpath->query('//*[contains(concat(" ",	@class), " h-")]')
-			: $this->xpath->query('./*[contains(concat(" ",	@class), " h-")]', $context);
+			: $this->xpath->query('.//*[contains(concat(" ",	@class), " h-")]', $context);
 		
 		// Parser microformats
 		foreach ($mfElements as $node) {
