@@ -5,7 +5,7 @@
  Description: Webmention support for WordPress posts/comments
  Author: pfefferle
  Author URI: http://notizblog.org/
- Version: 1.0.0-dev
+ Version: 1.1.0-dev
 */
 
 require_once 'vendor/mf2/Parser.php';
@@ -267,16 +267,27 @@ add_filter('query_vars', 'webmention_query_var');
  */
 function webmention_add_header() {
   echo '<link rel="http://webmention.org/" href="'.site_url("?webmention=endpoint").'" />'."\n";
+  
+  if ($com_ID = get_query_var('replytocom')) {
+    wp_enqueue_script("jquery");
+?>
+  <script type="text/javascript">
+  jQuery(document).ready( function() {
+    jQuery('html, body').animate( { scrollTop: jQuery('#comment-<?php echo $com_ID; ?>').offset().top }, 50 );
+  });
+  </script>
+<?php
+  }
 }
-add_action("wp_head", "webmention_add_header");
+add_action("wp_head", "webmention_add_header", 99);
 
 /**
  * adds the webmention header
  */
-function webmention_template_redirect() {
+function webmention_send_headers() {
   header('Link: <'.site_url("?webmention=endpoint").'>; rel="http://webmention.org/"', false);
 }
-add_action('template_redirect', 'webmention_template_redirect');
+add_action('send_headers', 'webmention_send_headers');
 
 /**
  * send webmentions
@@ -291,8 +302,12 @@ function webmention_send_ping($source, $target) {
   $args = array(
             'body' => 'source='.urlencode($source).'&target='.urlencode($target)
           );
-
-  return wp_remote_post( $webmention_server_url, $args );
+  
+  if ($webmention_server_url) {
+    return wp_remote_post( $webmention_server_url, $args );
+  }
+  
+  return false;
 }
 
 /**
@@ -309,28 +324,13 @@ function webmention_ping( $links, $pung, $post_ID ) {
   // get post
   $post = get_post($post_ID);
 
-  // parse source html
-  $parser = new Parser( "<div class='h-dummy'>".$post->post_content."</div>" );
-  $mf_array = $parser->parse(true);
-  
-  // some basic checks
-  if ( !is_array( $mf_array ) )
-    return false;
-  if ( !isset( $mf_array["items"] ) )
-    return false;
-  if ( count( $mf_array["items"] ) == 0 )
-    return false;
-  
-  // load properties of dummy html
-  $dummy = $mf_array["items"][0];
-  
-  // check post for some supported urls
-  foreach ( (array) $dummy['properties'] as $key => $values ) {
-    if (in_array($key, webmention_get_supported_url_types())) {
-      foreach ($values as $value) {
-        // @todo check response
-        $data = webmention_send_ping($source, $value);
-      }
+  // Find all external links in the source
+  if (preg_match_all("/<a[^>]+href=.(https?:\/\/[^'\"]+)/i", $post->post_content, $matches)) {
+    $links = array_unique($matches[1]);
+    
+    foreach ($links as $target) {
+      // @todo check response
+      $data = webmention_send_ping($source, $target);
     }
   }
 }
@@ -462,24 +462,7 @@ function webmention_get_comment_link($link, $comment, $args) {
   
   return $link;
 }
-//add_filter( 'get_comment_link', 'webmention_get_comment_link', 99, 3 );
-
-/**
- * adds a special template for single comments
- *
- * @param string $template "old" template path
- * @return string "new" template path
- */
-function webmention_template_include( $template ) {
-  global $wp,$wp_query; 
-  $path = apply_filters("webmention_comment_template", dirname(__FILE__)."/templates/comment.php");
-    
-  if (isset($wp_query->query['replytocom'])) {
-    return $path;
-  }
-  return $template;
-}
-add_filter( 'template_include', 'webmention_template_include' );
+add_filter( 'get_comment_link', 'webmention_get_comment_link', 99, 3 );
 
 /**
  * all supported url types
@@ -487,7 +470,7 @@ add_filter( 'template_include', 'webmention_template_include' );
  * @return array
  */
 function webmention_get_supported_url_types() {
-  return apply_filters("webmention_supported_url_types", array("in-reply-to", "like", "mention"));
+  return apply_filters("webmention_supported_url_types", array("in-reply-to", "like", "mention", "object-of-like"));
 }
 
 function webfinger_get_parent_source_url($comment) {
@@ -521,6 +504,50 @@ function webmention_create_post_types() {
 }
 add_action( 'init', 'webmention_create_post_types' );
 
+function webmention_meta_box() {    
+  add_meta_box("webmentionsdiv", "Replies", "webmention_meta_box_options", "webmention_reply", "normal", "low");    
+}    
+add_action("add_meta_boxes", "webmention_meta_box");  
+  
+function webmention_meta_box_options( $post ) {
+  $custom = get_post_custom($post->ID);
+  $value = get_post_meta( $post->ID, 'webmention_reply_urls', true );
+?>
+  <p><label for="webmention-reply-urls">This post is a reply to:</label><input type="text" name="webmention-reply-urls" class="code" value="<?php echo $value; ?>" style="width: 99%;" /><br />(<?php _e('Separate multiple URLs with spaces'); ?>)</p>
+<?php
+}
+
+function webmention_meta_box_save( $post_ID ) {
+  if (!isset($_POST['webmention-reply-urls'])) {
+    return;
+  }
+
+  $urls = sanitize_text_field( $_POST['webmention-reply-urls'] );
+  
+  if ( ! update_post_meta($post_ID, 'webmention_reply_urls', $urls) ) add_post_meta($post_ID, 'webmention_reply_urls', $urls, true);
+}    
+add_action('save_post', 'webmention_meta_box_save');
+
+/**
+ * Removes h-entry classes on a comment selection
+ */
+function webmention_comment_classes( $classes ) {
+  global $comment;
+  
+  if ( get_query_var( 'replytocom' ) && get_query_var( 'replytocom' ) != $comment->comment_ID ) {
+    foreach ( $classes as $key => $value ) {
+      if ( preg_match( '/^h-(.+)/i', $value ) ||
+           preg_match( '/^p-(.+)/i', $value ) ||
+           preg_match( '/^e-(.+)/i', $value ) ) {
+        unset ( $classes[$key] );
+      }
+    }
+  }
+  
+  return $classes;
+}
+add_filter( 'comment_class', 'webmention_comment_classes', 99 );
+
 /**
  * Adds custom classes to the array of post classes.
  */
@@ -532,6 +559,25 @@ function webmention_post_classes( $classes ) {
   return $classes;
 }
 add_filter( 'post_class', 'webmention_post_classes' );
+
+/**
+ * removes h-entry classes.
+ */
+function webmention_remove_classes( $classes ) {
+  if ( get_query_var( 'replytocom' ) ) {
+    foreach ( $classes as $key => $value ) {
+      if ( preg_match( '/^h-(.+)/i', $value ) ||
+           preg_match( '/^p-(.+)/i', $value ) ||
+           preg_match( '/^e-(.+)/i', $value ) ) {
+        unset ( $classes[$key] );
+      }
+    }
+  }
+  
+  return $classes;
+}
+add_filter( 'post_class', 'webmention_remove_classes', 99 );
+add_filter( 'body_class', 'webmention_remove_classes', 99 );
 
 /**
  * Finds a webmention server URI based on the given URL.
@@ -610,6 +656,10 @@ function discover_webmention_server_uri( $url ) {
   return false;
 }
 
+/**
+ * helper function to get postid by url for
+ * custom post types
+ */
 function webmention_url_to_postid( $url ) {
   // Try the core function
   $post_id = url_to_postid( $url );
