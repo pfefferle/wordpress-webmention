@@ -481,29 +481,6 @@ function webfinger_get_parent_source_url($comment) {
   return null;
 }
 
-
-function webmention_create_post_types() {
-  register_post_type( 'webmention_reply',
-	  array(
-      'labels' => array(
-        'name' => __( 'Replies' ),
-        'singular_name' => __( 'Reply' )
-			),
-		  'public' => true,
-		  'has_archive' => true,
-      'hierarchical' => true,
-      'query_var' => true,
-      'rewrite' => array( 'slug' => 'replies', 'with_front' => false, 'feeds' => true, 'ep_mask' => EP_PERMALINK ),
-      'supports' => array(
-        'title', 'revisions', 'title', 'trackbacks', 'comments', 'post-formats', 'author', 'editor', 'custom-fields'
-      )
-	  )
-  );
-  
-  flush_rewrite_rules();
-}
-add_action( 'init', 'webmention_create_post_types' );
-
 function webmention_meta_box() {    
   add_meta_box("webmentionsdiv", "Replies", "webmention_meta_box_options", "webmention_reply", "normal", "low");    
 }    
