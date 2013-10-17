@@ -90,10 +90,76 @@ class WebMentionPlugin {
 
     $contents = wp_remote_retrieve_body( $response );
 
-    // @todo check if source links target
+    // check if source really links to target
+    if (!strpos($contents, $target)) {
+      status_header(400);
+      echo "Can't find target link.";
+      exit;
+    }
+
+    status_header(200);
 
     do_action( 'webmention_inbox', $contents, $source, $target, $post );
     exit;
+  }
+
+  /**
+   * Save the webmention as comment
+   *
+   * @param string $contents the HTML of the source
+   * @param string $source the source URL
+   * @param string $target the target URL
+   * @param WP_Post $post the WordPress post object
+   */
+  public static function save_comment( $contents, $source, $target, $post ) {
+    $title = "John Doe";
+    $text = "";
+
+    if (preg_match("/<title>(.+)<\/title>/i", $contents, $match))
+      $title = trim($match[1]);
+
+    //Original source by driedfruit: https://github.com/driedfruit/php-pingback/
+    $pos = strpos($contents, $target);
+
+    $left = substr($contents, 0, $pos);
+    $right = substr($contents, $pos + $target);
+    $gl = strrpos($left, '>', -512) + 1;/* attempt to land */
+    $gr = strpos($right, '<', 512);  /* on tag boundaries */
+    $nleft = substr($left, $gl);
+    $nright = substr($right, 0, $gr);
+
+    /* Glue them and strip_tags (and remove excessive whitepsace) */
+    $nstr = $nleft.$nright;
+    $nstr = strip_tags($nstr);
+    $nstr = str_replace(array("\n","\t")," ", $nstr);
+
+    /* Take 120 chars from the CENTER of our current string */
+    $fat = strlen($nstr) - 120;
+    if ($fat > 0) {
+      $lfat = $fat / 2;
+      $rfat = $fat - $lfat;
+      $nstr = substr($nstr, $lfat);
+      $nstr = substr($nstr, 0, -$rfat);
+    }
+
+    /* Trim a little more and add [...] on the sides */
+    $nstr = trim($nstr);
+    if ($nstr) $context = preg_replace('#^.+?(\s)|(\s)\S+?$#', '\\2[&#8230;]\\1', $nstr);
+
+    // generate comment
+		$source = wp_slash( $source );
+
+		$comment_post_ID = (int) $post->ID;
+		$comment_author = wp_slash($title);
+		$comment_author_email = '';
+		$comment_author_url = $source;
+		$comment_content = wp_slash($context);
+		$comment_type = 'webmention';
+
+		$commentdata = compact('comment_post_ID', 'comment_author', 'comment_author_url', 'comment_author_email', 'comment_content', 'comment_type');
+
+		$comment_ID = wp_new_comment($commentdata);
+    do_action('webmention_post', $comment_ID);
   }
 
   /**
@@ -140,7 +206,7 @@ class WebMentionPlugin {
    * @param array $punk Pinged links
    * @param int $id The post_ID
    */
-  public static function pre_ping_hook( $links, $pung, $post_ID ) {
+  public static function publish_post_hook( $post_ID ) {
     // get source url
     $source = get_permalink($post_ID);
 
@@ -233,7 +299,9 @@ class WebMentionPlugin {
 add_filter('query_vars', array('WebMentionPlugin', 'query_var'));
 add_action('parse_query', array('WebMentionPlugin', 'parse_query'));
 
+add_action('webmention_inbox', array('WebMentionPlugin', 'save_comment'), 10, 4);
+
 add_action('wp_head', array('WebMentionPlugin', 'html_header'), 99);
 add_action('send_headers', array('WebMentionPlugin', 'http_header'));
 
-add_action('pre_ping', array('WebMentionPlugin', 'pre_ping_hook'), 10, 3);
+add_action('publish_post', array('WebMentionPlugin', 'publish_post_hook'));
