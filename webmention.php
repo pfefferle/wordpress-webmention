@@ -296,6 +296,20 @@ class WebMentionPlugin {
   }
 }
 
+/**
+ * a wrapper for WebMentionPlugin::send_webmention
+ *
+ * @param string $source source url
+ * @param string $target target url
+ * @return array of results including HTTP headers
+ */
+function send_webmention($source, $target) {
+  return WebMentionPlugin::send_webmention($source, $target);
+}
+
+// a pseudo hook so you can run a do_action('send_webmention') instead of calling WebMentionPlugin::send_webmention
+add_action('send_webmention', array('WebMentionPlugin', 'send_webmention'));
+
 add_filter('query_vars', array('WebMentionPlugin', 'query_var'));
 add_action('parse_query', array('WebMentionPlugin', 'parse_query'));
 
