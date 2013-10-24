@@ -99,7 +99,7 @@ class WebMentionPlugin {
 
     status_header(200);
 
-    do_action( 'webmention_inbox', $contents, $source, $target, $post );
+    do_action( 'webmention', $contents, $source, $target, $post );
     exit;
   }
 
@@ -147,18 +147,18 @@ class WebMentionPlugin {
     if ($nstr) $context = preg_replace('#^.+?(\s)|(\s)\S+?$#', '\\2[&#8230;]\\1', $nstr);
 
     // generate comment
-		$source = wp_slash( $source );
+    $source = wp_slash( $source );
 
-		$comment_post_ID = (int) $post->ID;
-		$comment_author = wp_slash($title);
-		$comment_author_email = '';
-		$comment_author_url = $source;
-		$comment_content = wp_slash($context);
-		$comment_type = 'webmention';
+    $comment_post_ID = (int) $post->ID;
+    $comment_author = wp_slash($title);
+    $comment_author_email = '';
+    $comment_author_url = $source;
+    $comment_content = wp_slash($context);
+    $comment_type = 'webmention';
 
-		$commentdata = compact('comment_post_ID', 'comment_author', 'comment_author_url', 'comment_author_email', 'comment_content', 'comment_type');
+    $commentdata = compact('comment_post_ID', 'comment_author', 'comment_author_url', 'comment_author_email', 'comment_content', 'comment_type');
 
-		$comment_ID = wp_new_comment($commentdata);
+    $comment_ID = wp_new_comment($commentdata);
     do_action('webmention_post', $comment_ID);
   }
 
@@ -169,7 +169,7 @@ class WebMentionPlugin {
    * @param string $target target url
    * @return array of results including HTTP headers
    */
-  public static function send_ping($source, $target) {
+  public static function send_webmention($source, $target) {
     $webmention_server_url = self::discover_endpoint( $target );
 
     $args = array(
@@ -219,7 +219,7 @@ class WebMentionPlugin {
 
       foreach ($links as $target) {
         // @todo check response
-        $data = self::send_ping($source, $target);
+        $data = self::send_webmention($source, $target);
       }
     }
   }
@@ -299,9 +299,9 @@ class WebMentionPlugin {
 add_filter('query_vars', array('WebMentionPlugin', 'query_var'));
 add_action('parse_query', array('WebMentionPlugin', 'parse_query'));
 
-add_action('webmention_inbox', array('WebMentionPlugin', 'save_comment'), 10, 4);
-
 add_action('wp_head', array('WebMentionPlugin', 'html_header'), 99);
 add_action('send_headers', array('WebMentionPlugin', 'http_header'));
 
 add_action('publish_post', array('WebMentionPlugin', 'publish_post_hook'));
+
+add_action('webmention', array('WebMentionPlugin', 'save_comment'), 10, 4);
