@@ -28,12 +28,10 @@ class WebMentionPlugin {
   }
 
   /**
-   * Parse the webfinger request and render the document.
+   * Parse the WebMention request and render the document.
    *
    * @param WP $wp WordPress request context
-   *
-   * @uses apply_filters() Calls 'webfinger' on webfinger data array
-   * @uses do_action() Calls 'webfinger_render' to render webfinger data
+   * @uses do_action() Calls 'webmention'
    */
   public static function parse_query($wp) {
     // check if it is a webfinger request or not
@@ -104,7 +102,7 @@ class WebMentionPlugin {
   }
 
   /**
-   * Save the webmention as comment
+   * Save the WebMention as comment
    *
    * @param string $contents the HTML of the source
    * @param string $source the source URL
@@ -163,7 +161,7 @@ class WebMentionPlugin {
   }
 
   /**
-   * Send webmentions
+   * Send WebMentions
    *
    * @param string $source source url
    * @param string $target target url
@@ -184,7 +182,7 @@ class WebMentionPlugin {
   }
 
   /**
-   * The webmention autodicovery meta-tags
+   * The WebMention autodicovery meta-tags
    */
   public static function html_header() {
     echo '<link rel="http://webmention.org/" href="'.site_url("?webmention=endpoint").'" />'."\n";
@@ -192,7 +190,7 @@ class WebMentionPlugin {
   }
 
   /**
-   * The webmention autodicovery http-header
+   * The WebMention autodicovery http-header
    */
   public static function http_header() {
     header('Link: <'.site_url("?webmention=endpoint").'>; rel="http://webmention.org/"', false);
@@ -200,7 +198,7 @@ class WebMentionPlugin {
   }
 
   /**
-   * Send webmention
+   * Send WebMentions if new Post was saved
    *
    * @param array $links Links to ping
    * @param array $punk Pinged links
@@ -225,7 +223,7 @@ class WebMentionPlugin {
   }
 
   /**
-   * Finds a webmention server URI based on the given URL.
+   * Finds a WebMention server URI based on the given URL.
    *
    * Checks the HTML for the rel="http://webmention.org/" link and http://webmention.org/ headers. It does
    * a check for the http://webmention.org/ headers first and returns that, if available. The
@@ -242,7 +240,7 @@ class WebMentionPlugin {
     if ( ! isset( $parsed_url['host'] ) ) // Not an URL. This should never happen.
       return false;
 
-    //Do not search for a webmention server on our own uploads
+    //Do not search for a WebMention server on our own uploads
     $uploads_dir = wp_upload_dir();
     if ( 0 === strpos($url, $uploads_dir['baseurl']) )
       return false;
