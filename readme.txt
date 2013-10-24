@@ -16,7 +16,15 @@ WebMention is a simple and modern alternative to the Pingback/Trackback protocol
 
 == FAQ ==
 
-soon
+= What are WebMentions? =
+
+[WebMention](http://webmention.org) is a simple way to automatically notify any URL when you link to it on your site. From the receivers perpective, it's a way to request notification when other sites link to it.
+
+It’s a modern alternative to Pingback and other forms of Linkback.
+
+= How can I send WebMentions =
+
+You can use the `send_webmention($source, $target)` function and pass a source and a target or you can fire an action like `do_action('send_webmention', $source, $target)`.
 
 == Changelog ==
 
