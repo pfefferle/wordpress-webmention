@@ -263,9 +263,10 @@ function webmention_query_var($vars) {
 add_filter('query_vars', 'webmention_query_var');
 
 /**
- * adds the "http://webmention.org/" meta-tag
+ * adds the webmention link meta-tags
  */
 function webmention_add_header() {
+  echo '<link rel="webmention" href="'.site_url("?webmention=endpoint").'" />'."\n";
   echo '<link rel="http://webmention.org/" href="'.site_url("?webmention=endpoint").'" />'."\n";
 }
 add_action("wp_head", "webmention_add_header");
@@ -569,11 +570,11 @@ function discover_webmention_server_uri( $url ) {
   if ( $links = wp_remote_retrieve_header( $response, 'link' ) ) {
     if ( is_array($links) ) {
       foreach ($links as $link) {
-        if (preg_match("/<(.+)>;\s+rel\s?=\s?[\"\']?http:\/\/webmention.org\/?[\"\']?/i", $link, $result))
+        if (preg_match("/<(.+)>;\s+rel\s?=\s?[\"\']?(http:\/\/)?webmention(.org\/?)?[\"\']?/i", $link, $result))
           return $result[1];
       }
     } else {
-      if (preg_match("/<(.+)>;\s+rel\s?=\s?[\"\']?http:\/\/webmention.org\/?[\"\']?/i", $links, $result))
+      if (preg_match("/<(.+)>;\s+rel\s?=\s?[\"\']?(http:\/\/)?webmention(.org\/?)?[\"\']?/i", $links, $result))
         return $result[1];
     }
   }
