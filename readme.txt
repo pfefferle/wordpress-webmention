@@ -29,7 +29,7 @@ You can use the `send_webmention($source, $target)` function and pass a source a
 == Changelog ==
 
 Project maintined on github at
-[pfefferle/wordpress-webfinger](https://github.com/pfefferle/wordpress-webmention).
+[pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
 
 = 2.0.0 =
 
@@ -37,7 +37,7 @@ initial release
 
 == Installation ==
 
-1. Upload the `webfinger`-folder to the `/wp-content/plugins/` directory
+1. Upload the `webmention`-folder to the `/wp-content/plugins/` directory
 2. Activate the plugin through the *Plugins* menu in WordPress
 3. ...and that's it :)
 
