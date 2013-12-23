@@ -34,7 +34,7 @@ class WebMentionPlugin {
    * @uses do_action() Calls 'webmention'
    */
   public static function parse_query($wp) {
-    // check if it is a webfinger request or not
+    // check if it is a webmention request or not
     if (!array_key_exists('webmention', $wp->query_vars)) {
       return;
     }
