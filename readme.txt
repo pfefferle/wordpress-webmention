@@ -3,7 +3,7 @@ Contributors: pfefferle
 Donate link: http://14101978.de
 Tags: webmention, pingback, trackback, linkback
 Requires at least: 2.7
-Tested up to: 3.6.1
+Tested up to: 3.8
 Stable tag: 2.0.0
 
 WebMention for WordPress!
