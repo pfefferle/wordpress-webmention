@@ -67,6 +67,13 @@ class WebMentionPlugin {
       exit;
     }
 
+    // check if pings are allowed
+    if ( !pings_open($post_ID) ) {
+      status_header(500);
+      echo "Pings are disabled for this post";
+      exit;
+    }
+
     $post_ID = (int) $post_ID;
     $post = get_post($post_ID);
 
@@ -102,17 +109,16 @@ class WebMentionPlugin {
     $content = apply_filters( "webmention_content", "", $contents, $target );
 
     // generate comment
-    $source = wp_slash( $source );
-
     $comment_post_ID = (int) $post->ID;
     $comment_author = wp_slash($title);
     $comment_author_email = '';
-    $comment_author_url = $source;
+    $comment_author_url = wp_slash($source);
     $comment_content = wp_slash($content);
     $comment_type = 'webmention';
 
     $commentdata = compact('comment_post_ID', 'comment_author', 'comment_author_url', 'comment_author_email', 'comment_content', 'comment_type');
 
+    // save comment
     $comment_ID = wp_new_comment($commentdata);
     do_action( 'webmention_post', $comment_ID );
     exit;
