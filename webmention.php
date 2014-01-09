@@ -115,11 +115,31 @@ class WebMentionPlugin {
     $comment_author_url = wp_slash($source);
     $comment_content = wp_slash($content);
     $comment_type = 'webmention';
+    $comment_parent = null;
 
-    $commentdata = compact('comment_post_ID', 'comment_author', 'comment_author_url', 'comment_author_email', 'comment_content', 'comment_type');
+    $commentdata = compact('comment_post_ID', 'comment_author', 'comment_author_url', 'comment_author_email', 'comment_content', 'comment_type', 'comment_parent');
 
-    // save comment
-    $comment_ID = wp_new_comment($commentdata);
+    // check dupes
+    global $wpdb;
+  	$comments = $wpdb->get_results( $wpdb->prepare("SELECT * FROM $wpdb->comments WHERE comment_post_ID = %d AND comment_author_url = %s", $comment_post_ID, $comment_author_url) );
+
+    // check result
+    if (!empty($comments)) {
+      $comment = $comments[0];
+    } else {
+      $comment = null;
+    }
+
+    // update or save webmention
+    if ($comment) {
+      $commentdata['comment_ID'] = $comment->comment_ID;
+      // save comment
+      $comment_ID = wp_update_comment($commentdata);
+    } else {
+      // save comment
+      $comment_ID = wp_new_comment($commentdata);
+    }
+
     do_action( 'webmention_post', $comment_ID );
     exit;
   }
