@@ -97,25 +97,35 @@ class WebMentionPlugin {
 
     status_header(200);
 
-    do_action( 'webmention', $contents, $source, $target, $post );
+    // filter title or content of the comment
+    $title = apply_filters( "webmention_title", "John Doe", $contents, $target );
+    $content = apply_filters( "webmention_content", "", $contents, $target );
+
+    // generate comment
+    $source = wp_slash( $source );
+
+    $comment_post_ID = (int) $post->ID;
+    $comment_author = wp_slash($title);
+    $comment_author_email = '';
+    $comment_author_url = $source;
+    $comment_content = wp_slash($content);
+    $comment_type = 'webmention';
+
+    $commentdata = compact('comment_post_ID', 'comment_author', 'comment_author_url', 'comment_author_email', 'comment_content', 'comment_type');
+
+    $comment_ID = wp_new_comment($commentdata);
+    do_action( 'webmention_post', $comment_ID );
     exit;
   }
 
   /**
-   * Save the WebMention as comment
+   * try to make a nice comment
    *
+   * @param string $context the comment-content
    * @param string $contents the HTML of the source
-   * @param string $source the source URL
    * @param string $target the target URL
-   * @param WP_Post $post the WordPress post object
    */
-  public static function save_comment( $contents, $source, $target, $post ) {
-    $title = "John Doe";
-    $text = "";
-
-    if (preg_match("/<title>(.+)<\/title>/i", $contents, $match))
-      $title = trim($match[1]);
-
+  public static function default_content_filter( $context, $contents, $target ) {
     //Original source by driedfruit: https://github.com/driedfruit/php-pingback/
     $pos = strpos($contents, $target);
 
@@ -144,20 +154,21 @@ class WebMentionPlugin {
     $nstr = trim($nstr);
     if ($nstr) $context = preg_replace('#^.+?(\s)|(\s)\S+?$#', '\\2[&#8230;]\\1', $nstr);
 
-    // generate comment
-    $source = wp_slash( $source );
+    return $context;
+  }
 
-    $comment_post_ID = (int) $post->ID;
-    $comment_author = wp_slash($title);
-    $comment_author_email = '';
-    $comment_author_url = $source;
-    $comment_content = wp_slash($context);
-    $comment_type = 'webmention';
+  /**
+   * try to make a nice title (username)
+   *
+   * @param string $$title the comment-title (username)
+   * @param string $contents the HTML of the source
+   * @param string $target the target URL
+   */
+  public static function default_title_filter( $title, $contents, $target ) {
+    if (preg_match("/<title>(.+)<\/title>/i", $contents, $match))
+      $title = trim($match[1]);
 
-    $commentdata = compact('comment_post_ID', 'comment_author', 'comment_author_url', 'comment_author_email', 'comment_content', 'comment_type');
-
-    $comment_ID = wp_new_comment($commentdata);
-    do_action('webmention_post', $comment_ID);
+    return $title;
   }
 
   /**
@@ -185,6 +196,7 @@ class WebMentionPlugin {
    * The WebMention autodicovery meta-tags
    */
   public static function html_header() {
+    // backwards compatibility with v0.1
     echo '<link rel="http://webmention.org/" href="'.site_url("?webmention=endpoint").'" />'."\n";
     echo '<link rel="webmention" href="'.site_url("?webmention=endpoint").'" />'."\n";
   }
@@ -193,6 +205,7 @@ class WebMentionPlugin {
    * The WebMention autodicovery http-header
    */
   public static function http_header() {
+    // backwards compatibility with v0.1
     header('Link: <'.site_url("?webmention=endpoint").'>; rel="http://webmention.org/"', false);
     header('Link: <'.site_url("?webmention=endpoint").'>; rel="webmention"', false);
   }
@@ -316,4 +329,5 @@ add_action('send_headers', array('WebMentionPlugin', 'http_header'));
 
 add_action('publish_post', array('WebMentionPlugin', 'publish_post_hook'));
 
-add_action('webmention', array('WebMentionPlugin', 'save_comment'), 10, 4);
+add_filter('webmention_title', array('WebMentionPlugin', 'default_title_filter'), 10, 3);
+add_filter('webmention_content', array('WebMentionPlugin', 'default_content_filter'), 10, 3);
