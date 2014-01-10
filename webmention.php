@@ -326,17 +326,11 @@ class WebMentionPlugin {
     if ( $links = wp_remote_retrieve_header( $response, 'link' ) ) {
       if ( is_array($links) ) {
         foreach ($links as $link) {
-          if (preg_match("/<(https?:\/\/[^>]+)>;\s+rel\s?=\s?[\"\']?http:\/\/webmention.org\/?[\"\']?/i", $link, $result))
-            return $result[1];
-
-          if (preg_match("/<(https?:\/\/[^>]+)>;\s+rel\s?=\s?[\"\']?webmention?[\"\']?/i", $link, $result))
+          if (preg_match("/<(https?:\/\/[^>]+)>;\s+rel\s?=\s?[\"\']?(http:\/\/)?webmention(.org)?\/?[\"\']?/i", $link, $result))
             return $result[1];
         }
       } else {
-        if (preg_match("/<(https?:\/\/[^>]+)>;\s+rel\s?=\s?[\"\']?http:\/\/webmention.org\/?[\"\']?/i", $links, $result))
-          return $result[1];
-
-        if (preg_match("/<(https?:\/\/[^>]+)>;\s+rel\s?=\s?[\"\']?webmention?[\"\']?/i", $link, $result))
+        if (preg_match("/<(https?:\/\/[^>]+)>;\s+rel\s?=\s?[\"\']?(http:\/\/)?webmention(.org)?\/?[\"\']?/i", $links, $result))
           return $result[1];
       }
     }
@@ -353,12 +347,15 @@ class WebMentionPlugin {
 
     $contents = wp_remote_retrieve_body( $response );
 
+    // boost performance and use alreade the header
+    $header = substr( $contents, 0, stripos( $contents, '</head>' ) );
+
     // check html meta-links
-    if (preg_match('/<link\s+href=[\"\']([^"\']+)[\"\']\s+rel=[\"\']webmention[\"\']\s*\/?>/i', $contents, $result)
-        || preg_match('/<link\s+rel=[\"\']webmention[\"\']\s+href=[\"\']([^\"\']+)[\"\']\s*\/?>/i', $contents, $result)) {
-      return $result[1];
-    } elseif(preg_match('/<link\s+href=[\"\']([^\"\']+)[\"\']\s+rel=[\"\']http:\/\/webmention\.org\/?[\"\']\s*\/?>/i', $contents, $result)
-        || preg_match('/<link\s+rel=[\"\']http:\/\/webmention\.org\/?[\"\']\s+href=[\"\']([^\"\']+)[\"\']\s*\/?>/i', $contents, $result)) {
+    if (preg_match('/<link\s+rel=[\"\'](http:\/\/)?webmention(.org)?[\"\']\s+href=[\"\']([^\"\']+)[\"\']\s*\/?>/i', $header, $result)) {
+      return $result[3];
+    }
+
+    if (preg_match('/<link\s+href=[\"\']([^"\']+)[\"\']\s+rel=[\"\'](http:\/\/)?webmention(.org)?[\"\']\s*\/?>/i', $header, $result)) {
       return $result[1];
     }
 
