@@ -9,11 +9,44 @@
 */
 
 /**
+ * a wrapper for WebMentionPlugin::send_webmention
+ *
+ * @param string $source source url
+ * @param string $target target url
+ * @return array of results including HTTP headers
+ */
+function send_webmention($source, $target) {
+  return WebMentionPlugin::send_webmention($source, $target);
+}
+
+// initialize plugin
+add_action('init', array( 'WebMentionPlugin', 'init' ));
+
+/**
  * WebMention Plugin Class
  *
  * @author Matthias Pfefferle
  */
 class WebMentionPlugin {
+
+  /**
+   * Initialize the plugin, registering WordPress hooks.
+   */
+  public static function init() {
+    // a pseudo hook so you can run a do_action('send_webmention') instead of calling WebMentionPlugin::send_webmention
+    add_action('send_webmention', array('WebMentionPlugin', 'send_webmention'));
+
+    add_filter('query_vars', array('WebMentionPlugin', 'query_var'));
+    add_action('parse_query', array('WebMentionPlugin', 'parse_query'));
+
+    add_action('wp_head', array('WebMentionPlugin', 'html_header'), 99);
+    add_action('send_headers', array('WebMentionPlugin', 'http_header'));
+
+    add_action('publish_post', array('WebMentionPlugin', 'publish_post_hook'));
+
+    add_filter('webmention_title', array('WebMentionPlugin', 'default_title_filter'), 10, 3);
+    add_filter('webmention_content', array('WebMentionPlugin', 'default_content_filter'), 10, 3);
+  }
 
   /**
    * Adds some query vars
@@ -332,28 +365,3 @@ class WebMentionPlugin {
     return false;
   }
 }
-
-/**
- * a wrapper for WebMentionPlugin::send_webmention
- *
- * @param string $source source url
- * @param string $target target url
- * @return array of results including HTTP headers
- */
-function send_webmention($source, $target) {
-  return WebMentionPlugin::send_webmention($source, $target);
-}
-
-// a pseudo hook so you can run a do_action('send_webmention') instead of calling WebMentionPlugin::send_webmention
-add_action('send_webmention', array('WebMentionPlugin', 'send_webmention'));
-
-add_filter('query_vars', array('WebMentionPlugin', 'query_var'));
-add_action('parse_query', array('WebMentionPlugin', 'parse_query'));
-
-add_action('wp_head', array('WebMentionPlugin', 'html_header'), 99);
-add_action('send_headers', array('WebMentionPlugin', 'http_header'));
-
-add_action('publish_post', array('WebMentionPlugin', 'publish_post_hook'));
-
-add_filter('webmention_title', array('WebMentionPlugin', 'default_title_filter'), 10, 3);
-add_filter('webmention_content', array('WebMentionPlugin', 'default_content_filter'), 10, 3);
