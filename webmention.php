@@ -167,7 +167,8 @@ class WebMentionPlugin {
     if ($comment) {
       $commentdata['comment_ID'] = $comment->comment_ID;
       // save comment
-      $comment_ID = wp_update_comment($commentdata);
+      wp_update_comment($commentdata);
+      $comment_ID = $comment->comment_ID;
     } else {
       // save comment
       $comment_ID = wp_new_comment($commentdata);
