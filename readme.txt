@@ -30,6 +30,11 @@ You can use the `send_webmention($source, $target)` function and pass a source a
 
 Project maintined on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
 
+= 2.0.1 =
+
+* small fixes
+* nicer excerpt extractor
+
 = 2.0.0 =
 
 initial release
