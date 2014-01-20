@@ -145,7 +145,7 @@ class WebMentionPlugin {
     $comment_post_ID = (int) $post->ID;
     $comment_author = wp_slash($title);
     $comment_author_email = '';
-    $comment_author_url = wp_slash($source);
+    $comment_author_url = esc_url_raw($source);
     $comment_content = wp_slash($content);
     $comment_type = 'webmention';
     $comment_parent = null;
