@@ -5,7 +5,7 @@
  Description: Webmention support for WordPress posts
  Author: pfefferle
  Author URI: http://notizblog.org/
- Version: 2.0.1
+ Version: 2.0.2-dev
 */
 
 /**
@@ -138,7 +138,7 @@ class WebMentionPlugin {
     status_header(200);
 
     // filter title or content of the comment
-    $title = apply_filters( "webmention_title", "John Doe", $contents, $target );
+    $title = apply_filters( "webmention_title", "", $contents, $target );
     $content = apply_filters( "webmention_content", "", $contents, $target );
 
     // generate comment
@@ -292,14 +292,21 @@ class WebMentionPlugin {
     // get post
     $post = get_post($post_ID);
 
+    // initialize links array
+    $links = array();
+
     // Find all external links in the source
     if (preg_match_all("/<a[^>]+href=.(https?:\/\/[^'\"]+)/i", $post->post_content, $matches)) {
-      $links = apply_filters('webmention_links', array_unique($matches[1]));
+      $links = $matches[1];
+    }
 
-      foreach ($links as $target) {
-        // @todo check response
-        $data = self::send_webmention($source, $target);
-      }
+    // filter links
+    $targets = apply_filters('webmention_links', $links, $post_ID);
+    $targets = array_unique($targets);
+
+    foreach ($targets as $target) {
+      // @todo check response
+      $data = self::send_webmention($source, $target);
     }
   }
 

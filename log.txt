@@ -1,0 +1,200 @@
+WP_Post Object
+(
+    [ID] => 1122
+    [post_author] => 1
+    [post_date] => 2014-01-22 18:06:05
+    [post_date_gmt] => 2014-01-22 17:06:05
+    [post_content] => hallo test
+    [post_title] => hallo test
+    [post_excerpt] => 
+    [post_status] => publish
+    [comment_status] => open
+    [ping_status] => open
+    [post_password] => 
+    [post_name] => hallo-test
+    [to_ping] => 
+    [pinged] => 
+    [post_modified] => 2014-01-22 18:41:14
+    [post_modified_gmt] => 2014-01-22 17:41:14
+    [post_content_filtered] => 
+    [post_parent] => 0
+    [guid] => http://devblog.local/?p=1122
+    [menu_order] => 0
+    [post_type] => post
+    [post_mime_type] => 
+    [comment_count] => 0
+    [filter] => raw
+)
+
+Array
+(
+    [0] => 
+)
+
+
+WP_Post Object
+(
+    [ID] => 1122
+    [post_author] => 1
+    [post_date] => 2014-01-22 18:06:05
+    [post_date_gmt] => 2014-01-22 17:06:05
+    [post_content] => hallo test
+    [post_title] => hallo test
+    [post_excerpt] => 
+    [post_status] => publish
+    [comment_status] => open
+    [ping_status] => open
+    [post_password] => 
+    [post_name] => hallo-test
+    [to_ping] => 
+    [pinged] => 
+    [post_modified] => 2014-01-22 18:41:14
+    [post_modified_gmt] => 2014-01-22 17:41:14
+    [post_content_filtered] => 
+    [post_parent] => 0
+    [guid] => http://devblog.local/?p=1122
+    [menu_order] => 0
+    [post_type] => post
+    [post_mime_type] => 
+    [comment_count] => 0
+    [filter] => raw
+)
+
+Array
+(
+    [0] => 
+)
+
+
+WP_Post Object
+(
+    [ID] => 1122
+    [post_author] => 1
+    [post_date] => 2014-01-22 18:06:05
+    [post_date_gmt] => 2014-01-22 17:06:05
+    [post_content] => hallo test
+    [post_title] => hallo test
+    [post_excerpt] => 
+    [post_status] => publish
+    [comment_status] => open
+    [ping_status] => open
+    [post_password] => 
+    [post_name] => hallo-test
+    [to_ping] => 
+    [pinged] => 
+    [post_modified] => 2014-01-22 18:42:07
+    [post_modified_gmt] => 2014-01-22 17:42:07
+    [post_content_filtered] => 
+    [post_parent] => 0
+    [guid] => http://devblog.local/?p=1122
+    [menu_order] => 0
+    [post_type] => post
+    [post_mime_type] => 
+    [comment_count] => 0
+    [filter] => raw
+)
+
+Array
+(
+    [0] => http://blog.local/?p=1198
+)
+
+Array
+(
+    [headers] => Array
+        (
+            [date] => Wed, 22 Jan 2014 17:42:09 GMT
+            [server] => Apache/2.2.24 (Unix) PHP/5.4.17 DAV/2 mod_ssl/2.2.24 OpenSSL/0.9.8y mod_perl/2.0.7 Perl/v5.16.2
+            [x-powered-by] => PHP/5.4.17
+            [x-pingback] => http://blog.local/xmlrpc.php
+            [link] => Array
+                (
+                    [0] => <http://blog.local/?webmention=endpoint>; rel="http://webmention.org/"
+                    [1] => <http://blog.local/?webmention=endpoint>; rel="webmention"
+                )
+
+            [content-length] => 0
+            [connection] => close
+            [content-type] => text/plain; charset=UTF-8
+        )
+
+    [body] => 
+    [response] => Array
+        (
+            [code] => 200
+            [message] => OK
+        )
+
+    [cookies] => Array
+        (
+        )
+
+    [filename] => 
+)
+
+WP_Post Object
+(
+    [ID] => 1122
+    [post_author] => 1
+    [post_date] => 2014-01-22 18:06:05
+    [post_date_gmt] => 2014-01-22 17:06:05
+    [post_content] => hallo test
+    [post_title] => hallo test
+    [post_excerpt] => 
+    [post_status] => publish
+    [comment_status] => open
+    [ping_status] => open
+    [post_password] => 
+    [post_name] => hallo-test
+    [to_ping] => 
+    [pinged] => 
+    [post_modified] => 2014-01-22 18:42:07
+    [post_modified_gmt] => 2014-01-22 17:42:07
+    [post_content_filtered] => 
+    [post_parent] => 0
+    [guid] => http://devblog.local/?p=1122
+    [menu_order] => 0
+    [post_type] => post
+    [post_mime_type] => 
+    [comment_count] => 0
+    [filter] => raw
+)
+
+Array
+(
+    [0] => http://blog.local/?p=1198
+)
+
+Array
+(
+    [headers] => Array
+        (
+            [date] => Wed, 22 Jan 2014 17:42:09 GMT
+            [server] => Apache/2.2.24 (Unix) PHP/5.4.17 DAV/2 mod_ssl/2.2.24 OpenSSL/0.9.8y mod_perl/2.0.7 Perl/v5.16.2
+            [x-powered-by] => PHP/5.4.17
+            [x-pingback] => http://blog.local/xmlrpc.php
+            [link] => Array
+                (
+                    [0] => <http://blog.local/?webmention=endpoint>; rel="http://webmention.org/"
+                    [1] => <http://blog.local/?webmention=endpoint>; rel="webmention"
+                )
+
+            [content-length] => 0
+            [connection] => close
+            [content-type] => text/plain; charset=UTF-8
+        )
+
+    [body] => 
+    [response] => Array
+        (
+            [code] => 200
+            [message] => OK
+        )
+
+    [cookies] => Array
+        (
+        )
+
+    [filename] => 
+)
+
