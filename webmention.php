@@ -147,8 +147,8 @@ class WebMentionPlugin {
     $comment_author_email = '';
     $comment_author_url = esc_url_raw($source);
     $comment_content = wp_slash($content);
-    // use pingback because wordpress doesn't support other post types
-    $comment_type = apply_filters('webmention_comment_type', 'pingback');
+    // change this if your theme can't handle the webmention comment type
+    $comment_type = apply_filters('webmention_comment_type', 'webmention');
     $comment_parent = null;
 
     $commentdata = compact('comment_post_ID', 'comment_author', 'comment_author_url', 'comment_author_email', 'comment_content', 'comment_type', 'comment_parent');
