@@ -30,8 +30,10 @@ You can use the `send_webmention($source, $target)` function and pass a source a
 
 Project maintined on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
 
-= 2.0.2 =
+= 2.1.0 =
 
+* switched from `webmention` to `pingback` comment type
+* nicer `title` and `content` discovery
 * added post-id to `webmention_links` filter
 * improved `publish_post_hook` function
 

@@ -5,7 +5,7 @@
  Description: Webmention support for WordPress posts
  Author: pfefferle
  Author URI: http://notizblog.org/
- Version: 2.0.2-dev
+ Version: 2.1.0-dev
 */
 
 /**
@@ -44,8 +44,8 @@ class WebMentionPlugin {
 
     add_action('publish_post', array('WebMentionPlugin', 'publish_post_hook'));
 
-    add_filter('webmention_title', array('WebMentionPlugin', 'default_title_filter'), 10, 3);
-    add_filter('webmention_content', array('WebMentionPlugin', 'default_content_filter'), 10, 3);
+    add_filter('webmention_title', array('WebMentionPlugin', 'default_title_filter'), 10, 4);
+    add_filter('webmention_content', array('WebMentionPlugin', 'default_content_filter'), 10, 4);
   }
 
   /**
@@ -138,8 +138,8 @@ class WebMentionPlugin {
     status_header(200);
 
     // filter title or content of the comment
-    $title = apply_filters( "webmention_title", "", $contents, $target );
-    $content = apply_filters( "webmention_content", "", $contents, $target );
+    $title = apply_filters( "webmention_title", "", $contents, $target, $source );
+    $content = apply_filters( "webmention_content", "", $contents, $target, $source );
 
     // generate comment
     $comment_post_ID = (int) $post->ID;
@@ -147,7 +147,8 @@ class WebMentionPlugin {
     $comment_author_email = '';
     $comment_author_url = esc_url_raw($source);
     $comment_content = wp_slash($content);
-    $comment_type = 'webmention';
+    // use pingback because wordpress doesn't support other post types
+    $comment_type = apply_filters('webmention_comment_type', 'pingback');
     $comment_parent = null;
 
     $commentdata = compact('comment_post_ID', 'comment_author', 'comment_author_url', 'comment_author_email', 'comment_content', 'comment_type', 'comment_parent');
@@ -184,45 +185,33 @@ class WebMentionPlugin {
    * @param string $context the comment-content
    * @param string $contents the HTML of the source
    * @param string $target the target URL
+   * @param string $source the source URL
+   *
+   * @return string the filtered content
    */
-  public static function default_content_filter( $context, $contents, $target ) {
-    // remove html header
-    $contents = preg_replace("/<head>(.*?)<\/head>/is", " ", $contents);
+  public static function default_content_filter( $content, $contents, $target, $source ) {
+    // get post format
+    $post_ID = url_to_postid($target);
+    $post_format = get_post_format($post_ID);
 
-    // original source by driedfruit: https://github.com/driedfruit/php-pingback/
-    $pos = strpos($contents, $target);
-
-    $left = substr($contents, 0, $pos);
-    $right = substr($contents, $pos + $target);
-    $gl = strrpos($left, '>', -512) + 1;/* attempt to land */
-
-    // check length
-    $length = strlen($right);
-    $length = ($length - 1) > 512 ? 512 : ($length - 1);
-    $gr = strpos($right, '<', $length);  /* on tag boundaries */
-
-    $nleft = substr($left, $gl);
-    $nright = substr($right, 0, $gr);
-
-    /* glue them and strip_tags (and remove excessive whitepsace) */
-    $nstr = $nleft.$nright;
-    $nstr = strip_tags($nstr);
-    $nstr = str_replace(array("\n","\t")," ", $nstr);
-
-    /* take 120 chars from the CENTER of our current string */
-    $fat = strlen($nstr) - 120;
-    if ($fat > 0) {
-      $lfat = $fat / 2;
-      $rfat = $fat - $lfat;
-      $nstr = substr($nstr, $lfat);
-      $nstr = substr($nstr, 0, -$rfat);
+    // replace "standard" with "Article"
+    if (!$post_format || $post_format == "standard") {
+      $post_format = "Article";
+    } else {
+      $post_formatstrings = get_post_format_strings();
+      // get the "nice" name
+      $post_format = $post_formatstrings[$post_format];
     }
 
-    /* trim a little more and add [...] on the sides */
-    $nstr = trim($nstr);
-    if ($nstr) $context = preg_replace('#^.+?(\s)|(\s)\S+?$#', '\\2[&#8230;]\\1', $nstr);
+    $host = parse_url($source, PHP_URL_HOST);
 
-    return $context;
+    // strip leading www, if any
+    $host = preg_replace("/^www\./", "", $host);
+
+    // generate default text
+    $content = sprintf(__('This %s was mentioned on <a href="%s">%s</a>', 'webmention'), $post_format, esc_url($source), $host);
+
+    return $content;
   }
 
   /**
@@ -231,10 +220,26 @@ class WebMentionPlugin {
    * @param string $$title the comment-title (username)
    * @param string $contents the HTML of the source
    * @param string $target the target URL
+   * @param string $source the source URL
+   *
+   * @return string the filtered title
    */
-  public static function default_title_filter( $title, $contents, $target ) {
-    if (preg_match("/<title>(.+)<\/title>/i", $contents, $match))
+  public static function default_title_filter( $title, $contents, $target, $source ) {
+    $meta_tags = get_meta_tags($source);
+
+    // use meta-author
+    if (array_key_exists('author', $meta_tags)) {
+      $title = $meta_tags['author'];
+    // use title
+    } elseif (preg_match("/<title>(.+)<\/title>/i", $contents, $match)) {
       $title = trim($match[1]);
+    // or host
+    } else {
+      $host = parse_url($source, PHP_URL_HOST);
+
+      // strip leading www, if any
+      $title = preg_replace("/^www\./", "", $host);
+    }
 
     return $title;
   }
