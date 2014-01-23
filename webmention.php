@@ -5,7 +5,7 @@
  Description: Webmention support for WordPress posts
  Author: pfefferle
  Author URI: http://notizblog.org/
- Version: 2.1.0
+ Version: 2.1.1-dev
 */
 
 /**
@@ -174,6 +174,8 @@ class WebMentionPlugin {
       // save comment
       $comment_ID = wp_new_comment($commentdata);
     }
+
+    echo "WebMention saved... Thanks :)";
 
     do_action( 'webmention_post', $comment_ID );
     exit;
