@@ -4,7 +4,7 @@ Donate link: http://14101978.de
 Tags: webmention, pingback, trackback, linkback
 Requires at least: 2.7
 Tested up to: 3.8
-Stable tag: 2.1.0
+Stable tag: 2.1.1
 
 WebMention for WordPress!
 
@@ -29,6 +29,10 @@ You can use the `send_webmention($source, $target)` function and pass a source a
 == Changelog ==
 
 Project maintined on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
+
+= 2.1.1 =
+
+* nicer feedback for the WebMention endpoint
 
 = 2.1.0 =
 
