@@ -8,7 +8,8 @@
  Version: 2.1.2
 */
 
-if (!function_exists("send_webmention")) :
+// check if class already exists
+if (!class_exists("WebMentionPlugin")) :
 
 /**
  * a wrapper for WebMentionPlugin::send_webmention
@@ -21,13 +22,8 @@ function send_webmention($source, $target) {
   return WebMentionPlugin::send_webmention($source, $target);
 }
 
-endif;
-
-
 // initialize plugin
 add_action('init', array( 'WebMentionPlugin', 'init' ));
-
-if (!class_exists("WebMentionPlugin")) :
 
 /**
  * WebMention Plugin Class
@@ -393,4 +389,5 @@ class WebMentionPlugin {
   }
 }
 
+// end check if class already exists
 endif;
