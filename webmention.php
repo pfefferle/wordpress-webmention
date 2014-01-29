@@ -5,8 +5,10 @@
  Description: Webmention support for WordPress posts
  Author: pfefferle
  Author URI: http://notizblog.org/
- Version: 2.1.1
+ Version: 2.1.2
 */
+
+if (!function_exists("send_webmention")) :
 
 /**
  * a wrapper for WebMentionPlugin::send_webmention
@@ -19,8 +21,13 @@ function send_webmention($source, $target) {
   return WebMentionPlugin::send_webmention($source, $target);
 }
 
+endif;
+
+
 // initialize plugin
 add_action('init', array( 'WebMentionPlugin', 'init' ));
+
+if (!class_exists("WebMentionPlugin")) :
 
 /**
  * WebMention Plugin Class
@@ -385,3 +392,5 @@ class WebMentionPlugin {
     return false;
   }
 }
+
+endif;
