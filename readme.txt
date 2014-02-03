@@ -14,7 +14,7 @@ Enables [WebMention](http://webmention.org/) support for WordPress.
 
 WebMention is a simple and modern alternative to the Pingback/Trackback protocol.
 
-== FAQ ==
+== Frequently Asked Questions ==
 
 = What are WebMentions? =
 

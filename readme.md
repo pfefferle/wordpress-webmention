@@ -1,10 +1,10 @@
 # WebMention #
-**Contributors:** pfefferle
-**Donate link:** http://14101978.de
-**Tags:** webmention, pingback, trackback, linkback
-**Requires at least:** 2.7
-**Tested up to:** 3.8
-**Stable tag:** 2.1.2
+**Contributors:** pfefferle  
+**Donate link:** http://14101978.de  
+**Tags:** webmention, pingback, trackback, linkback  
+**Requires at least:** 2.7  
+**Tested up to:** 3.8  
+**Stable tag:** 2.1.2  
 
 WebMention for WordPress!
 
@@ -14,7 +14,7 @@ Enables [WebMention](http://webmention.org/) support for WordPress.
 
 WebMention is a simple and modern alternative to the Pingback/Trackback protocol.
 
-## FAQ ##
+## Frequently Asked Questions ##
 
 ### What are WebMentions? ###
 
