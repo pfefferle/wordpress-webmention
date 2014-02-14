@@ -5,7 +5,7 @@
  Description: Webmention support for WordPress posts
  Author: pfefferle
  Author URI: http://notizblog.org/
- Version: 2.1.2
+ Version: 2.1.3
 */
 
 // check if class already exists
@@ -230,10 +230,10 @@ class WebMentionPlugin {
    * @return string the filtered title
    */
   public static function default_title_filter( $title, $contents, $target, $source ) {
-    $meta_tags = get_meta_tags($source);
+    $meta_tags = @get_meta_tags($source);
 
     // use meta-author
-    if (array_key_exists('author', $meta_tags)) {
+    if ($meta_tags && is_array($meta_tags) && array_key_exists('author', $meta_tags)) {
       $title = $meta_tags['author'];
     // use title
     } elseif (preg_match("/<title>(.+)<\/title>/i", $contents, $match)) {
