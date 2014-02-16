@@ -378,11 +378,11 @@ class WebMentionPlugin {
     $header = substr( $contents, 0, stripos( $contents, '</head>' ) );
 
     // check html meta-links
-    if (preg_match('/<link\s+rel=[\"\'](http:\/\/)?webmention(.org)?[\"\']\s+href=[\"\']([^\"\']+)[\"\']\s*\/?>/i', $header, $result)) {
+    if (preg_match('/<link\s+rel\s?=\s?[\"\']?(http:\/\/)?webmention(.org)?\/?[^\"\']*[\"\']?\s+href=[\"\']([^\'\"]+)[\"\']\s*\/?>/i', $header, $result)) {
       return $result[3];
     }
 
-    if (preg_match('/<link\s+href=[\"\']([^"\']+)[\"\']\s+rel=[\"\'](http:\/\/)?webmention(.org)?[\"\']\s*\/?>/i', $header, $result)) {
+    if (preg_match('/<link\s+href=[\"\']([^"\']+)[\"\']\s+rel=\s?=\s?[\"\']?(http:\/\/)?webmention(.org)?\/?[^\'\"]*[\"\']?\s*\/?>/i', $header, $result)) {
       return $result[1];
     }
 
