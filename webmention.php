@@ -70,7 +70,7 @@ class WebMentionPlugin {
    * @param WP $wp WordPress request context
    * @uses do_action() Calls 'webmention'
    */
-  public static function parse_query($wp) {
+  public static function parse_query($wp) {  
     // check if it is a webmention request or not
     if (!array_key_exists('webmention', $wp->query_vars)) {
       return;
@@ -354,11 +354,11 @@ class WebMentionPlugin {
       if ( is_array($links) ) {
         foreach ($links as $link) {
           if (preg_match("/<(https?:\/\/[^>]+)>;\s+rel\s?=\s?[\"\']?(http:\/\/)?webmention(.org)?\/?[\"\']?/i", $link, $result))
-            return $result[1];
+            return self::make_url_absolute($url, $result[1]);
         }
       } else {
         if (preg_match("/<(https?:\/\/[^>]+)>;\s+rel\s?=\s?[\"\']?(http:\/\/)?webmention(.org)?\/?[\"\']?/i", $links, $result))
-          return $result[1];
+          return self::make_url_absolute($url, $result[1]);
       }
     }
 
@@ -379,14 +379,48 @@ class WebMentionPlugin {
 
     // check html meta-links
     if (preg_match('/<link\s+rel\s?=\s?[\"\']?(http:\/\/)?webmention(.org)?\/?[^\"\']*[\"\']?\s+href=[\"\']([^\'\"]+)[\"\']\s*\/?>/i', $header, $result)) {
-      return $result[3];
+      return self::make_url_absolute($url, $result[3]);
     }
 
     if (preg_match('/<link\s+href=[\"\']([^"\']+)[\"\']\s+rel=\s?=\s?[\"\']?(http:\/\/)?webmention(.org)?\/?[^\'\"]*[\"\']?\s*\/?>/i', $header, $result)) {
-      return $result[1];
+      return self::make_url_absolute($url, $result[1]);
     }
 
     return false;
+  }
+  
+  /**
+   * converts relative to absolute urls
+   *
+   * based on the code of 99webtools.com
+   * @link https://99webtools.com/relative-path-into-absolute-url.php
+   *
+   * @param string $base the base url
+   * @param string $rel the relative url
+   * @return string the absolute url
+   */
+  public static function make_url_absolute( $base, $rel ) {
+    if(strpos($rel,"//")===0) {
+      return parse_url($base, PHP_URL_SCHEME).":".$rel;
+    }
+    // return if already absolute URL
+    if  (parse_url($rel, PHP_URL_SCHEME) != '') return $rel;
+    // queries and  anchors
+    if ($rel[0]=='#'  || $rel[0]=='?') return $base.$rel;
+    // parse base URL and convert to local variables:
+    // $scheme, $host, $path
+    extract(parse_url($base));
+    // remove  non-directory element from path
+    $path = preg_replace('#/[^/]*$#',  '', $path);
+    // destroy path if relative url points to root
+    if ($rel[0] ==  '/') $path = '';
+    // dirty absolute  URL
+    $abs =  "$host$path/$rel";
+    // replace '//' or '/./' or '/foo/../' with '/'
+    $re =  array('#(/\.?/)#', '#/(?!\.\.)[^/]+/\.\./#');
+    for ($n=1; $n>0; $abs=preg_replace($re, '/', $abs, -1, $n)) {}
+    // absolute URL is ready!
+    return  $scheme.'://'.$abs;
   }
 }
 
