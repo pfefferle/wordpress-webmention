@@ -79,6 +79,7 @@ class WebMentionPlugin {
     $content = file_get_contents('php://input');
     parse_str($content);
 
+    // plain text header
     header('Content-Type: text/plain; charset=' . get_option('blog_charset'));
 
     // check if source url is transmitted
@@ -95,7 +96,17 @@ class WebMentionPlugin {
       exit;
     }
 
-    $post_ID = url_to_postid($target);
+    // remove url-scheme
+    $schemeless_target = preg_replace("/^https?:\/\//i", "", $target);
+
+    // check post with http only
+    $post_ID = url_to_postid("http://".$schemeless_target);
+
+    // if there is no post
+    if ( !$post_ID ) {
+      // try https url
+      $post_ID = url_to_postid("https://".$schemeless_target);
+    }
 
     // check if post id exists
     if ( !$post_ID ) {
