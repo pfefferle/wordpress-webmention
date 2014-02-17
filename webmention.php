@@ -269,6 +269,12 @@ class WebMentionPlugin {
    * @return array of results including HTTP headers
    */
   public static function send_webmention($source, $target) {
+    // stop selfpings
+    if ($source == $target) {
+      return false;
+    }
+
+    // discover the webmention endpoint
     $webmention_server_url = self::discover_endpoint( $target );
 
     $args = array(
