@@ -18,8 +18,7 @@ From the [spec](http://webmention.org/):
 
 > Webmention is a simple way to automatically notify any URL when you link to it on your site.
 > From the receivers perpective, it's a way to request notification when other sites link to it.
-
-It’s a modern alternative to Pingback and other forms of Linkback.
+> It’s a modern alternative to Pingback and other forms of Linkback.
 
 == Frequently Asked Questions ==
 
