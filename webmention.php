@@ -70,7 +70,7 @@ class WebMentionPlugin {
    * @param WP $wp WordPress request context
    * @uses do_action() Calls 'webmention'
    */
-  public static function parse_query($wp) {  
+  public static function parse_query($wp) {
     // check if it is a webmention request or not
     if (!array_key_exists('webmention', $wp->query_vars)) {
       return;
@@ -133,7 +133,7 @@ class WebMentionPlugin {
     $contents = wp_remote_retrieve_body( $response );
 
     // check if source really links to target
-    if (!strpos($contents, $target)) {
+    if (!strpos($contents, str_replace(array('http://www.','http://','https://www.','https://'), '', untrailingslashit($target)))) {
       status_header(400);
       echo "Can't find target link.";
       exit;
@@ -388,7 +388,7 @@ class WebMentionPlugin {
 
     return false;
   }
-  
+
   /**
    * converts relative to absolute urls
    *
