@@ -11,6 +11,8 @@
 // check if class already exists
 if (!class_exists("WebMentionPlugin")) :
 
+    require_once(dirname(__FILE__).'/external/mf2/Mf2/Parser.php');
+    
 /**
  * a wrapper for WebMentionPlugin::send_webmention
  *
@@ -158,10 +160,41 @@ class WebMentionPlugin {
 
     // generate comment
     $comment_post_ID = (int) $post->ID;
-    $comment_author = wp_slash($title);
-    $comment_author_email = '';
-    $comment_author_url = esc_url_raw($source);
+    
+    // See if we can extract some microformats from the source and get some richer data about the post and author, if not, then we use the default data
+    $parser = new \mf2\Parser($contents);
+    if ($mf2 = $parser->parse()) {
+        error_log("Parsed MF2: " . print_r($mf2, true));
+        
+        foreach ($mf2->items as $item) {
+            
+            // TODO: Handle other types (likes, etc)
+            
+            // Handle entry
+            if (in_array('h-entry', $item->type)) {
+                
+                
+                if (!$comment_author)
+                    $comment_author = $item->properties->author[0]->properties->name[0];
+
+                if (!$comment_author_url)
+                    $comment_author_url = $item->properties->author[0]->properties->url[0];
+
+                if (!$comment_photo)
+                    $comment_photo = $item->properties->author[0]->properties->photo[0];
+
+            }
+            
+        }
+        
+        
+    }
+    
+    if (!$comment_author) $comment_author = wp_slash($title);
+    if (!$comment_author_email) $comment_author_email = '';
+    if (!$comment_author_url) $comment_author_url = esc_url_raw($source);
     $comment_content = wp_slash($content);
+    
     // change this if your theme can't handle the webmention comment type
     $comment_type = apply_filters('webmention_comment_type', 'webmention');
     $comment_parent = null;
@@ -189,7 +222,7 @@ class WebMentionPlugin {
       // save comment
       $comment_ID = wp_new_comment($commentdata);
     }
-
+    
     echo "WebMention received... Thanks :)";
 
     do_action( 'webmention_post', $comment_ID );
