@@ -164,24 +164,26 @@ class WebMentionPlugin {
     // See if we can extract some microformats from the source and get some richer data about the post and author, if not, then we use the default data
     $parser = new \mf2\Parser($contents);
     if ($mf2 = $parser->parse()) {
-        error_log("Parsed MF2: " . print_r($mf2, true));
         
-        foreach ($mf2->items as $item) {
+        foreach ($mf2['items'] as $item) {
             
             // TODO: Handle other types (likes, etc)
             
             // Handle entry
-            if (in_array('h-entry', $item->type)) {
+            if (in_array('h-entry', $item['type'])) {
                 
                 
-                if (!$comment_author)
-                    $comment_author = $item->properties->author[0]->properties->name[0];
+                if ((!$comment_author) && (isset($item['properties']['author'][0]['properties']['name'][0])))
+                    $comment_author = $item['properties']['author'][0]['properties']['name'][0];
 
-                if (!$comment_author_url)
-                    $comment_author_url = $item->properties->author[0]->properties->url[0];
+                if ((!$comment_author_url) && (isset($item['properties']['author'][0]['properties']['url'][0])))
+                    $comment_author_url = $item['properties']['author'][0]['properties']['url'][0];
 
-                if (!$comment_author_photo)
-                    $comment_author_photo = $item->properties->author[0]->properties->photo[0];
+                if ((!$comment_author_photo) && (isset($item['properties']['author'][0]['properties']['photo'][0])))
+                    $comment_author_photo = $item['properties']['author'][0]['properties']['photo'][0];
+                
+                if ((!$comment_content) && (isset($item['properties']['content'][0])))
+                    $comment_content = $item['properties']['content'][0];
 
             }
             
@@ -193,7 +195,7 @@ class WebMentionPlugin {
     if (!$comment_author) $comment_author = wp_slash($title);
     if (!$comment_author_email) $comment_author_email = '';
     if (!$comment_author_url) $comment_author_url = esc_url_raw($source);
-    $comment_content = wp_slash($content);
+    if (!$comment_content) $comment_content = wp_slash($content);
     
     // change this if your theme can't handle the webmention comment type
     $comment_type = apply_filters('webmention_comment_type', 'webmention');
@@ -215,8 +217,10 @@ class WebMentionPlugin {
     // update or save webmention
     if ($comment) {
       $commentdata['comment_ID'] = $comment->comment_ID;
+      
+      error_log(print_r($commentdata, true));
       // save comment
-      wp_update_comment($commentdata);
+      error_log(print_r(wp_update_comment($commentdata), true));
       $comment_ID = $comment->comment_ID;
     } else {
       // save comment
@@ -225,7 +229,7 @@ class WebMentionPlugin {
     
     // Now, if this was a webmention, we might have some extra metadata to save, so save it
     if ($comment_author_photo)
-        update_comment_metadata($comment_ID, 'comment_author_photo', $comment_author_photo); // Save the photo URL, giving themes the option of overriding the default icons.
+        update_comment_meta($comment_ID, 'comment_author_photo', $comment_author_photo); // Save the photo URL, giving themes the option of overriding the default icons.
     
     echo "WebMention received... Thanks :)";
 
