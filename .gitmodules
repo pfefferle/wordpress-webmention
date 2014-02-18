@@ -1,0 +1,3 @@
+[submodule "external/mf2"]
+	path = external/mf2
+	url = https://github.com/indieweb/php-mf2.git
