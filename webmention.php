@@ -180,8 +180,8 @@ class WebMentionPlugin {
                 if (!$comment_author_url)
                     $comment_author_url = $item->properties->author[0]->properties->url[0];
 
-                if (!$comment_photo)
-                    $comment_photo = $item->properties->author[0]->properties->photo[0];
+                if (!$comment_author_photo)
+                    $comment_author_photo = $item->properties->author[0]->properties->photo[0];
 
             }
             
@@ -222,6 +222,10 @@ class WebMentionPlugin {
       // save comment
       $comment_ID = wp_new_comment($commentdata);
     }
+    
+    // Now, if this was a webmention, we might have some extra metadata to save, so save it
+    if ($comment_author_photo)
+        update_comment_metadata($comment_ID, 'comment_author_photo', $comment_author_photo); // Save the photo URL, giving themes the option of overriding the default icons.
     
     echo "WebMention received... Thanks :)";
 
