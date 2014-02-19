@@ -11,6 +11,8 @@
 // check if class already exists
 if (!class_exists("WebMentionPlugin")) :
 
+    require_once(dirname(__FILE__).'/external/mf2/Mf2/Parser.php');
+    
 /**
  * a wrapper for WebMentionPlugin::send_webmention
  *
@@ -50,9 +52,32 @@ class WebMentionPlugin {
 
     add_filter('webmention_title', array('WebMentionPlugin', 'default_title_filter'), 10, 4);
     add_filter('webmention_content', array('WebMentionPlugin', 'default_content_filter'), 10, 4);
+    
+    add_filter( 'get_avatar', array('WebMentionPlugin', 'avatar_overrides'),10,3);
+    add_filter( 'get_avatar_comment_types', array('WebMentionPlugin', 'avatar_overrides_allowedtypes'), 10 ,1);
   }
+  
+  public static function avatar_overrides_allowedtypes($types) {
+      if (!is_array($types))
+          $types = array();
+      $types[] = 'webmention';
+      
+      return $types;
+  }
+  
+  public static function avatar_overrides($avatar, $id_or_email, $size ) {
+      
+      // Is this a webmention comment
+      if (is_object($id_or_email) && (isset($id_or_email->comment_ID)) && ($id_or_email->comment_type == 'webmention')) {
+          if ($photo_url = get_comment_meta($id_or_email->comment_ID, 'comment_author_photo', true)){
+              $avatar = "<img alt='' src='{$photo_url}' class='u-photo avatar avatar-$size photo' height='$size' width='$size' />";
+          }
+      }
+      
+      return $avatar;
+    }
 
-  /**
+        /**
    * Adds some query vars
    *
    * @param array $vars
@@ -158,10 +183,43 @@ class WebMentionPlugin {
 
     // generate comment
     $comment_post_ID = (int) $post->ID;
-    $comment_author = wp_slash($title);
-    $comment_author_email = '';
-    $comment_author_url = esc_url_raw($source);
-    $comment_content = wp_slash($content);
+    
+    // See if we can extract some microformats from the source and get some richer data about the post and author, if not, then we use the default data
+    $parser = new \mf2\Parser($contents);
+    if ($mf2 = $parser->parse()) {
+        
+        foreach ($mf2['items'] as $item) {
+            
+            // TODO: Handle other types (likes, etc)
+            
+            // Handle entry
+            if (in_array('h-entry', $item['type'])) {
+                
+                
+                if ((!$comment_author) && (isset($item['properties']['author'][0]['properties']['name'][0])))
+                    $comment_author = $item['properties']['author'][0]['properties']['name'][0];
+
+                if ((!$comment_author_url) && (isset($item['properties']['author'][0]['properties']['url'][0])))
+                    $comment_author_url = $item['properties']['author'][0]['properties']['url'][0];
+
+                if ((!$comment_author_photo) && (isset($item['properties']['author'][0]['properties']['photo'][0])))
+                    $comment_author_photo = $item['properties']['author'][0]['properties']['photo'][0];
+                
+                if ((!$comment_content) && (isset($item['properties']['content'][0])))
+                    $comment_content = $item['properties']['content'][0]['value']; // Use the plain text rather than HTML 
+
+            }
+            
+        }
+        
+        
+    }
+    
+    if (!$comment_author) $comment_author = wp_slash($title);
+    if (!$comment_author_email) $comment_author_email = '';
+    if (!$comment_author_url) $comment_author_url = esc_url_raw($source);
+    if (!$comment_content) $comment_content = wp_slash($content);
+    
     // change this if your theme can't handle the webmention comment type
     $comment_type = apply_filters('webmention_comment_type', 'webmention');
     $comment_parent = null;
@@ -169,8 +227,9 @@ class WebMentionPlugin {
     $commentdata = compact('comment_post_ID', 'comment_author', 'comment_author_url', 'comment_author_email', 'comment_content', 'comment_type', 'comment_parent');
 
     // check dupes
-    global $wpdb;
-  	$comments = $wpdb->get_results( $wpdb->prepare("SELECT * FROM $wpdb->comments WHERE comment_post_ID = %d AND comment_author_url = %s", $comment_post_ID, $comment_author_url) );
+    global $wpdb; 
+  	//$comments = $wpdb->get_results( $wpdb->prepare("SELECT * FROM $wpdb->comments WHERE comment_post_ID = %d AND comment_author_url = %s", $comment_post_ID, $source) );
+    $comments = $wpdb->get_results($wpdb->prepare("SELECT c.* FROM {$wpdb->comments} c JOIN {$wpdb->commentmeta} cm ON c.comment_ID=cm.comment_id WHERE cm.meta_key = 'post_source_hash' AND cm.meta_value=%s", md5($comment_post_ID .  $source))); // We hash source and post in a tag, so we can detect dupes.
 
     // check result
     if (!empty($comments)) {
@@ -182,6 +241,7 @@ class WebMentionPlugin {
     // update or save webmention
     if ($comment) {
       $commentdata['comment_ID'] = $comment->comment_ID;
+      
       // save comment
       wp_update_comment($commentdata);
       $comment_ID = $comment->comment_ID;
@@ -189,7 +249,14 @@ class WebMentionPlugin {
       // save comment
       $comment_ID = wp_new_comment($commentdata);
     }
-
+    
+    // Now, if this was a webmention, we might have some extra metadata to save, so save it
+    if ($comment_author_photo)
+        update_comment_meta($comment_ID, 'comment_author_photo', $comment_author_photo); // Save the photo URL, giving themes the option of overriding the default icons.
+    
+    update_comment_meta($comment_ID, 'post_source_hash', md5($comment_post_ID .  $source)); // Save the source url mashed with the post id, so we can do duplicate checking.
+    
+    error_log("WebMention received... Thanks :)");
     echo "WebMention received... Thanks :)";
 
     do_action( 'webmention_post', $comment_ID );
