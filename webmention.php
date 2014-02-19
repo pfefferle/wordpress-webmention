@@ -11,8 +11,6 @@
 // check if class already exists
 if (!class_exists("WebMentionPlugin")) :
 
-    require_once(dirname(__FILE__).'/external/mf2/Mf2/Parser.php');
-    
 /**
  * a wrapper for WebMentionPlugin::send_webmention
  *
@@ -185,36 +183,37 @@ class WebMentionPlugin {
     $comment_post_ID = (int) $post->ID;
     
     // See if we can extract some microformats from the source and get some richer data about the post and author, if not, then we use the default data
-    $parser = new \mf2\Parser($contents);
-    if ($mf2 = $parser->parse()) {
-        
-        foreach ($mf2['items'] as $item) {
-            
-            // TODO: Handle other types (likes, etc)
-            
-            // Handle entry
-            if (in_array('h-entry', $item['type'])) {
-                
-                
-                if ((!$comment_author) && (isset($item['properties']['author'][0]['properties']['name'][0])))
-                    $comment_author = $item['properties']['author'][0]['properties']['name'][0];
+    if (class_exists('\mf2\Parser')) {
+        $parser = new \mf2\Parser($contents);
+        if ($mf2 = $parser->parse()) {
 
-                if ((!$comment_author_url) && (isset($item['properties']['author'][0]['properties']['url'][0])))
-                    $comment_author_url = $item['properties']['author'][0]['properties']['url'][0];
+            foreach ($mf2['items'] as $item) {
 
-                if ((!$comment_author_photo) && (isset($item['properties']['author'][0]['properties']['photo'][0])))
-                    $comment_author_photo = $item['properties']['author'][0]['properties']['photo'][0];
-                
-                if ((!$comment_content) && (isset($item['properties']['content'][0])))
-                    $comment_content = $item['properties']['content'][0]['value']; // Use the plain text rather than HTML 
+                // TODO: Handle other types (likes, etc)
+
+                // Handle entry
+                if (in_array('h-entry', $item['type'])) {
+
+
+                    if ((!$comment_author) && (isset($item['properties']['author'][0]['properties']['name'][0])))
+                        $comment_author = $item['properties']['author'][0]['properties']['name'][0];
+
+                    if ((!$comment_author_url) && (isset($item['properties']['author'][0]['properties']['url'][0])))
+                        $comment_author_url = $item['properties']['author'][0]['properties']['url'][0];
+
+                    if ((!$comment_author_photo) && (isset($item['properties']['author'][0]['properties']['photo'][0])))
+                        $comment_author_photo = $item['properties']['author'][0]['properties']['photo'][0];
+
+                    if ((!$comment_content) && (isset($item['properties']['content'][0])))
+                        $comment_content = $item['properties']['content'][0]['value']; // Use the plain text rather than HTML 
+
+                }
 
             }
-            
+
+
         }
-        
-        
     }
-    
     if (!$comment_author) $comment_author = wp_slash($title);
     if (!$comment_author_email) $comment_author_email = '';
     if (!$comment_author_url) $comment_author_url = esc_url_raw($source);
