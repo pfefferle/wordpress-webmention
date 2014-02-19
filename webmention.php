@@ -52,9 +52,32 @@ class WebMentionPlugin {
 
     add_filter('webmention_title', array('WebMentionPlugin', 'default_title_filter'), 10, 4);
     add_filter('webmention_content', array('WebMentionPlugin', 'default_content_filter'), 10, 4);
+    
+    add_filter( 'get_avatar', array('WebMentionPlugin', 'avatar_overrides'),10,3);
+    add_filter( 'get_avatar_comment_types', array('WebMentionPlugin', 'avatar_overrides_allowedtypes'), 10 ,1);
   }
+  
+  public static function avatar_overrides_allowedtypes($types) {
+      if (!is_array($types))
+          $types = array();
+      $types[] = 'webmention';
+      
+      return $types;
+  }
+  
+  public static function avatar_overrides($avatar, $id_or_email, $size ) {
+      
+      // Is this a webmention comment
+      if (is_object($id_or_email) && (isset($id_or_email->comment_ID)) && ($id_or_email->comment_type == 'webmention')) {
+          if ($photo_url = get_comment_meta($id_or_email->comment_ID, 'comment_author_photo', true)){
+              $avatar = "<img alt='' src='{$photo_url}' class='u-photo avatar avatar-$size photo' height='$size' width='$size' />";
+          }
+      }
+      
+      return $avatar;
+    }
 
-  /**
+        /**
    * Adds some query vars
    *
    * @param array $vars
