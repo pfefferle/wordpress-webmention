@@ -242,7 +242,6 @@ class WebMentionPlugin {
     if ($comment) {
       $commentdata['comment_ID'] = $comment->comment_ID;
       
-      error_log(print_r($commentdata, true));
       // save comment
       wp_update_comment($commentdata);
       $comment_ID = $comment->comment_ID;
