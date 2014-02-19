@@ -183,7 +183,7 @@ class WebMentionPlugin {
                     $comment_author_photo = $item['properties']['author'][0]['properties']['photo'][0];
                 
                 if ((!$comment_content) && (isset($item['properties']['content'][0])))
-                    $comment_content = $item['properties']['content'][0];
+                    $comment_content = $item['properties']['content'][0]['value']; // Use the plain text rather than HTML 
 
             }
             
@@ -204,8 +204,9 @@ class WebMentionPlugin {
     $commentdata = compact('comment_post_ID', 'comment_author', 'comment_author_url', 'comment_author_email', 'comment_content', 'comment_type', 'comment_parent');
 
     // check dupes
-    global $wpdb;
-  	$comments = $wpdb->get_results( $wpdb->prepare("SELECT * FROM $wpdb->comments WHERE comment_post_ID = %d AND comment_author_url = %s", $comment_post_ID, $comment_author_url) );
+    global $wpdb; 
+  	//$comments = $wpdb->get_results( $wpdb->prepare("SELECT * FROM $wpdb->comments WHERE comment_post_ID = %d AND comment_author_url = %s", $comment_post_ID, $source) );
+    $comments = $wpdb->get_results($wpdb->prepare("SELECT c.* FROM {$wpdb->comments} c JOIN {$wpdb->commentmeta} cm ON c.comment_ID=cm.comment_id WHERE cm.meta_key = 'post_source_hash' AND cm.meta_value=%s", md5($comment_post_ID .  $source))); // We hash source and post in a tag, so we can detect dupes.
 
     // check result
     if (!empty($comments)) {
@@ -220,7 +221,7 @@ class WebMentionPlugin {
       
       error_log(print_r($commentdata, true));
       // save comment
-      error_log(print_r(wp_update_comment($commentdata), true));
+      wp_update_comment($commentdata);
       $comment_ID = $comment->comment_ID;
     } else {
       // save comment
@@ -231,6 +232,9 @@ class WebMentionPlugin {
     if ($comment_author_photo)
         update_comment_meta($comment_ID, 'comment_author_photo', $comment_author_photo); // Save the photo URL, giving themes the option of overriding the default icons.
     
+    update_comment_meta($comment_ID, 'post_source_hash', md5($comment_post_ID .  $source)); // Save the source url mashed with the post id, so we can do duplicate checking.
+    
+    error_log("WebMention received... Thanks :)");
     echo "WebMention received... Thanks :)";
 
     do_action( 'webmention_post', $comment_ID );
