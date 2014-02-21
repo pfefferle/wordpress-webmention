@@ -162,10 +162,13 @@ class WebMentionPlugin {
     $comment_author_email = '';
     $comment_author_url = esc_url_raw($source);
     $comment_content = wp_slash($content);
-    // change this if your theme can't handle the webmention comment type
-    $comment_type = apply_filters('webmention_comment_type', 'webmention');
+    // change this if your theme can't handle the WebMentions comment type
+    $webmention_comment_type = defined('WEBMENTION_COMMENT_TYPE') ? WEBMENTION_COMMENT_TYPE : 'webmention';
+    $comment_type = apply_filters('webmention_comment_type', $webmention_comment_type);
     $comment_parent = null;
-    $comment_approved = '1';
+    // change this if you want to auto approve your WebMentions
+    $webmention_comment_approve = defined('WEBMENTION_COMMENT_APPROVE') ? WEBMENTION_COMMENT_APPROVE : 0;
+    $comment_approved = apply_filters('webmention_comment_approve', $webmention_comment_approve);
 
     $commentdata = compact('comment_post_ID', 'comment_author', 'comment_author_url', 'comment_author_email', 'comment_content', 'comment_type', 'comment_parent', 'comment_approved');
 
