@@ -185,6 +185,10 @@ class WebMentionPlugin {
     } else {
       $comment = null;
     }
+    
+    
+    // disable flood control
+    remove_filter('check_comment_flood', 'check_comment_flood_db', 10, 3);
 
     // update or save webmention
     if ($comment) {
@@ -196,7 +200,10 @@ class WebMentionPlugin {
       // save comment
       $comment_ID = wp_new_comment($commentdata);
     }
-
+    
+    // re-add flood control
+    add_filter('check_comment_flood', 'check_comment_flood_db', 10, 3);
+    
     echo apply_filters('webmention_success_message', 'WebMention received... Thanks :)');
 
     do_action( 'webmention_post', $comment_ID );
