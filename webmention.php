@@ -5,7 +5,7 @@
  Description: Webmention support for WordPress posts
  Author: pfefferle
  Author URI: http://notizblog.org/
- Version: 2.2.0
+ Version: 2.2.0-dev
 */
 
 // check if class already exists
@@ -147,7 +147,7 @@ class WebMentionPlugin {
     $contents = wp_remote_retrieve_body( $response );
 
     // check if source really links to target
-    if (!strpos($contents, str_replace(array('http://www.','http://','https://www.','https://'), '', untrailingslashit($target)))) {
+    if (!strpos($contents, str_replace(array('http://www.','http://','https://www.','https://'), '', untrailingslashit(preg_replace('/#.*/', '', $target))))) {
       status_header(400);
       echo "Can't find target link.";
       exit;
