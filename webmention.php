@@ -204,6 +204,7 @@ class WebMentionPlugin {
     // re-add flood control
     add_filter('check_comment_flood', 'check_comment_flood_db', 10, 3);
     
+    // render a simple and customizable text output
     echo apply_filters('webmention_success_message', 'WebMention received... Thanks :)');
 
     do_action( 'webmention_post', $comment_ID );
@@ -248,7 +249,7 @@ class WebMentionPlugin {
   /**
    * try to make a nice title (username)
    *
-   * @param string $$title the comment-title (username)
+   * @param string $title the comment-title (username)
    * @param string $contents the HTML of the source
    * @param string $target the target URL
    * @param string $source the source URL
@@ -302,14 +303,22 @@ class WebMentionPlugin {
 
     // discover the webmention endpoint
     $webmention_server_url = self::discover_endpoint( $target );
-
+    
+    // if I can't find an endpoint, perhaps you can!
+    $webmention_server_url = apply_filters('webmention_server_url', $webmention_server_url, $target);
+    
     $args = array(
               'body' => 'source='.urlencode($source).'&target='.urlencode($target),
               'timeout' => 100
             );
 
     if ($webmention_server_url) {
-      return wp_remote_post( $webmention_server_url, $args );
+      $response = wp_remote_post( $webmention_server_url, $args );
+      
+      // use the response to do something usefull
+      do_action('webfinger_post_send', $response, $source, $target);
+      
+      return $response;
     }
 
     return false;
