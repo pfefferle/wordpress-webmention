@@ -177,7 +177,7 @@ class WebMentionPlugin {
 
     // check dupes
     global $wpdb;
-  	$comments = $wpdb->get_results( $wpdb->prepare("SELECT * FROM $wpdb->comments WHERE comment_post_ID = %d AND comment_author_url = %s", $comment_post_ID, $comment_author_url) );
+    $comments = $wpdb->get_results( $wpdb->prepare("SELECT * FROM $wpdb->comments WHERE comment_post_ID = %d AND comment_author_url = %s", $comment_post_ID, $comment_author_url) );
 
     // check result
     if (!empty($comments)) {
@@ -339,7 +339,7 @@ class WebMentionPlugin {
     $links = array();
 
     // Parsing the post, external links (if any)
-	  $links = wp_extract_urls( $post->post_content );
+    $links = wp_extract_urls( $post->post_content );
 
     // filter links
     $targets = apply_filters('webmention_links', $links, $post_ID);
@@ -374,11 +374,11 @@ class WebMentionPlugin {
   public static function do_webmentions() {
     global $wpdb;
     // get all posts that should be "mentioned"
-	  while ($mention = $wpdb->get_row("SELECT ID, meta_id FROM {$wpdb->posts}, {$wpdb->postmeta} WHERE {$wpdb->posts}.ID = {$wpdb->postmeta}.post_id AND {$wpdb->postmeta}.meta_key = '_mentionme' LIMIT 1")) {
+    while ($mention = $wpdb->get_row("SELECT ID, meta_id FROM {$wpdb->posts}, {$wpdb->postmeta} WHERE {$wpdb->posts}.ID = {$wpdb->postmeta}.post_id AND {$wpdb->postmeta}.meta_key = '_mentionme' LIMIT 1")) {
       delete_metadata_by_mid( 'post', $mention->meta_id );
       // send them webmentions
-		  self::send_webmentions( $mention->ID );
-	  }
+      self::send_webmentions( $mention->ID );
+    }
   }
 
   /**
