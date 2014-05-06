@@ -316,7 +316,7 @@ class WebMentionPlugin {
       $response = wp_remote_post( $webmention_server_url, $args );
       
       // use the response to do something usefull
-      do_action('webfinger_post_send', $response, $source, $target);
+      do_action('webmention_post_send', $response, $source, $target);
       
       return $response;
     }
