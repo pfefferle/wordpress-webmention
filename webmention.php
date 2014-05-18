@@ -424,11 +424,11 @@ class WebMentionPlugin {
     if ( $links = wp_remote_retrieve_header( $response, 'link' ) ) {
       if ( is_array($links) ) {
         foreach ($links as $link) {
-          if (preg_match("/<(https?:\/\/[^>]+)>;\s+rel\s?=\s?[\"\']?(http:\/\/)?webmention(.org)?\/?[\"\']?/i", $link, $result))
+          if (preg_match("/<(.[^>]+)>;\s+rel\s?=\s?[\"\']?(http:\/\/)?webmention(.org)?\/?[\"\']?/i", $link, $result))
             return self::make_url_absolute($url, $result[1]);
         }
       } else {
-        if (preg_match("/<(https?:\/\/[^>]+)>;\s+rel\s?=\s?[\"\']?(http:\/\/)?webmention(.org)?\/?[\"\']?/i", $links, $result))
+        if (preg_match("/<(.[^>]+)>;\s+rel\s?=\s?[\"\']?(http:\/\/)?webmention(.org)?\/?[\"\']?/i", $links, $result))
           return self::make_url_absolute($url, $result[1]);
       }
     }
