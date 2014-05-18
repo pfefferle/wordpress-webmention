@@ -448,9 +448,20 @@ class WebMentionPlugin {
     // boost performance and use alreade the header
     $header = substr( $contents, 0, stripos( $contents, '</head>' ) );
 
-    // check html meta-links
-    if (preg_match('/<link\s+rel\s?=\s?[\"\']?(http:\/\/)?webmention(.org)?\/?[^\"\']*[\"\']?\s+href=[\"\']([^\'\"]+)[\"\']\s*\/?>/i', $header, $result)) {
-      return self::make_url_absolute($url, $result[3]);
+    // unicode to HTML entities
+    $contents = mb_convert_encoding($contents, 'HTML-ENTITIES', mb_detect_encoding($contents));
+
+    libxml_use_internal_errors(true);
+
+    $doc = new DOMDocument();
+    @$doc->loadHTML($contents);
+
+    $xpath = new DOMXPath($doc);
+
+    // check <link> elements
+    // checks only head-links
+    foreach ($xpath->query('//head/link[contains(concat(" ", @rel, " "), " webmention ") or contains(@rel, "webmention.org")]/@href') as $result) {
+      return self::make_url_absolute($url, $result->value);
     }
 
     if (preg_match('/<link\s+href=[\"\']([^"\']+)[\"\']\s+rel=\s?=\s?[\"\']?(http:\/\/)?webmention(.org)?\/?[^\'\"]*[\"\']?\s*\/?>/i', $header, $result)) {
