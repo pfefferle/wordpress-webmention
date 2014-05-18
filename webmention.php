@@ -464,8 +464,10 @@ class WebMentionPlugin {
       return self::make_url_absolute($url, $result->value);
     }
 
-    if (preg_match('/<link\s+href=[\"\']([^"\']+)[\"\']\s+rel=\s?=\s?[\"\']?(http:\/\/)?webmention(.org)?\/?[^\'\"]*[\"\']?\s*\/?>/i', $header, $result)) {
-      return self::make_url_absolute($url, $result[1]);
+    // check <a> elements
+    // checks only body>a-links
+    foreach ($xpath->query('//body//a[contains(concat(" ", @rel, " "), " webmention ") or contains(@rel, "webmention.org")]/@href') as $result) {
+      return self::make_url_absolute($url, $result->value);
     }
 
     return false;
