@@ -347,8 +347,10 @@ class WebMentionPlugin {
     // initialize links array
     $links = array();
 
-    // Parsing the post, external links (if any)
-    $links = wp_extract_urls( $post->post_content );
+    // Find all external links in the source
+    if (preg_match_all("/<a[^>]+href=.(https?:\/\/[^'\"]+)/i", $post->post_content, $matches)) {
+      $links = $matches[1];
+    }
 
     // filter links
     $targets = apply_filters('webmention_links', $links, $post_ID);
