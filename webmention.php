@@ -185,8 +185,8 @@ class WebMentionPlugin {
     } else {
       $comment = null;
     }
-    
-    
+
+
     // disable flood control
     remove_filter('check_comment_flood', 'check_comment_flood_db', 10, 3);
 
@@ -200,10 +200,10 @@ class WebMentionPlugin {
       // save comment
       $comment_ID = wp_new_comment($commentdata);
     }
-    
+
     // re-add flood control
     add_filter('check_comment_flood', 'check_comment_flood_db', 10, 3);
-    
+
     // render a simple and customizable text output
     echo apply_filters('webmention_success_message', 'WebMention received... Thanks :)');
 
@@ -303,10 +303,10 @@ class WebMentionPlugin {
 
     // discover the webmention endpoint
     $webmention_server_url = self::discover_endpoint( $target );
-    
+
     // if I can't find an endpoint, perhaps you can!
     $webmention_server_url = apply_filters('webmention_server_url', $webmention_server_url, $target);
-    
+
     $args = array(
               'body' => 'source='.urlencode($source).'&target='.urlencode($target),
               'timeout' => 100
@@ -314,10 +314,10 @@ class WebMentionPlugin {
 
     if ($webmention_server_url) {
       $response = wp_remote_post( $webmention_server_url, $args );
-      
+
       // use the response to do something usefull
       do_action('webmention_post_send', $response, $source, $target);
-      
+
       return $response;
     }
 
