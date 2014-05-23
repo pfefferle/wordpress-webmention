@@ -36,6 +36,13 @@ You can use the `send_webmention($source, $target)` function and pass a source a
 
 Project maintined on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
 
+= 2.3.0 =
+
+* a lot of fixes
+* disabled flood control
+* nicer response value
+* some more filters/actions
+
 = 2.2.0 =
 
 * prevent selfpings
