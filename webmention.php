@@ -153,8 +153,6 @@ class WebMentionPlugin {
       exit;
     }
 
-    status_header(200);
-
     // filter title or content of the comment
     $title = apply_filters( "webmention_title", "", $contents, $target, $source );
     $content = apply_filters( "webmention_content", "", $contents, $target, $source );
@@ -203,6 +201,9 @@ class WebMentionPlugin {
 
     // re-add flood control
     add_filter('check_comment_flood', 'check_comment_flood_db', 10, 3);
+
+    // set header
+    status_header(apply_filters('webmention_success_header', 200));
 
     // render a simple and customizable text output
     echo apply_filters('webmention_success_message', 'WebMention received... Thanks :)');
