@@ -175,7 +175,7 @@ class WebMentionPlugin {
 
     // check dupes
     global $wpdb;
-    $comments = $wpdb->get_results( $wpdb->prepare("SELECT * FROM $wpdb->comments WHERE comment_post_ID = %d AND comment_author_url = %s", $comment_post_ID, $comment_author_url) );
+    $comments = $wpdb->get_results( $wpdb->prepare("SELECT * FROM $wpdb->comments WHERE comment_post_ID = %d AND comment_author_url = %s", $comment_post_ID,  htmlentities($comment_author_url)) );
 
     // check result
     if (!empty($comments)) {
