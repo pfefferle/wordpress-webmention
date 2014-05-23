@@ -205,7 +205,7 @@ class WebMentionPlugin {
     status_header(apply_filters('webmention_success_header', 200));
 
     // render a simple and customizable text output
-    echo apply_filters('webmention_success_message', 'WebMention received... Thanks :)');
+    echo apply_filters('webmention_success_message', get_comment_link($comment_ID));
 
     do_action( 'webmention_post', $comment_ID );
     exit;
