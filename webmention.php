@@ -184,7 +184,6 @@ class WebMentionPlugin {
       $comment = null;
     }
 
-
     // disable flood control
     remove_filter('check_comment_flood', 'check_comment_flood_db', 10, 3);
 
