@@ -16,6 +16,7 @@ if (!class_exists("WebMentionPlugin")) :
  *
  * @param string $source source url
  * @param string $target target url
+ *
  * @return array of results including HTTP headers
  */
 function send_webmention($source, $target) {
@@ -51,8 +52,10 @@ class WebMentionPlugin {
 
     add_action('publish_post', array('WebMentionPlugin', 'publish_post_hook'));
 
+    // default handlers
     add_filter('webmention_title', array('WebMentionPlugin', 'default_title_filter'), 10, 4);
     add_filter('webmention_content', array('WebMentionPlugin', 'default_content_filter'), 10, 4);
+    add_action('webmention_request', array('WebMentionPlugin', 'default_request_handler'), 10, 3);
   }
 
   /**
@@ -71,7 +74,8 @@ class WebMentionPlugin {
    * Parse the WebMention request and render the document.
    *
    * @param WP $wp WordPress request context
-   * @uses do_action() Calls 'webmention'
+   *
+   * @uses do_action() Calls 'webmention_request' on the default request
    */
   public static function parse_query($wp) {
     // check if it is a webmention request or not
@@ -99,41 +103,7 @@ class WebMentionPlugin {
       exit;
     }
 
-    // remove url-scheme
-    $schemeless_target = preg_replace("/^https?:\/\//i", "", $target);
-
-    // check post with http only
-    $post_ID = url_to_postid("http://".$schemeless_target);
-
-    // if there is no post
-    if ( !$post_ID ) {
-      // try https url
-      $post_ID = url_to_postid("https://".$schemeless_target);
-    }
-
-    // check if post id exists
-    if ( !$post_ID ) {
-      status_header(404);
-      echo "Specified target URL not found.";
-      exit;
-    }
-
-    // check if pings are allowed
-    if ( !pings_open($post_ID) ) {
-      status_header(500);
-      echo "Pings are disabled for this post";
-      exit;
-    }
-
-    $post_ID = (int) $post_ID;
-    $post = get_post($post_ID);
-
-    // check if post exists
-    if ( !$post ) {
-      status_header(404);
-      echo "Specified target URL not found.";
-      exit;
-    }
+    // @todo check if target-host matches the blog-host
 
     $response = wp_remote_get( $source, array('timeout' => 100) );
 
@@ -151,6 +121,75 @@ class WebMentionPlugin {
       status_header(400);
       echo "Can't find target link.";
       exit;
+    }
+
+    // be sure to add an "exit;" to the end of your request handler
+    do_action("webmention_request", $source, $target, $contents);
+
+    // if no "action" is responsible, return a 404
+    status_header(404);
+    echo "Specified target URL not found.";
+
+    exit;
+  }
+
+  /**
+   * default request handler
+   *
+   * tries to map a target url to a specific post and generates a simple
+   * "default" comment.
+   *
+   * @param string $source the source url
+   * @param string $target the target url
+   * @param string $contents the html code of $source
+   *
+   * @uses apply_filters calls "webmention_post_id" on the post_ID
+   * @uses apply_filters calls "webmention_title" on the default comment-title
+   * @uses apply_filters calls "webmention_content" on the default comment-content
+   * @uses apply_filters calls "webmention_comment_type" on the default comment type
+   *  the default is "webmention"
+   * @uses apply_filters calls "webmention_comment_approve" to set the comment
+   *  to auto-approve (for example)
+   * @uses apply_filters calls "webmention_success_header" on the default response
+   *  header
+   * @uses do_action calls "webmention_post" on the comment_ID to be pingback
+   *  and trackback compatible
+   */
+  public static function default_request_handler( $source, $target, $contents ) {
+    // remove url-scheme
+    $schemeless_target = preg_replace("/^https?:\/\//i", "", $target);
+
+    // check post with http only
+    $post_ID = url_to_postid("http://".$schemeless_target);
+
+    // if there is no post
+    if ( !$post_ID ) {
+      // try https url
+      $post_ID = url_to_postid("https://".$schemeless_target);
+    }
+
+    // add some kind of a "default" id to add all
+    // webmentions to a specific post/page
+    $post_ID = apply_filters("webmention_post_id", $post_ID, $target);
+
+    // check if post id exists
+    if ( !$post_ID ) {
+      return;
+    }
+
+    // check if pings are allowed
+    if ( !pings_open($post_ID) ) {
+      status_header(500);
+      echo "Pings are disabled for this post";
+      exit;
+    }
+
+    $post_ID = intval($post_ID);
+    $post = get_post($post_ID);
+
+    // check if post exists
+    if ( !$post ) {
+      return;
     }
 
     // filter title or content of the comment
@@ -293,6 +332,7 @@ class WebMentionPlugin {
    *
    * @param string $source source url
    * @param string $target target url
+   *
    * @return array of results including HTTP headers
    */
   public static function send_webmention( $source, $target ) {
@@ -401,6 +441,7 @@ class WebMentionPlugin {
    *
    * @param string $url URL to ping.
    * @param int $deprecated Not Used.
+   *
    * @return bool|string False on failure, string containing URI on success.
    */
   public static function discover_endpoint( $url ) {
@@ -499,6 +540,7 @@ class WebMentionPlugin {
    *
    * @param string $base the base url
    * @param string $rel the relative url
+   *
    * @return string the absolute url
    */
   public static function make_url_absolute( $base, $rel ) {
