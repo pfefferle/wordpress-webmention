@@ -4,7 +4,7 @@
 **Tags:** webmention, pingback, trackback, linkback  
 **Requires at least:** 2.7  
 **Tested up to:** 3.8  
-**Stable tag:** 2.2.0  
+**Stable tag:** 2.3.0  
 
 WebMention for WordPress!
 
