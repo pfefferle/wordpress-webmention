@@ -179,7 +179,7 @@ class WebMentionPlugin {
 
     // check if pings are allowed
     if ( !pings_open($post_ID) ) {
-      status_header(500);
+      status_header(403);
       echo "Pings are disabled for this post";
       exit;
     }
