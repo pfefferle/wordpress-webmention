@@ -4,7 +4,7 @@ Donate link: http://14101978.de
 Tags: webmention, pingback, trackback, linkback
 Requires at least: 2.7
 Tested up to: 3.8
-Stable tag: 2.3.0
+Stable tag: 2.3.1
 
 WebMention for WordPress!
 
@@ -56,6 +56,11 @@ If you want to add a more complex request handler, you should take a look at the
 == Changelog ==
 
 Project maintined on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
+
+= 2.3.1 =
+
+* use error-code 403 instead of 500 if pingbacks/webmentions are disabled for a post (thanks @snarfed)
+* added `webmention_comment_parent`
 
 = 2.3.0 =
 
