@@ -150,6 +150,7 @@ class WebMentionPlugin {
    *  the default is "webmention"
    * @uses apply_filters calls "webmention_comment_approve" to set the comment
    *  to auto-approve (for example)
+   * @uses apply_filters calls "webmention_comment_parent" to add a parent comment-id
    * @uses apply_filters calls "webmention_success_header" on the default response
    *  header
    * @uses do_action calls "webmention_post" on the comment_ID to be pingback
