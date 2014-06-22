@@ -53,6 +53,10 @@ comments on a post or a page. The plugin provides a simple filter for that:
 If you want to add a more complex request handler, you should take a look at the
 `webmention_request` action and the `default_request_handler`.
 
+### Who made the logos? ###
+
+The WebMention and Pingback logos are made by [Aaron Parecki](http://aaronparecki.com) and the Microformats logo is made by [Dan Cederholm](http://simplebits.com/work/microformats/)
+
 ## Changelog ##
 
 Project maintined on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
