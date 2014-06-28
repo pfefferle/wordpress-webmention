@@ -60,7 +60,7 @@ Project maintined on github at [pfefferle/wordpress-webmention](https://github.c
 ### 2.3.1 ###
 
 * use error-code 403 instead of 500 if pingbacks/webmentions are disabled for a post (thanks @snarfed)
-* added `webmention_comment_parent`
+* added `webmention_comment_parent` filter
 
 ### 2.3.0 ###
 
