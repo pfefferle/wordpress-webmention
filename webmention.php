@@ -579,3 +579,52 @@ class WebMentionPlugin {
 
 // end check if class already exists
 endif;
+
+// Return the Number of Webmentions
+if (!function_exists('webmention_count')) :
+function webmention_count( $count= "" ) {
+        global $id;
+        $comment_count = 0;
+        $comments = get_approved_comments( $id );
+        foreach ( $comments as $comment ) {
+                if ( $comment->comment_type === 'webmention' ) {
+                        $comment_count++;
+                }
+        }
+        return $comment_count;
+}
+endif;
+
+/**
+ * Don't count webmentions, pingbacks or trackbacks when determining
+ * the number of comments on a post. Can be used as a filter on get_comment_number
+ */
+if (!function_exists('comment_count')) :
+function comment_count( $count = "" ) {
+        global $id;
+        $comment_count = 0;
+        $comments = get_approved_comments( $id );
+        foreach ( $comments as $comment ) {
+                if ( $comment->comment_type === '' ) {
+                        $comment_count++;
+                }
+        }
+        return $comment_count;
+}
+endif;
+
+// To be fair, count pings, trackbacks, and webmentions together
+if (!function_exists('mention_count')) :
+function mention_count($count = "") {
+        global $id;
+        $comment_count = 0;
+        $comments = get_approved_comments( $id );
+        foreach ( $comments as $comment ) {
+                if (( $comment->comment_type === 'trackback' )||( $comment->comment_type === 'pingback')||( $comment->comment_type === 'webmention')) {
+                        $comment_count++;
+                }
+        }
+        return $comment_count;
+}
+endif;
+
