@@ -339,7 +339,7 @@ class WebMentionPlugin {
    *
    * @return array of results including HTTP headers
    */
-  public static function send_webmention($source, $target) {
+  public static function send_webmention($source, $target, $post_ID = null) {
     // stop selfpings
     if ($source == $target) {
       return false;
@@ -360,7 +360,7 @@ class WebMentionPlugin {
       $response = wp_remote_post( $webmention_server_url, $args );
 
       // use the response to do something usefull
-      do_action('webmention_post_send', $response, $source, $target);
+      do_action('webmention_post_send', $response, $source, $target, $post_ID);
 
       return $response;
     }
@@ -377,9 +377,7 @@ class WebMentionPlugin {
    *   add_action('publish_post', array('WebMentionPlugin', 'send_webmentions'));
    * </code>
    *
-   * @param array $links Links to ping
-   * @param array $punk Pinged links
-   * @param int $id The post_ID
+   * @param int $post_id The post_ID
    */
   public static function send_webmentions($post_ID) {
     // get source url
@@ -402,7 +400,7 @@ class WebMentionPlugin {
 
     foreach ($targets as $target) {
       // send webmention
-      $response = self::send_webmention($source, $target);
+      $response = self::send_webmention($source, $target, $post_ID);
 
       // check response
       if ( !is_wp_error( $response ) ) {
