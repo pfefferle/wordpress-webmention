@@ -5,14 +5,14 @@
  Description: Webmention support for WordPress posts
  Author: pfefferle
  Author URI: http://notizblog.org/
- Version: 2.3.1
+ Version: 2.3.2
 */
 
 // check if class already exists
 if (!class_exists("WebMentionPlugin")) :
 
 /**
- * a wrapper for WebMentionPlugin::send_webmention
+ * A wrapper for WebMentionPlugin::send_webmention
  *
  * @param string $source source url
  * @param string $target target url
@@ -33,7 +33,7 @@ add_action('init', array( 'WebMentionPlugin', 'init' ));
  */
 class WebMentionPlugin {
   /**
-   * Initialize the plugin, registering WordPress hooks.
+   * Initialize the plugin, registering WordPress hooks
    */
   public static function init() {
     // a pseudo hook so you can run a do_action('send_webmention')
@@ -70,7 +70,7 @@ class WebMentionPlugin {
   }
 
   /**
-   * Parse the WebMention request and render the document.
+   * Parse the WebMention request and render the document
    *
    * @param WP $wp WordPress request context
    *
@@ -133,9 +133,9 @@ class WebMentionPlugin {
   }
 
   /**
-   * default request handler
+   * Default request handler
    *
-   * tries to map a target url to a specific post and generates a simple
+   * Tries to map a target url to a specific post and generates a simple
    * "default" comment.
    *
    * @param string $source the source url
@@ -255,7 +255,7 @@ class WebMentionPlugin {
   }
 
   /**
-   * try to make a nice comment
+   * Try to make a nice comment
    *
    * @param string $context the comment-content
    * @param string $contents the HTML of the source
@@ -290,7 +290,7 @@ class WebMentionPlugin {
   }
 
   /**
-   * try to make a nice title (username)
+   * Try to make a nice title (username)
    *
    * @param string $title the comment-title (username)
    * @param string $contents the HTML of the source
@@ -336,6 +336,7 @@ class WebMentionPlugin {
    *
    * @param string $source source url
    * @param string $target target url
+   * @param int $post_ID the post_ID (optional)
    *
    * @return array of results including HTTP headers
    */
@@ -377,7 +378,7 @@ class WebMentionPlugin {
    *   add_action('publish_post', array('WebMentionPlugin', 'send_webmentions'));
    * </code>
    *
-   * @param int $post_id The post_ID
+   * @param int $post_ID the post_ID
    */
   public static function send_webmentions($post_ID) {
     // get source url
@@ -412,12 +413,6 @@ class WebMentionPlugin {
           add_ping( $post_ID, $target );
         }
       }
-
-      // rescedule if server responds with a http error 500
-      if (500 == wp_remote_retrieve_response_code( $response )) {
-        add_post_meta( $post_ID, '_mentionme', '1', true );
-        wp_schedule_single_event( time()+60, 'do_pings' );
-      }
     }
   }
 
@@ -435,16 +430,15 @@ class WebMentionPlugin {
   }
 
   /**
-   * Finds a WebMention server URI based on the given URL.
+   * Finds a WebMention server URI based on the given URL
    *
    * Checks the HTML for the rel="http://webmention.org/" link and http://webmention.org/ headers. It does
    * a check for the http://webmention.org/ headers first and returns that, if available. The
    * check for the rel="http://webmention.org/" has more overhead than just the header.
    *
-   * @param string $url URL to ping.
-   * @param int $deprecated Not Used.
+   * @param string $url URL to ping
    *
-   * @return bool|string False on failure, string containing URI on success.
+   * @return bool|string False on failure, string containing URI on success
    */
   public static function discover_endpoint($url) {
     /** @todo Should use Filter Extension or custom preg_match instead. */
@@ -453,7 +447,7 @@ class WebMentionPlugin {
     if ( ! isset( $parsed_url['host'] ) ) // Not an URL. This should never happen.
       return false;
 
-    //Do not search for a WebMention server on our own uploads
+    // do not search for a WebMention server on our own uploads
     $uploads_dir = wp_upload_dir();
     if ( 0 === strpos($url, $uploads_dir['baseurl']) )
       return false;
@@ -476,11 +470,11 @@ class WebMentionPlugin {
       }
     }
 
-    // Not an (x)html, sgml, or xml page, no use going further.
+    // not an (x)html, sgml, or xml page, no use going further
     if ( preg_match('#(image|audio|video|model)/#is', wp_remote_retrieve_header( $response, 'content-type' )) )
       return false;
 
-    // Now do a GET since we're going to look in the html headers (and we're sure its not a binary file)
+    // now do a GET since we're going to look in the html headers (and we're sure its not a binary file)
     $response = wp_remote_get( $url, array( 'timeout' => 100, 'httpversion' => '1.0' ) );
 
     if ( is_wp_error( $response ) )
@@ -535,9 +529,10 @@ class WebMentionPlugin {
   }
 
   /**
-   * converts relative to absolute urls
+   * Converts relative to absolute urls
    *
-   * based on the code of 99webtools.com
+   * Based on the code of 99webtools.com
+   *
    * @link https://99webtools.com/relative-path-into-absolute-url.php
    *
    * @param string $base the base url

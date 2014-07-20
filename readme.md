@@ -57,6 +57,11 @@ If you want to add a more complex request handler, you should take a look at the
 
 Project maintined on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
 
+### 2.3.3 ###
+
+* added more params to `webmention_post_send` (props to @snarfed)
+* removed rescedule of webmentions (props to @snarfed)
+
 ### 2.3.1 ###
 
 * use error-code 403 instead of 500 if pingbacks/webmentions are disabled for a post (thanks @snarfed)
