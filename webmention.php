@@ -614,51 +614,29 @@ class WebMentionPlugin {
 // end check if class already exists
 endif;
 
-// Return the Number of Webmentions
-if (!function_exists('webmention_count')) :
-function webmention_count( $count= "" ) {
-        global $id;
-        $comment_count = 0;
-        $comments = get_approved_comments( $id );
-        foreach ( $comments as $comment ) {
-                if ( $comment->comment_type === 'webmention' ) {
-                        $comment_count++;
-                }
-        }
-        return $comment_count;
-}
-endif;
-
+if (!function_exists('get_webmentions_number')) :
 /**
- * Don't count webmentions, pingbacks or trackbacks when determining
- * the number of comments on a post. Can be used as a filter on get_comment_number
+ * Return the Number of Webmentions
+ *
+ * @param int $post_id The post ID (optional)
+ *
+ * @return int the number of WebMentions for one Post
  */
-if (!function_exists('comment_count')) :
-function comment_count( $count = "" ) {
-        global $id;
-        $comment_count = 0;
-        $comments = get_approved_comments( $id );
-        foreach ( $comments as $comment ) {
-                if ( $comment->comment_type === '' ) {
-                        $comment_count++;
-                }
-        }
-        return $comment_count;
+function get_webmentions_number($post_id = 0) {
+  $post = get_post($post_id);
+
+  // change this if your theme can't handle the WebMentions comment type
+  $webmention_comment_type = defined('WEBMENTION_COMMENT_TYPE') ? WEBMENTION_COMMENT_TYPE : 'webmention';
+  $comment_type = apply_filters('webmention_comment_type', $webmention_comment_type);
+
+  $args = array(
+    'post_id' => $post->ID,
+    'type'    => $comment_type,
+    'count'   => true,
+    'status'  => 'approve'
+  );
+
+  $comments_query = new WP_Comment_Query;
+  return $comments_query->query($args);
 }
 endif;
-
-// To be fair, count pings, trackbacks, and webmentions together
-if (!function_exists('mention_count')) :
-function mention_count($count = "") {
-        global $id;
-        $comment_count = 0;
-        $comments = get_approved_comments( $id );
-        foreach ( $comments as $comment ) {
-                if (( $comment->comment_type === 'trackback' )||( $comment->comment_type === 'pingback')||( $comment->comment_type === 'webmention')) {
-                        $comment_count++;
-                }
-        }
-        return $comment_count;
-}
-endif;
-
