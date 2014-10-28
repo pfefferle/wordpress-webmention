@@ -5,7 +5,7 @@
  Description: Webmention support for WordPress posts
  Author: pfefferle
  Author URI: http://notizblog.org/
- Version: 2.3.2
+ Version: 2.3.2-beta
 */
 
 // check if class already exists
@@ -24,7 +24,7 @@ function send_webmention($source, $target) {
 }
 
 // initialize plugin
-add_action('init', array( 'WebMentionPlugin', 'init' ));
+add_action('init', array('WebMentionPlugin', 'init'));
 
 /**
  * WebMention Plugin Class
@@ -104,16 +104,16 @@ class WebMentionPlugin {
 
     // @todo check if target-host matches the blog-host
 
-    $response = wp_remote_get( $source, array('timeout' => 100) );
+    $response = wp_remote_get($source, array('timeout' => 100));
 
     // check if source is accessible
-    if ( is_wp_error( $response ) ) {
+    if (is_wp_error($response)) {
       status_header(400);
       echo "Source URL not found.";
       exit;
     }
 
-    $contents = wp_remote_retrieve_body( $response );
+    $contents = wp_remote_retrieve_body($response);
 
     // check if source really links to target
     if (!strpos($contents, str_replace(array('http://www.','http://','https://www.','https://'), '', untrailingslashit(preg_replace('/#.*/', '', $target))))) {
@@ -178,7 +178,7 @@ class WebMentionPlugin {
     }
 
     // check if pings are allowed
-    if ( !pings_open($post_ID) ) {
+    if (!pings_open($post_ID)) {
       status_header(403);
       echo "Pings are disabled for this post";
       exit;
@@ -193,8 +193,8 @@ class WebMentionPlugin {
     }
 
     // filter title or content of the comment
-    $title = apply_filters( "webmention_title", "", $contents, $target, $source );
-    $content = apply_filters( "webmention_content", "", $contents, $target, $source );
+    $title = apply_filters("webmention_title", "", $contents, $target, $source);
+    $content = apply_filters("webmention_content", "", $contents, $target, $source);
 
     // generate comment
     $comment_post_ID = (int) $post->ID;
@@ -218,7 +218,7 @@ class WebMentionPlugin {
 
     // check dupes
     global $wpdb;
-    $comments = $wpdb->get_results( $wpdb->prepare("SELECT * FROM $wpdb->comments WHERE comment_post_ID = %d AND comment_author_url = %s", $comment_post_ID,  htmlentities($comment_author_url)) );
+    $comments = $wpdb->get_results($wpdb->prepare("SELECT * FROM $wpdb->comments WHERE comment_post_ID = %d AND comment_author_url = %s", $comment_post_ID,  htmlentities($comment_author_url)));
 
     // check result
     if (!empty($comments)) {
@@ -250,7 +250,7 @@ class WebMentionPlugin {
     // render a simple and customizable text output
     echo apply_filters('webmention_success_message', get_comment_link($comment_ID));
 
-    do_action( 'webmention_post', $comment_ID );
+    do_action('webmention_post', $comment_ID);
     exit;
   }
 
@@ -326,8 +326,8 @@ class WebMentionPlugin {
    */
   public static function publish_post_hook($post_ID) {
     // check if pingbacks are enabled
-    if ( get_option('default_pingback_flag') )
-      add_post_meta( $post_ID, '_mentionme', '1', true );
+    if (get_option('default_pingback_flag'))
+      add_post_meta($post_ID, '_mentionme', '1', true);
   }
 
 
@@ -347,7 +347,7 @@ class WebMentionPlugin {
     }
 
     // discover the webmention endpoint
-    $webmention_server_url = self::discover_endpoint( $target );
+    $webmention_server_url = self::discover_endpoint($target);
 
     // if I can't find an endpoint, perhaps you can!
     $webmention_server_url = apply_filters('webmention_server_url', $webmention_server_url, $target);
@@ -355,10 +355,10 @@ class WebMentionPlugin {
     $args = array(
               'body' => 'source='.urlencode($source).'&target='.urlencode($target),
               'timeout' => 100
-            );
+           );
 
     if ($webmention_server_url) {
-      $response = wp_remote_post( $webmention_server_url, $args );
+      $response = wp_remote_post($webmention_server_url, $args);
 
       // use the response to do something usefull
       do_action('webmention_post_send', $response, $source, $target, $post_ID);
@@ -404,15 +404,51 @@ class WebMentionPlugin {
       $response = self::send_webmention($source, $target, $post_ID);
 
       // check response
-      if ( !is_wp_error( $response ) ) {
+      if (!is_wp_error($response) &&
+          wp_remote_retrieve_response_code($response) < 400) {
         $pung = get_pung($post_ID);
 
         // if not already added to punged urls
         if (!in_array($target, $pung)) {
           // tell the pingback function not to ping these links again
-          add_ping( $post_ID, $target );
+          add_ping($post_ID, $target);
         }
       }
+
+      // rescedule if server responds with a http error 5xx
+      if (wp_remote_retrieve_response_code($response) >= 500) {
+        self::reschedule($post_ID);
+      }
+    }
+  }
+
+  /**
+   * Rescedule WebMentions on HTTP code 500
+   *
+   * @param int $post_ID the post id
+   */
+  public static function reschedule($post_ID) {
+    $tries = get_post_meta($post_ID, '_mentionme_tries', true);
+
+    // check "tries" and set to 0 if null
+    if (!$tries) {
+      $tries = 0;
+    }
+
+    // raise "tries" counter
+    $tries = $tries+1;
+
+    // rescedule only three times
+    if ($tries <= 3) {
+      // save new tries value
+      update_post_meta($post_ID, '_mentionme_tries', $tries);
+
+      // and rescedule
+      add_post_meta($post_ID, '_mentionme', '1', true);
+
+      wp_schedule_single_event(time()+($tries*900), 'do_pings');
+    } else {
+      delete_post_meta($post_ID, '_mentionme_tries');
     }
   }
 
@@ -421,11 +457,16 @@ class WebMentionPlugin {
    */
   public static function do_webmentions() {
     global $wpdb;
+
     // get all posts that should be "mentioned"
-    while ($mention = $wpdb->get_row("SELECT ID, meta_id FROM {$wpdb->posts}, {$wpdb->postmeta} WHERE {$wpdb->posts}.ID = {$wpdb->postmeta}.post_id AND {$wpdb->postmeta}.meta_key = '_mentionme' LIMIT 1")) {
-      delete_metadata_by_mid( 'post', $mention->meta_id );
+    $mentions = $wpdb->get_results("SELECT ID, meta_id FROM {$wpdb->posts}, {$wpdb->postmeta} WHERE {$wpdb->posts}.ID = {$wpdb->postmeta}.post_id AND {$wpdb->postmeta}.meta_key = '_mentionme'");
+
+    // iterate mentions
+    foreach ($mentions as $mention) {
+      delete_metadata_by_mid('post', $mention->meta_id);
+
       // send them webmentions
-      self::send_webmentions( $mention->ID );
+      self::send_webmentions($mention->ID);
     }
   }
 
@@ -444,22 +485,22 @@ class WebMentionPlugin {
     /** @todo Should use Filter Extension or custom preg_match instead. */
     $parsed_url = parse_url($url);
 
-    if ( ! isset( $parsed_url['host'] ) ) // Not an URL. This should never happen.
+    if (!isset($parsed_url['host'])) // Not an URL. This should never happen.
       return false;
 
     // do not search for a WebMention server on our own uploads
     $uploads_dir = wp_upload_dir();
-    if ( 0 === strpos($url, $uploads_dir['baseurl']) )
+    if (0 === strpos($url, $uploads_dir['baseurl']))
       return false;
 
-    $response = wp_remote_head( $url, array( 'timeout' => 100, 'httpversion' => '1.0' ) );
+    $response = wp_remote_head($url, array('timeout' => 100, 'httpversion' => '1.0'));
 
-    if ( is_wp_error( $response ) )
+    if (is_wp_error($response))
       return false;
 
     // check link header
-    if ( $links = wp_remote_retrieve_header( $response, 'link' ) ) {
-      if ( is_array($links) ) {
+    if ($links = wp_remote_retrieve_header($response, 'link')) {
+      if (is_array($links)) {
         foreach ($links as $link) {
           if (preg_match("/<(.[^>]+)>;\s+rel\s?=\s?[\"\']?(http:\/\/)?webmention(.org)?\/?[\"\']?/i", $link, $result))
             return self::make_url_absolute($url, $result[1]);
@@ -471,19 +512,19 @@ class WebMentionPlugin {
     }
 
     // not an (x)html, sgml, or xml page, no use going further
-    if ( preg_match('#(image|audio|video|model)/#is', wp_remote_retrieve_header( $response, 'content-type' )) )
+    if (preg_match('#(image|audio|video|model)/#is', wp_remote_retrieve_header($response, 'content-type')))
       return false;
 
     // now do a GET since we're going to look in the html headers (and we're sure its not a binary file)
-    $response = wp_remote_get( $url, array( 'timeout' => 100, 'httpversion' => '1.0' ) );
+    $response = wp_remote_get($url, array('timeout' => 100, 'httpversion' => '1.0'));
 
-    if ( is_wp_error( $response ) )
+    if (is_wp_error($response))
       return false;
 
-    $contents = wp_remote_retrieve_body( $response );
+    $contents = wp_remote_retrieve_body($response);
 
     // boost performance and use alreade the header
-    $header = substr( $contents, 0, stripos( $contents, '</head>' ) );
+    $header = substr($contents, 0, stripos($contents, '</head>'));
 
     // unicode to HTML entities
     $contents = mb_convert_encoding($contents, 'HTML-ENTITIES', mb_detect_encoding($contents));
@@ -533,7 +574,7 @@ class WebMentionPlugin {
    *
    * Based on the code of 99webtools.com
    *
-   * @link https://99webtools.com/relative-path-into-absolute-url.php
+   * @link http://99webtools.com/relative-path-into-absolute-url.php
    *
    * @param string $base the base url
    * @param string $rel the relative url
