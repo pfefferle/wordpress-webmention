@@ -5,7 +5,7 @@
  Description: Webmention support for WordPress posts
  Author: pfefferle
  Author URI: http://notizblog.org/
- Version: 2.3.2-beta
+ Version: 2.4.0-beta
 */
 
 // check if class already exists
