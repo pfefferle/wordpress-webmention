@@ -112,7 +112,7 @@ class WebMentionPlugin {
       $supplied_code = get_query_var( 'webmention' );
       $is_valid = false;
  
-      foreach ( $valid_codes as $expire_code ) {
+      foreach ( $valid_endpoint_codes as $expire_code ) {
         if ( $supplied_code == $expire_code ) {
           $is_valid = true;
         }
