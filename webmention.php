@@ -71,7 +71,7 @@ class WebMentionPlugin {
 
   /**
    * get the three valid endpoint codes. In the returned array,
-   * the middle item is the most correct
+   * the first item -index 0- is the most correct
    * 
    * @return array
    */
@@ -79,8 +79,8 @@ class WebMentionPlugin {
     $format = 'Y-m-d a';
     $time_block = 12 * 60 * 60;
     $valid_codes = array(
-      date( $format, time() - $time_block ),
       date( $format, time() ),
+      date( $format, time() - $time_block ),
       date( $format, time() + $time_block )
     );
     
@@ -107,7 +107,6 @@ class WebMentionPlugin {
     else {
       // check if the end point has expired
       $valid_endpoint_codes = WebMentionPlugin::expire_codes();
-      $endpoint_code = $valid_endpoint_codes[1];
       
       $supplied_code = get_query_var( 'webmention' );
       $is_valid = false;
@@ -115,6 +114,7 @@ class WebMentionPlugin {
       foreach ( $valid_endpoint_codes as $expire_code ) {
         if ( $supplied_code == $expire_code ) {
           $is_valid = true;
+          break;
         }
       }
  
@@ -598,7 +598,7 @@ class WebMentionPlugin {
   public static function html_header() {
     // backwards compatibility with v0.1
     $valid_endpoint_codes = WebMentionPlugin::expire_codes();
-    $endpoint_code = $valid_endpoint_codes[1];
+    $endpoint_code = $valid_endpoint_codes[0];
     echo '<link rel="http://webmention.org/" href="'.site_url("?webmention=" . $endpoint_code ).'" />'."\n";
     echo '<link rel="webmention" href="'.site_url("?webmention=" . $endpoint_code ).'" />'."\n";
   }
@@ -609,7 +609,7 @@ class WebMentionPlugin {
   public static function http_header() {
     // backwards compatibility with v0.1
     $valid_endpoint_codes = WebMentionPlugin::expire_codes();
-    $endpoint_code = $valid_endpoint_codes[1];
+    $endpoint_code = $valid_endpoint_codes[0];
     header('Link: <'.site_url("?webmention=" . $endpoint_code).'>; rel="http://webmention.org/"', false);
     header('Link: <'.site_url("?webmention=" . $endpoint_code).'>; rel="webmention"', false);
   }
