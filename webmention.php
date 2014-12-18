@@ -76,16 +76,26 @@ class WebMentionPlugin {
    * @return array
    */
   public static function expire_codes() {
-    $format = 'Y-m-d a';
+    $action = 'web mention endpoint';
+    $time_format = 'Y-m-d a';
     $time_block = 12 * 60 * 60;
     $valid_codes = array(
-      date( $format, time() ),
-      date( $format, time() - $time_block ),
-      date( $format, time() + $time_block )
+      date( $time_format, time() ),
+      date( $time_format, time() - $time_block ),
+      date( $time_format, time() - ( 2 * $time_block ) )
     );
     
+    // always use logged out user code, endpoint may be looked up by a logged in user
+    // while the web mention comes from a logged out user (using curl or similar)
+    $uid = 0;
+    $uid = apply_filters( 'nonce_user_logged_out', $uid, $action );
+    
+    // as above, always use the lgoged out token.
+    $token = '';
+
+
     foreach ( $valid_codes as $key => $expire_code ) {
-      $valid_codes[$key] = wp_hash( $expire_code, 'nonce' );
+      $valid_codes[$key] = wp_hash( $expire_code . '|' . $action . '|' . $uid . '|' . $token, 'nonce' );
     }
     
     return $valid_codes;
