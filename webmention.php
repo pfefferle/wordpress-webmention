@@ -78,7 +78,7 @@ class WebMentionPlugin {
   public static function expire_codes() {
     $action = 'web mention endpoint';
     $time_format = 'Y-m-d a';
-    $time_block = 12 * 60 * 60;
+    $time_block = DAY_IN_SECONDS / 2;
     $valid_codes = array(
       date( $time_format, time() ),
       date( $time_format, time() - $time_block ),
