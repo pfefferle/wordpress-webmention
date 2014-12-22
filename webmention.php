@@ -129,7 +129,9 @@ class WebMentionPlugin {
       }
  
       if ( false == $is_valid ) {
-        return;
+        status_header(400);
+        echo "invalid endpoint";
+        exit;
       }
     }
 
