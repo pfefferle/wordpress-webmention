@@ -122,7 +122,7 @@ class WebMentionPlugin {
       $is_valid = false;
  
       foreach ( $valid_endpoint_codes as $expire_code ) {
-        if ( $supplied_code == $expire_code ) {
+        if ( hash_equals( $expire_code, $supplied_code ) ) {
           $is_valid = true;
           break;
         }
