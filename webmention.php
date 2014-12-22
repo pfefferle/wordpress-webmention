@@ -75,15 +75,17 @@ class WebMentionPlugin {
    * 
    * @return array
    */
-  public static function expire_codes() {
+  public static function expire_code( $tick = 0 ) {
     $action = 'web mention endpoint';
     $time_format = 'Y-m-d a';
     $time_block = 12 * HOUR_IN_SECONDS;
-    $valid_codes = array(
-      date( $time_format, time() ),
-      date( $time_format, time() - $time_block ),
-      date( $time_format, time() - ( 2 * $time_block ) )
-    );
+    $tick = abs( intval( $tick ) );
+    if ( 3 < $tick ) {
+        // something wrong, tick too high/
+        // use default
+        $tick = 0;
+    }
+    $expire_code = date( $time_format, time() - ( $tick * $time_block ) );
     
     // always use logged out user code, endpoint may be looked up by a logged in user
     // while the web mention comes from a logged out user (using curl or similar)
@@ -94,11 +96,9 @@ class WebMentionPlugin {
     $token = '';
 
 
-    foreach ( $valid_codes as $key => $expire_code ) {
-      $valid_codes[$key] = wp_hash( $expire_code . '|' . $action . '|' . $uid . '|' . $token, 'nonce' );
-    }
+    $expire_code = wp_hash( $expire_code . '|' . $action . '|' . $uid . '|' . $token, 'nonce' );
     
-    return $valid_codes;
+    return $expire_code;
   }
   
   
@@ -116,13 +116,13 @@ class WebMentionPlugin {
     }
     else {
       // check if the end point has expired
-      $valid_endpoint_codes = WebMentionPlugin::expire_codes();
+      $valid_ticks = array( 0, -1, -2 );
       
       $supplied_code = get_query_var( 'webmention' );
       $is_valid = false;
  
-      foreach ( $valid_endpoint_codes as $expire_code ) {
-        if ( hash_equals( $expire_code, $supplied_code ) ) {
+      foreach ( $valid_ticks as $tick ) {
+        if ( hash_equals( WebMentionPlugin::expire_code( $tick ), $supplied_code ) ) {
           $is_valid = true;
           break;
         }
@@ -611,8 +611,7 @@ class WebMentionPlugin {
    */
   public static function html_header() {
     // backwards compatibility with v0.1
-    $valid_endpoint_codes = WebMentionPlugin::expire_codes();
-    $endpoint_code = $valid_endpoint_codes[0];
+    $endpoint_code = WebMentionPlugin::expire_code();
     echo '<link rel="http://webmention.org/" href="'.site_url("?webmention=" . $endpoint_code ).'" />'."\n";
     echo '<link rel="webmention" href="'.site_url("?webmention=" . $endpoint_code ).'" />'."\n";
   }
@@ -622,8 +621,7 @@ class WebMentionPlugin {
    */
   public static function http_header() {
     // backwards compatibility with v0.1
-    $valid_endpoint_codes = WebMentionPlugin::expire_codes();
-    $endpoint_code = $valid_endpoint_codes[0];
+    $endpoint_code = WebMentionPlugin::expire_code();
     header('Link: <'.site_url("?webmention=" . $endpoint_code).'>; rel="http://webmention.org/"', false);
     header('Link: <'.site_url("?webmention=" . $endpoint_code).'>; rel="webmention"', false);
   }
