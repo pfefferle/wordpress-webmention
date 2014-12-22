@@ -129,9 +129,6 @@ class WebMentionPlugin {
       }
     }
 
-    $content = file_get_contents('php://input');
-    parse_str($content);
-
     // plain text header
     header('Content-Type: text/plain; charset=' . get_option('blog_charset'));
 
@@ -142,6 +139,8 @@ class WebMentionPlugin {
       exit;
     }
 
+    $content = file_get_contents('php://input');
+    parse_str($content);
 
     // check if source url is transmitted
     if (!isset($source)) {
