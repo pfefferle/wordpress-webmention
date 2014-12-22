@@ -70,8 +70,8 @@ class WebMentionPlugin {
   }
 
   /**
-   * get the three valid endpoint codes. In the returned array,
-   * the first item -index 0- is the most correct
+   * generate a valid expire code. 
+   * Three possible values are valid at any one time, ticks: 0, 1, or 2
    * 
    * @return array
    */
