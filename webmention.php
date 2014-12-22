@@ -127,12 +127,6 @@ class WebMentionPlugin {
           break;
         }
       }
- 
-      if ( false == $is_valid ) {
-        status_header(400);
-        echo "invalid endpoint";
-        exit;
-      }
     }
 
     $content = file_get_contents('php://input');
@@ -140,6 +134,14 @@ class WebMentionPlugin {
 
     // plain text header
     header('Content-Type: text/plain; charset=' . get_option('blog_charset'));
+
+    // fail if invalide endpoint
+    if ( false == $is_valid ) {
+      status_header(400);
+      echo "invalid endpoint";
+      exit;
+    }
+
 
     // check if source url is transmitted
     if (!isset($source)) {
