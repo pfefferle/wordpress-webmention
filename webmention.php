@@ -43,6 +43,8 @@ class WebMentionPlugin {
     add_filter('query_vars', array('WebMentionPlugin', 'query_var'));
     add_action('parse_query', array('WebMentionPlugin', 'parse_query'));
 
+    add_action('admin_comment_types_dropdown', array('WebMentionPlugin', 'comment_types_dropdown'));
+
     add_action('wp_head', array('WebMentionPlugin', 'html_header'), 99);
     add_action('send_headers', array('WebMentionPlugin', 'http_header'));
 
@@ -287,6 +289,20 @@ class WebMentionPlugin {
     $content = sprintf(__('This %s was mentioned on <a href="%s">%s</a>', 'webmention'), $post_format, esc_url($source), $host);
 
     return $content;
+  }
+
+  /**
+   * Extend the "filter by comment type" of in the comments section
+   * of the admin interface with "webmention"
+   *
+   * @param array $types the different comment types
+   *
+   * @return array the filtert comment types
+   */
+  public static function comment_types_dropdown($types) {
+    $types['webmention'] = __('Webmentions', 'webmention');
+
+    return $types;
   }
 
   /**
