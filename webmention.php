@@ -45,8 +45,11 @@ class WebMentionPlugin {
 
     add_action('admin_comment_types_dropdown', array('WebMentionPlugin', 'comment_types_dropdown'));
 
+    // endpoint discovery
     add_action('wp_head', array('WebMentionPlugin', 'html_header'), 99);
     add_action('send_headers', array('WebMentionPlugin', 'http_header'));
+    add_filter('host_meta', array('WebMentionPlugin', 'jrd_links'));
+    add_filter('webfinger_data', array('WebMentionPlugin', 'jrd_links'));
 
     // run webmentions before the other pinging stuff
     add_action('do_pings', array('WebMentionPlugin', 'do_webmentions'), 5, 1);
@@ -583,6 +586,16 @@ class WebMentionPlugin {
     // backwards compatibility with v0.1
     header('Link: <'.site_url("?webmention=endpoint").'>; rel="http://webmention.org/"', false);
     header('Link: <'.site_url("?webmention=endpoint").'>; rel="webmention"', false);
+  }
+
+  /**
+   * Generates webfinger/host-meta links
+   */
+  public static function jrd_links($array) {
+    $array["links"][] = array("rel" => "webmention", "href" => site_url("?webmention=endpoint"));
+    $array["links"][] = array("rel" => "http://webmention.org/", "href" => site_url("?webmention=endpoint"));
+
+    return $array;
   }
 
   /**
