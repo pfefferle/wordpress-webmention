@@ -75,6 +75,39 @@ class WebMentionPlugin {
   }
 
   /**
+   * generate a valid expire code. 
+   * Three possible values are valid at any one time, ticks: 0, 1, or 2
+   * 
+   * @return array
+   */
+  public static function expire_code( $tick = 0 ) {
+    $action = 'web mention endpoint';
+    $time_format = 'Y-m-d a';
+    $time_block = 12 * HOUR_IN_SECONDS;
+    $tick = abs( intval( $tick ) );
+    if ( 3 < $tick ) {
+        // something wrong, tick too high/
+        // use default
+        $tick = 0;
+    }
+    $expire_code = date( $time_format, time() - ( $tick * $time_block ) );
+    
+    // always use logged out user code, endpoint may be looked up by a logged in user
+    // while the web mention comes from a logged out user (using curl or similar)
+    $uid = 0;
+    $uid = apply_filters( 'nonce_user_logged_out', $uid, $action );
+    
+    // as above, always use the lgoged out token.
+    $token = '';
+
+
+    $expire_code = wp_hash( $expire_code . '|' . $action . '|' . $uid . '|' . $token, 'nonce' );
+    
+    return $expire_code;
+  }
+  
+  
+  /**
    * Parse the WebMention request and render the document
    *
    * @param WP $wp WordPress request context
@@ -86,12 +119,33 @@ class WebMentionPlugin {
     if (!array_key_exists('webmention', $wp->query_vars)) {
       return;
     }
-
-    $content = file_get_contents('php://input');
-    parse_str($content);
+    else {
+      // check if the end point has expired
+      $valid_ticks = array( 0, -1, -2 );
+      
+      $supplied_code = get_query_var( 'webmention' );
+      $is_valid = false;
+ 
+      foreach ( $valid_ticks as $tick ) {
+        if ( hash_equals( WebMentionPlugin::expire_code( $tick ), $supplied_code ) ) {
+          $is_valid = true;
+          break;
+        }
+      }
+    }
 
     // plain text header
     header('Content-Type: text/plain; charset=' . get_option('blog_charset'));
+
+    // fail if invalide endpoint
+    if ( false == $is_valid ) {
+      status_header(400);
+      echo "invalid endpoint";
+      exit;
+    }
+
+    $content = file_get_contents('php://input');
+    parse_str($content);
 
     // check if source url is transmitted
     if (!isset($source)) {
@@ -575,8 +629,9 @@ class WebMentionPlugin {
    */
   public static function html_header() {
     // backwards compatibility with v0.1
-    echo '<link rel="http://webmention.org/" href="'.site_url("?webmention=endpoint").'" />'."\n";
-    echo '<link rel="webmention" href="'.site_url("?webmention=endpoint").'" />'."\n";
+    $endpoint_code = WebMentionPlugin::expire_code();
+    echo '<link rel="http://webmention.org/" href="'.site_url("?webmention=" . $endpoint_code ).'" />'."\n";
+    echo '<link rel="webmention" href="'.site_url("?webmention=" . $endpoint_code ).'" />'."\n";
   }
 
   /**
@@ -584,8 +639,9 @@ class WebMentionPlugin {
    */
   public static function http_header() {
     // backwards compatibility with v0.1
-    header('Link: <'.site_url("?webmention=endpoint").'>; rel="http://webmention.org/"', false);
-    header('Link: <'.site_url("?webmention=endpoint").'>; rel="webmention"', false);
+    $endpoint_code = WebMentionPlugin::expire_code();
+    header('Link: <'.site_url("?webmention=" . $endpoint_code).'>; rel="http://webmention.org/"', false);
+    header('Link: <'.site_url("?webmention=" . $endpoint_code).'>; rel="webmention"', false);
   }
 
   /**
