@@ -87,21 +87,21 @@ class WebMentionPlugin {
       return;
     }
 
-    $content = file_get_contents('php://input');
-    parse_str($content);
+    $input = file_get_contents('php://input');
+    parse_str($input, $params);
 
     // plain text header
     header('Content-Type: text/plain; charset=' . get_option('blog_charset'));
 
     // check if source url is transmitted
-    if (!isset($source)) {
+    if (!isset($params['source'])) {
       status_header(400);
       echo "'source' is missing";
       exit;
     }
 
     // check if target url is transmitted
-    if (!isset($target)) {
+    if (!isset($params['target'])) {
       status_header(400);
       echo "'target' is missing";
       exit;
@@ -109,7 +109,7 @@ class WebMentionPlugin {
 
     // @todo check if target-host matches the blog-host
 
-    $response = wp_remote_get($source, array('timeout' => 100));
+    $response = wp_remote_get($params['source'], array('timeout' => 100));
 
     // check if source is accessible
     if (is_wp_error($response)) {
@@ -121,14 +121,14 @@ class WebMentionPlugin {
     $contents = wp_remote_retrieve_body($response);
 
     // check if source really links to target
-    if (!strpos($contents, str_replace(array('http://www.','http://','https://www.','https://'), '', untrailingslashit(preg_replace('/#.*/', '', $target))))) {
+    if (!strpos($contents, str_replace(array('http://www.','http://','https://www.','https://'), '', untrailingslashit(preg_replace('/#.*/', '', $params['target']))))) {
       status_header(400);
       echo "Can't find target link.";
       exit;
     }
 
     // be sure to add an "exit;" to the end of your request handler
-    do_action("webmention_request", $source, $target, $contents);
+    do_action("webmention_request", $params['source'], $params['target'], $contents);
 
     // if no "action" is responsible, return a 404
     status_header(404);
