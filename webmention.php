@@ -90,7 +90,6 @@ class WebMentionPlugin {
     // always use logged out user code, endpoint may be looked up by a logged in user
     // while the web mention comes from a logged out user (using curl or similar)
     $uid = 0;
-    $uid = apply_filters( 'nonce_user_logged_out', $uid, $action );
     
     // as above, always use the lgoged out token.
     $token = '';
