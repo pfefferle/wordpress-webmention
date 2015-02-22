@@ -94,7 +94,8 @@ class WebMentionPlugin {
     // as above, always use the lgoged out token.
     $token = '';
 
-
+    // custom hash used rather than standard nonce to prevent session data polluting the
+    // web mention endpoint. The endpoint needs to remain the same for all users.
     $expire_code = wp_hash( $expire_code . '|' . $action . '|' . $uid . '|' . $token, 'nonce' );
     
     return $expire_code;
