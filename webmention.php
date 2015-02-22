@@ -134,7 +134,7 @@ class WebMentionPlugin {
 
     // fail if invalide endpoint
     if ( false == $is_valid ) {
-      status_header(400);
+      status_header(403);
       echo "invalid endpoint";
       exit;
     }
