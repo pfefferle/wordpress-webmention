@@ -622,21 +622,21 @@ class WebMentionPlugin {
     // $scheme, $host, $path
     extract(parse_url($base));
     // remove  non-directory element from path
-    $path = preg_replace('#/[^/]*$#',  '', $path);
+    $path = preg_replace('#/[^/]*$#', '', $path);
     // destroy path if relative url points to root
-    if ($rel[0] ==  '/') $path = '';
+    if ($rel[0] == '/') $path = '';
     // dirty absolute  URL
-    $abs =  "$host";
+    $abs = "$host";
     // check port
     if (isset($port) && !empty($port))
       $abs .= ":$port";
     // add path + rel
-    $abs .=  "$path/$rel";
+    $abs .= "$path/$rel";
     // replace '//' or '/./' or '/foo/../' with '/'
-    $re =  array('#(/\.?/)#', '#/(?!\.\.)[^/]+/\.\./#');
+    $re = array('#(/\.?/)#', '#/(?!\.\.)[^/]+/\.\./#');
     for ($n=1; $n>0; $abs=preg_replace($re, '/', $abs, -1, $n)) {}
     // absolute URL is ready!
-    return  $scheme.'://'.$abs;
+    return $scheme.'://'.$abs;
   }
 }
 
