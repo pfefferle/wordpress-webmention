@@ -88,7 +88,11 @@ class WebMentionPlugin {
     }
 
     $input = file_get_contents('php://input');
+    $params = array();
     parse_str($input, $params);
+
+    // to handle authentication or sinilar stuff
+    do_action("before_webmention_request");
 
     // plain text header
     header('Content-Type: text/plain; charset=' . get_option('blog_charset'));
@@ -574,26 +578,32 @@ class WebMentionPlugin {
    * The WebMention autodicovery meta-tags
    */
   public static function html_header() {
+    $endpoint = apply_filters("webmention_endpoint", site_url("?webmention=endpoint"));
+
     // backwards compatibility with v0.1
-    echo '<link rel="http://webmention.org/" href="'.site_url("?webmention=endpoint").'" />'."\n";
-    echo '<link rel="webmention" href="'.site_url("?webmention=endpoint").'" />'."\n";
+    echo '<link rel="http://webmention.org/" href="'.$endpoint.'" />'."\n";
+    echo '<link rel="webmention" href="'.$endpoint.'" />'."\n";
   }
 
   /**
    * The WebMention autodicovery http-header
    */
   public static function http_header() {
+    $endpoint = apply_filters("webmention_endpoint", site_url("?webmention=endpoint"));
+
     // backwards compatibility with v0.1
-    header('Link: <'.site_url("?webmention=endpoint").'>; rel="http://webmention.org/"', false);
-    header('Link: <'.site_url("?webmention=endpoint").'>; rel="webmention"', false);
+    header('Link: <'.$endpoint.'>; rel="http://webmention.org/"', false);
+    header('Link: <'.$endpoint.'>; rel="webmention"', false);
   }
 
   /**
    * Generates webfinger/host-meta links
    */
   public static function jrd_links($array) {
-    $array["links"][] = array("rel" => "webmention", "href" => site_url("?webmention=endpoint"));
-    $array["links"][] = array("rel" => "http://webmention.org/", "href" => site_url("?webmention=endpoint"));
+    $endpoint = apply_filters("webmention_endpoint", site_url("?webmention=endpoint"));
+
+    $array["links"][] = array("rel" => "webmention", "href" => $endpoint);
+    $array["links"][] = array("rel" => "http://webmention.org/", "href" => $endpoint);
 
     return $array;
   }
