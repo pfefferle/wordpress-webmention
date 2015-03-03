@@ -5,7 +5,7 @@
  Description: Webmention support for WordPress posts
  Author: pfefferle
  Author URI: http://notizblog.org/
- Version: 2.4.0-beta
+ Version: 2.3.3
 */
 
 // check if class already exists
@@ -90,9 +90,6 @@ class WebMentionPlugin {
     $input = file_get_contents('php://input');
     $params = array();
     parse_str($input, $params);
-
-    // to handle authentication or sinilar stuff
-    do_action("before_webmention_request");
 
     // plain text header
     header('Content-Type: text/plain; charset=' . get_option('blog_charset'));

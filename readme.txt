@@ -3,8 +3,8 @@ Contributors: pfefferle
 Donate link: http://14101978.de
 Tags: webmention, pingback, trackback, linkback
 Requires at least: 2.7
-Tested up to: 3.8
-Stable tag: 2.3.1
+Tested up to: 4.1.1
+Stable tag: 2.3.3
 
 WebMention for WordPress!
 
@@ -57,12 +57,11 @@ If you want to add a more complex request handler, you should take a look at the
 
 Project maintined on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
 
-= 2.4.0 =
+= 2.3.3 =
 
-* added "before_webmention_request" action to implement for example spam filters: <http://indiewebcamp.com/Webmention#Issues>
 * added filter for webmention endpoint (to add/require additional paramaters: <https://github.com/pfefferle/wordpress-webmention/issues/39> or <https://github.com/pfefferle/wordpress-webmention/pull/41>)
 
-= 2.3.3 =
+= 2.3.2 =
 
 * added more params to `webmention_post_send` (props to @snarfed)
 * removed rescedule of webmentions (props to @snarfed)
