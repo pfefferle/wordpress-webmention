@@ -304,7 +304,7 @@ class WebMentionPlugin {
    * @return array the filtert comment types
    */
   public static function comment_types_dropdown($types) {
-    $types['webmention'] = __('Webmentions', 'webmention');
+    $types['webmention'] = __('WebMentions', 'webmention');
 
     return $types;
   }
