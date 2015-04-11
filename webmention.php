@@ -2,7 +2,7 @@
 /*
  Plugin Name: WebMention
  Plugin URI: https://github.com/pfefferle/wordpress-webmention
- Description: Webmention support for WordPress posts
+ Description: WebMention support for WordPress posts
  Author: pfefferle
  Author URI: http://notizblog.org/
  Version: 2.3.3
@@ -87,22 +87,18 @@ class WebMentionPlugin {
       return;
     }
 
-    $input = file_get_contents('php://input');
-    $params = array();
-    parse_str($input, $params);
-
     // plain text header
     header('Content-Type: text/plain; charset=' . get_option('blog_charset'));
 
     // check if source url is transmitted
-    if (!isset($params['source'])) {
+    if (!isset($_POST['source'])) {
       status_header(400);
       echo "'source' is missing";
       exit;
     }
 
     // check if target url is transmitted
-    if (!isset($params['target'])) {
+    if (!isset($_POST['target'])) {
       status_header(400);
       echo "'target' is missing";
       exit;
@@ -110,7 +106,7 @@ class WebMentionPlugin {
 
     // @todo check if target-host matches the blog-host
 
-    $response = wp_remote_get($params['source'], array('timeout' => 100));
+    $response = wp_remote_get($_POST['source'], array('timeout' => 100));
 
     // check if source is accessible
     if (is_wp_error($response)) {
@@ -122,14 +118,14 @@ class WebMentionPlugin {
     $contents = wp_remote_retrieve_body($response);
 
     // check if source really links to target
-    if (!strpos($contents, str_replace(array('http://www.','http://','https://www.','https://'), '', untrailingslashit(preg_replace('/#.*/', '', $params['target']))))) {
+    if (!strpos($contents, str_replace(array('http://www.','http://','https://www.','https://'), '', untrailingslashit(preg_replace('/#.*/', '', $_POST['target']))))) {
       status_header(400);
       echo "Can't find target link.";
       exit;
     }
 
     // be sure to add an "exit;" to the end of your request handler
-    do_action("webmention_request", $params['source'], $params['target'], $contents);
+    do_action("webmention_request", $_POST['source'], $_POST['target'], $contents);
 
     // if no "action" is responsible, return a 404
     status_header(404);
@@ -224,7 +220,7 @@ class WebMentionPlugin {
 
     // check dupes
     global $wpdb;
-    $comments = $wpdb->get_results($wpdb->prepare("SELECT * FROM $wpdb->comments WHERE comment_post_ID = %d AND comment_author_url = %s", $comment_post_ID,  htmlentities($comment_author_url)));
+    $comments = $wpdb->get_results($wpdb->prepare("SELECT * FROM $wpdb->comments WHERE comment_post_ID = %d AND comment_author_url = %s", $comment_post_ID, htmlentities($comment_author_url)));
 
     // check result
     if (!empty($comments)) {
@@ -346,8 +342,9 @@ class WebMentionPlugin {
    */
   public static function publish_post_hook($post_ID) {
     // check if pingbacks are enabled
-    if (get_option('default_pingback_flag'))
+    if (get_option('default_pingback_flag')) {
       add_post_meta($post_ID, '_mentionme', '1', true);
+    }
   }
 
 
@@ -505,41 +502,48 @@ class WebMentionPlugin {
     /** @todo Should use Filter Extension or custom preg_match instead. */
     $parsed_url = parse_url($url);
 
-    if (!isset($parsed_url['host'])) // Not an URL. This should never happen.
+    if (!isset($parsed_url['host'])) { // Not an URL. This should never happen.
       return false;
+    }
 
     // do not search for a WebMention server on our own uploads
     $uploads_dir = wp_upload_dir();
-    if (0 === strpos($url, $uploads_dir['baseurl']))
+    if (0 === strpos($url, $uploads_dir['baseurl'])) {
       return false;
+    }
 
     $response = wp_remote_head($url, array('timeout' => 100, 'httpversion' => '1.0'));
 
-    if (is_wp_error($response))
+    if (is_wp_error($response)) {
       return false;
+    }
 
     // check link header
     if ($links = wp_remote_retrieve_header($response, 'link')) {
       if (is_array($links)) {
         foreach ($links as $link) {
-          if (preg_match("/<(.[^>]+)>;\s+rel\s?=\s?[\"\']?(http:\/\/)?webmention(.org)?\/?[\"\']?/i", $link, $result))
+          if (preg_match("/<(.[^>]+)>;\s+rel\s?=\s?[\"\']?(http:\/\/)?webmention(.org)?\/?[\"\']?/i", $link, $result)) {
             return self::make_url_absolute($url, $result[1]);
+          }
         }
       } else {
-        if (preg_match("/<(.[^>]+)>;\s+rel\s?=\s?[\"\']?(http:\/\/)?webmention(.org)?\/?[\"\']?/i", $links, $result))
+        if (preg_match("/<(.[^>]+)>;\s+rel\s?=\s?[\"\']?(http:\/\/)?webmention(.org)?\/?[\"\']?/i", $links, $result)) {
           return self::make_url_absolute($url, $result[1]);
+        }
       }
     }
 
     // not an (x)html, sgml, or xml page, no use going further
-    if (preg_match('#(image|audio|video|model)/#is', wp_remote_retrieve_header($response, 'content-type')))
+    if (preg_match('#(image|audio|video|model)/#is', wp_remote_retrieve_header($response, 'content-type'))) {
       return false;
+    }
 
     // now do a GET since we're going to look in the html headers (and we're sure its not a binary file)
     $response = wp_remote_get($url, array('timeout' => 100, 'httpversion' => '1.0'));
 
-    if (is_wp_error($response))
+    if (is_wp_error($response)) {
       return false;
+    }
 
     $contents = wp_remote_retrieve_body($response);
 
@@ -652,7 +656,7 @@ endif;
 
 if (!function_exists('get_webmentions_number')) :
 /**
- * Return the Number of Webmentions
+ * Return the Number of WebMentions
  *
  * @param int $post_id The post ID (optional)
  *
