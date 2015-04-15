@@ -10,9 +10,10 @@ WebMention for WordPress!
 
 == Description ==
 
-Enables [WebMention](http://webmention.org/) support for WordPress.
+[vimeo https://vimeo.com/85217592]
+-- Video by [Andy Sylvester](http://andysylvester.com/2014/01/27/working-with-webmention-video/)
 
-WebMention is a simple and modern alternative to the Pingback/Trackback protocol.
+[WebMention](http://webmention.org/) is a simple and modern alternative to the Pingback/Trackback protocol.
 
 From the [spec](http://webmention.org/):
 
@@ -56,6 +57,10 @@ If you want to add a more complex request handler, you should take a look at the
 == Changelog ==
 
 Project maintined on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
+
+= 2.3.4 =
+
+* some fixes and improvements
 
 = 2.3.3 =
 
