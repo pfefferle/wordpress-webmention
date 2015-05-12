@@ -32,6 +32,7 @@ It’s a modern alternative to Pingback and other forms of Linkback.
 ### How can I send WebMentions ###
 
 Activate sending webmentions by checking the "Attempt to notify any blogs linked to from the article" option on the Settings --> Discussion page in WordPress.
+
 You can use the `send_webmention($source, $target)` function and pass a source and a target or you can fire an action like `do_action('send_webmention', $source, $target)`.
 
 ### How can I handle Homepage-WebMentions ###
