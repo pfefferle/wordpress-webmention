@@ -407,17 +407,20 @@ class WebMentionPlugin {
     // initialize links array
     $links = array();
 
-    // Find all external links in the source
-    // http://daringfireball.net/2010/07/improved_regex_for_matching_urls
-    if ( preg_match_all('/(?xi)\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:\'".,<>?«»“”‘’]))/', $post->post_content, $matches )) {
-
-        // resolve issues with [url](url) type markdown links
-        foreach ($matches[2] as $cntr => $url )
-            if ( !empty($url) )
-                $matches[1][$cntr] = $url;
-
-        $links = $matches[1];
+    // all URL; HTML, Markdown, in-text
+    if (preg_match_all("/\b(?:http|https)\:\/\/?[a-zA-Z0-9\.\/\?\:@\-_=#]+\.[a-zA-Z0-9\.\/\?\:@\-_=#]*/i", $post->post_content, $matches)) {
+        $links = $matches[0];
     }
+
+    // HTML links only
+    //if (preg_match_all("/<a[^>]+href=.(https?:\/\/[^'\"]+)/i", $post->post_content, $matches)) {
+        //$links = $matches[1];
+    //}
+
+    // Markdown links only
+    //if (preg_match_all("/\[([^\[]+)\]\(([^\)]+)\)/i", $post->post_content, $matches)) {
+        //$links = $matches[2];
+    //}
 
     // filter links
     $targets = apply_filters('webmention_links', $links, $post_ID);
