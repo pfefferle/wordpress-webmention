@@ -407,10 +407,20 @@ class WebMentionPlugin {
     // initialize links array
     $links = array();
 
-    // Find all external links in the source
-    if (preg_match_all("/<a[^>]+href=.(https?:\/\/[^'\"]+)/i", $post->post_content, $matches)) {
-      $links = $matches[1];
+    // all URL; HTML, Markdown, in-text
+    if (preg_match_all("/\b(?:http|https)\:\/\/?[a-zA-Z0-9\.\/\?\:@\-_=#]+\.[a-zA-Z0-9\.\/\?\:@\-_=#]*/i", $post->post_content, $matches)) {
+        $links = $matches[0];
     }
+
+    // HTML links only
+    //if (preg_match_all("/<a[^>]+href=.(https?:\/\/[^'\"]+)/i", $post->post_content, $matches)) {
+        //$links = $matches[1];
+    //}
+
+    // Markdown links only
+    //if (preg_match_all("/\[([^\[]+)\]\(([^\)]+)\)/i", $post->post_content, $matches)) {
+        //$links = $matches[2];
+    //}
 
     // filter links
     $targets = apply_filters('webmention_links', $links, $post_ID);
