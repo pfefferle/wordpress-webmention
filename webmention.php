@@ -60,6 +60,8 @@ class WebMentionPlugin {
     add_filter('webmention_title', array('WebMentionPlugin', 'default_title_filter'), 10, 4);
     add_filter('webmention_content', array('WebMentionPlugin', 'default_content_filter'), 10, 4);
     add_action('webmention_request', array('WebMentionPlugin', 'default_request_handler'), 10, 3);
+    add_filter('comment_notification_subject', array('WebMentionPlugin', 'comment_notification_subject'), 9 );
+    add_filter('comment_notification_text', array('WebMentionPlugin', 'comment_notification_text'), 9 );
   }
 
   /**
@@ -649,6 +651,52 @@ class WebMentionPlugin {
     // absolute URL is ready!
     return $scheme.'://'.$abs;
   }
+
+  /**
+   * Filters Comment Notification Subject for Webmentions
+   *
+   * @param string $subject the subject text
+   * @param int    $comment_id Comment ID
+   *
+   * @return string subject
+   */
+  public static function comment_notification_subject($subject, $comment_id) {
+    $comment = get_comment( $comment_id );
+    $post    = get_post( $comment->comment_post_ID );
+    if ( empty( $comment ) )
+       return $subject;
+    if ( $comment->comment_type=="webmention" ) {
+       $subject = sprintf( __('[%1$s] %2$s: "%3$s"'), $blogname, __("WebMention", "WebMention")  , $post->post_title );
+    }
+    return $subject;
+  }
+
+  /**
+   * Filters Comment Notification Text to Display Webmentions
+   *
+   * @param string $notify_message The comment notification email text.
+   * @param int    $comment_id Comment ID
+   *
+   * @return string subject
+   */
+  public static function comment_notification_text($notify_message, $comment_id) {
+    $comment = get_comment( $comment_id );
+    $host = parse_url($comment->comment_author_url, PHP_URL_HOST);
+    // strip leading www, if any
+    $host = preg_replace("/^www\./", "", $host);
+    $post    = get_post( $comment->comment_post_ID );
+    if ( empty( $comment ) )
+       return $notify_message;
+		if ( $comment->comment_type == "webmention" ) {
+       $notify_message  = sprintf( __( 'New WebMention on your post "%s"' ), $post->post_title ) . "\r\n";
+       /* translators: 1: website name, 2: website hostname */
+       $notify_message .= sprintf( __('Website: %1$s (%2$s)'), $comment->comment_author, $host ) . "\r\n";
+       $notify_message .= sprintf( __( 'URL: %s' ), $comment->comment_author_url ) . "\r\n";
+       $notify_message .= sprintf( __('Excerpt: %s' ), "\r\n" . $comment->comment_content) . "\r\n\r\n";
+    }    
+  return $notify_message;
+  } 
+
 }
 
 // end check if class already exists
