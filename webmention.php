@@ -60,7 +60,14 @@ class WebMentionPlugin {
     add_filter('webmention_title', array('WebMentionPlugin', 'default_title_filter'), 10, 4);
     add_filter('webmention_content', array('WebMentionPlugin', 'default_content_filter'), 10, 4);
     add_action('webmention_request', array('WebMentionPlugin', 'default_request_handler'), 10, 3);
+
+    // Update Text to Be Aware of Webmentions
+    add_filter('comment_notification_text', array('WebMentionPlugin', 'comment_notification_text'), 9, 2 );
+    add_filter('comment_moderation_text', array('WebMentionPlugin', 'comment_moderation_text'), 9, 2 );
+    // Update Subject of Notification
+    add_filter('comment_notification_subject', array('WebMentionPlugin', 'comment_notification_subject'), 9, 2 );
   }
+
 
   /**
    * Adds some query vars
@@ -649,6 +656,131 @@ class WebMentionPlugin {
     // absolute URL is ready!
     return $scheme.'://'.$abs;
   }
+
+  /**
+   * Filters Comment Notification Subject for Webmentions
+   *
+   * @param string $subject the subject text
+   * @param int    $comment_id Comment ID
+   *
+   * @return string subject
+   */
+  public static function comment_notification_subject($subject, $comment_id) {
+    $comment = get_comment( $comment_id );
+    $post    = get_post( $comment->comment_post_ID );
+    if ( empty( $comment ) )
+       return $subject;
+    if ( $comment->comment_type=="webmention" ) {
+       $subject = sprintf( __('[%1$s] %2$s: "%3$s"'), $blogname, __("WebMention", "webmention")  , $post->post_title );
+    }
+    return $subject;
+  }
+
+  /**
+   * Outputs the Basic Webmention Details
+   *
+   * @param int    $comment_id Comment_id
+   *
+   * @return string subject
+   */
+  public static function webmention_basic_text($comment_id) {
+    $comment = get_comment($comment_id);
+    $host = parse_url($comment->comment_author_url, PHP_URL_HOST);
+    // strip leading www, if any
+    $host = preg_replace("/^www\./", "", $host);
+    $post    = get_post( $comment->comment_post_ID );
+    $notify_message  = sprintf( __( 'A new webmention on your post "%s"' ), $post->post_title ) . "\r\n";
+    /* translators: 1: website name, 2: website hostname */
+    $notify_message .= sprintf( __('Website: %1$s (%2$s)'), $comment->comment_author, $host ) . "\r\n";
+    $notify_message .= sprintf( __( 'URL: %s' ), $comment->comment_author_url ) . "\r\n";
+    $notify_message .= sprintf( __('Content: %s' ), "\r\n" . $comment->comment_content) . "\r\n\r\n";
+    return $notify_message;
+  }
+
+
+  /**
+   * Filters Comment Notification Text to Display Webmentions
+   *
+   * @param string $notify_message The comment notification email text.
+   * @param int    $comment_id Comment ID
+   *
+   * @return string notify_message
+   */
+  public static function comment_notification_text($notify_message, $comment_id) {
+    $comment = get_comment( $comment_id );
+    if ( empty( $comment ) )
+       return $notify_message;
+		if ( $comment->comment_type == "webmention" ) {
+       $notify_message = self::webmention_basic_text($comment_id);
+       $notify_message .= self::comment_notification($comment_id);
+    }    
+  return $notify_message;
+  }
+
+  /**
+   * Filters Comment Moderation Text to Display Webmentions
+   *
+   * @param string $notify_message The comment moderation email text.
+   * @param int    $comment_id Comment ID
+   *
+   * @return string notify_message
+   */
+  public static function comment_moderation_text($notify_message, $comment_id) {
+    $comment = get_comment( $comment_id );
+    if ( empty( $comment ) )
+       return $notify_message;
+    if ( $comment->comment_type == "webmention" ) {
+       $notify_message = self::webmention_basic_text($comment_id);
+       $notify_message .= self::comment_moderation($comment_id);
+    }
+  return $notify_message;
+  } 
+
+  /**
+   * Standard Comment Notification Moderation Options
+   *
+   * @param object    $comment_id Comment_id
+   *
+   * @return string notify_message
+   */
+  public static function comment_notification($comment_id) {
+    $comment = get_comment($comment_id);
+    $post = get_post($comment->comment_post_ID);
+    if ( user_can( $post->post_author, 'edit_comment', $comment->comment_id ) ) {
+      if ( EMPTY_TRASH_DAYS )
+        $notify_message = sprintf( __('Trash it: %s'), admin_url("comment.php?action=trash&c=$comment->comment_id") ) . "\r\n";
+      else
+        $notify_message = sprintf( __('Delete it: %s'), admin_url("comment.php?action=delete&c=$comment->comment_id") ) . "\r\n";
+        $notify_message .= sprintf( __('Spam it: %s'), admin_url("comment.php?action=spam&c=$comment->comment_id") ) . "\r\n";
+    }
+    return $notify_message;
+  } 
+
+  /**
+   * Standard Comment Notification Moderation Options
+   *
+   * @param int    $comment_id Comment_id
+   *
+   * @return string notify_message
+   */ 
+  public static function comment_moderation($comment_id) {
+    global $wpdb;
+    $comment = get_comment($comment_id);
+    $comments_waiting = $wpdb->get_var("SELECT count(comment_ID) FROM $wpdb->comments WHERE comment_approved = '0'");
+    $notify_message = sprintf( __('Approve it: %s'),  admin_url("comment.php?action=approve&c=$comment_id") ) . "\r\n";
+    if ( EMPTY_TRASH_DAYS )
+        $notify_message .= sprintf( __('Trash it: %s'), admin_url("comment.php?action=trash&c=$comment_id") ) . "\r\n";
+    else
+        $notify_message .= sprintf( __('Delete it: %s'), admin_url("comment.php?action=delete&c=$comment_id") ) . "\r\n";
+    $notify_message .= sprintf( __('Spam it: %s'), admin_url("comment.php?action=spam&c=$comment_id") ) . "\r\n";
+ 
+    $notify_message .= sprintf( _n('Currently %s comment is waiting for approval. Please visit the moderation panel:',
+        'Currently %s comments are waiting for approval. Please visit the moderation panel:', $comments_waiting), number_format_i18n($comments_waiting) ) . "\r\n";
+    $notify_message .= admin_url("edit-comments.php?comment_status=moderated") . "\r\n";
+    return $notify_message; 
+  } 
+
+
 }
 
 // end check if class already exists
