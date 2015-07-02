@@ -592,8 +592,8 @@ class WebMentionPlugin {
     $endpoint = apply_filters("webmention_endpoint", site_url("?webmention=endpoint"));
 
     // backwards compatibility with v0.1
-    echo '<link rel="http://webmention.org/" href="'.$endpoint.'" />'."\n";
-    echo '<link rel="webmention" href="'.$endpoint.'" />'."\n";
+    echo '	<link rel="http://webmention.org/" href="'.$endpoint.'" />'."\n";
+    echo '	<link rel="webmention" href="'.$endpoint.'" />'."\n";
   }
 
   /**
