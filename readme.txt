@@ -4,16 +4,16 @@ Donate link: http://14101978.de
 Tags: webmention, pingback, trackback, linkback
 Requires at least: 2.7
 Tested up to: 4.1.1
-Stable tag: 2.3.3
+Stable tag: 2.4.0
 
 WebMention for WordPress!
 
 == Description ==
 
+[WebMention](http://webmention.org/) is a simple and modern alternative to the Pingback/Trackback protocol.
+
 [vimeo https://vimeo.com/85217592]
 -- Video by [Andy Sylvester](http://andysylvester.com/2014/01/27/working-with-webmention-video/)
-
-[WebMention](http://webmention.org/) is a simple and modern alternative to the Pingback/Trackback protocol.
 
 From the [spec](http://webmention.org/):
 
@@ -59,6 +59,10 @@ If you want to add a more complex request handler, you should take a look at the
 == Changelog ==
 
 Project maintined on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
+
+= 2.4.0 =
+
+* switched to WordPress Coding Standard
 
 = 2.3.4 =
 

@@ -4,16 +4,16 @@
 **Tags:** webmention, pingback, trackback, linkback  
 **Requires at least:** 2.7  
 **Tested up to:** 4.1.1  
-**Stable tag:** 2.3.3  
+**Stable tag:** 2.4.0  
 
 WebMention for WordPress!
 
 ## Description ##
 
+[WebMention](http://webmention.org/) is a simple and modern alternative to the Pingback/Trackback protocol.
+
 [vimeo https://vimeo.com/85217592]
 -- Video by [Andy Sylvester](http://andysylvester.com/2014/01/27/working-with-webmention-video/)
-
-[WebMention](http://webmention.org/) is a simple and modern alternative to the Pingback/Trackback protocol.
 
 From the [spec](http://webmention.org/):
 
@@ -32,7 +32,6 @@ It’s a modern alternative to Pingback and other forms of Linkback.
 ### How can I send WebMentions ###
 
 Activate sending webmentions by checking the "Attempt to notify any blogs linked to from the article" option on the Settings --> Discussion page in WordPress.
-
 You can use the `send_webmention($source, $target)` function and pass a source and a target or you can fire an action like `do_action('send_webmention', $source, $target)`.
 
 ### How can I handle Homepage-WebMentions ###
@@ -59,6 +58,10 @@ If you want to add a more complex request handler, you should take a look at the
 ## Changelog ##
 
 Project maintined on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
+
+### 2.4.0 ###
+
+* switched to WordPress Coding Standard
 
 ### 2.3.4 ###
 
