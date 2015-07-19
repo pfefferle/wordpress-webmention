@@ -46,7 +46,8 @@ class WebMentionPlugin {
 		add_action( 'wp_head', array( 'WebMentionPlugin', 'html_header' ), 99 );
 		add_action( 'send_headers', array( 'WebMentionPlugin', 'http_header' ) );
 		add_filter( 'host_meta', array( 'WebMentionPlugin', 'jrd_links' ) );
-		add_filter( 'webfinger_data', array( 'WebMentionPlugin', 'jrd_links' ) );
+		add_filter( 'webfinger_user_data', array( 'WebMentionPlugin', 'jrd_links' ) );
+		add_filter( 'webfinger_post_data', array( 'WebMentionPlugin', 'jrd_links' ) );
 
 		// run webmentions before the other pinging stuff
 		add_action( 'do_pings', array( 'WebMentionPlugin', 'do_webmentions' ), 5, 1 );
@@ -88,7 +89,7 @@ class WebMentionPlugin {
 		header( 'Content-Type: text/plain; charset=' . get_option( 'blog_charset' ) );
 
 		// check if source url is transmitted
-		if ( ! isset($_POST['source'] ) ) {
+		if ( ! isset( $_POST['source'] ) ) {
 			status_header( 400 );
 			echo '"source" is missing';
 			exit;
@@ -274,7 +275,7 @@ class WebMentionPlugin {
 		} else {
 			$post_formatstrings = get_post_format_strings();
 			// get the "nice" name
-			$post_format = $post_formatstrings[$post_format];
+			$post_format = $post_formatstrings[ $post_format ];
 		}
 
 		$host = parse_url( $source, PHP_URL_HOST );
@@ -318,13 +319,9 @@ class WebMentionPlugin {
 		// use meta-author
 		if ( $meta_tags && is_array( $meta_tags ) && array_key_exists( 'author', $meta_tags ) ) {
 			$title = $meta_tags['author'];
-		}
-		// use title
-		elseif ( preg_match( '/<title>(.+)<\/title>/i', $contents, $match ) ) {
+		} elseif ( preg_match( '/<title>(.+)<\/title>/i', $contents, $match ) ) { // use title
 			$title = trim( $match[1] );
-		}
-		// or host
-		else {
+		} else { // or host
 			$host = parse_url( $source, PHP_URL_HOST );
 
 			// strip leading www, if any
@@ -638,7 +635,7 @@ class WebMentionPlugin {
 		// remove	non-directory element from path
 		$path = preg_replace( '#/[^/]*$#', '', $path );
 		// destroy path if relative url points to root
-		if ( $rel[0] == '/' ) {
+		if ( '/' == $rel[0] ) {
 			$path = '';
 		}
 		// dirty absolute URL
@@ -650,7 +647,7 @@ class WebMentionPlugin {
 		// add path + rel
 		$abs .= "$path/$rel";
 		// replace '//' or '/./' or '/foo/../' with '/'
-		$re = array('#(/\.?/)#', '#/(?!\.\.)[^/]+/\.\./#');
+		$re = array( '#(/\.?/)#', '#/(?!\.\.)[^/]+/\.\./#' );
 		for ( $n = 1; $n > 0; $abs = preg_replace( $re, '/', $abs, -1, $n ) ) { }
 		// absolute URL is ready!
 		return $scheme . '://' . $abs;
