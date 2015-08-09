@@ -121,13 +121,12 @@ class WebMentionPlugin {
 			echo "Can't find target link.";
 			exit;
 		}
+
 		// if it does, get rid of all evil
-		else {
-			if (!function_exists('wp_kses_post')) {
-				include_once(ABSPATH . 'wp-includes/kses.php');
-			}
-			$contents = wp_kses_post( $contents );
+		if ( ! function_exists( 'wp_kses_post' ) ) {
+			include_once( ABSPATH . 'wp-includes/kses.php' );
 		}
+		$contents = wp_kses_post( $contents );
 
 		// be sure to add an "exit;" to the end of your request handler
 		do_action( 'webmention_request', $_POST['source'], $_POST['target'], $contents );
@@ -678,7 +677,7 @@ if ( ! function_exists( 'get_webmentions_number' ) ) :
 
 		$args = array(
 			'post_id' => $post->ID,
-			'type'		=> $comment_type,
+			'type'	=> $comment_type,
 			'count'	 => true,
 			'status'	=> 'approve',
 		);
