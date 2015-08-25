@@ -3,7 +3,7 @@
 **Donate link:** http://14101978.de  
 **Tags:** webmention, pingback, trackback, linkback  
 **Requires at least:** 2.7  
-**Tested up to:** 4.1.1  
+**Tested up to:** 4.3  
 **Stable tag:** 2.4.0  
 
 WebMention for WordPress!
