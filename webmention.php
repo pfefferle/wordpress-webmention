@@ -239,6 +239,7 @@ class WebMentionPlugin {
 		// update or save webmention
 		if ( $comment ) {
 			$commentdata['comment_ID'] = $comment->comment_ID;
+			$commentdata['comment_approved'] = $comment->comment_approved;
 			// save comment
 			wp_update_comment( $commentdata );
 			$comment_ID = $comment->comment_ID;
