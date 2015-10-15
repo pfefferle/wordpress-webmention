@@ -230,7 +230,14 @@ class WebMentionPlugin {
 		if ( ! empty( $comments ) ) {
 			$comment = $comments[0];
 		} else {
-			$comment = null;
+			$comments = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $wpdb->comments INNER JOIN $wpdb->commentmeta USING (comme
+nt_ID) WHERE comment_post_ID = %d AND meta_key = '_crossposting_link' AND meta_value = %s", $comment_post_ID, htmlentities( $comment_author_url )
+ ) );
+			if ( ! empty( $comments ) ) {
+				$comment = $comments[0];
+			} else {
+				$comment = null;
+			}
 		}
 
 		// disable flood control
