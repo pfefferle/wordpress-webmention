@@ -116,7 +116,7 @@ class WebMentionPlugin {
 		$contents = wp_remote_retrieve_body( $response );
 
 		// check if source really links to target
-		if ( ! strpos( $contents, str_replace( array( 'http://www.', 'http://', 'https://www.', 'https://' ), '', untrailingslashit( preg_replace( '/#.*/', '', $_POST['target'] ) ) ) ) ) {
+		if ( ! strpos( htmlspecialchars_decode($contents), str_replace( array( 'http://www.', 'http://', 'https://www.', 'https://' ), '', untrailingslashit( preg_replace( '/#.*/', '', $_POST['target'] ) ) ) ) ) {
 			status_header( 400 );
 			echo "Can't find target link.";
 			exit;
