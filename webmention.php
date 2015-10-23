@@ -26,6 +26,14 @@ function send_webmention( $source, $target ) {
 // initialize plugin
 add_action( 'init', array( 'WebMentionPlugin', 'init' ) );
 
+if ( ! defined( 'WEBMENTION_COMMENT_APPROVE' ) ) {
+	define( 'WEBMENTION_COMMENT_APPROVE', 0 );
+}
+
+if ( ! defined( 'WEBMENTION_COMMENT_TYPE' ) ) {
+	define( 'WEBMENTION_COMMENT_TYPE', 'webmention' );
+}
+
 /**
  * WebMention Plugin Class
  *
@@ -213,12 +221,10 @@ class WebMentionPlugin {
 		$comment_content = wp_slash( $content );
 
 		// change this if your theme can't handle the WebMentions comment type
-		$webmention_comment_type = defined( 'WEBMENTION_COMMENT_TYPE' ) ? WEBMENTION_COMMENT_TYPE : 'webmention';
-		$comment_type = apply_filters( 'webmention_comment_type', $webmention_comment_type );
+		$comment_type = apply_filters( 'webmention_comment_type', WEBMENTION_COMMENT_TYPE );
 
 		// change this if you want to auto approve your WebMentions
-		$webmention_comment_approve = defined( 'WEBMENTION_COMMENT_APPROVE' ) ? WEBMENTION_COMMENT_APPROVE : 0;
-		$comment_approved = apply_filters( 'webmention_comment_approve', $webmention_comment_approve );
+		$comment_approved = apply_filters( 'webmention_comment_approve', WEBMENTION_COMMENT_APPROVE );
 
 		// filter the parent id
 		$comment_parent = apply_filters( 'webmention_comment_parent', null, $target );
