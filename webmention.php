@@ -70,6 +70,7 @@ class WebMentionPlugin {
 		// default handlers
 		add_filter( 'webmention_title', array( 'WebMentionPlugin', 'default_title_filter' ), 10, 4 );
 		add_filter( 'webmention_content', array( 'WebMentionPlugin', 'default_content_filter' ), 10, 4 );
+		add_filter( 'webmention_check_dupes', array( 'WebMentionPlugin', 'check_dupes' ), 10, 2 );
 		add_action( 'webmention_request', array( 'WebMentionPlugin', 'default_request_handler' ), 10, 3 );
 	}
 
@@ -234,15 +235,7 @@ class WebMentionPlugin {
 		$commentdata = compact( 'comment_post_ID', 'comment_author', 'comment_author_url', 'comment_author_email', 'comment_content', 'comment_type', 'comment_parent', 'comment_approved' );
 
 		// check dupes
-		global $wpdb;
-		$comments = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $wpdb->comments WHERE comment_post_ID = %d AND comment_author_url = %s", $comment_post_ID, htmlentities( $comment_author_url ) ) );
-
-		// check result
-		if ( ! empty( $comments ) ) {
-			$comment = $comments[0];
-		} else {
-			$comment = null;
-		}
+		$comment = apply_filters( 'webmention_check_dupes', null, $commentdata );
 
 		// disable flood control
 		remove_filter( 'check_comment_flood', 'check_comment_flood_db', 10, 3 );
@@ -305,6 +298,41 @@ class WebMentionPlugin {
 		$content = sprintf( __( 'This %s was mentioned on <a href="%s">%s</a>', 'webmention' ), $post_format, esc_url( $source ), $host );
 
 		return $content;
+	}
+
+	/**
+	 * Check if a comment already exists
+	 *
+	 * @param  array      $comment     the filtered comment
+	 * @param  array      $commentdata the comment, created for the webmention data
+	 *
+	 * @return array|null              the dupe or null
+	 */
+	public static function check_dupes( $comment, $commentdata ) {
+		global $wpdb;
+
+		// check if comment is already set
+		$comments = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $wpdb->comments WHERE comment_post_ID = %d AND comment_author_url = %s", $commentdata['comment_post_ID'], htmlentities( $commentdata['comment_author_url'] ) ) );
+
+		// check result
+		if ( ! empty( $comments ) ) {
+			error_log( print_r( $comments, true ) . PHP_EOL, 3, dirname( __FILE__ ) . '/log.txt' );
+
+			return $comments[0];
+		}
+
+		// check comments sent via salmon are also dupes
+		// or anyone else who can't use comment_author_url as the original link,
+		// but can use a _crossposting_link meta value.
+		// @link https://github.com/pfefferle/wordpress-salmon/blob/master/plugin.php#L192
+		$comments = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $wpdb->comments INNER JOIN $wpdb->commentmeta USING (comment_ID) WHERE comment_post_ID = %d AND meta_key = '_crossposting_link' AND meta_value = %s", $commentdata['comment_post_ID'], htmlentities( $commentdata['comment_author_url'] ) ) );
+
+		// check result
+		if ( ! empty( $comments ) ) {
+			return $comments[0];
+		}
+
+		return null;
 	}
 
 	/**
