@@ -51,6 +51,8 @@ class WebMentionPlugin {
 		add_filter( 'query_vars', array( 'WebMentionPlugin', 'query_var' ) );
 		add_action( 'parse_query', array( 'WebMentionPlugin', 'parse_query' ) );
 
+		// admin settings
+		add_action( 'admin_init', array( 'WebMentionPlugin', 'admin_register_settings' ) );
 		add_action( 'admin_comment_types_dropdown', array( 'WebMentionPlugin', 'comment_types_dropdown' ) );
 
 		// endpoint discovery
@@ -359,7 +361,6 @@ class WebMentionPlugin {
 		}
 	}
 
-
 	/**
 	 * Send WebMentions
 	 *
@@ -370,8 +371,15 @@ class WebMentionPlugin {
 	 * @return array of results including HTTP headers
 	 */
 	public static function send_webmention( $source, $target, $post_ID = null ) {
-		// stop selfpings
-		if ( $source == $target ) {
+		// stop selfpings on the same URL
+		if ( ( get_option( 'webmention_disable_selfpings_same_url' ) === '1' ) &&
+			 ( $source === $target ) ) {
+			return false;
+		}
+
+		// stop selfpings on the same domain
+		if ( ( get_option( 'webmention_disable_selfpings_same_domain' ) === '1' ) &&
+			 ( parse_url( $source, PHP_URL_HOST ) === parse_url( $target, PHP_URL_HOST ) ) ) {
 			return false;
 		}
 
@@ -667,6 +675,39 @@ class WebMentionPlugin {
 		for ( $n = 1; $n > 0; $abs = preg_replace( $re, '/', $abs, -1, $n ) ) { }
 		// absolute URL is ready!
 		return $scheme . '://' . $abs;
+	}
+
+	/**
+	 * Register WebMention admin settings.
+	 */
+	public static function admin_register_settings() {
+		register_setting( 'discussion', 'webmention_disable_selfpings_same_url' );
+		register_setting( 'discussion', 'webmention_disable_selfpings_same_domain' );
+
+		add_settings_field( 'webmention_disucssion_settings', __( 'WebMention Settings', 'webmention' ), array( 'WebMentionPlugin', 'discussion_settings' ), 'discussion', 'default' );
+	}
+
+	/**
+	 * Add WebMention options to the WordPress discussion settings page.
+	 */
+	public static function discussion_settings () {
+?>
+	<fieldset>
+		<label for="webmention_disable_selfpings_same_url">
+			<input type="checkbox" name="webmention_disable_selfpings_same_url" id="webmention_disable_selfpings_same_url" value="1" <?php
+				echo checked( true, get_option( 'webmention_disable_selfpings_same_url' ) );  ?> />
+			<?php _e( 'Disable self-pings on the same URL <small>(for example "http://example.com/?p=123")</small>', 'webmention' ) ?>
+		</label>
+
+		<br />
+
+		<label for="webmention_disable_selfpings_same_domain">
+			<input type="checkbox" name="webmention_disable_selfpings_same_domain" id="webmention_disable_selfpings_same_domain" value="1" <?php
+				echo checked( true, get_option( 'webmention_disable_selfpings_same_domain' ) );  ?> />
+			<?php _e( 'Disable self-pings on the same Domain <small>(for example "example.com")</small>', 'webmention' ) ?>
+		</label>
+	</fieldset>
+<?php
 	}
 }
 
