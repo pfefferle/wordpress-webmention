@@ -1,12 +1,15 @@
 <?php
-/*
- Plugin Name: WebMention
- Plugin URI: https://github.com/pfefferle/wordpress-webmention
- Description: WebMention support for WordPress posts
- Author: pfefferle
- Author URI: http://notizblog.org/
- Version: 2.4.0
-*
+/**
+ * Plugin Name: WebMention
+ * Plugin URI: https://github.com/pfefferle/wordpress-webmention
+ * Description: WebMention support for WordPress posts
+ * Author: pfefferle
+ * Author URI: http://notizblog.org/
+ * Version: 2.4.0
+ * License: MIT
+ * License URI: http://opensource.org/licenses/MIT
+ * Text Domain: webmention
+ */
 
 /**
  * A wrapper for WebMentionPlugin::send_webmention
@@ -116,7 +119,7 @@ class WebMentionPlugin {
 		$contents = wp_remote_retrieve_body( $response );
 
 		// check if source really links to target
-		if ( ! strpos( htmlspecialchars_decode($contents), str_replace( array( 'http://www.', 'http://', 'https://www.', 'https://' ), '', untrailingslashit( preg_replace( '/#.*/', '', $_POST['target'] ) ) ) ) ) {
+		if ( ! strpos( htmlspecialchars_decode( $contents ), str_replace( array( 'http://www.', 'http://', 'https://www.', 'https://' ), '', untrailingslashit( preg_replace( '/#.*/', '', $_POST['target'] ) ) ) ) ) {
 			status_header( 400 );
 			echo "Can't find target link.";
 			exit;
@@ -321,7 +324,7 @@ class WebMentionPlugin {
 	 * @return string the filtered title
 	 */
 	public static function default_title_filter( $title, $contents, $target, $source ) {
-		$meta_tags = @get_meta_tags( $source );
+		$meta_tags = get_meta_tags( $source );
 
 		// use meta-author
 		if ( $meta_tags && is_array( $meta_tags ) && array_key_exists( 'author', $meta_tags ) ) {
@@ -559,7 +562,7 @@ class WebMentionPlugin {
 		libxml_use_internal_errors( true );
 
 		$doc = new DOMDocument();
-		@$doc->loadHTML( $contents );
+		$doc->loadHTML( $contents );
 
 		$xpath = new DOMXPath( $doc );
 

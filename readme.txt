@@ -5,6 +5,8 @@ Tags: webmention, pingback, trackback, linkback
 Requires at least: 2.7
 Tested up to: 4.3
 Stable tag: 2.4.0
+License: MIT
+License URI: http://opensource.org/licenses/MIT
 
 WebMention for WordPress!
 
@@ -59,6 +61,10 @@ If you want to add a more complex request handler, you should take a look at the
 == Changelog ==
 
 Project maintined on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
+
+= 2.x.x =
+
+
 
 = 2.4.0 =
 
