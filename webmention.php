@@ -423,6 +423,7 @@ class WebMentionPlugin {
 		);
 
 		if ( $webmention_server_url ) {
+			static::debug('Sending webmention to: ' .$webmention_server_url . ' as: ' . $args['body']);
 			$response = wp_remote_post( $webmention_server_url, $args );
 
 			// use the response to do something usefull
@@ -736,6 +737,17 @@ class WebMentionPlugin {
 		</label>
 	</fieldset>
 <?php
+	}
+
+	/**
+	 *
+	 */
+	public static function debug( $message) {
+		if (is_object($message) || is_array($message))
+			$message = json_encode($message);
+
+		if ( defined('WP_DEBUG') && WP_DEBUG == true )
+			error_log ( $message );
 	}
 }
 
