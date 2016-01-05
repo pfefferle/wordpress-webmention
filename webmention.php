@@ -65,6 +65,12 @@ class WebMentionPlugin {
 		// run webmentions before the other pinging stuff
 		add_action( 'do_pings', array( 'WebMentionPlugin', 'do_webmentions' ), 5, 1 );
 
+		$statuses = array ('new', 'draft', 'auto-draft', 'pending', 'private', 'future' );
+		foreach ($statuses as $status) {
+			add_action("{$status}_to_publish", array( 'WebMentionPlugin', 'publish_post_hook' ));
+		}
+		add_action( 'publish_future_post', array('WebMentionPlugin', 'publish_post_hook'));
+
 		add_action( 'publish_post', array( 'WebMentionPlugin', 'publish_post_hook' ) );
 
 		// default handlers
