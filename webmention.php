@@ -429,7 +429,7 @@ class WebMentionPlugin {
 		);
 
 		if ( $webmention_server_url ) {
-			static::debug('Sending webmention to: ' .$webmention_server_url . ' as: ' . $args['body']);
+			self::debug('Sending webmention to: ' .$webmention_server_url . ' as: ' . $args['body']);
 			$response = wp_remote_post( $webmention_server_url, $args );
 
 			// use the response to do something usefull
