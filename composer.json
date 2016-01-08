@@ -1,0 +1,14 @@
+{
+    "name": "pfefferle/wordpress-webmention",
+    "description": "A WebMention plugin for WordPress http://wordpress.org/plugins/webmention/",
+    "require": {
+        "php": ">=5.2.0",
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Matthias Pfefferle",
+            "homepage": "http://notizblog.org"
+        }
+    ]
+}

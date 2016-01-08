@@ -65,6 +65,12 @@ class WebMentionPlugin {
 		// run webmentions before the other pinging stuff
 		add_action( 'do_pings', array( 'WebMentionPlugin', 'do_webmentions' ), 5, 1 );
 
+		$statuses = array ('new', 'draft', 'auto-draft', 'pending', 'private', 'future' );
+		foreach ($statuses as $status) {
+			add_action("{$status}_to_publish", array( 'WebMentionPlugin', 'publish_post_hook' ));
+		}
+		add_action( 'publish_future_post', array('WebMentionPlugin', 'publish_post_hook'));
+
 		add_action( 'publish_post', array( 'WebMentionPlugin', 'publish_post_hook' ) );
 
 		// default handlers
@@ -423,6 +429,7 @@ class WebMentionPlugin {
 		);
 
 		if ( $webmention_server_url ) {
+			self::debug('Sending webmention to: ' .$webmention_server_url . ' as: ' . $args['body']);
 			$response = wp_remote_post( $webmention_server_url, $args );
 
 			// use the response to do something usefull
@@ -736,6 +743,17 @@ class WebMentionPlugin {
 		</label>
 	</fieldset>
 <?php
+	}
+
+	/**
+	 *
+	 */
+	public static function debug( $message) {
+		if (is_object($message) || is_array($message))
+			$message = json_encode($message);
+
+		if ( defined('WP_DEBUG') && WP_DEBUG == true )
+			error_log ( $message );
 	}
 }
 
