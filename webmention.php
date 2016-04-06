@@ -71,7 +71,7 @@ class WebMentionPlugin {
 		add_filter( 'webmention_title', array( 'WebMentionPlugin', 'default_title_filter' ), 10, 4 );
 		add_filter( 'webmention_content', array( 'WebMentionPlugin', 'default_content_filter' ), 10, 4 );
 		add_filter( 'webmention_check_dupes', array( 'WebMentionPlugin', 'check_dupes' ), 10, 2 );
-		add_action( 'webmention_request', array( 'WebMentionPlugin', 'default_request_handler' ), 10, 3 );
+		add_action( 'webmention_request', array( 'WebMentionPlugin', 'synchronous_request_handler' ), 10, 3 );
 	}
 
 	/**
@@ -118,49 +118,62 @@ class WebMentionPlugin {
 
 		// @todo check if target-host matches the blog-host
 
-		$response = wp_remote_get( $_POST['source'], array( 'timeout' => 100 ) );
+    // remove url-scheme
+    $schemeless_target = preg_replace( '/^https?:\/\//i', '', $_POST['target'] );
 
-		// check if source is accessible
-		if ( is_wp_error( $response ) ) {
-			status_header( 400 );
-			echo 'Source URL not found.';
+    // check post with http only
+    $post_ID = url_to_postid( 'http://' . $schemeless_target );
+
+    // if there is no post
+    if ( ! $post_ID ) {
+      // try https url
+      $post_ID = url_to_postid( 'https://' . $schemeless_target );
+    }
+
+    // add some kind of a "default" id to add all
+    // webmentions to a specific post/page
+    $post_ID = apply_filters( 'webmention_post_id', $post_ID, $_POST['target'] );
+
+    // check if post id exists
+    if ( ! $post_ID ) {
+    	status_header( 404 );
+    	echo 'Specified target URL not found.';
 			exit;
-		}
+    }
 
-		$contents = wp_remote_retrieve_body( $response );
+    // check if pings are allowed
+    if ( ! pings_open( $post_ID ) ) {
+      status_header( 403 );
+      echo 'Pings are disabled for this post';
+      exit;
+    }
 
-		// check if source really links to target
-		if ( ! strpos( htmlspecialchars_decode( $contents ), str_replace( array( 'http://www.', 'http://', 'https://www.', 'https://' ), '', untrailingslashit( preg_replace( '/#.*/', '', $_POST['target'] ) ) ) ) ) {
-			status_header( 400 );
-			echo "Can't find target link.";
-			exit;
-		}
+    $post_ID = intval( $post_ID );
+    $post = get_post( $post_ID );
 
-		// if it does, get rid of all evil
-		if ( ! function_exists( 'wp_kses_post' ) ) {
-			include_once( ABSPATH . 'wp-includes/kses.php' );
-		}
-		$contents = wp_kses_post( $contents );
+    // check if post exists
+    if ( ! $post ) {
+      return;
+    }
 
 		// be sure to add an "exit;" to the end of your request handler
-		do_action( 'webmention_request', $_POST['source'], $_POST['target'], $contents );
+		do_action( 'webmention_request', $_POST['source'], $_POST['target'], $post );
 
 		// if no "action" is responsible, return a 404
 		status_header( 404 );
-		echo 'Specified target URL not found.';
-
+		echo 'Webmention Handler Failed.';
 		exit;
 	}
 
 	/**
-	 * Default request handler
+	 * Synchronous request handler
 	 *
 	 * Tries to map a target url to a specific post and generates a simple
 	 * "default" comment.
 	 *
 	 * @param string $source the source url
 	 * @param string $target the target url
-	 * @param string $contents the html code of $source
+	 * @param string $post the post associated with the target
 	 *
 	 * @uses apply_filters calls "webmention_post_id" on the post_ID
 	 * @uses apply_filters calls "webmention_title" on the default comment-title
@@ -175,53 +188,41 @@ class WebMentionPlugin {
 	 * @uses do_action calls "webmention_post" on the comment_ID to be pingback
 	 *	and trackback compatible
 	 */
-	public static function default_request_handler( $source, $target, $contents ) {
-		// remove url-scheme
-		$schemeless_target = preg_replace( '/^https?:\/\//i', '', $target );
+	public static function synchronous_request_handler( $source, $target, $post ) {
 
-		// check post with http only
-		$post_ID = url_to_postid( 'http://' . $schemeless_target );
+    $response = wp_remote_get( $_POST['source'], array( 'timeout' => 100 ) );
 
-		// if there is no post
-		if ( ! $post_ID ) {
-			// try https url
-			$post_ID = url_to_postid( 'https://' . $schemeless_target );
-		}
+    // check if source is accessible
+    if ( is_wp_error( $response ) ) {
+      status_header( 400 );
+      echo 'Source URL not found.';
+      exit;
+    }
+    $remote_source = wp_remote_retrieve_body( $response );
 
-		// add some kind of a "default" id to add all
-		// webmentions to a specific post/page
-		$post_ID = apply_filters( 'webmention_post_id', $post_ID, $target );
-
-		// check if post id exists
-		if ( ! $post_ID ) {
-			return;
-		}
-
-		// check if pings are allowed
-		if ( ! pings_open( $post_ID ) ) {
-			status_header( 403 );
-			echo 'Pings are disabled for this post';
-			exit;
-		}
-
-		$post_ID = intval( $post_ID );
-		$post = get_post( $post_ID );
-
-		// check if post exists
-		if ( ! $post ) {
-			return;
-		}
+    // check if source really links to target
+    if ( ! strpos( htmlspecialchars_decode( $remote_source ), str_replace( array( 'http://www.', 'http://', 'https://www.', 'https://' ), '', untrailingslashit( preg_replace( '/#.*/', '', $_POST['target'] ) ) ) ) ) {
+      status_header( 400 );
+      echo "Source Site Does Not Link to Target.";
+      exit;
+    }
+    // if it does, get rid of all evil
+    if ( ! function_exists( 'wp_kses_post' ) ) {
+      include_once( ABSPATH . 'wp-includes/kses.php' );
+    }
+		$remote_source_original = $remote_source;
+    $remote_source = wp_kses_post( $remote_source );
 
 		// filter title or content of the comment
-		$title = apply_filters( 'webmention_title', '', $contents, $target, $source );
-		$content = apply_filters( 'webmention_content', '', $contents, $target, $source );
+		$title = apply_filters( 'webmention_title', '', $remote_source, $target, $source );
+		$remote_source = apply_filters( 'webmention_content', '', $remote_source, $target, $source );
 
 		// generate comment
 		$comment_post_ID = (int) $post->ID;
 		$comment_author = wp_slash( $title );
 		$comment_author_email = '';
 		$comment_author_url = esc_url_raw( $source );
-		$comment_content = wp_slash( $content );
+		$comment_content = wp_slash( $remote_source );
 
 		// change this if your theme can't handle the WebMentions comment type
 		$comment_type = apply_filters( 'webmention_comment_type', WEBMENTION_COMMENT_TYPE );
@@ -232,7 +233,7 @@ class WebMentionPlugin {
 		// filter the parent id
 		$comment_parent = apply_filters( 'webmention_comment_parent', null, $target );
 
-		$commentdata = compact( 'comment_post_ID', 'comment_author', 'comment_author_url', 'comment_author_email', 'comment_content', 'comment_type', 'comment_parent', 'comment_approved' );
+		$commentdata = compact( 'comment_post_ID', 'comment_author', 'comment_author_url', 'comment_author_email', 'comment_content', 'comment_type', 'comment_parent', 'comment_approved', 'remote_source', 'remote_source_original' );
 
 		// check dupes
 		$comment = apply_filters( 'webmention_check_dupes', null, $commentdata );
@@ -310,10 +311,18 @@ class WebMentionPlugin {
 	 */
 	public static function check_dupes( $comment, $commentdata ) {
 		global $wpdb;
-
-		// check if comment is already set
-		$comments = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $wpdb->comments WHERE comment_post_ID = %d AND comment_author_url = %s", $commentdata['comment_post_ID'], htmlentities( $commentdata['comment_author_url'] ) ) );
-
+		global $wp_version;
+		if ( $wp_version >= 4.4 ) {
+			// check if comment is already set
+			$comments = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $wpdb->comments WHERE comment_post_ID = %d AND comment_author_url = %s", $commentdata['comment_post_ID'], htmlentities( $commentdata['comment_author_url'] ) ) );
+		}
+		else {
+			$args = array( 
+						'comment_post_ID' => $commentdata['comment_post_ID'],
+						'author_url' => htmlentities( $commentdata['comment_author_url'] )
+			);
+			$comments = get_comments( $args );
+		}
 		// check result
 		if ( ! empty( $comments ) ) {
 			error_log( print_r( $comments, true ) . PHP_EOL, 3, dirname( __FILE__ ) . '/log.txt' );
@@ -325,7 +334,19 @@ class WebMentionPlugin {
 		// or anyone else who can't use comment_author_url as the original link,
 		// but can use a _crossposting_link meta value.
 		// @link https://github.com/pfefferle/wordpress-salmon/blob/master/plugin.php#L192
-		$comments = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $wpdb->comments INNER JOIN $wpdb->commentmeta USING (comment_ID) WHERE comment_post_ID = %d AND meta_key = '_crossposting_link' AND meta_value = %s", $commentdata['comment_post_ID'], htmlentities( $commentdata['comment_author_url'] ) ) );
+ 		if ( $wp_version >= 4.4 ) {
+			$comments = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $wpdb->comments INNER JOIN $wpdb->commentmeta USING (comment_ID) WHERE comment_post_ID = %d AND meta_key = '_crossposting_link' AND meta_value = %s", $commentdata['comment_post_ID'], htmlentities( $commentdata['comment_author_url'] ) ) );
+		}
+		else { 
+      $args = array(
+            'comment_post_ID' => $commentdata['comment_post_ID'],
+            'author_url' => htmlentities( $commentdata['comment_author_url'] ),
+						'meta_key' => '_crossposting_link',
+						'meta_value' => $commentdata['comment_author_url']
+      );
+      $comments = get_comments( $args );
+    }
+
 
 		// check result
 		if ( ! empty( $comments ) ) {
