@@ -118,43 +118,43 @@ class WebMentionPlugin {
 
 		// @todo check if target-host matches the blog-host
 
-    // remove url-scheme
-    $schemeless_target = preg_replace( '/^https?:\/\//i', '', $_POST['target'] );
+		// remove url-scheme
+		$schemeless_target = preg_replace( '/^https?:\/\//i', '', $_POST['target'] );
 
-    // check post with http only
-    $post_ID = url_to_postid( 'http://' . $schemeless_target );
+		// check post with http only
+		$post_ID = url_to_postid( 'http://' . $schemeless_target );
 
-    // if there is no post
-    if ( ! $post_ID ) {
-      // try https url
-      $post_ID = url_to_postid( 'https://' . $schemeless_target );
-    }
+		// if there is no post
+		if ( ! $post_ID ) {
+			// try https url
+			$post_ID = url_to_postid( 'https://' . $schemeless_target );
+		}
 
-    // add some kind of a "default" id to add all
-    // webmentions to a specific post/page
-    $post_ID = apply_filters( 'webmention_post_id', $post_ID, $_POST['target'] );
+		// add some kind of a "default" id to add all
+		// webmentions to a specific post/page
+		$post_ID = apply_filters( 'webmention_post_id', $post_ID, $_POST['target'] );
 
-    // check if post id exists
-    if ( ! $post_ID ) {
-    	status_header( 404 );
-    	echo 'Specified target URL not found.';
+		// check if post id exists
+		if ( ! $post_ID ) {
+			status_header( 404 );
+			echo 'Specified target URL not found.';
 			exit;
-    }
+		}
 
-    // check if pings are allowed
-    if ( ! pings_open( $post_ID ) ) {
-      status_header( 403 );
-      echo 'Pings are disabled for this post';
-      exit;
-    }
+		// check if pings are allowed
+		if ( ! pings_open( $post_ID ) ) {
+			status_header( 403 );
+			echo 'Pings are disabled for this post';
+			exit;
+		}
 
-    $post_ID = intval( $post_ID );
-    $post = get_post( $post_ID );
+		$post_ID = intval( $post_ID );
+		$post = get_post( $post_ID );
 
-    // check if post exists
-    if ( ! $post ) {
-      return;
-    }
+		// check if post exists
+		if ( ! $post ) {
+			return;
+		}
 
 		// be sure to add an "exit;" to the end of your request handler
 		do_action( 'webmention_request', $_POST['source'], $_POST['target'], $post );
@@ -190,28 +190,28 @@ class WebMentionPlugin {
 	 */
 	public static function synchronous_request_handler( $source, $target, $post ) {
 
-    $response = wp_remote_get( $_POST['source'], array( 'timeout' => 100 ) );
+		$response = wp_remote_get( $_POST['source'], array( 'timeout' => 100 ) );
 
-    // check if source is accessible
-    if ( is_wp_error( $response ) ) {
-      status_header( 400 );
-      echo 'Source URL not found.';
-      exit;
-    }
-    $remote_source = wp_remote_retrieve_body( $response );
+		// check if source is accessible
+		if ( is_wp_error( $response ) ) {
+			status_header( 400 );
+			echo 'Source URL not found.';
+			exit;
+		}
+		$remote_source = wp_remote_retrieve_body( $response );
 
-    // check if source really links to target
-    if ( ! strpos( htmlspecialchars_decode( $remote_source ), str_replace( array( 'http://www.', 'http://', 'https://www.', 'https://' ), '', untrailingslashit( preg_replace( '/#.*/', '', $_POST['target'] ) ) ) ) ) {
-      status_header( 400 );
-      echo "Source Site Does Not Link to Target.";
-      exit;
-    }
-    // if it does, get rid of all evil
-    if ( ! function_exists( 'wp_kses_post' ) ) {
-      include_once( ABSPATH . 'wp-includes/kses.php' );
-    }
+		// check if source really links to target
+		if ( ! strpos( htmlspecialchars_decode( $remote_source ), str_replace( array( 'http://www.', 'http://', 'https://www.', 'https://' ), '', untrailingslashit( preg_replace( '/#.*/', '', $_POST['target'] ) ) ) ) ) {
+			status_header( 400 );
+			echo 'Source Site Does Not Link to Target.';
+			exit;
+		}
+		// if it does, get rid of all evil
+		if ( ! function_exists( 'wp_kses_post' ) ) {
+			include_once( ABSPATH . 'wp-includes/kses.php' );
+		}
 		$remote_source_original = $remote_source;
-    $remote_source = wp_kses_post( $remote_source );
+		$remote_source = wp_kses_post( $remote_source );
 
 		// filter title or content of the comment
 		$title = apply_filters( 'webmention_title', '', $remote_source, $target, $source );
@@ -315,11 +315,10 @@ class WebMentionPlugin {
 		if ( $wp_version >= 4.4 ) {
 			// check if comment is already set
 			$comments = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $wpdb->comments WHERE comment_post_ID = %d AND comment_author_url = %s", $commentdata['comment_post_ID'], htmlentities( $commentdata['comment_author_url'] ) ) );
-		}
-		else {
-			$args = array( 
+		} else {
+			$args = array(
 						'comment_post_ID' => $commentdata['comment_post_ID'],
-						'author_url' => htmlentities( $commentdata['comment_author_url'] )
+						'author_url' => htmlentities( $commentdata['comment_author_url'] ),
 			);
 			$comments = get_comments( $args );
 		}
@@ -334,19 +333,17 @@ class WebMentionPlugin {
 		// or anyone else who can't use comment_author_url as the original link,
 		// but can use a _crossposting_link meta value.
 		// @link https://github.com/pfefferle/wordpress-salmon/blob/master/plugin.php#L192
- 		if ( $wp_version >= 4.4 ) {
+		if ( $wp_version >= 4.4 ) {
 			$comments = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $wpdb->comments INNER JOIN $wpdb->commentmeta USING (comment_ID) WHERE comment_post_ID = %d AND meta_key = '_crossposting_link' AND meta_value = %s", $commentdata['comment_post_ID'], htmlentities( $commentdata['comment_author_url'] ) ) );
-		}
-		else { 
-      $args = array(
-            'comment_post_ID' => $commentdata['comment_post_ID'],
-            'author_url' => htmlentities( $commentdata['comment_author_url'] ),
+		} else {
+			$args = array(
+			'comment_post_ID' => $commentdata['comment_post_ID'],
+			'author_url' => htmlentities( $commentdata['comment_author_url'] ),
 						'meta_key' => '_crossposting_link',
-						'meta_value' => $commentdata['comment_author_url']
-      );
-      $comments = get_comments( $args );
-    }
-
+						'meta_value' => $commentdata['comment_author_url'],
+			);
+			$comments = get_comments( $args );
+		}
 
 		// check result
 		if ( ! empty( $comments ) ) {
