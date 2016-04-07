@@ -159,8 +159,8 @@ class WebMentionPlugin {
 		// be sure to add an "exit;" to the end of your request handler
 		do_action( 'webmention_request', $_POST['source'], $_POST['target'], $post );
 
-		// if no "action" is responsible, return a 404
-		status_header( 404 );
+		// if no "action" is responsible, return a 500
+		status_header( 500 );
 		echo 'Webmention Handler Failed.';
 		exit;
 	}
