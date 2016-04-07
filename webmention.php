@@ -248,9 +248,13 @@ class WebMentionPlugin {
 			// save comment
 			wp_update_comment( $commentdata );
 			$comment_ID = $comment->comment_ID;
+
+	    do_action( 'webmention_update', $comment_ID, $commentdata );
 		} else {
 			// save comment
 			$comment_ID = wp_new_comment( $commentdata );
+
+	    do_action( 'webmention_post', $comment_ID, $commentdata );
 		}
 
 		// re-add flood control
@@ -262,7 +266,6 @@ class WebMentionPlugin {
 		// render a simple and customizable text output
 		echo apply_filters( 'webmention_success_message', get_comment_link( $comment_ID ) );
 
-		do_action( 'webmention_post', $comment_ID );
 		exit;
 	}
 
