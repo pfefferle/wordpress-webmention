@@ -71,7 +71,7 @@ class WebMentionPlugin {
 		add_filter( 'webmention_title', array( 'WebMentionPlugin', 'default_title_filter' ), 10, 4 );
 		add_filter( 'webmention_content', array( 'WebMentionPlugin', 'default_content_filter' ), 10, 4 );
 		add_filter( 'webmention_check_dupes', array( 'WebMentionPlugin', 'check_dupes' ), 10, 2 );
-		add_filter( 'webmention_source_verify', array( 'WebMentionPlugin', 'source_verify' ), 10, 2 );
+		add_filter( 'webmention_source_verify', array( 'WebMentionPlugin', 'source_verify' ), 10, 4 );
 		add_action( 'webmention_request', array( 'WebMentionPlugin', 'synchronous_request_handler' ), 10, 3 );
 	}
 
@@ -177,6 +177,7 @@ class WebMentionPlugin {
 	 * @param string $post the post associated with the target
 	 *
 	 * @uses apply_filters calls "webmention_post_id" on the post_ID
+	* @uses apply_filters calls "webmention_source_verify" to verify the source links to the targetr
 	 * @uses apply_filters calls "webmention_title" on the default comment-title
 	 * @uses apply_filters calls "webmention_content" on the default comment-content
 	 * @uses apply_filters calls "webmention_comment_type" on the default comment type
@@ -186,8 +187,9 @@ class WebMentionPlugin {
 	 * @uses apply_filters calls "webmention_comment_parent" to add a parent comment-id
 	 * @uses apply_filters calls "webmention_success_header" on the default response
 	 *	header
-	 * @uses do_action calls "webmention_post" on the comment_ID to be pingback
-	 *	and trackback compatible
+	 * @uses do_action calls "webmention_post" on the comment_ID and commentdata to match pingback
+	 *	and trackback
+	 * @uses do_action calls "webmention_update" on the comment_ID and commentdata when the webmention is being updated
 	 */
 	public static function synchronous_request_handler( $source, $target, $post ) {
 
@@ -201,7 +203,7 @@ class WebMentionPlugin {
 		}
 		// A valid response code from the other server would not be considered an error.
 		$response_code = wp_remote_retrieve_response_code( $response );
-		if ( '200' !== $response_code ) {
+		if ( '200' != $response_code ) {
 			// Error Handler Should End with an Exit. Default handling is below.
 			do_action( 'webmention_retrieve_error', $post, $source, $response_code );
 			status_header( 400 );
@@ -211,7 +213,7 @@ class WebMentionPlugin {
 		}
 		$remote_source = wp_remote_retrieve_body( $response );
 		// check if source really links to the target. Allow for more complex verification using content type
-		if ( ! apply_filters( 'webmention_source_verify', $remote_source, $target, wp_remote_retrieve_header( $response, 'content-type' ) ) ) {
+		if ( ! apply_filters( 'webmention_source_verify', false, $remote_source, $target, wp_remote_retrieve_header( $response, 'content-type' ) ) ) {
 			status_header( 400 );
 			echo 'Source Site Does Not Link to Target.';
 			exit;
@@ -282,13 +284,14 @@ class WebMentionPlugin {
 	/**
 	* Verify Source
 	*
+	* @param boolean $verified Should be false
 	* @param string $remote_source The retrieved source
 	* @param string $target The target URL
 	* @param string $content-type Content Type returned from the request
 	*
 	* @return boolean True if the target URL is in the source
 	*/
-	public static function source_verify($remote_source, $target, $content_type) {
+	public static function source_verify($verified, $remote_source, $target, $content_type) {
 		$remote_source = htmlspecialchars_decode( $remote_source );
 		return strpos( $remote_source, str_replace( array( 'http://www.', 'http://', 'https://www.', 'https://' ), '', untrailingslashit( preg_replace( '/#.*/', '', $target ) ) ) );
 	}
