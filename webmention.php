@@ -228,16 +228,14 @@ class WebMentionPlugin {
 		$remote_source_original = $remote_source;
 		$remote_source = wp_kses_post( $remote_source );
 
-		// filter title or content of the comment
-		$title = apply_filters( 'webmention_title', '', $remote_source, $target, $source );
-		$content = apply_filters( 'webmention_content', '', $remote_source, $target, $source );
-
 		// generate comment
 		$comment_post_ID = (int) $post->ID;
-		$comment_author = wp_slash( $title );
 		$comment_author_email = '';
 		$comment_author_url = esc_url_raw( $source );
-		$comment_content = wp_slash( $content );
+
+		// filter title and content of the comment. Title in a linkback is stored in the author field
+		$comment_author = wp_slash( apply_filters( 'webmention_title', '', $remote_source, $target, $source ) );
+		$comment_content = wp_slash( apply_filters( 'webmention_content', '', $remote_source, $target, $source ) );
 
 		// change this if your theme can't handle the WebMentions comment type
 		$comment_type = apply_filters( 'webmention_comment_type', WEBMENTION_COMMENT_TYPE );
