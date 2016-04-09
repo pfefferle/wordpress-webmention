@@ -661,13 +661,13 @@ class WebMentionPlugin {
 
 		// check <link> elements
 		// checks only head-links
-		foreach ( $xpath->query( '//head/link[contains(concat(" ", @rel, " "), " webmention ") or contains(@rel, "webmention.org")]/@href' ) as $result ) {
+		foreach ( $xpath->query( '//head/link[contains(concat(" ", @rel, " "), " webmention ") or contains(@rel, "webmention.net")]/@href' ) as $result ) {
 			return self::make_url_absolute( $url, $result->value );
 		}
 
 		// check <a> elements
 		// checks only body>a-links
-		foreach ( $xpath->query( '//body//a[contains(concat(" ", @rel, " "), " webmention ") or contains(@rel, "webmention.org")]/@href' ) as $result ) {
+		foreach ( $xpath->query( '//body//a[contains(concat(" ", @rel, " "), " webmention ") or contains(@rel, "webmention.net")]/@href' ) as $result ) {
 			return self::make_url_absolute( $url, $result->value );
 		}
 
@@ -681,7 +681,7 @@ class WebMentionPlugin {
 		$endpoint = apply_filters( 'webmention_endpoint', site_url( '?webmention=endpoint' ) );
 
 		// backwards compatibility with v0.1
-		echo '<link rel="http://webmention.org/" href="' . $endpoint . '" />' . "\n";
+		echo '<link rel="http://webmention.net/" href="' . $endpoint . '" />' . "\n";
 		echo '<link rel="webmention" href="' . $endpoint . '" />' . "\n";
 	}
 
