@@ -1,18 +1,18 @@
 <?php
 /**
- * Plugin Name: WebMention
- * Plugin URI: https://github.com/pfefferle/wordpress-webmention
- * Description: WebMention support for WordPress posts
+ * Plugin Name: Webmention
+ * Plugin URI: https://github.com/pfefferle/wordpress-Webmention
+ * Description: Webmention support for WordPress posts
  * Author: pfefferle
  * Author URI: http://notizblog.org/
  * Version: 2.5.0
  * License: MIT
  * License URI: http://opensource.org/licenses/MIT
- * Text Domain: webmention
+ * Text Domain: Webmention
  */
 
 /**
- * A wrapper for WebMentionPlugin::send_webmention
+ * A wrapper for WebmentionPlugin::send_Webmention
  *
  * @param string $source source url
  * @param string $target target url
@@ -20,11 +20,11 @@
  * @return array of results including HTTP headers
  */
 function send_webmention( $source, $target ) {
-	return WebMentionPlugin::send_webmention( $source, $target );
+	return WebmentionPlugin::send_Webmention( $source, $target );
 }
 
 // initialize plugin
-add_action( 'init', array( 'WebMentionPlugin', 'init' ) );
+add_action( 'init', array( 'WebmentionPlugin', 'init' ) );
 
 if ( ! defined( 'WEBMENTION_COMMENT_APPROVE' ) ) {
 	define( 'WEBMENTION_COMMENT_APPROVE', 0 );
@@ -35,44 +35,44 @@ if ( ! defined( 'WEBMENTION_COMMENT_TYPE' ) ) {
 }
 
 /**
- * WebMention Plugin Class
+ * Webmention Plugin Class
  *
  * @author Matthias Pfefferle
  */
-class WebMentionPlugin {
+class WebmentionPlugin {
 	/**
 	 * Initialize the plugin, registering WordPress hooks
 	 */
 	public static function init() {
 		// a pseudo hook so you can run a do_action('send_webmention')
-		// instead of calling WebMentionPlugin::send_webmention
-		add_action( 'send_webmention', array( 'WebMentionPlugin', 'send_webmention' ), 10, 2 );
+		// instead of calling WebmentionPlugin::send_webmention
+		add_action( 'send_webmention', array( 'WebmentionPlugin', 'send_webmention' ), 10, 2 );
 
-		add_filter( 'query_vars', array( 'WebMentionPlugin', 'query_var' ) );
-		add_action( 'parse_query', array( 'WebMentionPlugin', 'parse_query' ) );
+		add_filter( 'query_vars', array( 'WebmentionPlugin', 'query_var' ) );
+		add_action( 'parse_query', array( 'WebmentionPlugin', 'parse_query' ) );
 
 		// admin settings
-		add_action( 'admin_init', array( 'WebMentionPlugin', 'admin_register_settings' ) );
-		add_action( 'admin_comment_types_dropdown', array( 'WebMentionPlugin', 'comment_types_dropdown' ) );
+		add_action( 'admin_init', array( 'WebmentionPlugin', 'admin_register_settings' ) );
+		add_action( 'admin_comment_types_dropdown', array( 'WebmentionPlugin', 'comment_types_dropdown' ) );
 
 		// endpoint discovery
-		add_action( 'wp_head', array( 'WebMentionPlugin', 'html_header' ), 99 );
-		add_action( 'send_headers', array( 'WebMentionPlugin', 'http_header' ) );
-		add_filter( 'host_meta', array( 'WebMentionPlugin', 'jrd_links' ) );
-		add_filter( 'webfinger_user_data', array( 'WebMentionPlugin', 'jrd_links' ) );
-		add_filter( 'webfinger_post_data', array( 'WebMentionPlugin', 'jrd_links' ) );
+		add_action( 'wp_head', array( 'WebmentionPlugin', 'html_header' ), 99 );
+		add_action( 'send_headers', array( 'WebmentionPlugin', 'http_header' ) );
+		add_filter( 'host_meta', array( 'WebmentionPlugin', 'jrd_links' ) );
+		add_filter( 'webfinger_user_data', array( 'WebmentionPlugin', 'jrd_links' ) );
+		add_filter( 'webfinger_post_data', array( 'WebmentionPlugin', 'jrd_links' ) );
 
-		// run webmentions before the other pinging stuff
-		add_action( 'do_pings', array( 'WebMentionPlugin', 'do_webmentions' ), 5, 1 );
+		// run Webmentions before the other pinging stuff
+		add_action( 'do_pings', array( 'WebmentionPlugin', 'do_Webmentions' ), 5, 1 );
 
-		add_action( 'publish_post', array( 'WebMentionPlugin', 'publish_post_hook' ) );
+		add_action( 'publish_post', array( 'WebmentionPlugin', 'publish_post_hook' ) );
 
 		// default handlers
-		add_filter( 'webmention_title', array( 'WebMentionPlugin', 'default_title_filter' ), 10, 4 );
-		add_filter( 'webmention_content', array( 'WebMentionPlugin', 'default_content_filter' ), 10, 4 );
-		add_filter( 'webmention_check_dupes', array( 'WebMentionPlugin', 'check_dupes' ), 10, 2 );
-		add_filter( 'webmention_source_verify', array( 'WebMentionPlugin', 'source_verify' ), 10, 4 );
-		add_action( 'webmention_request', array( 'WebMentionPlugin', 'synchronous_request_handler' ), 10, 3 );
+		add_filter( 'webmention_title', array( 'WebmentionPlugin', 'default_title_filter' ), 10, 4 );
+		add_filter( 'webmention_content', array( 'WebmentionPlugin', 'default_content_filter' ), 10, 4 );
+		add_filter( 'webmention_check_dupes', array( 'WebmentionPlugin', 'check_dupes' ), 10, 2 );
+		add_filter( 'webmention_source_verify', array( 'WebmentionPlugin', 'source_verify' ), 10, 4 );
+		add_action( 'webmention_request', array( 'WebmentionPlugin', 'synchronous_request_handler' ), 10, 3 );
 	}
 
 	/**
@@ -88,14 +88,14 @@ class WebMentionPlugin {
 	}
 
 	/**
-	 * Parse the WebMention request and render the document
+	 * Parse the Webmention request and render the document
 	 *
 	 * @param WP $wp WordPress request context
 	 *
 	 * @uses do_action() Calls 'webmention_request' on the default request
 	 */
 	public static function parse_query( $wp ) {
-		// check if it is a webmention request or not
+		// check if it is a Webmention request or not
 		if ( ! array_key_exists( 'webmention', $wp->query_vars ) ) {
 			return;
 		}
@@ -132,7 +132,7 @@ class WebMentionPlugin {
 		}
 
 		// add some kind of a "default" id to add all
-		// webmentions to a specific post/page
+		// Webmentions to a specific post/page
 		$post_ID = apply_filters( 'webmention_post_id', $post_ID, $_POST['target'] );
 
 		// check if post id exists
@@ -189,7 +189,7 @@ class WebMentionPlugin {
 	 *	header
 	 * @uses do_action calls "webmention_post" on the comment_ID and commentdata to match pingback
 	 *	and trackback
-	 * @uses do_action calls "webmention_update" on the comment_ID and commentdata when the webmention is being updated
+	 * @uses do_action calls "webmention_update" on the comment_ID and commentdata when the Webmention is being updated
 	 */
 	public static function synchronous_request_handler( $source, $target, $post ) {
 
@@ -237,14 +237,14 @@ class WebMentionPlugin {
 		$comment_author = wp_slash( apply_filters( 'webmention_title', '', $remote_source, $target, $source ) );
 		$comment_content = wp_slash( apply_filters( 'webmention_content', '', $remote_source, $target, $source ) );
 
-		// change this if your theme can't handle the WebMentions comment type
-		$comment_type = apply_filters( 'webmention_comment_type', WEBMENTION_COMMENT_TYPE );
+		// change this if your theme can't handle the Webmentions comment type
+		$comment_type = apply_filters( 'webmention_comment_type', Webmention_COMMENT_TYPE );
 
-		// change this if you want to auto approve your WebMentions
-		$comment_approved = apply_filters( 'webmention_comment_approve', WEBMENTION_COMMENT_APPROVE );
+		// change this if you want to auto approve your Webmentions
+		$comment_approved = apply_filters( 'webmention_comment_approve', Webmention_COMMENT_APPROVE );
 
 		// filter the parent id
-		$comment_parent = apply_filters( 'webmention_comment_parent', null, $target );
+		$comment_parent = apply_filters( 'Webmention_comment_parent', null, $target );
 
 		$commentdata = compact( 'comment_post_ID', 'comment_author', 'comment_author_url', 'comment_author_email', 'comment_content', 'comment_type', 'comment_parent', 'comment_approved', 'remote_source', 'remote_source_original', 'content_type' );
 
@@ -254,7 +254,7 @@ class WebMentionPlugin {
 		// disable flood control
 		remove_filter( 'check_comment_flood', 'check_comment_flood_db', 10, 3 );
 
-		// update or save webmention
+		// update or save Webmention
 		if ( $comment ) {
 			$commentdata['comment_ID'] = $comment->comment_ID;
 			$commentdata['comment_approved'] = $comment->comment_approved;
@@ -262,7 +262,7 @@ class WebMentionPlugin {
 			wp_update_comment( $commentdata );
 			$comment_ID = $comment->comment_ID;
 
-			do_action( 'webmention_update', $comment_ID, $commentdata );
+			do_action( 'Webmention_update', $comment_ID, $commentdata );
 		} else {
 			// save comment
 			$comment_ID = wp_new_comment( $commentdata );
@@ -277,7 +277,7 @@ class WebMentionPlugin {
 		status_header( apply_filters( 'webmention_success_header', 200 ) );
 
 		// render a simple and customizable text output
-		echo apply_filters( 'webmention_success_message', get_comment_link( $comment_ID ) );
+		echo apply_filters( 'Webmention_success_message', get_comment_link( $comment_ID ) );
 
 		exit;
 	}
@@ -338,7 +338,7 @@ class WebMentionPlugin {
 	 * Check if a comment already exists
 	 *
 	 * @param  array      $comment     the filtered comment
-	 * @param  array      $commentdata the comment, created for the webmention data
+	 * @param  array      $commentdata the comment, created for the Webmention data
 	 *
 	 * @return array|null              the dupe or null
 	 */
@@ -388,14 +388,14 @@ class WebMentionPlugin {
 
 	/**
 	 * Extend the "filter by comment type" of in the comments section
-	 * of the admin interface with "webmention"
+	 * of the admin interface with "Webmention"
 	 *
 	 * @param array $types the different comment types
 	 *
 	 * @return array the filtert comment types
 	 */
 	public static function comment_types_dropdown( $types ) {
-		$types['webmention'] = __( 'WebMentions', 'webmention' );
+		$types['webmention'] = __( 'Webmentions', 'Webmention' );
 
 		return $types;
 	}
@@ -429,7 +429,7 @@ class WebMentionPlugin {
 	}
 
 	/**
-	 * Marks the post as "no webmentions sent yet"
+	 * Marks the post as "no Webmentions sent yet"
 	 *
 	 * @param int $post_ID
 	 */
@@ -441,7 +441,7 @@ class WebMentionPlugin {
 	}
 
 	/**
-	 * Send WebMentions
+	 * Send Webmentions
 	 *
 	 * @param string $source source url
 	 * @param string $target target url
@@ -462,7 +462,7 @@ class WebMentionPlugin {
 			return false;
 		}
 
-		// discover the webmention endpoint
+		// discover the Webmention endpoint
 		$webmention_server_url = self::discover_endpoint( $target );
 
 		// if I can't find an endpoint, perhaps you can!
@@ -486,12 +486,12 @@ class WebMentionPlugin {
 	}
 
 	/**
-	 * Send WebMentions if new Post was saved
+	 * Send Webmentions if new Post was saved
 	 *
 	 * You can still hook this function directly into the `publish_post` action:
 	 *
 	 * <code>
-	 *	 add_action('publish_post', array('WebMentionPlugin', 'send_webmentions'));
+	 *	 add_action('publish_post', array('WebmentionPlugin', 'send_webmentions'));
 	 * </code>
 	 *
 	 * @param int $post_ID the post_ID
@@ -516,7 +516,7 @@ class WebMentionPlugin {
 		$targets = array_unique( $targets );
 
 		foreach ( $targets as $target ) {
-			// send webmention
+			// send Webmention
 			$response = self::send_webmention( $source, $target, $post_ID );
 
 			// check response
@@ -539,7 +539,7 @@ class WebMentionPlugin {
 	}
 
 	/**
-	 * Rescedule WebMentions on HTTP code 500
+	 * Rescedule Webmentions on HTTP code 500
 	 *
 	 * @param int $post_ID the post id
 	 */
@@ -569,29 +569,30 @@ class WebMentionPlugin {
 	}
 
 	/**
-	 * Do webmentions
+	 * Do Webmentions
 	 */
 	public static function do_webmentions() {
 		global $wpdb;
 
 		// get all posts that should be "mentioned"
+		// TODO: Replace with WP_Query
 		$mentions = $wpdb->get_results( "SELECT ID, meta_id FROM {$wpdb->posts}, {$wpdb->postmeta} WHERE {$wpdb->posts}.ID = {$wpdb->postmeta}.post_id AND {$wpdb->postmeta}.meta_key = '_mentionme'" );
 
 		// iterate mentions
 		foreach ( $mentions as $mention ) {
 			delete_metadata_by_mid( 'post', $mention->meta_id );
 
-			// send them webmentions
+			// send them Webmentions
 			self::send_webmentions( $mention->ID );
 		}
 	}
 
 	/**
-	 * Finds a WebMention server URI based on the given URL
+	 * Finds a Webmention server URI based on the given URL
 	 *
-	 * Checks the HTML for the rel="http://webmention.org/" link and http://webmention.org/ headers. It does
-	 * a check for the http://webmention.org/ headers first and returns that, if available. The
-	 * check for the rel="http://webmention.org/" has more overhead than just the header.
+	 * Checks the HTML for the rel="Webmention" link and http://webmention.org/ headers. It does
+	 * a check for the link headers first and returns them, if available. The
+	 * check for the html headers has more overhead than just the link header.
 	 *
 	 * @param string $url URL to ping
 	 *
@@ -605,7 +606,7 @@ class WebMentionPlugin {
 			return false;
 		}
 
-		// do not search for a WebMention server on our own uploads
+		// do not search for a Webmention server on our own uploads
 		$uploads_dir = wp_upload_dir();
 		if ( 0 === strpos( $url, $uploads_dir['baseurl'] ) ) {
 			return false;
@@ -661,13 +662,13 @@ class WebMentionPlugin {
 
 		// check <link> elements
 		// checks only head-links
-		foreach ( $xpath->query( '//head/link[contains(concat(" ", @rel, " "), " webmention ") or contains(@rel, "webmention.net")]/@href' ) as $result ) {
+		foreach ( $xpath->query( '//head/link[contains(concat(" ", @rel, " "), " webmention ") or contains(@rel, "webmention.org")]/@href' ) as $result ) {
 			return self::make_url_absolute( $url, $result->value );
 		}
 
 		// check <a> elements
 		// checks only body>a-links
-		foreach ( $xpath->query( '//body//a[contains(concat(" ", @rel, " "), " webmention ") or contains(@rel, "webmention.net")]/@href' ) as $result ) {
+		foreach ( $xpath->query( '//body//a[contains(concat(" ", @rel, " "), " webmention ") or contains(@rel, "webmention.org")]/@href' ) as $result ) {
 			return self::make_url_absolute( $url, $result->value );
 		}
 
@@ -675,24 +676,20 @@ class WebMentionPlugin {
 	}
 
 	/**
-	 * The WebMention autodicovery meta-tags
+	 * The Webmention autodicovery meta-tags
 	 */
 	public static function html_header() {
 		$endpoint = apply_filters( 'webmention_endpoint', site_url( '?webmention=endpoint' ) );
 
-		// backwards compatibility with v0.1
-		echo '<link rel="http://webmention.net/" href="' . $endpoint . '" />' . "\n";
 		echo '<link rel="webmention" href="' . $endpoint . '" />' . "\n";
 	}
 
 	/**
-	 * The WebMention autodicovery http-header
+	 * The Webmention autodicovery http-header
 	 */
 	public static function http_header() {
 		$endpoint = apply_filters( 'webmention_endpoint', site_url( '?webmention=endpoint' ) );
 
-		// backwards compatibility with v0.1
-		header( 'Link: <' . $endpoint . '>; rel="http://webmention.org/"', false );
 		header( 'Link: <' . $endpoint . '>; rel="webmention"', false );
 	}
 
@@ -703,7 +700,6 @@ class WebMentionPlugin {
 		$endpoint = apply_filters( 'webmention_endpoint', site_url( '?webmention=endpoint' ) );
 
 		$array['links'][] = array( 'rel' => 'webmention', 'href' => $endpoint );
-		$array['links'][] = array( 'rel' => 'http://webmention.net/', 'href' => $endpoint );
 
 		return $array;
 	}
@@ -757,53 +753,53 @@ class WebMentionPlugin {
 	}
 
 	/**
-	 * Register WebMention admin settings.
+	 * Register Webmention admin settings.
 	 */
 	public static function admin_register_settings() {
-		register_setting( 'discussion', 'webmention_disable_selfpings_same_url' );
-		register_setting( 'discussion', 'webmention_disable_selfpings_same_domain' );
+		register_setting( 'discussion', 'Webmention_disable_selfpings_same_url' );
+		register_setting( 'discussion', 'Webmention_disable_selfpings_same_domain' );
 
-		add_settings_field( 'webmention_disucssion_settings', __( 'WebMention Settings', 'webmention' ), array( 'WebMentionPlugin', 'discussion_settings' ), 'discussion', 'default' );
+		add_settings_field( 'Webmention_disucssion_settings', __( 'Webmention Settings', 'Webmention' ), array( 'WebmentionPlugin', 'discussion_settings' ), 'discussion', 'default' );
 	}
 
 	/**
-	 * Add WebMention options to the WordPress discussion settings page.
+	 * Add Webmention options to the WordPress discussion settings page.
 	 */
 	public static function discussion_settings () {
 ?>
 	<fieldset>
-		<label for="webmention_disable_selfpings_same_url">
-			<input type="checkbox" name="webmention_disable_selfpings_same_url" id="webmention_disable_selfpings_same_url" value="1" <?php
-				echo checked( true, get_option( 'webmention_disable_selfpings_same_url' ) );  ?> />
-			<?php _e( 'Disable self-pings on the same URL <small>(for example "http://example.com/?p=123")</small>', 'webmention' ) ?>
+		<label for="Webmention_disable_selfpings_same_url">
+			<input type="checkbox" name="Webmention_disable_selfpings_same_url" id="Webmention_disable_selfpings_same_url" value="1" <?php
+				echo checked( true, get_option( 'Webmention_disable_selfpings_same_url' ) );  ?> />
+			<?php _e( 'Disable self-pings on the same URL <small>(for example "http://example.com/?p=123")</small>', 'Webmention' ) ?>
 		</label>
 
 		<br />
 
-		<label for="webmention_disable_selfpings_same_domain">
-			<input type="checkbox" name="webmention_disable_selfpings_same_domain" id="webmention_disable_selfpings_same_domain" value="1" <?php
-				echo checked( true, get_option( 'webmention_disable_selfpings_same_domain' ) );  ?> />
-			<?php _e( 'Disable self-pings on the same Domain <small>(for example "example.com")</small>', 'webmention' ) ?>
+		<label for="Webmention_disable_selfpings_same_domain">
+			<input type="checkbox" name="Webmention_disable_selfpings_same_domain" id="Webmention_disable_selfpings_same_domain" value="1" <?php
+				echo checked( true, get_option( 'Webmention_disable_selfpings_same_domain' ) );  ?> />
+			<?php _e( 'Disable self-pings on the same Domain <small>(for example "example.com")</small>', 'Webmention' ) ?>
 		</label>
 	</fieldset>
 <?php
 	}
 }
 
-if ( ! function_exists( 'get_webmentions_number' ) ) :
+if ( ! function_exists( 'get_Webmentions_number' ) ) :
 	/**
-	 * Return the Number of WebMentions
+	 * Return the Number of Webmentions
 	 *
 	 * @param int $post_id The post ID (optional)
 	 *
-	 * @return int the number of WebMentions for one Post
+	 * @return int the number of Webmentions for one Post
 	 */
-	function get_webmentions_number( $post_id = 0 ) {
+	function get_Webmentions_number( $post_id = 0 ) {
 		$post = get_post( $post_id );
 
-		// change this if your theme can't handle the WebMentions comment type
-		$webmention_comment_type = defined( 'WEBMENTION_COMMENT_TYPE' ) ? WEBMENTION_COMMENT_TYPE : 'webmention';
-		$comment_type = apply_filters( 'webmention_comment_type', $webmention_comment_type );
+		// change this if your theme can't handle the Webmentions comment type
+		$Webmention_comment_type = defined( 'Webmention_COMMENT_TYPE' ) ? Webmention_COMMENT_TYPE : 'Webmention';
+		$comment_type = apply_filters( 'Webmention_comment_type', $Webmention_comment_type );
 
 		$args = array(
 			'post_id' => $post->ID,
