@@ -212,8 +212,10 @@ class WebMentionPlugin {
 
 		}
 		$remote_source = wp_remote_retrieve_body( $response );
+		// Content Type to Be Added to Commentdata to be used by hooks or filters.
+		$content_type = wp_remote_retrieve_header( $response, 'content-type' );
 		// check if source really links to the target. Allow for more complex verification using content type
-		if ( ! apply_filters( 'webmention_source_verify', false, $remote_source, $target, wp_remote_retrieve_header( $response, 'content-type' ) ) ) {
+		if ( ! apply_filters( 'webmention_source_verify', false, $remote_source, $target, $content_type ) ) {
 			status_header( 400 );
 			echo 'Source Site Does Not Link to Target.';
 			exit;
@@ -222,6 +224,7 @@ class WebMentionPlugin {
 		if ( ! function_exists( 'wp_kses_post' ) ) {
 			include_once( ABSPATH . 'wp-includes/kses.php' );
 		}
+		// To Match New Pingback Functionality the filtered and original source will be passed in the commentdata.
 		$remote_source_original = $remote_source;
 		$remote_source = wp_kses_post( $remote_source );
 
@@ -245,7 +248,7 @@ class WebMentionPlugin {
 		// filter the parent id
 		$comment_parent = apply_filters( 'webmention_comment_parent', null, $target );
 
-		$commentdata = compact( 'comment_post_ID', 'comment_author', 'comment_author_url', 'comment_author_email', 'comment_content', 'comment_type', 'comment_parent', 'comment_approved', 'remote_source', 'remote_source_original' );
+		$commentdata = compact( 'comment_post_ID', 'comment_author', 'comment_author_url', 'comment_author_email', 'comment_content', 'comment_type', 'comment_parent', 'comment_approved', 'remote_source', 'remote_source_original', 'content_type' );
 
 		// check dupes
 		$comment = apply_filters( 'webmention_check_dupes', null, $commentdata );
