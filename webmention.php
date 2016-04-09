@@ -193,7 +193,7 @@ class WebmentionPlugin {
 	 */
 	public static function synchronous_request_handler( $source, $target, $post ) {
 
-		$response = wp_remote_get( $_POST['source'], array( 'timeout' => 10, 'limit_response_size' => 1048576 ) );
+		$response = wp_remote_head( $_POST['source'], array( 'timeout' => 10 ) );
 		// check if source is accessible
 		if ( is_wp_error( $response ) ) {
 			status_header( 400 );
@@ -211,6 +211,13 @@ class WebmentionPlugin {
 			exit;
 
 		}
+    // not an (x)html, sgml, or xml page, no use going further
+    if ( preg_match( '#(image|audio|video|model)/#is', wp_remote_retrieve_header( $response, 'content-type' ) ) ) {
+      status_header( 400 );
+			echo 'Source Content-Type is Media';
+			exit;
+    }
+    $response = wp_remote_get( $_POST['source'], array( 'timeout' => 10, 'limit_response_size' => 1048576 ) );
 		$remote_source = wp_remote_retrieve_body( $response );
 		// Content Type to Be Added to Commentdata to be used by hooks or filters.
 		$content_type = wp_remote_retrieve_header( $response, 'content-type' );
@@ -238,13 +245,13 @@ class WebmentionPlugin {
 		$comment_content = wp_slash( apply_filters( 'webmention_content', '', $remote_source, $target, $source ) );
 
 		// change this if your theme can't handle the Webmentions comment type
-		$comment_type = apply_filters( 'webmention_comment_type', Webmention_COMMENT_TYPE );
+		$comment_type = apply_filters( 'webmention_comment_type', WEBMENTION_COMMENT_TYPE );
 
 		// change this if you want to auto approve your Webmentions
-		$comment_approved = apply_filters( 'webmention_comment_approve', Webmention_COMMENT_APPROVE );
+		$comment_approved = apply_filters( 'webmention_comment_approve', WEBMENTION_COMMENT_APPROVE );
 
 		// filter the parent id
-		$comment_parent = apply_filters( 'Webmention_comment_parent', null, $target );
+		$comment_parent = apply_filters( 'webmention_comment_parent', null, $target );
 
 		$commentdata = compact( 'comment_post_ID', 'comment_author', 'comment_author_url', 'comment_author_email', 'comment_content', 'comment_type', 'comment_parent', 'comment_approved', 'remote_source', 'remote_source_original', 'content_type' );
 
@@ -262,7 +269,7 @@ class WebmentionPlugin {
 			wp_update_comment( $commentdata );
 			$comment_ID = $comment->comment_ID;
 
-			do_action( 'Webmention_update', $comment_ID, $commentdata );
+			do_action( 'webmention_update', $comment_ID, $commentdata );
 		} else {
 			// save comment
 			$comment_ID = wp_new_comment( $commentdata );
@@ -277,7 +284,7 @@ class WebmentionPlugin {
 		status_header( apply_filters( 'webmention_success_header', 200 ) );
 
 		// render a simple and customizable text output
-		echo apply_filters( 'Webmention_success_message', get_comment_link( $comment_ID ) );
+		echo apply_filters( 'webmention_success_message', get_comment_link( $comment_ID ) );
 
 		exit;
 	}
@@ -590,7 +597,7 @@ class WebmentionPlugin {
 	/**
 	 * Finds a Webmention server URI based on the given URL
 	 *
-	 * Checks the HTML for the rel="Webmention" link and http://webmention.org/ headers. It does
+	 * Checks the HTML for the rel=wwebmention" link and headers. It does
 	 * a check for the link headers first and returns them, if available. The
 	 * check for the html headers has more overhead than just the link header.
 	 *
@@ -622,12 +629,12 @@ class WebmentionPlugin {
 		if ( $links = wp_remote_retrieve_header( $response, 'link' ) ) {
 			if ( is_array( $links ) ) {
 				foreach ( $links as $link ) {
-					if ( preg_match( '/<(.[^>]+)>;\s+rel\s?=\s?[\"\']?(http:\/\/)?webmention(.org)?\/?[\"\']?/i', $link, $result ) ) {
+					if ( preg_match( '/<(.[^>]+)>;\s+rel\s?=\s?[\"\']?(http:\/\/)?webmention?\/?[\"\']?/i', $link, $result ) ) {
 						return self::make_url_absolute( $url, $result[1] );
 					}
 				}
 			} else {
-				if ( preg_match( '/<(.[^>]+)>;\s+rel\s?=\s?[\"\']?(http:\/\/)?webmention(.org)?\/?[\"\']?/i', $links, $result ) ) {
+				if ( preg_match( '/<(.[^>]+)>;\s+rel\s?=\s?[\"\']?(http:\/\/)?webmention?\/?[\"\']?/i', $links, $result ) ) {
 					return self::make_url_absolute( $url, $result[1] );
 				}
 			}
@@ -756,10 +763,10 @@ class WebmentionPlugin {
 	 * Register Webmention admin settings.
 	 */
 	public static function admin_register_settings() {
-		register_setting( 'discussion', 'Webmention_disable_selfpings_same_url' );
-		register_setting( 'discussion', 'Webmention_disable_selfpings_same_domain' );
+		register_setting( 'discussion', 'webmention_disable_selfpings_same_url' );
+		register_setting( 'discussion', 'webmention_disable_selfpings_same_domain' );
 
-		add_settings_field( 'Webmention_disucssion_settings', __( 'Webmention Settings', 'Webmention' ), array( 'WebmentionPlugin', 'discussion_settings' ), 'discussion', 'default' );
+		add_settings_field( 'webmention_discussion_settings', __( 'Webmention Settings', 'Webmention' ), array( 'WebmentionPlugin', 'discussion_settings' ), 'discussion', 'default' );
 	}
 
 	/**
@@ -768,17 +775,17 @@ class WebmentionPlugin {
 	public static function discussion_settings () {
 ?>
 	<fieldset>
-		<label for="Webmention_disable_selfpings_same_url">
-			<input type="checkbox" name="Webmention_disable_selfpings_same_url" id="Webmention_disable_selfpings_same_url" value="1" <?php
-				echo checked( true, get_option( 'Webmention_disable_selfpings_same_url' ) );  ?> />
+		<label for="webmention_disable_selfpings_same_url">
+			<input type="checkbox" name="webmention_disable_selfpings_same_url" id="webmention_disable_selfpings_same_url" value="1" <?php
+				echo checked( true, get_option( 'webmention_disable_selfpings_same_url' ) );  ?> />
 			<?php _e( 'Disable self-pings on the same URL <small>(for example "http://example.com/?p=123")</small>', 'Webmention' ) ?>
 		</label>
 
 		<br />
 
-		<label for="Webmention_disable_selfpings_same_domain">
-			<input type="checkbox" name="Webmention_disable_selfpings_same_domain" id="Webmention_disable_selfpings_same_domain" value="1" <?php
-				echo checked( true, get_option( 'Webmention_disable_selfpings_same_domain' ) );  ?> />
+		<label for="webmention_disable_selfpings_same_domain">
+			<input type="checkbox" name="webmention_disable_selfpings_same_domain" id="webmention_disable_selfpings_same_domain" value="1" <?php
+				echo checked( true, get_option( 'webmention_disable_selfpings_same_domain' ) );  ?> />
 			<?php _e( 'Disable self-pings on the same Domain <small>(for example "example.com")</small>', 'Webmention' ) ?>
 		</label>
 	</fieldset>
@@ -786,7 +793,7 @@ class WebmentionPlugin {
 	}
 }
 
-if ( ! function_exists( 'get_Webmentions_number' ) ) :
+if ( ! function_exists( 'get_webmentions_number' ) ) :
 	/**
 	 * Return the Number of Webmentions
 	 *
@@ -794,12 +801,12 @@ if ( ! function_exists( 'get_Webmentions_number' ) ) :
 	 *
 	 * @return int the number of Webmentions for one Post
 	 */
-	function get_Webmentions_number( $post_id = 0 ) {
+	function get_webmentions_number( $post_id = 0 ) {
 		$post = get_post( $post_id );
 
 		// change this if your theme can't handle the Webmentions comment type
-		$Webmention_comment_type = defined( 'Webmention_COMMENT_TYPE' ) ? Webmention_COMMENT_TYPE : 'Webmention';
-		$comment_type = apply_filters( 'Webmention_comment_type', $Webmention_comment_type );
+		$webmention_comment_type = defined( 'WEBMENTION_COMMENT_TYPE' ) ? WEBMENTION_COMMENT_TYPE : 'webmention';
+		$comment_type = apply_filters( 'webmention_comment_type', $webmention_comment_type );
 
 		$args = array(
 			'post_id' => $post->ID,
