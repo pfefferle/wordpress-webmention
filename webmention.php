@@ -703,7 +703,7 @@ class WebMentionPlugin {
 		$endpoint = apply_filters( 'webmention_endpoint', site_url( '?webmention=endpoint' ) );
 
 		$array['links'][] = array( 'rel' => 'webmention', 'href' => $endpoint );
-		$array['links'][] = array( 'rel' => 'http://webmention.org/', 'href' => $endpoint );
+		$array['links'][] = array( 'rel' => 'http://webmention.net/', 'href' => $endpoint );
 
 		return $array;
 	}
