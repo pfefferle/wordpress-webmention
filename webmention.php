@@ -71,6 +71,7 @@ class WebMentionPlugin {
 		add_filter( 'webmention_title', array( 'WebMentionPlugin', 'default_title_filter' ), 10, 4 );
 		add_filter( 'webmention_content', array( 'WebMentionPlugin', 'default_content_filter' ), 10, 4 );
 		add_filter( 'webmention_check_dupes', array( 'WebMentionPlugin', 'check_dupes' ), 10, 2 );
+		add_filter( 'webmention_source_verify', array( 'WebMentionPlugin', 'source_verify' ), 10, 2 );
 		add_action( 'webmention_request', array( 'WebMentionPlugin', 'synchronous_request_handler' ), 10, 3 );
 	}
 
@@ -191,17 +192,26 @@ class WebMentionPlugin {
 	public static function synchronous_request_handler( $source, $target, $post ) {
 
 		$response = wp_remote_get( $_POST['source'], array( 'timeout' => 10, 'limit_response_size' => 1048576 ) );
-
 		// check if source is accessible
 		if ( is_wp_error( $response ) ) {
 			status_header( 400 );
-			echo 'Source URL not found.';
+			// Echo the Error Response
+			echo $response['body'];
 			exit;
 		}
-		$remote_source = wp_remote_retrieve_body( $response );
+		// A valid response code from the other server would not be considered an error.
+		$response_code = wp_remote_retrieve_response_code( $response );
+		if ( '200' !== $response_code ) {
+			// Error Handler Should End with an Exit. Default handling is below.
+			do_action( 'webmention_retrieve_error', $post, $source, $response_code );
+			status_header( 400 );
+			echo 'Unable to Verify Source: ' . $response_code . ' ' . wp_remote_retrieve_response_message( $response );
+			exit;
 
-		// check if source really links to target
-		if ( ! strpos( htmlspecialchars_decode( $remote_source ), str_replace( array( 'http://www.', 'http://', 'https://www.', 'https://' ), '', untrailingslashit( preg_replace( '/#.*/', '', $_POST['target'] ) ) ) ) ) {
+		}
+		$remote_source = wp_remote_retrieve_body( $response );
+		// check if source really links to the target. Allow for more complex verification using content type
+		if ( ! apply_filters( 'webmention_source_verify', $remote_source, $target, wp_remote_retrieve_header( $response, 'content-type' ) ) ) {
 			status_header( 400 );
 			echo 'Source Site Does Not Link to Target.';
 			exit;
@@ -249,12 +259,12 @@ class WebMentionPlugin {
 			wp_update_comment( $commentdata );
 			$comment_ID = $comment->comment_ID;
 
-	    do_action( 'webmention_update', $comment_ID, $commentdata );
+			do_action( 'webmention_update', $comment_ID, $commentdata );
 		} else {
 			// save comment
 			$comment_ID = wp_new_comment( $commentdata );
 
-	    do_action( 'webmention_post', $comment_ID, $commentdata );
+			do_action( 'webmention_post', $comment_ID, $commentdata );
 		}
 
 		// re-add flood control
@@ -268,6 +278,22 @@ class WebMentionPlugin {
 
 		exit;
 	}
+
+	/**
+	* Verify Source
+	*
+	* @param string $remote_source The retrieved source
+	* @param string $target The target URL
+	* @param string $content-type Content Type returned from the request
+	*
+	* @return boolean True if the target URL is in the source
+	*/
+	public static function source_verify($remote_source, $target, $content_type) {
+		$remote_source = htmlspecialchars_decode( $remote_source );
+		return strpos( $remote_source, str_replace( array( 'http://www.', 'http://', 'https://www.', 'https://' ), '', untrailingslashit( preg_replace( '/#.*/', '', $target ) ) ) );
+	}
+
+
 
 	/**
 	 * Try to make a nice comment
