@@ -608,7 +608,7 @@ class WebMentionPlugin {
 		}
 
 		// now do a GET since we're going to look in the html headers (and we're sure its not a binary file)
-		$response = wp_remote_get( $url, array( 'timeout' => 100, 'httpversion' => '1.0' ) );
+		$response = wp_remote_get( $url, array( 'timeout' => 10, 'httpversion' => '1.0', 'limit_response_size' => 1048576 ) );
 
 		if ( is_wp_error( $response ) ) {
 			return false;
