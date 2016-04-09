@@ -1,4 +1,4 @@
-# WebMention #
+# Webmention #
 **Contributors:** pfefferle  
 **Donate link:** http://14101978.de  
 **Tags:** webmention, pingback, trackback, linkback  
@@ -8,41 +8,42 @@
 **License:** MIT  
 **License URI:** http://opensource.org/licenses/MIT  
 
-WebMention for WordPress!
+Webmention for WordPress!
 
 ## Description ##
 
-[WebMention](http://webmention.org/) is a simple and modern alternative to the Pingback/Trackback protocol.
+[Webmention](http://webmention.net/) is a simple way to notify any URL when you link to it on your site. From the perspective of the receiver, it is a way to request notifications when other sites link to it. 
 
-[vimeo https://vimeo.com/85217592]
--- Video by [Andy Sylvester](http://andysylvester.com/2014/01/27/working-with-webmention-video/)
-
-From the [spec](http://webmention.org/):
-
-> Webmention is a simple way to automatically notify any URL when you link to it on your site.
-> From the receivers perpective, it's a way to request notification when other sites link to it.
-> It’s a modern alternative to Pingback and other forms of Linkback.
+To further enhance the display of webmentions, we recommend you install [Semantic Linkbacks](http://wordpress.org/plugins/semantic-linkbacks). This optional plugin parses the retrieved content for 
+microformats to give better context to webmentions as well as trackbacks and pingbacks.
 
 ## Frequently Asked Questions ##
 
-### What are WebMentions? ###
+### What are Webmentions? ###
 
-[WebMention](http://webmention.org) is a simple way to automatically notify any URL when you link to it on your site. From the receivers perpective, it's a way to request notification when other sites link to it.
+[Webmention](http://webmention.net) is a simple way to automatically notify any URL when you link to it on your site. From the receivers perpective, it's a way to request notification when other sites link to it. 
 
-It’s a modern alternative to Pingback and other forms of Linkback.
+### That Sounds Like a Pingback or a Trackback ###
 
-### How can I send WebMentions ###
+Webmention is an update/replacement for Pingback or Trackback. Unlike the older protocols, the specification has a working draft with the W3C as well as an active community of individuals using it on their sites.
 
-Activate sending WebMentions by checking the "Attempt to notify any blogs linked to from the article" option on the Settings --> Discussion page in WordPress.
+### How do Webmentions Look on My Site? ###
+
+By default, a webmention will display as 'This was mentioned on Site Title'. We recommend you install [Semantic Linkbacks](http://wordpress.org/plugins/semantic-linkbacks) which has the ability to 
+parse the remote content to try and retrieve the author name, author avatar, and improved context, even allowing properly marked up content text to be displayed as a comment to your post. 
+
+### How can I send Webmentions ###
+
+Activate sending Webmentions by checking the "Attempt to notify any blogs linked to from the article" option on the Settings --> Discussion page in WordPress.
 
 You can use the `send_webmention($source, $target)` function and pass a source and a target or you can fire an action like `do_action('send_webmention', $source, $target)`.
 
-### How can I handle Homepage-WebMentions ###
+### How can I handle Homepage-Webmentions ###
 
-WebMentions should be allowed on all URLs of a blog. The plugin currently supports only WebMentions on
-posts or pages, but it is very simple to add support for other types like homepages or archive pages.
-The easiest way is to provide some kind of a default post/page to show collect all mentions that are no
-comments on a post or a page. The plugin provides a simple filter for that:
+Webmentions should be allowed on all URLs of a blog. The plugin currently supports only Webmentions on
+posts or pages, but it offers a way to add support for other types like homepages or archive pages.
+You can create a default post/page to show collect all mentions that are not comments on a post or a page. 
+The plugin provides a simple filter for that:
 
     function handle_exotic_webmentions($id, $target) {
       // do nothing if id is set
@@ -56,7 +57,7 @@ comments on a post or a page. The plugin provides a simple filter for that:
     add_filter("webmention_post_id", "handle_exotic_webmentions", 10, 2);
 
 If you want to add a more complex request handler, you should take a look at the
-`webmention_request` action and the `default_request_handler`.
+`webmention_request` action and the `synchronous_request_handler`.
 
 ## Changelog ##
 
@@ -144,10 +145,3 @@ initial release
 1. Upload the `webmention`-folder to the `/wp-content/plugins/` directory
 2. Activate the plugin through the *Plugins* menu in WordPress
 3. ...and that's it :)
-
-## Upgrade Notice ##
-
-### 2.0.0 ###
-
-This plugin doesn't support the microformts stuff mentioned in the IndieWebCamp Wiki.
-To enable semantik linkbacks you have to use <https://github.com/pfefferle/wordpress-semantic-linkbacks>

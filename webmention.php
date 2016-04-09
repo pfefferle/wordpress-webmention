@@ -230,14 +230,14 @@ class WebMentionPlugin {
 
 		// filter title or content of the comment
 		$title = apply_filters( 'webmention_title', '', $remote_source, $target, $source );
-		$remote_source = apply_filters( 'webmention_content', '', $remote_source, $target, $source );
+		$content = apply_filters( 'webmention_content', '', $remote_source, $target, $source );
 
 		// generate comment
 		$comment_post_ID = (int) $post->ID;
 		$comment_author = wp_slash( $title );
 		$comment_author_email = '';
 		$comment_author_url = esc_url_raw( $source );
-		$comment_content = wp_slash( $remote_source );
+		$comment_content = wp_slash( $content );
 
 		// change this if your theme can't handle the WebMentions comment type
 		$comment_type = apply_filters( 'webmention_comment_type', WEBMENTION_COMMENT_TYPE );
