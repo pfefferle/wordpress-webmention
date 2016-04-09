@@ -190,7 +190,7 @@ class WebMentionPlugin {
 	 */
 	public static function synchronous_request_handler( $source, $target, $post ) {
 
-		$response = wp_remote_get( $_POST['source'], array( 'timeout' => 100 ) );
+		$response = wp_remote_get( $_POST['source'], array( 'timeout' => 10, 'limit_response_size' => 1048576 ) );
 
 		// check if source is accessible
 		if ( is_wp_error( $response ) ) {
