@@ -20,7 +20,7 @@
  * @return array of results including HTTP headers
  */
 function send_webmention( $source, $target ) {
-	return WebmentionPlugin::send_Webmention( $source, $target );
+	return WebmentionPlugin::send_webmention( $source, $target );
 }
 
 // initialize plugin
@@ -63,7 +63,7 @@ class WebmentionPlugin {
 		add_filter( 'webfinger_post_data', array( 'WebmentionPlugin', 'jrd_links' ) );
 
 		// run Webmentions before the other pinging stuff
-		add_action( 'do_pings', array( 'WebmentionPlugin', 'do_Webmentions' ), 5, 1 );
+		add_action( 'do_pings', array( 'WebmentionPlugin', 'do_webmentions' ), 5, 1 );
 
 		add_action( 'publish_post', array( 'WebmentionPlugin', 'publish_post_hook' ) );
 
