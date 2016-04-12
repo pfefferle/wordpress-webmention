@@ -141,15 +141,15 @@ class WebmentionPlugin {
 
 		// check if post id exists
 		if ( ! $post_ID ) {
-			status_header( 404 );
+			status_header( 400 );
 			echo 'Specified target URL not found.';
 			exit;
 		}
 
 		// check if pings are allowed
 		if ( ! pings_open( $post_ID ) ) {
-			status_header( 403 );
-			echo 'Pings are disabled for this post';
+			status_header( 400 );
+			echo 'Webmentions are disabled for this resource';
 			exit;
 		}
 
