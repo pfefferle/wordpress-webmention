@@ -117,7 +117,11 @@ class WebmentionPlugin {
 			exit;
 		}
 
-		// @todo check if target-host matches the blog-host
+		if ( ! stristr( $_POST['target'], preg_replace( '/^https?:\/\//i', '', get_site_url() ) ) ) {
+			status_header( 400 );
+			echo '"target" does not Point to Site';
+			exit;
+		}
 
 		// remove url-scheme
 		$schemeless_target = preg_replace( '/^https?:\/\//i', '', $_POST['target'] );
