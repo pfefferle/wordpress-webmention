@@ -176,6 +176,44 @@ class WebmentionPlugin {
 	}
 
 	/**
+   * Retrieves the Source or Returns an Error
+   *
+   * Tries to fetch the URL
+
+	 * @param $url URL to fetch
+	 *
+   * @return array|WP_Error Return the response or an Error Object
+	**/
+	public static function get( $url ) {
+		$args = array( 
+					'timeout' => 10,
+					'limit_response_size' => 1048576
+		);
+    $response = wp_remote_head( $url, $args );
+    // check if source is accessible
+    if ( is_wp_error( $response ) ) {
+      return( $response );
+    }
+    // A valid response code from the other server would not be considered an error.
+    $response_code = wp_remote_retrieve_response_code( $response );
+
+    // not an (x)html, sgml, or xml page, no use going further
+    if ( preg_match( '#(image|audio|video|model)/#is', wp_remote_retrieve_header( $response, 'content-type' ) ) ) {
+      return new WP_Error( 'content-type', 'Content Type is Media' );
+    }
+		switch ( $response_code ) {
+    case 200: 
+    	$response = wp_remote_get( $url, $args );
+    	break;
+		case 410:
+			return new WP_Error( 'gone', 'Page is Gone' );
+    default: 
+      return new WP_Error( $response_code,  wp_remote_retrieve_response_message( $response ));
+    }
+    return ( $response );
+	}
+
+	/**
 	 * Synchronous request handler
 	 *
 	 * Tries to map a target url to a specific post and generates a simple
@@ -203,31 +241,15 @@ class WebmentionPlugin {
 	 */
 	public static function synchronous_request_handler( $source, $target, $post, $vouch ) {
 
-		$response = wp_remote_head( $_POST['source'], array( 'timeout' => 10 ) );
-		// check if source is accessible
+		$response = self::get( $source );
 		if ( is_wp_error( $response ) ) {
 			status_header( 400 );
-			// Echo the Error Response
-			echo $response['body'];
-			exit;
-		}
-		// A valid response code from the other server would not be considered an error.
-		$response_code = wp_remote_retrieve_response_code( $response );
-		if ( '200' != $response_code ) {
 			// Error Handler Should End with an Exit. Default handling is below.
-			do_action( 'webmention_retrieve_error', $post, $source, $response_code );
+			do_action( 'webmention_retrieve_error', $post, $source, $response );
 			status_header( 400 );
-			echo 'Unable to Verify Source: ' . $response_code . ' ' . wp_remote_retrieve_response_message( $response );
+			echo 'Unable to Retrieve Source: ' . $response->get_error_message();
 			exit;
-
 		}
-    // not an (x)html, sgml, or xml page, no use going further
-    if ( preg_match( '#(image|audio|video|model)/#is', wp_remote_retrieve_header( $response, 'content-type' ) ) ) {
-      status_header( 400 );
-			echo 'Source Content-Type is Media';
-			exit;
-    }
-    $response = wp_remote_get( $_POST['source'], array( 'timeout' => 10, 'limit_response_size' => 1048576 ) );
 		$remote_source = wp_remote_retrieve_body( $response );
 		// Content Type to Be Added to Commentdata to be used by hooks or filters.
 		$content_type = wp_remote_retrieve_header( $response, 'content-type' );
