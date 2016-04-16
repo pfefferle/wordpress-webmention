@@ -73,6 +73,10 @@ class WebmentionPlugin {
 		add_filter( 'webmention_check_dupes', array( 'WebmentionPlugin', 'check_dupes' ), 10, 2 );
 		add_filter( 'webmention_source_verify', array( 'WebmentionPlugin', 'source_verify' ), 10, 4 );
 		add_action( 'webmention_request', array( 'WebmentionPlugin', 'synchronous_request_handler' ), 10, 3 );
+
+		// Save Last Updated Time as Comment Meta
+		add_action( 'webmention_update', array( 'WebmentionPlugin', 'last_modified' ), 9, 2 );
+
 	}
 
 	/**
@@ -176,41 +180,41 @@ class WebmentionPlugin {
 	}
 
 	/**
-   * Retrieves the Source or Returns an Error
-   *
-   * Tries to fetch the URL
+	* Retrieves the Source or Returns an Error
+	*
+	* Tries to fetch the URL
 
 	 * @param $url URL to fetch
 	 *
-   * @return array|WP_Error Return the response or an Error Object
+	* @return array|WP_Error Return the response or an Error Object
 	**/
 	public static function get( $url ) {
-		$args = array( 
+		$args = array(
 					'timeout' => 10,
-					'limit_response_size' => 1048576
+					'limit_response_size' => 1048576,
 		);
-    $response = wp_remote_head( $url, $args );
-    // check if source is accessible
-    if ( is_wp_error( $response ) ) {
-      return( $response );
-    }
-    // A valid response code from the other server would not be considered an error.
-    $response_code = wp_remote_retrieve_response_code( $response );
+		$response = wp_remote_head( $url, $args );
+		// check if source is accessible
+		if ( is_wp_error( $response ) ) {
+			return( $response );
+		}
+		// A valid response code from the other server would not be considered an error.
+		$response_code = wp_remote_retrieve_response_code( $response );
 
-    // not an (x)html, sgml, or xml page, no use going further
-    if ( preg_match( '#(image|audio|video|model)/#is', wp_remote_retrieve_header( $response, 'content-type' ) ) ) {
-      return new WP_Error( 'content-type', 'Content Type is Media' );
-    }
+		// not an (x)html, sgml, or xml page, no use going further
+		if ( preg_match( '#(image|audio|video|model)/#is', wp_remote_retrieve_header( $response, 'content-type' ) ) ) {
+			return new WP_Error( 'content-type', 'Content Type is Media' );
+		}
 		switch ( $response_code ) {
-    case 200: 
-    	$response = wp_remote_get( $url, $args );
-    	break;
-		case 410:
+			case 200:
+				$response = wp_remote_get( $url, $args );
+			break;
+			case 410:
 			return new WP_Error( 'gone', 'Page is Gone' );
-    default: 
-      return new WP_Error( $response_code,  wp_remote_retrieve_response_message( $response ));
-    }
-    return ( $response );
+			default:
+		  return new WP_Error( $response_code,  wp_remote_retrieve_response_message( $response ) );
+		}
+		return ( $response );
 	}
 
 	/**
@@ -336,7 +340,13 @@ class WebmentionPlugin {
 		return strpos( $remote_source, str_replace( array( 'http://www.', 'http://', 'https://www.', 'https://' ), '', untrailingslashit( preg_replace( '/#.*/', '', $target ) ) ) );
 	}
 
-
+	/**
+	 * Add Last Updated Meta to Updated Webmentions
+	*/
+	public static function last_modified( $comment_id, $commentdata ) {
+		update_comment_meta( $comment_id, 'comment_modified', current_time( 'mysql' ) );
+		update_comment_meta( $comment_id, 'comment_modified_gmt', current_time( 'mysql', 1 ) );
+	}
 
 	/**
 	 * Try to make a nice comment
