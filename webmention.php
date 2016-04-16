@@ -204,6 +204,7 @@ class WebmentionPlugin {
 		$url = wp_kses_bad_protocol( $url, array( 'http', 'https' ) );
 		if ( ! $url || strtolower( $url ) !== strtolower( $original_url ) ) {
 			return false; }
+    /** @todo Should use Filter Extension or custom preg_match instead. */
 		$parsed_url = @parse_url( $url );
 		if ( ! $parsed_url || empty( $parsed_url['host'] ) ) {
 			return false; }
@@ -681,10 +682,8 @@ class WebmentionPlugin {
 	 * @return bool|string False on failure, string containing URI on success
 	 */
 	public static function discover_endpoint( $url ) {
-		/** @todo Should use Filter Extension or custom preg_match instead. */
-		$parsed_url = parse_url( $url );
 
-		if ( ! isset( $parsed_url['host'] ) ) { // Not an URL. This should never happen.
+		if ( ! self::is_valid_url( $url ) ) { // Not an URL. This should never happen.
 			return false;
 		}
 
