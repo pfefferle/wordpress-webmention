@@ -113,11 +113,22 @@ class WebmentionPlugin {
 			echo '"source" is missing';
 			exit;
 		}
+		if ( ! self::is_valid_url( $_POST['source'] ) ) {
+			status_header( 400 );
+			echo '"source" is not valid URL';
+			exit;
+		}
 
 		// check if target url is transmitted
 		if ( ! isset( $_POST['target'] ) ) {
 			status_header( 400 );
 			echo '"target" is missing';
+			exit;
+		}
+
+		if ( ! self::is_valid_url( $_POST['target'] ) ) {
+			status_header( 400 );
+			echo '"target" is not valid URL';
 			exit;
 		}
 
@@ -177,6 +188,28 @@ class WebmentionPlugin {
 		status_header( 500 );
 		echo 'Webmention Handler Failed.';
 		exit;
+	}
+
+	/**
+	* Is This URL Valid
+	*
+	* Runs a validity check on the URL. Based on built-in WordPress Validations
+	*
+	* @param $url URL to fetch
+	*
+	* @return boolean
+	**/
+	public static function is_valid_url( $url ) {
+		$original_url = $url;
+		$url = wp_kses_bad_protocol( $url, array( 'http', 'https' ) );
+		if ( ! $url || strtolower( $url ) !== strtolower( $original_url ) ) {
+			return false; }
+		$parsed_url = @parse_url( $url );
+		if ( ! $parsed_url || empty( $parsed_url['host'] ) ) {
+			return false; }
+		if ( isset( $parsed_url['user'] ) || isset( $parsed_url['pass'] ) ) {
+			return false; }
+		return true;
 	}
 
 	/**
