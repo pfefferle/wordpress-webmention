@@ -175,14 +175,18 @@ class WebmentionPlugin {
 		if ( ! $post ) {
 			return;
 		}
-		// If there is a vouch parameter, pass it to the handler
-		$vouch = false;
-		if ( ! isset( $_POST['vouch'] ) ) {
-			$vouch = $_POST['vouch'];
-		}
+
+		$approved = array( 'vouch', 'csrf' );
+		$approved = apply_filters( 'webmention_query_var', $approved );
+		$var = array();
+		foreach ( $approved as $app ) {
+			if ( array_key_exists( $app, $_POST ) ) {
+				$var[] = $_POST[$app];	
+			}
+  	}
 
 		// be sure to add an "exit;" to the end of your request handler
-		do_action( 'webmention_request', $_POST['source'], $_POST['target'], $post, $vouch );
+		do_action( 'webmention_request', $_POST['source'], $_POST['target'], $post, $var );
 
 		// if no "action" is responsible, return a 500
 		status_header( 500 );
@@ -263,7 +267,7 @@ class WebmentionPlugin {
 	 * @param string $source the source url
 	 * @param string $target the target url
 	 * @param string $post the post associated with the target
-	 * @param string $vouch A vouch parameter if one exists
+	 * @param array $var Approved Variables
 	 *
 	 * @uses apply_filters calls "webmention_post_id" on the post_ID
 	* @uses apply_filters calls "webmention_source_verify" to verify the source links to the targetr
@@ -280,7 +284,7 @@ class WebmentionPlugin {
 	 *	and trackback
 	 * @uses do_action calls "webmention_update" on the comment_ID and commentdata when the Webmention is being updated
 	 */
-	public static function synchronous_request_handler( $source, $target, $post, $vouch ) {
+	public static function synchronous_request_handler( $source, $target, $post, $var ) {
 
 		$response = self::get( $source );
 		if ( is_wp_error( $response ) ) {
@@ -326,7 +330,7 @@ class WebmentionPlugin {
 		// filter the parent id
 		$comment_parent = apply_filters( 'webmention_comment_parent', null, $target );
 
-		$commentdata = compact( 'comment_post_ID', 'comment_author', 'comment_author_url', 'comment_author_email', 'comment_content', 'comment_type', 'comment_parent', 'comment_approved', 'remote_source', 'remote_source_original', 'content_type', 'vouch' );
+		$commentdata = compact( 'comment_post_ID', 'comment_author', 'comment_author_url', 'comment_author_email', 'comment_content', 'comment_type', 'comment_parent', 'comment_approved', 'remote_source', 'remote_source_original', 'content_type', 'var' );
 
 		// check dupes
 		$comment = apply_filters( 'webmention_check_dupes', null, $commentdata );
