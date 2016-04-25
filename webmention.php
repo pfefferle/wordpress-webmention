@@ -340,8 +340,10 @@ class WebmentionPlugin {
 
 		// update or save Webmention
 		if ( $comment ) {
-			$commentdata['comment_ID'] = $comment->comment_ID;
-			$commentdata['comment_approved'] = $comment->comment_approved;
+      // Assume that if the original was approved, the update should be as well. This can be overridden 
+      $commentdata['comment_approved'] = $comment->comment_approved;  
+			// Merge Arrays Together with New Data Overwriting Old and Filter
+			$commentdata = apply_filter( 'pre_update_webmention', array_merge($comment, $commentdata), $comment, $commentdata);
 			// save comment
 			wp_update_comment( $commentdata );
 			$comment_ID = $comment->comment_ID;
