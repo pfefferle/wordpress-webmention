@@ -27,6 +27,13 @@ class Webmention_Receiver {
 		// admin settings
 		add_action( 'admin_comment_types_dropdown', array( 'Webmention_Receiver', 'comment_types_dropdown' ) );
 
+		// Endpoint Discovery
+		add_action( 'wp_head', array( 'Webmention_Receiver', 'html_header' ), 99 );
+		add_action( 'send_headers', array( 'Webmention_Receiver', 'http_header' ) );
+		add_filter( 'host_meta', array( 'Webmention_Receiver', 'jrd_links' ) );
+		add_filter( 'webfinger_user_data', array( 'Webmention_Receiver', 'jrd_links' ) );
+		add_filter( 'webfinger_post_data', array( 'Webmention_Receiver', 'jrd_links' ) );
+
 		// default handlers
 		add_filter( 'webmention_title', array( 'Webmention_Receiver', 'default_title_filter' ), 10, 4 );
 		add_filter( 'webmention_content', array( 'Webmention_Receiver', 'default_content_filter' ), 10, 4 );
@@ -478,4 +485,35 @@ class Webmention_Receiver {
 
 		return $title;
 	}
+
+	/**
+	* The Webmention autodicovery meta-tags
+	*/
+	public static function html_header() {
+		$endpoint = apply_filters( 'webmention_endpoint', site_url( '?webmention=endpoint' ) );
+
+		echo '<link rel="webmention" href="' . $endpoint . '" />' . "\n";
+	}
+
+	/**
+	* The Webmention autodicovery http-header
+	*/
+	public static function http_header() {
+		$endpoint = apply_filters( 'webmention_endpoint', site_url( '?webmention=endpoint' ) );
+
+		header( 'Link: <' . $endpoint . '>; rel="webmention"', false );
+	}
+
+	/**
+	* Generates webfinger/host-meta links
+	*/
+	public static function jrd_links( $array ) {
+		$endpoint = apply_filters( 'webmention_endpoint', site_url( '?webmention=endpoint' ) );
+
+		$array['links'][] = array( 'rel' => 'webmention', 'href' => $endpoint );
+
+		return $array;
+	}
+
+
 }

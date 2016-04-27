@@ -31,12 +31,6 @@ class Webmention_Sender {
 
 		// admin settings
 		add_action( 'admin_init', array( 'Webmention_Sender', 'admin_register_settings' ) );
-		// endpoint discovery
-		add_action( 'wp_head', array( 'Webmention_Sender', 'html_header' ), 99 );
-		add_action( 'send_headers', array( 'Webmention_Sender', 'http_header' ) );
-		add_filter( 'host_meta', array( 'Webmention_Sender', 'jrd_links' ) );
-		add_filter( 'webfinger_user_data', array( 'Webmention_Sender', 'jrd_links' ) );
-		add_filter( 'webfinger_post_data', array( 'Webmention_Sender', 'jrd_links' ) );
 
 		// run Webmentions before the other pinging stuff
 		add_action( 'do_pings', array( 'Webmention_Sender', 'do_webmentions' ), 5, 1 );
@@ -310,35 +304,6 @@ class Webmention_Sender {
 		}
 
 		return false;
-	}
-
-	/**
-	 * The Webmention autodicovery meta-tags
-	 */
-	public static function html_header() {
-		$endpoint = apply_filters( 'webmention_endpoint', site_url( '?webmention=endpoint' ) );
-
-		echo '<link rel="webmention" href="' . $endpoint . '" />' . "\n";
-	}
-
-	/**
-	 * The Webmention autodicovery http-header
-	 */
-	public static function http_header() {
-		$endpoint = apply_filters( 'webmention_endpoint', site_url( '?webmention=endpoint' ) );
-
-		header( 'Link: <' . $endpoint . '>; rel="webmention"', false );
-	}
-
-	/**
-	 * Generates webfinger/host-meta links
-	 */
-	public static function jrd_links( $array ) {
-		$endpoint = apply_filters( 'webmention_endpoint', site_url( '?webmention=endpoint' ) );
-
-		$array['links'][] = array( 'rel' => 'webmention', 'href' => $endpoint );
-
-		return $array;
 	}
 
 	/**
