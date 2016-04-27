@@ -232,7 +232,13 @@ class Webmention_Sender {
 	 * @return bool|string False on failure, string containing URI on success
 	 */
 	public static function discover_endpoint( $url ) {
-
+    $user_agent = apply_filters( 'http_headers_useragent', 'Webmention (WordPress/' . $wp_version . ')' );
+    $args = array(
+          'timeout' => 10,
+          'limit_response_size' => 1048576,
+          'redirection' => 20,
+          'user-agent' => $user_agent,
+    );
 		if ( ! self::is_valid_url( $url ) ) { // Not an URL. This should never happen.
 			return false;
 		}
@@ -243,7 +249,7 @@ class Webmention_Sender {
 			return false;
 		}
 
-		$response = wp_remote_head( $url, array( 'timeout' => 100, 'httpversion' => '1.0' ) );
+		$response = wp_remote_head( $url, $args );
 
 		if ( is_wp_error( $response ) ) {
 			return false;
@@ -270,7 +276,7 @@ class Webmention_Sender {
 		}
 
 		// now do a GET since we're going to look in the html headers (and we're sure its not a binary file)
-		$response = wp_remote_get( $url, array( 'timeout' => 10, 'httpversion' => '1.0', 'limit_response_size' => 1048576 ) );
+		$response = wp_remote_get( $url, $args );
 
 		if ( is_wp_error( $response ) ) {
 			return false;

@@ -194,7 +194,8 @@ class Webmention_Receiver {
 	* @return array|WP_Error Return the response or an Error Object
 	**/
 	public static function get( $url ) {
-		$user_agent = apply_filters( 'http_headers_useragent', 'WordPress/' . $wp_version );
+		global $wp_version;
+		$user_agent = apply_filters( 'http_headers_useragent', 'Webmention (WordPress/' . $wp_version . ')' );
 		$args = array(
 					'timeout' => 10,
 					'limit_response_size' => 1048576,
