@@ -301,7 +301,7 @@ class Webmention_Receiver {
 		$commentdata = compact( 'comment_post_ID', 'comment_author', 'comment_author_url', 'comment_author_email', 'comment_content', 'comment_type', 'comment_parent', 'comment_approved', 'remote_source', 'remote_source_original', 'content_type', 'var' );
 
 		// check dupes
-		$comment = apply_filters( 'webmention_check_dupes', null, $commentdata );
+		$comment = apply_filters( 'webmention_check_dupes', null, $post->ID, $source );
 		// disable flood control
 		remove_filter( 'check_comment_flood', 'check_comment_flood_db', 10, 3 );
 
@@ -396,21 +396,22 @@ class Webmention_Receiver {
 	/**
 	 * Check if a comment already exists
 	 *
-	 * @param  array      $comment     the filtered comment
-	 * @param  array      $commentdata the comment, created for the Webmention data
+	 * @param  array      $comment		the filtered comment
+	 * @param  int				$post_ID		the post ID of the post
+	 * @param	 string			$source			The Source URL being checked
 	 *
 	 * @return array|null              the dupe or null
 	 */
-	public static function check_dupes( $comment, $commentdata ) {
+	public static function check_dupes( $comment, $post_ID, $source ) {
 		global $wpdb;
 		global $wp_version;
 		if ( $wp_version >= 4.4 ) {
 			// check if comment is already set
-			$comments = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $wpdb->comments WHERE comment_post_ID = %d AND comment_author_url = %s", $commentdata['comment_post_ID'], htmlentities( $commentdata['comment_author_url'] ) ) );
+			$comments = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $wpdb->comments WHERE comment_post_ID = %d AND comment_author_url = %s", $post_ID, htmlentities( $source ) ) );
 		} else {
 			$args = array(
-						'comment_post_ID' => $commentdata['comment_post_ID'],
-						'author_url' => htmlentities( $commentdata['comment_author_url'] ),
+						'comment_post_ID' => $post_ID,
+						'author_url' => htmlentities( $source ),
 			);
 			$comments = get_comments( $args );
 		}
@@ -426,13 +427,13 @@ class Webmention_Receiver {
 		// but can use a _crossposting_link meta value.
 		// @link https://github.com/pfefferle/wordpress-salmon/blob/master/plugin.php#L192
 		if ( $wp_version >= 4.4 ) {
-			$comments = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $wpdb->comments INNER JOIN $wpdb->commentmeta USING (comment_ID) WHERE comment_post_ID = %d AND meta_key = '_crossposting_link' AND meta_value = %s", $commentdata['comment_post_ID'], htmlentities( $commentdata['comment_author_url'] ) ) );
+			$comments = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $wpdb->comments INNER JOIN $wpdb->commentmeta USING (comment_ID) WHERE comment_post_ID = %d AND meta_key = '_crossposting_link' AND meta_value = %s", $post_ID, htmlentities( $source ) ) );
 		} else {
 			$args = array(
-			'comment_post_ID' => $commentdata['comment_post_ID'],
-			'author_url' => htmlentities( $commentdata['comment_author_url'] ),
+			'comment_post_ID' => $post_ID,
+			'author_url' => htmlentities( $source ),
 						'meta_key' => '_crossposting_link',
-						'meta_value' => $commentdata['comment_author_url'],
+						'meta_value' => $source,
 			);
 			$comments = get_comments( $args );
 		}
