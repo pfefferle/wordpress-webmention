@@ -37,7 +37,7 @@ class Webmention_Receiver {
 		// default handlers
 		add_filter( 'webmention_title', array( 'Webmention_Receiver', 'default_title_filter' ), 10, 4 );
 		add_filter( 'webmention_content', array( 'Webmention_Receiver', 'default_content_filter' ), 10, 4 );
-		add_filter( 'webmention_check_dupes', array( 'Webmention_Receiver', 'check_dupes' ), 10, 2 );
+		add_filter( 'webmention_check_dupes', array( 'Webmention_Receiver', 'check_dupes' ), 10, 3 );
 		add_filter( 'webmention_source_verify', array( 'Webmention_Receiver', 'source_verify' ), 10, 4 );
 		add_action( 'webmention_request', array( 'Webmention_Receiver', 'synchronous_request_handler' ), 10, 3 );
 
@@ -253,7 +253,6 @@ class Webmention_Receiver {
 	 * @uses do_action calls "webmention_update" on the comment_ID and commentdata when the Webmention is being updated
 	 */
 	public static function synchronous_request_handler( $source, $target, $post, $var ) {
-
 		$response = self::get( $source );
 		if ( is_wp_error( $response ) ) {
 			status_header( 400 );
@@ -300,10 +299,10 @@ class Webmention_Receiver {
 
 		$commentdata = compact( 'comment_post_ID', 'comment_author', 'comment_author_url', 'comment_author_email', 'comment_content', 'comment_type', 'comment_parent', 'comment_approved', 'remote_source', 'remote_source_original', 'content_type', 'var' );
 
-		// check dupes
-		$comment = apply_filters( 'webmention_check_dupes', null, $post->ID, $source );
 		// disable flood control
 		remove_filter( 'check_comment_flood', 'check_comment_flood_db', 10, 3 );
+    // check dupes first
+    $comment = apply_filters( 'webmention_check_dupes', null, $post->ID, $source );
 
 		// update or save Webmention
 		if ( $comment ) {
