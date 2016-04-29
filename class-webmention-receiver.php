@@ -176,7 +176,7 @@ class Webmention_Receiver {
 		if ( ! $url || strtolower( $url ) !== strtolower( $original_url ) ) {
 			return false; }
 		/** @todo Should use Filter Extension or custom preg_match instead. */
-		$parsed_url = @parse_url( $url );
+		$parsed_url = wp_parse_url( $url );
 		if ( ! $parsed_url || empty( $parsed_url['host'] ) ) {
 			return false; }
 		if ( isset( $parsed_url['user'] ) || isset( $parsed_url['pass'] ) ) {
@@ -381,7 +381,7 @@ class Webmention_Receiver {
 			$post_format = $post_formatstrings[ $post_format ];
 		}
 
-		$host = parse_url( $source, PHP_URL_HOST );
+		$host = wp_parse_url( $source, PHP_URL_HOST );
 
 		// strip leading www, if any
 		$host = preg_replace( '/^www\./', '', $host );

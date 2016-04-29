@@ -53,7 +53,7 @@ class Webmention_Sender {
 		if ( ! $url || strtolower( $url ) !== strtolower( $original_url ) ) {
 			return false; }
 		/** @todo Should use Filter Extension or custom preg_match instead. */
-		$parsed_url = @parse_url( $url );
+		$parsed_url = wp_parse_url( $url );
 		if ( ! $parsed_url || empty( $parsed_url['host'] ) ) {
 			return false; }
 		if ( isset( $parsed_url['user'] ) || isset( $parsed_url['pass'] ) ) {
@@ -91,7 +91,7 @@ class Webmention_Sender {
 
 		// stop selfpings on the same domain
 		if ( ( get_option( 'webmention_disable_selfpings_same_domain' ) === '1' ) &&
-			 ( parse_url( $source, PHP_URL_HOST ) === parse_url( $target, PHP_URL_HOST ) ) ) {
+			 ( wp_parse_url( $source, PHP_URL_HOST ) === parse_url( $target, PHP_URL_HOST ) ) ) {
 			return false;
 		}
 
@@ -322,10 +322,10 @@ class Webmention_Sender {
 	 */
 	public static function make_url_absolute( $base, $rel ) {
 		if ( 0 === strpos( $rel, '//' ) ) {
-			return parse_url( $base, PHP_URL_SCHEME ) . ':' . $rel;
+			return wp_parse_url( $base, PHP_URL_SCHEME ) . ':' . $rel;
 		}
 		// return if already absolute URL
-		if ( parse_url( $rel, PHP_URL_SCHEME ) != '' ) {
+		if ( wp_parse_url( $rel, PHP_URL_SCHEME ) != '' ) {
 			return $rel;
 		}
 		// queries and	anchors
@@ -334,7 +334,7 @@ class Webmention_Sender {
 		}
 		// parse base URL and convert to local variables:
 		// $scheme, $host, $path
-		extract( parse_url( $base ) );
+		extract( wp_parse_url( $base ) );
 		// remove	non-directory element from path
 		$path = preg_replace( '#/[^/]*$#', '', $path );
 		// destroy path if relative url points to root
