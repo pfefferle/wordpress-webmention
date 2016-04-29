@@ -205,16 +205,12 @@ class Webmention_Sender {
 	 * Do Webmentions
 	 */
 	public static function do_webmentions() {
-		global $wpdb;
-
 		// get all posts that should be "mentioned"
-		// TODO: Replace with WP_Query
-		$mentions = $wpdb->get_results( "SELECT ID, meta_id FROM {$wpdb->posts}, {$wpdb->postmeta} WHERE {$wpdb->posts}.ID = {$wpdb->postmeta}.post_id AND {$wpdb->postmeta}.meta_key = '_mentionme'" );
+		$mentions = new WP_Query( array( 'meta_key' => '_mentionme' ) );
 
 		// iterate mentions
 		foreach ( $mentions as $mention ) {
-			delete_metadata_by_mid( 'post', $mention->meta_id );
-
+			delete_post_meta( $mention->ID, '_mentionme' );
 			// send them Webmentions
 			self::send_webmentions( $mention->ID );
 		}
