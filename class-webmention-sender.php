@@ -164,15 +164,16 @@ class Webmention_Sender {
 				}
 			}
 
-			// rescedule if server responds with a http error 5xx
-			if ( wp_remote_retrieve_response_code( $response ) >= 500 ) {
+			// reschedule if server responds with a http error 5xx or an error code 429
+			$code = wp_remote_retrieve_response_code( $response );
+			if ( ( $code >= 500 ) || ( 429 == $code ) ) {
 				self::reschedule( $post_ID );
 			}
 		}
 	}
 
 	/**
-	 * Rescedule Webmentions on HTTP code 500
+	 * Reschedule Webmentions
 	 *
 	 * @param int $post_ID the post id
 	 */
@@ -228,13 +229,13 @@ class Webmention_Sender {
 	 * @return bool|string False on failure, string containing URI on success
 	 */
 	public static function discover_endpoint( $url ) {
-    $user_agent = apply_filters( 'http_headers_useragent', 'Webmention (WordPress/' . $wp_version . ')' );
-    $args = array(
-          'timeout' => 10,
-          'limit_response_size' => 1048576,
-          'redirection' => 20,
-          'user-agent' => $user_agent,
-    );
+		$user_agent = apply_filters( 'http_headers_useragent', 'Webmention (WordPress/' . $wp_version . ')' );
+		$args = array(
+		  'timeout' => 10,
+		  'limit_response_size' => 1048576,
+		  'redirection' => 20,
+		  'user-agent' => $user_agent,
+		);
 		if ( ! self::is_valid_url( $url ) ) { // Not an URL. This should never happen.
 			return false;
 		}
@@ -256,12 +257,12 @@ class Webmention_Sender {
 			if ( is_array( $links ) ) {
 				foreach ( $links as $link ) {
 					if ( preg_match( '/<(.[^>]+)>;\s+rel\s?=\s?[\"\']?(http:\/\/)?webmention?\/?[\"\']?/i', $link, $result ) ) {
-			      return WP_Http::make_absolute_url( $url, $result[1] );
+						return WP_Http::make_absolute_url( $url, $result[1] );
 					}
 				}
 			} else {
 				if ( preg_match( '/<(.[^>]+)>;\s+rel\s?=\s?[\"\']?(http:\/\/)?webmention?\/?[\"\']?/i', $links, $result ) ) {
-		      return WP_Http::make_absolute_url( $url, $result[1] );
+					return WP_Http::make_absolute_url( $url, $result[1] );
 				}
 			}
 		}
@@ -302,7 +303,7 @@ class Webmention_Sender {
 		// check <a> elements
 		// checks only body>a-links
 		foreach ( $xpath->query( '//body//a[contains(concat(" ", @rel, " "), " webmention ") or contains(@rel, "webmention.org")]/@href' ) as $result ) {
-      return WP_Http::make_absolute_url( $url, $result->value );
+			return WP_Http::make_absolute_url( $url, $result->value );
 		}
 
 		return false;
