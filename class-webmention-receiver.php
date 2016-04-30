@@ -286,7 +286,7 @@ class Webmention_Receiver {
 
 		// filter title and content of the comment. Title in a linkback is stored in the author field
 		$comment_author = wp_slash( apply_filters( 'webmention_title', '', $remote_source, $target, $source ) );
-		$comment_content = wp_slash( apply_filters( 'webmention_content', '', $remote_source, $target, $source ) );
+		$comment_content = wp_slash( apply_filters( 'webmention_content', '', $remote_source_original, $target, $source ) );
 
 		// change this if your theme can't handle the Webmentions comment type
 		$comment_type = apply_filters( 'webmention_comment_type', WEBMENTION_COMMENT_TYPE );
@@ -296,9 +296,8 @@ class Webmention_Receiver {
 
 		// filter the parent id
 		$comment_parent = apply_filters( 'webmention_comment_parent', null, $target );
-
 		$commentdata = compact( 'comment_post_ID', 'comment_author', 'comment_author_url', 'comment_author_email', 'comment_content', 'comment_type', 'comment_parent', 'comment_approved', 'remote_source', 'remote_source_original', 'content_type', 'var' );
-
+		
 		// disable flood control
 		remove_filter( 'check_comment_flood', 'check_comment_flood_db', 10, 3 );
 		// check dupes first
@@ -355,6 +354,7 @@ class Webmention_Receiver {
 	public static function last_modified( $comment_id, $commentdata ) {
 		update_comment_meta( $comment_id, 'comment_modified', current_time( 'mysql' ) );
 		update_comment_meta( $comment_id, 'comment_modified_gmt', current_time( 'mysql', 1 ) );
+		update_comment_meta( $comment_id, 'meta', $commentdata['meta']);
 	}
 
 	/**
@@ -388,7 +388,6 @@ class Webmention_Receiver {
 
 		// generate default text
 		$content = sprintf( __( 'This %s was mentioned on <a href="%s">%s</a>', 'webmention' ), $post_format, esc_url( $source ), $host );
-
 		return $content;
 	}
 
@@ -470,7 +469,7 @@ class Webmention_Receiver {
 	 * @return string the filtered title
 	 */
 	public static function default_title_filter( $title, $contents, $target, $source ) {
-		$meta_tags = get_meta_tags( $source );
+		$meta_tags = self::get_meta_tags( $contents );
 
 		// use meta-author
 		if ( $meta_tags && is_array( $meta_tags ) && array_key_exists( 'author', $meta_tags ) ) {
@@ -478,14 +477,38 @@ class Webmention_Receiver {
 		} elseif ( preg_match( '/<title>(.+)<\/title>/i', $contents, $match ) ) { // use title
 			$title = trim( $match[1] );
 		} else { // or host
-			$parsed = wp_parse_url( $source );
-			$host = $parsed['host'];
+			$host = wp_parse_url( $source );
+			$host = $host['host'];
 
 			// strip leading www, if any
 			$title = preg_replace( '/^www\./', '', $host );
 		}
 
 		return $title;
+	}
+
+	public static function get_meta_tags( $source_content ) {
+		if ( ! $source_content ) {
+			return null;
+		}
+		$meta = array();
+  	if ( preg_match_all( '/<meta [^>]+>/', $source_content, $matches ) ) {
+        $items = $matches[0];
+ 
+        foreach ( $items as $value ) {
+            if ( preg_match( '/(property|name)="([^"]+)"[^>]+content="([^"]+)"/', $value, $new_matches ) ) {
+                $meta_name  = $new_matches[2];
+                $meta_value = $new_matches[3];
+ 
+                // Sanity check. $key is usually things like 'title', 'description', 'keywords', etc.
+                if ( strlen( $meta_name ) > 100 ) {
+                    continue;
+                }
+                $meta[$meta_name] = $meta_value;
+            }
+        }
+    }
+		return $meta;
 	}
 
 	/**
