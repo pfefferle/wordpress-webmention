@@ -1,5 +1,5 @@
 # Webmention #
-**Contributors:** pfefferle  
+**Contributors:** pfefferle, dshanske  
 **Donate link:** http://14101978.de  
 **Tags:** webmention, pingback, trackback, linkback  
 **Requires at least:** 4.4  
@@ -65,7 +65,20 @@ Project maintined on github at [pfefferle/wordpress-webmention](https://github.c
 
 ### 3.0.0 ###
 
-* Complete Rewrite to Specification
+* Major Rewrite to Specification
+* Verify Target Before Source
+* Use Comment_Query to Check for Dupes
+* Pass Source to Commentdata array to match pingbacks
+* Add separate action for update vs post
+* Add Filter for Source Verification to Allow Different Verification Criteria by Content Type
+* Update README
+* Protection against Amplification Attacks
+* Pass Optional Additional Parameters to Hander
+* Verify Target Points to Site
+* Verify URL is valid
+* Add Last Modified date metadata to updated webmentions
+* Add User Agent for verification requests
+* Split receiver and sender into individual files
 
 ### 2.5.0 ###
 
