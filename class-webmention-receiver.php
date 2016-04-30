@@ -301,8 +301,8 @@ class Webmention_Receiver {
 
 		// disable flood control
 		remove_filter( 'check_comment_flood', 'check_comment_flood_db', 10, 3 );
-    // check dupes first
-    $comment = apply_filters( 'webmention_check_dupes', null, $post->ID, $source );
+		// check dupes first
+		$comment = apply_filters( 'webmention_check_dupes', null, $post->ID, $source );
 
 		// update or save Webmention
 		if ( $comment ) {
@@ -381,8 +381,8 @@ class Webmention_Receiver {
 			$post_format = $post_formatstrings[ $post_format ];
 		}
 
-		$host = wp_parse_url( $source, PHP_URL_HOST );
-
+		$parsed = wp_parse_url( $source );
+		$host = $parsed['host']; 
 		// strip leading www, if any
 		$host = preg_replace( '/^www\./', '', $host );
 
@@ -478,7 +478,8 @@ class Webmention_Receiver {
 		} elseif ( preg_match( '/<title>(.+)<\/title>/i', $contents, $match ) ) { // use title
 			$title = trim( $match[1] );
 		} else { // or host
-			$host = parse_url( $source, PHP_URL_HOST );
+			$parsed = wp_parse_url( $source );
+			$host = $parsed['host'];
 
 			// strip leading www, if any
 			$title = preg_replace( '/^www\./', '', $host );
