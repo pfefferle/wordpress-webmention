@@ -442,7 +442,7 @@ class Webmention_Receiver {
 			return $comments[0];
 		}
 
-		return null;
+		return $comment;
 	}
 
 	/**
