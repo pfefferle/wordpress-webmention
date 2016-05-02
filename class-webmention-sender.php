@@ -91,7 +91,7 @@ class Webmention_Sender {
 
 		// stop selfpings on the same domain
 		if ( ( get_option( 'webmention_disable_selfpings_same_domain' ) === '1' ) &&
-			 ( wp_parse_url( $source, PHP_URL_HOST ) === parse_url( $target, PHP_URL_HOST ) ) ) {
+			 ( wp_parse_url( $source, PHP_URL_HOST ) === wp_parse_url( $target, PHP_URL_HOST ) ) ) {
 			return false;
 		}
 
@@ -137,11 +137,9 @@ class Webmention_Sender {
 		$post = get_post( $post_ID );
 
 		// initialize links array
-		$links = array();
-
-		// Find all external links in the source
-		if ( preg_match_all( '/<a[^>]+href=.(https?:\/\/[^\'\"]+)/i', $post->post_content, $matches ) ) {
-			$links = $matches[1];
+		$links = wp_extra_urls( $post->post_content );
+		if ( ! $links ) {
+			$links = array();
 		}
 
 		// filter links
