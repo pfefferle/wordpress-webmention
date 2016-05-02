@@ -52,7 +52,6 @@ class Webmention_Sender {
 		$url = wp_kses_bad_protocol( $url, array( 'http', 'https' ) );
 		if ( ! $url || strtolower( $url ) !== strtolower( $original_url ) ) {
 			return false; }
-		/** @todo Should use Filter Extension or custom preg_match instead. */
 		$parsed_url = wp_parse_url( $url );
 		if ( ! $parsed_url || empty( $parsed_url['host'] ) ) {
 			return false; }
@@ -148,6 +147,9 @@ class Webmention_Sender {
 
 		foreach ( $targets as $target ) {
 			// send Webmention
+			if ( WP_DEBUG ) {
+				error_log( 'WEBMENTION CALLED'. $source .  '->' . $target );
+			}
 			$response = self::send_webmention( $source, $target, $post_ID );
 
 			// check response
@@ -206,12 +208,13 @@ class Webmention_Sender {
 	public static function do_webmentions() {
 		// get all posts that should be "mentioned"
 		$mentions = new WP_Query( array( 'meta_key' => '_mentionme' ) );
-
-		// iterate mentions
-		foreach ( $mentions as $mention ) {
-			delete_post_meta( $mention->ID, '_mentionme' );
-			// send them Webmentions
-			self::send_webmentions( $mention->ID );
+		if ( $mentions->have_posts() ) {
+			while ( $mentions->have_posts() ) {
+					$mentions->the_post();
+					delete_post_meta( get_the_ID() , '_mentionme' );
+					// send them Webmentions
+					self::send_webmentions( get_the_ID() );
+			}
 		}
 	}
 
@@ -227,6 +230,7 @@ class Webmention_Sender {
 	 * @return bool|string False on failure, string containing URI on success
 	 */
 	public static function discover_endpoint( $url ) {
+		global $wp_version;
 		$user_agent = apply_filters( 'http_headers_useragent', 'Webmention (WordPress/' . $wp_version . ')' );
 		$args = array(
 		  'timeout' => 10,
