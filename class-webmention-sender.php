@@ -137,7 +137,7 @@ class Webmention_Sender {
 		$post = get_post( $post_ID );
 
 		// initialize links array
-		$links = wp_extra_urls( $post->post_content );
+		$links = wp_extract_urls( $post->post_content );
 		if ( ! $links ) {
 			$links = array();
 		}
