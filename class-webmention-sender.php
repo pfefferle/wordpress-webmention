@@ -72,6 +72,19 @@ class Webmention_Sender {
 		}
 	}
 
+  /**
+   * Fires on Deleted Webmentions
+   *
+   * @param int $post_ID
+   */
+  public static function transition_post_hook( $new, $old, $post ) {
+    // check if pingbacks are enabled
+    if ( get_option( 'default_pingback_flag' ) ) {
+			// For Sending Webmentions on Delete
+    }
+  }
+
+
 	/**
 	 * Send Webmentions
 	 *
@@ -100,9 +113,14 @@ class Webmention_Sender {
 		// if I can't find an endpoint, perhaps you can!
 		$webmention_server_url = apply_filters( 'webmention_server_url', $webmention_server_url, $target );
 
+    global $wp_version;
+    $user_agent = apply_filters( 'http_headers_useragent', 'Webmention (WordPress/' . $wp_version . ')' );
+
 		$args = array(
 			'body' => 'source=' . urlencode( $source ) . '&target=' . urlencode( $target ),
 			'timeout' => 100,
+      'user-agent' => $user_agent,
+
 		);
 
 		if ( $webmention_server_url ) {
@@ -148,7 +166,7 @@ class Webmention_Sender {
 		foreach ( $targets as $target ) {
 			// send Webmention
 			if ( WP_DEBUG ) {
-				error_log( 'WEBMENTION CALLED'. $source .  '->' . $target );
+				error_log( 'WEBMENTION SENT: '. $source .  ' -> ' . $target );
 			}
 			$response = self::send_webmention( $source, $target, $post_ID );
 
@@ -259,12 +277,12 @@ class Webmention_Sender {
 			if ( is_array( $links ) ) {
 				foreach ( $links as $link ) {
 					if ( preg_match( '/<(.[^>]+)>;\s+rel\s?=\s?[\"\']?(http:\/\/)?webmention?\/?[\"\']?/i', $link, $result ) ) {
-						return WP_Http::make_absolute_url( $url, $result[1] );
+						return WP_Http::make_absolute_url( $result[1], $url );
 					}
 				}
 			} else {
 				if ( preg_match( '/<(.[^>]+)>;\s+rel\s?=\s?[\"\']?(http:\/\/)?webmention?\/?[\"\']?/i', $links, $result ) ) {
-					return WP_Http::make_absolute_url( $url, $result[1] );
+					return WP_Http::make_absolute_url( $result[1], $url );
 				}
 			}
 		}

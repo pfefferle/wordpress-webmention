@@ -70,7 +70,6 @@ class Webmention_Receiver {
 		if ( ! array_key_exists( 'webmention', $wp->query_vars ) ) {
 			return;
 		}
-
 		// plain text header
 		header( 'Content-Type: text/plain; charset=' . get_option( 'blog_charset' ) );
 
@@ -420,12 +419,6 @@ class Webmention_Receiver {
 		}
 		// check result
 		if ( ! empty( $comments ) ) {
-			// If insufficient file permissions send to system log but only if WP_DEBUG is on
-			if ( ! error_log( print_r( $comments, true ) . PHP_EOL, 3, dirname( __FILE__ ) . '/log.txt' ) ) {
-				if (WP_DEBUG) {
-					error_log( print_r( $comments, true ) . PHP_EOL );
-				}
-			}
 			return $comments[0];
 		}
 
