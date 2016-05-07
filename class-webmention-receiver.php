@@ -39,7 +39,7 @@ class Webmention_Receiver {
 		add_filter( 'webmention_content', array( 'Webmention_Receiver', 'default_content_filter' ), 10, 4 );
 		add_filter( 'webmention_check_dupes', array( 'Webmention_Receiver', 'check_dupes' ), 10, 3 );
 		add_filter( 'webmention_source_verify', array( 'Webmention_Receiver', 'source_verify' ), 10, 4 );
-		add_action( 'webmention_request', array( 'Webmention_Receiver', 'synchronous_request_handler' ), 10, 3 );
+		add_action( 'webmention_request', array( 'Webmention_Receiver', 'synchronous_request_handler' ), 10, 4 );
 
 		// Save Last Updated Time as Comment Meta
 		add_action( 'webmention_update', array( 'Webmention_Receiver', 'last_modified' ), 9, 2 );
@@ -181,6 +181,10 @@ class Webmention_Receiver {
 			return false; }
 		if ( isset( $parsed_url['user'] ) || isset( $parsed_url['pass'] ) ) {
 			return false; }
+		$ip = gethostbyname( $parsed_url['host'] );
+	  if(!$ip || $ip == $parsed_url['host'] ) {
+				return false;
+		}
 		return true;
 	}
 
@@ -297,7 +301,7 @@ class Webmention_Receiver {
 		// filter the parent id
 		$comment_parent = apply_filters( 'webmention_comment_parent', null, $target );
 		$commentdata = compact( 'comment_post_ID', 'comment_author', 'comment_author_url', 'comment_author_email', 'comment_content', 'comment_type', 'comment_parent', 'comment_approved', 'remote_source', 'remote_source_original', 'content_type', 'var' );
-		
+
 		// disable flood control
 		remove_filter( 'check_comment_flood', 'check_comment_flood_db', 10, 3 );
 		// check dupes first
@@ -307,8 +311,10 @@ class Webmention_Receiver {
 		if ( $comment ) {
 			// Assume that if the original was approved, the update should be as well. This can be overridden
 			$commentdata['comment_approved'] = $comment->comment_approved;
-			// Merge Arrays Together with New Data Overwriting Old and Filter
-			$commentdata = apply_filters( 'pre_update_webmention', array_merge( $comment, $commentdata ), $comment, $commentdata );
+
+			$commentdata['comment_ID'] = $comment->comment_ID;
+			// Filter the Comment Data if needed for more intelligent updating
+			$commentdata = apply_filters( 'pre_update_webmention', $commentdata, $comment );
 			// save comment
 			wp_update_comment( $commentdata );
 			$comment_ID = $comment->comment_ID;
@@ -354,7 +360,6 @@ class Webmention_Receiver {
 	public static function last_modified( $comment_id, $commentdata ) {
 		update_comment_meta( $comment_id, 'comment_modified', current_time( 'mysql' ) );
 		update_comment_meta( $comment_id, 'comment_modified_gmt', current_time( 'mysql', 1 ) );
-		update_comment_meta( $comment_id, 'meta', $commentdata['meta']);
 	}
 
 	/**
@@ -382,7 +387,7 @@ class Webmention_Receiver {
 		}
 
 		$parsed = wp_parse_url( $source );
-		$host = $parsed['host']; 
+		$host = $parsed['host'];
 		// strip leading www, if any
 		$host = preg_replace( '/^www\./', '', $host );
 
@@ -415,8 +420,12 @@ class Webmention_Receiver {
 		}
 		// check result
 		if ( ! empty( $comments ) ) {
-			error_log( print_r( $comments, true ) . PHP_EOL, 3, dirname( __FILE__ ) . '/log.txt' );
-
+			// If insufficient file permissions send to system log but only if WP_DEBUG is on
+			if ( ! error_log( print_r( $comments, true ) . PHP_EOL, 3, dirname( __FILE__ ) . '/log.txt' ) ) {
+				if (WP_DEBUG) {
+					error_log( print_r( $comments, true ) . PHP_EOL );
+				}
+			}
 			return $comments[0];
 		}
 
@@ -492,22 +501,22 @@ class Webmention_Receiver {
 			return null;
 		}
 		$meta = array();
-  	if ( preg_match_all( '/<meta [^>]+>/', $source_content, $matches ) ) {
-        $items = $matches[0];
- 
-        foreach ( $items as $value ) {
-            if ( preg_match( '/(property|name)="([^"]+)"[^>]+content="([^"]+)"/', $value, $new_matches ) ) {
-                $meta_name  = $new_matches[2];
-                $meta_value = $new_matches[3];
- 
-                // Sanity check. $key is usually things like 'title', 'description', 'keywords', etc.
-                if ( strlen( $meta_name ) > 100 ) {
-                    continue;
-                }
-                $meta[$meta_name] = $meta_value;
-            }
-        }
-    }
+		if ( preg_match_all( '/<meta [^>]+>/', $source_content, $matches ) ) {
+			$items = $matches[0];
+
+			foreach ( $items as $value ) {
+				if ( preg_match( '/(property|name)="([^"]+)"[^>]+content="([^"]+)"/', $value, $new_matches ) ) {
+					$meta_name  = $new_matches[2];
+					$meta_value = $new_matches[3];
+
+					// Sanity check. $key is usually things like 'title', 'description', 'keywords', etc.
+					if ( strlen( $meta_name ) > 100 ) {
+						continue;
+					}
+					$meta[$meta_name] = $meta_value;
+				}
+			}
+		}
 		return $meta;
 	}
 
