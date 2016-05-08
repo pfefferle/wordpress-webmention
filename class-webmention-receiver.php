@@ -147,7 +147,7 @@ class Webmention_Receiver {
 		$var = array();
 		foreach ( $approved as $app ) {
 			if ( array_key_exists( $app, $_POST ) ) {
-				$var[] = $_POST[$app];
+				$var[] = $_POST[ $app ];
 			}
 		}
 
@@ -181,7 +181,7 @@ class Webmention_Receiver {
 		if ( isset( $parsed_url['user'] ) || isset( $parsed_url['pass'] ) ) {
 			return false; }
 		$ip = gethostbyname( $parsed_url['host'] );
-	  if(!$ip || $ip == $parsed_url['host'] ) {
+		if ( ! $ip || $ip == $parsed_url['host'] ) {
 				return false;
 		}
 		return true;
@@ -506,7 +506,7 @@ class Webmention_Receiver {
 					if ( strlen( $meta_name ) > 100 ) {
 						continue;
 					}
-					$meta[$meta_name] = $meta_value;
+					$meta[ $meta_name ] = $meta_value;
 				}
 			}
 		}
@@ -540,6 +540,25 @@ class Webmention_Receiver {
 		$array['links'][] = array( 'rel' => 'webmention', 'href' => $endpoint );
 
 		return $array;
+	}
+
+  /**
+  * Generates a webmention form
+  */
+	public static function webmention_form() {
+	?> 
+	 <br />
+	 <form id="webmention-form" action="<?php echo site_url( '?webmention=endpoint' ); ?>" method="post">
+	  <p>
+		<label for="webmention-source"><?php _e( 'Respond on your own site:', 'webmention_form' ); ?></label>
+		<input id="webmention-source" size="15" type="url" name="source" placeholder="http://example.com/post/100" />
+
+		<input id="webmention-submit" type="submit" name="submit" value="Send" />
+
+	  <input id="webmention-target" type="hidden" name="target" value="<?php the_permalink(); ?>" />
+		</p>
+	</form>
+	<?php
 	}
 
 
