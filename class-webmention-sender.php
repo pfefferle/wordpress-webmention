@@ -102,8 +102,8 @@ class Webmention_Sender {
 		}
 
 		// stop selfpings on the same domain
-		if ( ( get_option( 'webmention_disable_selfpings_same_domain' ) === '1' ) &&
-			 ( wp_parse_url( $source, PHP_URL_HOST ) === wp_parse_url( $target, PHP_URL_HOST ) ) ) {
+		$disable_selfpings_domain = apply_filters( 'webmention_disable_selfpings', get_option( 'webmention_disable_selfpings_same_domain', 0) );
+		if ( ( 1 == $disable_selfpings_domain) && ( 0 !== url_to_postid( $target ) ) ) {
 			return false;
 		}
 
