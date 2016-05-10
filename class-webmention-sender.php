@@ -29,9 +29,6 @@ class Webmention_Sender {
 		// instead of calling Webmention_Sender::send_webmention
 		add_action( 'send_webmention', array( 'Webmention_Sender', 'send_webmention' ), 10, 2 );
 
-		// admin settings
-		add_action( 'admin_init', array( 'Webmention_Sender', 'admin_register_settings' ) );
-
 		// run Webmentions before the other pinging stuff
 		add_action( 'do_pings', array( 'Webmention_Sender', 'do_webmentions' ), 5, 1 );
 
@@ -72,17 +69,17 @@ class Webmention_Sender {
 		}
 	}
 
-  /**
-   * Fires on Deleted Webmentions
-   *
-   * @param int $post_ID
-   */
-  public static function transition_post_hook( $new, $old, $post ) {
-    // check if pingbacks are enabled
-    if ( get_option( 'default_pingback_flag' ) ) {
+	/**
+	* Fires on Deleted Webmentions
+	*
+	* @param int $post_ID
+	*/
+	public static function transition_post_hook( $new, $old, $post ) {
+		// check if pingbacks are enabled
+		if ( get_option( 'default_pingback_flag' ) ) {
 			// For Sending Webmentions on Delete
-    }
-  }
+		}
+	}
 
 
 	/**
@@ -102,7 +99,7 @@ class Webmention_Sender {
 		}
 
 		// stop selfpings on the same domain
-		$disable_selfpings_domain = apply_filters( 'webmention_disable_selfpings', get_option( 'webmention_disable_selfpings_same_domain', 0) );
+		$disable_selfpings_domain = apply_filters( 'webmention_disable_selfpings', get_option( 'webmention_disable_selfpings_same_domain', 0 ) );
 		if ( ( 1 == $disable_selfpings_domain) && ( 0 !== url_to_postid( $target ) ) ) {
 			return false;
 		}
@@ -113,13 +110,13 @@ class Webmention_Sender {
 		// if I can't find an endpoint, perhaps you can!
 		$webmention_server_url = apply_filters( 'webmention_server_url', $webmention_server_url, $target );
 
-    global $wp_version;
-    $user_agent = apply_filters( 'http_headers_useragent', 'Webmention (WordPress/' . $wp_version . ')' );
+		global $wp_version;
+		$user_agent = apply_filters( 'http_headers_useragent', 'Webmention (WordPress/' . $wp_version . ')' );
 
 		$args = array(
 			'body' => 'source=' . urlencode( $source ) . '&target=' . urlencode( $target ),
 			'timeout' => 100,
-      'user-agent' => $user_agent,
+		'user-agent' => $user_agent,
 
 		);
 
@@ -329,38 +326,6 @@ class Webmention_Sender {
 		return false;
 	}
 
-	/**
-	 * Register Webmention admin settings.
-	 */
-	public static function admin_register_settings() {
-		register_setting( 'discussion', 'webmention_disable_selfpings_same_url' );
-		register_setting( 'discussion', 'webmention_disable_selfpings_same_domain' );
-
-		add_settings_field( 'webmention_discussion_settings', __( 'Webmention Settings', 'Webmention' ), array( 'Webmention_Sender', 'discussion_settings' ), 'discussion', 'default' );
-	}
-
-	/**
-	 * Add Webmention options to the WordPress discussion settings page.
-	 */
-	public static function discussion_settings () {
-?>
-	<fieldset>
-		<label for="webmention_disable_selfpings_same_url">
-			<input type="checkbox" name="webmention_disable_selfpings_same_url" id="webmention_disable_selfpings_same_url" value="1" <?php
-				echo checked( true, get_option( 'webmention_disable_selfpings_same_url' ) );  ?> />
-			<?php _e( 'Disable self-pings on the same URL <small>(for example "http://example.com/?p=123")</small>', 'Webmention' ) ?>
-		</label>
-
-		<br />
-
-		<label for="webmention_disable_selfpings_same_domain">
-			<input type="checkbox" name="webmention_disable_selfpings_same_domain" id="webmention_disable_selfpings_same_domain" value="1" <?php
-				echo checked( true, get_option( 'webmention_disable_selfpings_same_domain' ) );  ?> />
-			<?php _e( 'Disable self-pings on the same Domain <small>(for example "example.com")</small>', 'Webmention' ) ?>
-		</label>
-	</fieldset>
-<?php
-	}
 }
 
 if ( ! function_exists( 'get_webmentions_number' ) ) :
