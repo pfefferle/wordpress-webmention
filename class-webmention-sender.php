@@ -32,7 +32,9 @@ class Webmention_Sender {
 		// run Webmentions before the other pinging stuff
 		add_action( 'do_pings', array( 'Webmention_Sender', 'do_webmentions' ), 5, 1 );
 
-		add_action( 'publish_post', array( 'Webmention_Sender', 'publish_post_hook' ) );
+		add_action( 'publish_post', array( 'Webmention_Sender', 'publish_hook' ) );
+		add_action( 'publish_page', array( 'Webmention_Sender', 'publish_hook' ) );
+
 	}
 
 	/**
@@ -62,7 +64,7 @@ class Webmention_Sender {
 	 *
 	 * @param int $post_ID
 	 */
-	public static function publish_post_hook( $post_ID ) {
+	public static function publish_hook( $post_ID ) {
 		// check if pingbacks are enabled
 		if ( get_option( 'default_pingback_flag' ) ) {
 			add_post_meta( $post_ID, '_mentionme', '1', true );
@@ -99,7 +101,7 @@ class Webmention_Sender {
 		}
 
 		// stop selfpings on the same domain
-		$disable_selfpings_domain = apply_filters( 'webmention_disable_selfpings', get_option( 'webmention_disable_selfpings_same_domain', 0 ) );
+		$disable_selfpings_domain = apply_filters( 'webmention_disable_selfpings', 0 );
 		if ( ( 1 == $disable_selfpings_domain) && ( 0 !== url_to_postid( $target ) ) ) {
 			return false;
 		}
@@ -222,7 +224,7 @@ class Webmention_Sender {
 	 */
 	public static function do_webmentions() {
 		// get all posts that should be "mentioned"
-		$mentions = new WP_Query( array( 'meta_key' => '_mentionme' ) );
+		$mentions = new WP_Query( array( 'meta_key' => '_mentionme', 'post_type' => 'any' ) );
 		if ( $mentions->have_posts() ) {
 			while ( $mentions->have_posts() ) {
 					$mentions->the_post();
