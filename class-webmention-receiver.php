@@ -110,11 +110,11 @@ class Webmention_Receiver {
 		}
 
 		if ( ! self::is_valid_url( $_POST['target'] ) ) {
-			self::error( new WP_Error( 400, '"target" is not valid URL' ) );
+			self::error( new WP_Error( 400, '"target" is not valid URL', $_POST['target'] ) );
 		}
 
 		if ( ! stristr( $_POST['target'], preg_replace( '/^https?:\/\//i', '', get_site_url() ) ) ) {
-			self::error( new WP_Error( 400, '"target" does not Point to Site' ) );
+			self::error( new WP_Error( 400, '"target" does not Point to Site', $_POST['target'] ) );
 		}
 
 		// remove url-scheme
@@ -135,12 +135,12 @@ class Webmention_Receiver {
 
 		// check if post id exists
 		if ( ! $post_ID ) {
-			self::error( new WP_Error( 400, 'Specified target URL not found' ) );
+			self::error( new WP_Error( 400, 'Specified target URL not found', $_POST['target'] ) );
 		}
 
 		// check if pings are allowed
 		if ( ! pings_open( $post_ID ) ) {
-			self::error( new WP_Error( 400, 'Webmentions are disabled for this resource' ) );
+			self::error( new WP_Error( 400, 'Webmentions are disabled for this resource', $post_ID ) );
 		}
 
 		$post_ID = intval( $post_ID );
@@ -268,16 +268,15 @@ class Webmention_Receiver {
 			status_header( 400 );
 			// Error Handler Should End with an Exit. Default handling is below.
 			do_action( 'webmention_retrieve_error', $post, $source, $response );
-			status_header( 400 );
-			echo 'Unable to Retrieve Source: ' . $response->get_error_message();
-			exit;
+			self::error( new WP_Error( 400, 'Unable to Retrieve Source: ' . $response->get_error_message(), $response ) );
+
 		}
 		$remote_source = wp_remote_retrieve_body( $response );
 		// Content Type to Be Added to Commentdata to be used by hooks or filters.
 		$content_type = wp_remote_retrieve_header( $response, 'content-type' );
 		// check if source really links to the target. Allow for more complex verification using content type
 		if ( ! apply_filters( 'webmention_source_verify', false, $remote_source, $target, $content_type ) ) {
-			self::error( new WP_Error( 400, 'Source Site Does Not Link to Target' ) );
+			self::error( new WP_Error( 400, 'Source Site Does Not Link to Target', array( $remote_source, $target, $content_type ) ) );
 		}
 		// if it does, get rid of all evil
 		if ( ! function_exists( 'wp_kses_post' ) ) {
