@@ -47,6 +47,29 @@ class Webmention_Receiver {
 	}
 
 	/**
+	* Error Function
+	*
+	* @param
+	*/
+	public static function error( $error ) {
+		if ( ! is_wp_error( $error ) ) {
+			status_header( 500 );
+			echo 'Unknown Error';
+			exit;
+		}
+		// Allow for other actions such as error logging or debugging
+		do_action( 'webmention_error', $error );
+		if ( is_numeric( $error->get_error_code() ) ) {
+			status_header( $error->get_error_code() );
+		} // If the error code isn't numeric, something is wrong
+		else {
+			status_header( 500 );
+		}
+		echo $error->get_error_message();
+		exit;
+	}
+
+	/**
 	 * Adds some query vars
 	 *
 	 * @param array $vars
@@ -75,33 +98,23 @@ class Webmention_Receiver {
 
 		// check if source url is transmitted
 		if ( ! isset( $_POST['source'] ) ) {
-			status_header( 400 );
-			echo '"source" is missing';
-			exit;
+			self::error( new WP_Error( 400, '"source" is missing' ) );
 		}
 		if ( ! self::is_valid_url( $_POST['source'] ) ) {
-			status_header( 400 );
-			echo '"source" is not valid URL';
-			exit;
+			self::error( new WP_Error( 400, '"source" is not valid URL' ) );
 		}
 
 		// check if target url is transmitted
 		if ( ! isset( $_POST['target'] ) ) {
-			status_header( 400 );
-			echo '"target" is missing';
-			exit;
+			self::error( new WP_Error( 400, '"target" is missing' ) );
 		}
 
 		if ( ! self::is_valid_url( $_POST['target'] ) ) {
-			status_header( 400 );
-			echo '"target" is not valid URL';
-			exit;
+			self::error( new WP_Error( 400, '"target" is not valid URL' ) );
 		}
 
 		if ( ! stristr( $_POST['target'], preg_replace( '/^https?:\/\//i', '', get_site_url() ) ) ) {
-			status_header( 400 );
-			echo '"target" does not Point to Site';
-			exit;
+			self::error( new WP_Error( 400, '"target" does not Point to Site' ) );
 		}
 
 		// remove url-scheme
@@ -122,16 +135,12 @@ class Webmention_Receiver {
 
 		// check if post id exists
 		if ( ! $post_ID ) {
-			status_header( 400 );
-			echo 'Specified target URL not found.';
-			exit;
+			self::error( new WP_Error( 400, 'Specified target URL not found' ) );
 		}
 
 		// check if pings are allowed
 		if ( ! pings_open( $post_ID ) ) {
-			status_header( 400 );
-			echo 'Webmentions are disabled for this resource';
-			exit;
+			self::error( new WP_Error( 400, 'Webmentions are disabled for this resource' ) );
 		}
 
 		$post_ID = intval( $post_ID );
@@ -155,9 +164,7 @@ class Webmention_Receiver {
 		do_action( 'webmention_request', $_POST['source'], $_POST['target'], $post, $var );
 
 		// if no "action" is responsible, return a 500
-		status_header( 500 );
-		echo 'Webmention Handler Failed.';
-		exit;
+		self::error( new WP_Error( 500, 'Webmention Handler Failed' ) );
 	}
 
 	/**
@@ -270,9 +277,7 @@ class Webmention_Receiver {
 		$content_type = wp_remote_retrieve_header( $response, 'content-type' );
 		// check if source really links to the target. Allow for more complex verification using content type
 		if ( ! apply_filters( 'webmention_source_verify', false, $remote_source, $target, $content_type ) ) {
-			status_header( 400 );
-			echo 'Source Site Does Not Link to Target.';
-			exit;
+			self::error( new WP_Error( 400, 'Source Site Does Not Link to Target' ) );
 		}
 		// if it does, get rid of all evil
 		if ( ! function_exists( 'wp_kses_post' ) ) {
@@ -542,9 +547,9 @@ class Webmention_Receiver {
 		return $array;
 	}
 
-  /**
-  * Generates a webmention form
-  */
+	/**
+	* Generates a webmention form
+	*/
 	public static function webmention_form() {
 	?> 
 	 <br />
