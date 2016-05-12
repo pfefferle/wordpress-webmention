@@ -276,7 +276,7 @@ class Webmention_Receiver {
 		$content_type = wp_remote_retrieve_header( $response, 'content-type' );
 		// check if source really links to the target. Allow for more complex verification using content type
 		if ( ! apply_filters( 'webmention_source_verify', false, $remote_source, $target, $content_type ) ) {
-			self::error( new WP_Error( 400, 'Source Site Does Not Link to Target', array( $remote_source, $target, $content_type ) ) );
+			self::error( new WP_Error( 400, 'Source Site Does Not Link to Target', compact( 'remote_source', 'source', 'target', 'content_type' ) ) );
 		}
 		// if it does, get rid of all evil
 		if ( ! function_exists( 'wp_kses_post' ) ) {

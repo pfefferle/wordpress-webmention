@@ -79,6 +79,7 @@ Project maintined on github at [pfefferle/wordpress-webmention](https://github.c
 * Add Last Modified date metadata to updated webmentions
 * Add User Agent for verification requests
 * Split receiver and sender into individual files
+* New action hook for generating log messages
 
 = 2.5.0 =
 
