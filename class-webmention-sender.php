@@ -224,14 +224,14 @@ class Webmention_Sender {
 	 */
 	public static function do_webmentions() {
 		// get all posts that should be "mentioned"
-		$mentions = new WP_Query( array( 'meta_key' => '_mentionme', 'post_type' => 'any' ) );
-		if ( $mentions->have_posts() ) {
-			while ( $mentions->have_posts() ) {
-					$mentions->the_post();
-					delete_post_meta( get_the_ID() , '_mentionme' );
+		$mentions = get_posts( array( 'meta_key' => '_mentionme', 'post_type' => 'any', 'fields' => 'ids', 'nopaging' => true ) );
+		if ( empty( $mentions ) ) {
+			return;
+		}
+		foreach ( $mentions as $mention ) {  
+					delete_post_meta( $mention , '_mentionme' );
 					// send them Webmentions
-					self::send_webmentions( get_the_ID() );
-			}
+					self::send_webmentions( $mention );
 		}
 	}
 
