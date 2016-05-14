@@ -34,6 +34,8 @@ class Webmention_Sender {
 
 		add_action( 'publish_post', array( 'Webmention_Sender', 'publish_hook' ) );
 		add_action( 'publish_page', array( 'Webmention_Sender', 'publish_hook' ) );
+    //send salmention when comment on post approved
+    add_action('transition_comment_status', array( 'Webmention_Sender', 'comment_transition' ), 10, 3);
 
 	}
 
@@ -70,6 +72,16 @@ class Webmention_Sender {
 			add_post_meta( $post_ID, '_mentionme', '1', true );
 		}
 	}
+
+	public static function comment_transition($new_status, $old_status, $comment) {
+		if($old_status != $new_status) {
+			if($new_status == 'approved') {
+        self::publish_hook( $comment->comment_post_ID );
+			}
+		}
+	}
+
+
 
 	/**
 	* Fires on Deleted Webmentions
