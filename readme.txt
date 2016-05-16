@@ -80,6 +80,7 @@ Project maintined on github at [pfefferle/wordpress-webmention](https://github.c
 * Add User Agent for verification requests
 * Split receiver and sender into individual files
 * New action hook for generating log messages
+* Add unit tests for endpoint discovery based on webmention.rocks
 
 = 2.5.0 =
 

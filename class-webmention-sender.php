@@ -328,13 +328,13 @@ class Webmention_Sender {
 		// check <link> elements
 		// checks only head-links
 		foreach ( $xpath->query( '//head/link[contains(concat(" ", @rel, " "), " webmention ") or contains(@rel, "webmention.org")]/@href' ) as $result ) {
-			return WP_Http::make_absolute_url( $url, $result->value );
+			return WP_Http::make_absolute_url( $result->value, $url );
 		}
 
 		// check <a> elements
 		// checks only body>a-links
 		foreach ( $xpath->query( '//body//a[contains(concat(" ", @rel, " "), " webmention ") or contains(@rel, "webmention.org")]/@href' ) as $result ) {
-			return WP_Http::make_absolute_url( $url, $result->value );
+			return WP_Http::make_absolute_url( $result->value, $url );
 		}
 
 		return false;
