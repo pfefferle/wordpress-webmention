@@ -162,6 +162,38 @@ class DiscoverTest extends WP_UnitTestCase {
     $this->assertSame( 'http://www.example.com/test/9/webmention' , $endpoint );
   }
 
+ public function discover_notwebmention_htmllink() {
+    $headers = $this->headers( array() );
+    $response = $this->response( 200, 'OK' );
+    $body = '<!DOCTYPE html><html lang="en"><head><link rel="not-webmention" href="http://www.example.com/test/12/webmention"></head><body>This is a testThere is also a <a href="/test/121/webmention" rel="webmention"></body></html>';
+    return $this->httpreturn( $headers, $response, $body );
+  }
+
+
+  public function test_discover_notwebmention_htmllink() {
+    $url = 'http://www.example.com/test/12';
+
+    add_filter( 'pre_http_request', array( $this, 'discover_notwebmention_htmllink' ) );
+    $endpoint = Webmention_Sender::discover_endpoint( $url );
+    $this->assertSame( 'http://www.example.com/test/121/webmention' , $endpoint );
+  }
+
+ public function discover_empty_htmllink() {
+    $headers = $this->headers( array() );
+    $response = $this->response( 200, 'OK' );
+    $body = '<!DOCTYPE html><html lang="en"><head><link rel="webmention" href=""></head><body>This is a test</body></html>';
+    return $this->httpreturn( $headers, $response, $body );
+  }
+
+
+  public function test_discover_empty_htmllink() {
+    $url = 'http://www.example.com/test/15';
+
+    add_filter( 'pre_http_request', array( $this, 'discover_empty_htmllink' ) );
+    $endpoint = Webmention_Sender::discover_endpoint( $url );
+    $this->assertSame( 'http://www.example.com/test/15' , $endpoint );
+  }
+
 
 
 	public function discover_relative_hreflink() {
@@ -196,6 +228,40 @@ class DiscoverTest extends WP_UnitTestCase {
     $this->assertSame( 'http://www.example.com/test/6/webmention' , $endpoint );
   }
 
+  public function discover_comment_hreflink() {
+    $headers = $this->headers( array() );
+    $response = $this->response( 200, 'OK' );
+    $body = '<!DOCTYPE html><html lang="en"><head></head><body><!-- <a rel="webmention" href="http://www.example.com/test/13/webmention">Webmention</a> --><a rel="webmention" href="http://www.example.com/test/131/webmention">Webmention</a></body></html>';
+    return $this->httpreturn( $headers, $response, $body );
+  }
+
+
+  public function test_discover_comment_hreflink() {
+    $url = 'http://www.example.com/test/13';
+
+    add_filter( 'pre_http_request', array( $this, 'discover_comment_hreflink' ) );
+    $endpoint = Webmention_Sender::discover_endpoint( $url );
+    $this->assertSame( 'http://www.example.com/test/131/webmention' , $endpoint );
+  }
+
+  public function discover_escaped_hreflink() {
+    $headers = $this->headers( array() );
+    $response = $this->response( 200, 'OK' );
+    $body = '<!DOCTYPE html><html lang="en"><head></head><body><code>&lt;a rel="webmention" href="http://www.example.com/test/14/webmention">Webmention&gt;&lt;/a&gt;<a rel="webmention" href="http://www.example.com/test/141/webmention">Webmention</a></body></html>';
+    return $this->httpreturn( $headers, $response, $body );
+  }
+
+
+  public function test_discover_escaped_hreflink() {
+    $url = 'http://www.example.com/test/14';
+
+    add_filter( 'pre_http_request', array( $this, 'discover_escaped_hreflink' ) );
+    $endpoint = Webmention_Sender::discover_endpoint( $url );
+    $this->assertSame( 'http://www.example.com/test/141/webmention' , $endpoint );
+  }
+
+
+
 
 	public function discover_multiple_link() {
     $headers = $this->headers( '<http://www.example.com/test/11/webmention>; rel=webmention' );
@@ -208,7 +274,7 @@ class DiscoverTest extends WP_UnitTestCase {
   public function test_discover_multiple_link() {
     $url = 'http://www.example.com/test/11';
 
-    add_filter( 'pre_http_request', array( $this, 'discover_multiple_hreflink' ) );
+    add_filter( 'pre_http_request', array( $this, 'discover_multiple_link' ) );
     $endpoint = Webmention_Sender::discover_endpoint( $url );
     $this->assertSame( 'http://www.example.com/test/11/webmention' , $endpoint );
 	}
