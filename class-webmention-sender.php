@@ -206,7 +206,7 @@ class Webmention_Sender {
 	 */
 	public static function discover_endpoint( $url ) {
 		/** @todo Should use Filter Extension or custom preg_match instead. */
-		$parsed_url = parse_url( $url );
+		$parsed_url = wp_parse_url( $url );
 
 		if ( ! isset( $parsed_url['host'] ) ) { // Not an URL. This should never happen.
 			return false;
@@ -229,12 +229,12 @@ class Webmention_Sender {
 			if ( is_array( $links ) ) {
 				foreach ( $links as $link ) {
 					if ( preg_match( '/<(.[^>]+)>;\s+rel\s?=\s?[\"\']?(http:\/\/)?webmention(.org)?\/?[\"\']?/i', $link, $result ) ) {
-						return self::make_url_absolute( $url, $result[1] );
+						return WP_Http::make_url_absolute( $result[1], $url );
 					}
 				}
 			} else {
 				if ( preg_match( '/<(.[^>]+)>;\s+rel\s?=\s?[\"\']?(http:\/\/)?webmention(.org)?\/?[\"\']?/i', $links, $result ) ) {
-					return self::make_url_absolute( $url, $result[1] );
+					return WP_Http::make_url_absolute( $result[1], $url );
 				}
 			}
 		}
@@ -269,64 +269,16 @@ class Webmention_Sender {
 		// check <link> elements
 		// checks only head-links
 		foreach ( $xpath->query( '//head/link[contains(concat(" ", @rel, " "), " webmention ") or contains(@rel, "webmention.org")]/@href' ) as $result ) {
-			return self::make_url_absolute( $url, $result->value );
+			return WP_Http::make_url_absolute( $result->value, $url );
 		}
 
 		// check <a> elements
 		// checks only body>a-links
 		foreach ( $xpath->query( '//body//a[contains(concat(" ", @rel, " "), " webmention ") or contains(@rel, "webmention.org")]/@href' ) as $result ) {
-			return self::make_url_absolute( $url, $result->value );
+			return WP_Http::make_url_absolute( $result->value, $url );
 		}
 
 		return false;
-	}
-
-	/**
-	 * Converts relative to absolute urls
-	 *
-	 * Based on the code of 99webtools.com
-	 *
-	 * @link http://99webtools.com/relative-path-into-absolute-url.php
-	 *
-	 * @param string $base the base url
-	 * @param string $rel the relative url
-	 *
-	 * @return string the absolute url
-	 */
-	public static function make_url_absolute( $base, $rel ) {
-		if ( 0 === strpos( $rel, '//' ) ) {
-			return parse_url( $base, PHP_URL_SCHEME ) . ':' . $rel;
-		}
-		// return if already absolute URL
-		if ( parse_url( $rel, PHP_URL_SCHEME ) != '' ) {
-			return $rel;
-		}
-		// queries and	anchors
-		if ( '#' == $rel[0]  || '?' == $rel[0] ) {
-			return $base . $rel;
-		}
-		// parse base URL and convert to local variables:
-		// $scheme, $host, $path
-		extract( parse_url( $base ) );
-		// remove	non-directory element from path
-		$path = preg_replace( '#/[^/]*$#', '', $path );
-		// destroy path if relative url points to root
-		if ( '/' == $rel[0] ) {
-			$path = '';
-		}
-		// dirty absolute URL
-		$abs = "$host";
-		// check port
-		if ( isset( $port ) && ! empty( $port ) ) {
-			$abs .= ":$port";
-		}
-		// add path + rel
-		$abs .= "$path/$rel";
-		// replace '//' or '/./' or '/foo/../' with '/'
-		$re = array( '#(/\.?/)#', '#/(?!\.\.)[^/]+/\.\./#' );
-		for ( $n = 1; $n > 0; $abs = preg_replace( $re, '/', $abs, -1, $n ) ) { }
-		// absolute URL is ready!
-		return $scheme . '://' . $abs;
 	}
 }
 
