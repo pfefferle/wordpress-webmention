@@ -179,17 +179,15 @@ class Webmention_Sender {
 	 * Do webmentions
 	 */
 	public static function do_webmentions() {
-		global $wpdb;
+		$mentions = get_posts( array( 'meta_key' => '_mentionme', 'post_type' => 'any', 'fields' => 'ids', 'nopaging' => true ) );
+		if ( empty( $mentions ) ) {
+			return;
+		}
 
-		// get all posts that should be "mentioned"
-		$mentions = $wpdb->get_results( "SELECT ID, meta_id FROM {$wpdb->posts}, {$wpdb->postmeta} WHERE {$wpdb->posts}.ID = {$wpdb->postmeta}.post_id AND {$wpdb->postmeta}.meta_key = '_mentionme'" );
-
-		// iterate mentions
 		foreach ( $mentions as $mention ) {
-			delete_metadata_by_mid( 'post', $mention->meta_id );
-
-			// send them webmentions
-			self::send_webmentions( $mention->ID );
+			delete_post_meta( $mention , '_mentionme' );
+			// send them Webmentions
+			self::send_webmentions( $mention );
 		}
 	}
 
