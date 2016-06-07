@@ -275,11 +275,11 @@ class Webmention_Receiver {
 	 * @return array|null              the dupe or null
 	 */
 	public static function check_dupes( $comment, $commentdata ) {
-		global $wpdb;
-
-		// check if comment is already set
-		$comments = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $wpdb->comments WHERE comment_post_ID = %d AND comment_author_url = %s", $commentdata['comment_post_ID'], htmlentities( $commentdata['comment_author_url'] ) ) );
-
+		$args = array(
+					'comment_post_ID' => $commentdata['comment_post_ID'],
+					'author_url' => htmlentities( commentdata['comment_author_url'] ),
+		);
+		$comments = get_comments( $args );
 		// check result
 		if ( ! empty( $comments ) ) {
 			error_log( print_r( $comments, true ) . PHP_EOL, 3, dirname( __FILE__ ) . '/log.txt' );
@@ -291,7 +291,12 @@ class Webmention_Receiver {
 		// or anyone else who can't use comment_author_url as the original link,
 		// but can use a _crossposting_link meta value.
 		// @link https://github.com/pfefferle/wordpress-salmon/blob/master/plugin.php#L192
-		$comments = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $wpdb->comments INNER JOIN $wpdb->commentmeta USING (comment_ID) WHERE comment_post_ID = %d AND meta_key = '_crossposting_link' AND meta_value = %s", $commentdata['comment_post_ID'], htmlentities( $commentdata['comment_author_url'] ) ) );
+		$args = array(
+				'comment_post_ID' => commentdata['comment_post_ID'],
+				'meta_key' => '_crossposting_link',
+				'meta_value' => commentdata['comment_author_url'],
+		);
+		$comments = get_comments( $args );
 
 		// check result
 		if ( ! empty( $comments ) ) {
