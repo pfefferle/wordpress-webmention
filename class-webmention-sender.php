@@ -228,13 +228,13 @@ class Webmention_Sender {
 		if ( $links = wp_remote_retrieve_header( $response, 'link' ) ) {
 			if ( is_array( $links ) ) {
 				foreach ( $links as $link ) {
-					if ( preg_match( '/<(.[^>]+)>;\s+rel\s?=\s?[\"\']?(http:\/\/)?webmention(.org)?\/?[\"\']?/i', $link, $result ) ) {
-						return WP_Http::make_url_absolute( $result[1], $url );
+					if ( preg_match( '/<(.[^>]+)>;\s+rel\s?=\s?[\"\']?(http:\/\/)?webmention(\.org)?\/?[\"\']?/i', $link, $result ) ) {
+						return WP_Http::make_absolute_url( $result[1], $url );
 					}
 				}
 			} else {
-				if ( preg_match( '/<(.[^>]+)>;\s+rel\s?=\s?[\"\']?(http:\/\/)?webmention(.org)?\/?[\"\']?/i', $links, $result ) ) {
-					return WP_Http::make_url_absolute( $result[1], $url );
+				if ( preg_match( '/<(.[^>]+)>;\s+rel\s?=\s?[\"\']?(http:\/\/)?webmention(\.org)?\/?[\"\']?/i', $links, $result ) ) {
+					return WP_Http::make_absolute_url( $result[1], $url );
 				}
 			}
 		}
@@ -269,13 +269,13 @@ class Webmention_Sender {
 		// check <link> elements
 		// checks only head-links
 		foreach ( $xpath->query( '//head/link[contains(concat(" ", @rel, " "), " webmention ") or contains(@rel, "webmention.org")]/@href' ) as $result ) {
-			return WP_Http::make_url_absolute( $result->value, $url );
+			return WP_Http::make_absolute_url( $result->value, $url );
 		}
 
 		// check <a> elements
 		// checks only body>a-links
 		foreach ( $xpath->query( '//body//a[contains(concat(" ", @rel, " "), " webmention ") or contains(@rel, "webmention.org")]/@href' ) as $result ) {
-			return WP_Http::make_url_absolute( $result->value, $url );
+			return WP_Http::make_absolute_url( $result->value, $url );
 		}
 
 		return false;
