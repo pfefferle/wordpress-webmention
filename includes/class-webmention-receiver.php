@@ -362,12 +362,18 @@ class Webmention_Receiver {
 		}
 	}
 
+  /**
+   * Return Webmention Endpoint
+   */
+  public static function get_endpoint() {
+    return apply_filters( 'webmention_endpoint', site_url( '?webmention=endpoint' ) );
+	}
+
 	/**
 	 * The WebMention autodicovery meta-tags
 	 */
 	public static function html_header() {
-		$endpoint = apply_filters( 'webmention_endpoint', site_url( '?webmention=endpoint' ) );
-
+		$endpoint = self::get_endpoint();
 		// backwards compatibility with v0.1
 		echo '<link rel="http://webmention.org/" href="' . $endpoint . '" />' . "\n";
 		echo '<link rel="webmention" href="' . $endpoint . '" />' . "\n";
@@ -377,8 +383,7 @@ class Webmention_Receiver {
 	 * The WebMention autodicovery http-header
 	 */
 	public static function http_header() {
-		$endpoint = apply_filters( 'webmention_endpoint', site_url( '?webmention=endpoint' ) );
-
+		$endpoint = self::get_endpoint();
 		// backwards compatibility with v0.1
 		header( 'Link: <' . $endpoint . '>; rel="http://webmention.org/"', false );
 		header( 'Link: <' . $endpoint . '>; rel="webmention"', false );
@@ -388,8 +393,7 @@ class Webmention_Receiver {
 	 * Generates webfinger/host-meta links
 	 */
 	public static function jrd_links( $array ) {
-		$endpoint = apply_filters( 'webmention_endpoint', site_url( '?webmention=endpoint' ) );
-
+		$endpoint = self::get_endpoint();
 		$array['links'][] = array( 'rel' => 'webmention', 'href' => $endpoint );
 		$array['links'][] = array( 'rel' => 'http://webmention.org/', 'href' => $endpoint );
 
