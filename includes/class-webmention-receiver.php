@@ -82,7 +82,10 @@ class Webmention_Receiver {
 			exit;
 		}
 
-		// @todo check if target-host matches the blog-host
+		if ( ! stristr( $_POST['target'], preg_replace( '/^https?:\/\//i', '', get_site_url() ) ) ) {
+			status_header( 400 );
+			echo '"target" is not on this site';
+		}
 
 		$response = wp_remote_get( $_POST['source'], array( 'timeout' => 100 ) );
 
@@ -319,6 +322,39 @@ class Webmention_Receiver {
 		return $types;
 	}
 
+
+
+	/** 
+	 * Parse meta tags from source content
+	 * Based on the Press This Meta Parsing Code
+	 *
+	 * @param string $source_content Source Content
+	 * 
+	 * @return array meta tags 
+	 */
+	public static function get_meta_tags( $source_content ) {
+		if ( ! $source_content ) {
+			return null;
+		}
+		$meta = array();
+		if ( preg_match_all( '/<meta [^>]+>/', $source_content, $matches ) ) {
+			$items = $matches[0];
+			foreach ( $items as $value ) {
+				if ( preg_match( '/(property|name)="([^"]+)"[^>]+content="([^"]+)"/', $value, $new_matches ) ) {
+					$meta_name  = $new_matches[2];
+					$meta_value = $new_matches[3];
+					// Sanity check. $key is usually things like 'title', 'description', 'keywords', etc.
+					if ( strlen( $meta_name ) > 100 ) {
+						continue;
+					}
+					$meta[ $meta_name ] = $meta_value;
+				}
+			}
+		}
+		return $meta;
+	}
+
+
 	/**
 	 * Try to make a nice title (username)
 	 *
@@ -330,7 +366,7 @@ class Webmention_Receiver {
 	 * @return string the filtered title
 	 */
 	public static function default_title_filter( $title, $contents, $target, $source ) {
-		$meta_tags = get_meta_tags( $source );
+		$meta_tags = self::get_meta_tags( $source );
 
 		// use meta-author
 		if ( $meta_tags && is_array( $meta_tags ) && array_key_exists( 'author', $meta_tags ) ) {
@@ -359,12 +395,18 @@ class Webmention_Receiver {
 		}
 	}
 
+  /**
+   * Return Webmention Endpoint
+   */
+  public static function get_endpoint() {
+    return apply_filters( 'webmention_endpoint', site_url( '?webmention=endpoint' ) );
+	}
+
 	/**
 	 * The WebMention autodicovery meta-tags
 	 */
 	public static function html_header() {
-		$endpoint = apply_filters( 'webmention_endpoint', site_url( '?webmention=endpoint' ) );
-
+		$endpoint = self::get_endpoint();
 		// backwards compatibility with v0.1
 		echo '<link rel="http://webmention.org/" href="' . $endpoint . '" />' . "\n";
 		echo '<link rel="webmention" href="' . $endpoint . '" />' . "\n";
@@ -374,8 +416,7 @@ class Webmention_Receiver {
 	 * The WebMention autodicovery http-header
 	 */
 	public static function http_header() {
-		$endpoint = apply_filters( 'webmention_endpoint', site_url( '?webmention=endpoint' ) );
-
+		$endpoint = self::get_endpoint();
 		// backwards compatibility with v0.1
 		header( 'Link: <' . $endpoint . '>; rel="http://webmention.org/"', false );
 		header( 'Link: <' . $endpoint . '>; rel="webmention"', false );
@@ -385,60 +426,11 @@ class Webmention_Receiver {
 	 * Generates webfinger/host-meta links
 	 */
 	public static function jrd_links( $array ) {
-		$endpoint = apply_filters( 'webmention_endpoint', site_url( '?webmention=endpoint' ) );
-
+		$endpoint = self::get_endpoint();
 		$array['links'][] = array( 'rel' => 'webmention', 'href' => $endpoint );
 		$array['links'][] = array( 'rel' => 'http://webmention.org/', 'href' => $endpoint );
 
 		return $array;
-	}
-
-	/**
-	 * Converts relative to absolute urls
-	 *
-	 * Based on the code of 99webtools.com
-	 *
-	 * @link http://99webtools.com/relative-path-into-absolute-url.php
-	 *
-	 * @param string $base the base url
-	 * @param string $rel the relative url
-	 *
-	 * @return string the absolute url
-	 */
-	public static function make_url_absolute( $base, $rel ) {
-		if ( 0 === strpos( $rel, '//' ) ) {
-			return parse_url( $base, PHP_URL_SCHEME ) . ':' . $rel;
-		}
-		// return if already absolute URL
-		if ( parse_url( $rel, PHP_URL_SCHEME ) != '' ) {
-			return $rel;
-		}
-		// queries and	anchors
-		if ( '#' == $rel[0]  || '?' == $rel[0] ) {
-			return $base . $rel;
-		}
-		// parse base URL and convert to local variables:
-		// $scheme, $host, $path
-		extract( parse_url( $base ) );
-		// remove	non-directory element from path
-		$path = preg_replace( '#/[^/]*$#', '', $path );
-		// destroy path if relative url points to root
-		if ( '/' == $rel[0] ) {
-			$path = '';
-		}
-		// dirty absolute URL
-		$abs = "$host";
-		// check port
-		if ( isset( $port ) && ! empty( $port ) ) {
-			$abs .= ":$port";
-		}
-		// add path + rel
-		$abs .= "$path/$rel";
-		// replace '//' or '/./' or '/foo/../' with '/'
-		$re = array( '#(/\.?/)#', '#/(?!\.\.)[^/]+/\.\./#' );
-		for ( $n = 1; $n > 0; $abs = preg_replace( $re, '/', $abs, -1, $n ) ) { }
-		// absolute URL is ready!
-		return $scheme . '://' . $abs;
 	}
 }
 

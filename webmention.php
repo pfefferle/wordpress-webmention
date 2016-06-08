@@ -11,8 +11,8 @@
  * Text Domain: webmention
  */
 
-require_once( 'class-webmention-sender.php' );
-require_once( 'class-webmention-receiver.php' );
+require_once( 'includes/class-webmention-sender.php' );
+require_once( 'includes/class-webmention-receiver.php' );
 
 // initialize admin settings
 add_action( 'admin_init', array( 'WebMentionPlugin', 'admin_register_settings' ) );
