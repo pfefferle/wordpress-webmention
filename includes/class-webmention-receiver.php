@@ -82,7 +82,10 @@ class Webmention_Receiver {
 			exit;
 		}
 
-		// @todo check if target-host matches the blog-host
+		if ( ! stristr( $_POST['target'], preg_replace( '/^https?:\/\//i', '', get_site_url() ) ) ) {
+			status_header( 400 );
+			echo '"target" is not on this site';
+		}
 
 		$response = wp_remote_get( $_POST['source'], array( 'timeout' => 100 ) );
 
