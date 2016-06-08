@@ -322,6 +322,39 @@ class Webmention_Receiver {
 		return $types;
 	}
 
+
+
+	/** 
+	 * Parse meta tags from source content
+	 * Based on the Press This Meta Parsing Code
+	 *
+	 * @param string $source_content Source Content
+	 * 
+	 * @return array meta tags 
+	 */
+	public static function get_meta_tags( $source_content ) {
+		if ( ! $source_content ) {
+			return null;
+		}
+		$meta = array();
+		if ( preg_match_all( '/<meta [^>]+>/', $source_content, $matches ) ) {
+			$items = $matches[0];
+			foreach ( $items as $value ) {
+				if ( preg_match( '/(property|name)="([^"]+)"[^>]+content="([^"]+)"/', $value, $new_matches ) ) {
+					$meta_name  = $new_matches[2];
+					$meta_value = $new_matches[3];
+					// Sanity check. $key is usually things like 'title', 'description', 'keywords', etc.
+					if ( strlen( $meta_name ) > 100 ) {
+						continue;
+					}
+					$meta[ $meta_name ] = $meta_value;
+				}
+			}
+		}
+		return $meta;
+	}
+
+
 	/**
 	 * Try to make a nice title (username)
 	 *
@@ -333,7 +366,7 @@ class Webmention_Receiver {
 	 * @return string the filtered title
 	 */
 	public static function default_title_filter( $title, $contents, $target, $source ) {
-		$meta_tags = get_meta_tags( $source );
+		$meta_tags = self::get_meta_tags( $source );
 
 		// use meta-author
 		if ( $meta_tags && is_array( $meta_tags ) && array_key_exists( 'author', $meta_tags ) ) {
