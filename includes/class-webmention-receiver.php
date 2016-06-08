@@ -395,11 +395,11 @@ class Webmention_Receiver {
 		}
 	}
 
-  /**
-   * Return Webmention Endpoint
-   */
-  public static function get_endpoint() {
-    return apply_filters( 'webmention_endpoint', site_url( '?webmention=endpoint' ) );
+	/**
+	 * Return Webmention Endpoint
+	 */
+	public static function get_endpoint() {
+		return apply_filters( 'webmention_endpoint', site_url( '?webmention=endpoint' ) );
 	}
 
 	/**
