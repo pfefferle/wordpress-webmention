@@ -279,30 +279,3 @@ class Webmention_Sender {
 		return false;
 	}
 }
-
-if ( ! function_exists( 'get_webmentions_number' ) ) :
-	/**
-	 * Return the Number of WebMentions
-	 *
-	 * @param int $post_id The post ID (optional)
-	 *
-	 * @return int the number of WebMentions for one Post
-	 */
-	function get_webmentions_number( $post_id = 0 ) {
-		$post = get_post( $post_id );
-
-		// change this if your theme can't handle the WebMentions comment type
-		$webmention_comment_type = defined( 'WEBMENTION_COMMENT_TYPE' ) ? WEBMENTION_COMMENT_TYPE : 'webmention';
-		$comment_type = apply_filters( 'webmention_comment_type', $webmention_comment_type );
-
-		$args = array(
-			'post_id' => $post->ID,
-			'type'	=> $comment_type,
-			'count'	 => true,
-			'status'	=> 'approve',
-		);
-
-		$comments_query = new WP_Comment_Query;
-		return $comments_query->query( $args );
-	}
-endif;
