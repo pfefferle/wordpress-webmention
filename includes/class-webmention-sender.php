@@ -36,6 +36,24 @@ class Webmention_Sender {
 	}
 
 	/**
+	* Pre-Sets for HTTP API
+	*
+	* @return array
+	*/
+	public static function http_args( ) {
+		global $wp_version;
+		$plugin_version = '2.6.0';
+		$user_agent = apply_filters( 'http_headers_useragent', 'Webmention-Plugin/' . $plugin_version . '(WordPress/' . $wp_version . ')' );
+		$args = array(
+		'timeout' => 10,
+		'limit_response_size' => 1048576,
+		'redirection' => 20,
+		'user-agent' => $user_agent,
+		);
+		return $args;
+	}
+
+	/**
 	 * Marks the post as "no webmentions sent yet"
 	 *
 	 * @param int $post_ID
@@ -75,10 +93,8 @@ class Webmention_Sender {
 		// if I can't find an endpoint, perhaps you can!
 		$webmention_server_url = apply_filters( 'webmention_server_url', $webmention_server_url, $target );
 
-		$args = array(
-			'body' => 'source=' . urlencode( $source ) . '&target=' . urlencode( $target ),
-			'timeout' => 100,
-		);
+		$args = self::http_args();
+		$args['body'] = 'source=' . urlencode( $source ) . '&target=' . urlencode( $target );
 
 		if ( $webmention_server_url ) {
 			$response = wp_remote_post( $webmention_server_url, $args );
@@ -216,7 +232,7 @@ class Webmention_Sender {
 			return false;
 		}
 
-		$response = wp_remote_head( $url, array( 'timeout' => 100, 'httpversion' => '1.0' ) );
+		$response = wp_remote_head( $url, self::http_args() );
 
 		if ( is_wp_error( $response ) ) {
 			return false;
@@ -243,7 +259,7 @@ class Webmention_Sender {
 		}
 
 		// now do a GET since we're going to look in the html headers (and we're sure its not a binary file)
-		$response = wp_remote_get( $url, array( 'timeout' => 100, 'httpversion' => '1.0' ) );
+		$response = wp_remote_get( $url, self::http_args() );
 
 		if ( is_wp_error( $response ) ) {
 			return false;

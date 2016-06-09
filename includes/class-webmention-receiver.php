@@ -41,6 +41,24 @@ class Webmention_Receiver {
 	}
 
 	/**
+	* Pre-Sets for HTTP API
+	*
+	* @return array
+	*/
+	public static function http_args( ) {
+		global $wp_version;
+		$plugin_version = '2.6.0';
+		$user_agent = apply_filters( 'http_headers_useragent', 'Webmention-Plugin/' . $plugin_version . '(WordPress/' . $wp_version . ')' );
+		$args = array(
+				'timeout' => 10,
+				'limit_response_size' => 1048576,
+		    'redirection' => 20,
+				'user-agent' => $user_agent,
+		);
+		return $args;
+	}
+
+	/**
 	 * Adds some query vars
 	 *
 	 * @param array $vars
@@ -87,7 +105,7 @@ class Webmention_Receiver {
 			echo '"target" is not on this site';
 		}
 
-		$response = wp_remote_get( $_POST['source'], array( 'timeout' => 100 ) );
+		$response = wp_remote_get( $_POST['source'], self::http_args() );
 
 		// check if source is accessible
 		if ( is_wp_error( $response ) ) {
@@ -324,13 +342,13 @@ class Webmention_Receiver {
 
 
 
-	/** 
+	/**
 	 * Parse meta tags from source content
 	 * Based on the Press This Meta Parsing Code
 	 *
 	 * @param string $source_content Source Content
-	 * 
-	 * @return array meta tags 
+	 *
+	 * @return array meta tags
 	 */
 	public static function get_meta_tags( $source_content ) {
 		if ( ! $source_content ) {
