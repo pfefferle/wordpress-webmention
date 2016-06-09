@@ -35,23 +35,23 @@ class Webmention_Sender {
 		add_action( 'publish_post', array( 'Webmention_Sender', 'publish_post_hook' ) );
 	}
 
-  /**
-   * Pre-Sets for HTTP API
-   *
-   * @return array
-   */
-  public static function http_args( ) {
-    global $wp_version;
-    $plugin_version = '2.6.0';
-    $user_agent = apply_filters( 'http_headers_useragent', 'Webmention-Plugin/' . $plugin_version . '(WordPress/' . $wp_version . ')' );
-    $args = array(
-        'timeout' => 10,
-        'limit_response_size' => 1048576,
-        'redirection' => 20,
-        'user-agent' => $user_agent,
-    );
+	/**
+	* Pre-Sets for HTTP API
+	*
+	* @return array
+	*/
+	public static function http_args( ) {
+		global $wp_version;
+		$plugin_version = '2.6.0';
+		$user_agent = apply_filters( 'http_headers_useragent', 'Webmention-Plugin/' . $plugin_version . '(WordPress/' . $wp_version . ')' );
+		$args = array(
+		'timeout' => 10,
+		'limit_response_size' => 1048576,
+		'redirection' => 20,
+		'user-agent' => $user_agent,
+		);
 		return $args;
-  }
+	}
 
 	/**
 	 * Marks the post as "no webmentions sent yet"

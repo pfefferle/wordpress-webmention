@@ -40,11 +40,11 @@ class Webmention_Receiver {
 		add_action( 'webmention_request', array( 'Webmention_Receiver', 'default_request_handler' ), 10, 3 );
 	}
 
-  /**
-   * Pre-Sets for HTTP API
-   *
-   * @return array
-   */
+	/**
+	* Pre-Sets for HTTP API
+	*
+	* @return array
+	*/
 	public static function http_args( ) {
 		global $wp_version;
 		$plugin_version = '2.6.0';
@@ -342,13 +342,13 @@ class Webmention_Receiver {
 
 
 
-	/** 
+	/**
 	 * Parse meta tags from source content
 	 * Based on the Press This Meta Parsing Code
 	 *
 	 * @param string $source_content Source Content
-	 * 
-	 * @return array meta tags 
+	 *
+	 * @return array meta tags
 	 */
 	public static function get_meta_tags( $source_content ) {
 		if ( ! $source_content ) {
