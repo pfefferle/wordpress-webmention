@@ -1,22 +1,6 @@
 <?php
-
 /**
- * A wrapper for Webmention_Sender::send_webmention
- *
- * @param string $source source url
- * @param string $target target url
- *
- * @return array of results including HTTP headers
- */
-function send_webmention( $source, $target ) {
-	return Webmention_Sender::send_webmention( $source, $target );
-}
-
-// initialize plugin
-add_action( 'init', array( 'Webmention_Sender', 'init' ) );
-
-/**
- * WebMention Plugin Class
+ * Webmention Plugin Class
  *
  * @author Matthias Pfefferle
  */
@@ -48,7 +32,7 @@ class Webmention_Sender {
 	}
 
 	/**
-	 * Send WebMentions
+	 * Send Webmentions
 	 *
 	 * @param string $source source url
 	 * @param string $target target url
@@ -99,7 +83,7 @@ class Webmention_Sender {
 	}
 
 	/**
-	 * Send WebMentions if new Post was saved
+	 * Send Webmentions if new Post was saved
 	 *
 	 * You can still hook this function directly into the `publish_post` action:
 	 *
@@ -152,7 +136,7 @@ class Webmention_Sender {
 	}
 
 	/**
-	 * Rescedule WebMentions on HTTP code 500
+	 * Rescedule Webmentions on HTTP code 500
 	 *
 	 * @param int $post_ID the post id
 	 */
@@ -198,7 +182,7 @@ class Webmention_Sender {
 	}
 
 	/**
-	 * Finds a WebMention server URI based on the given URL
+	 * Finds a Webmention server URI based on the given URL
 	 *
 	 * Checks the HTML for the rel="http://webmention.org/" link and http://webmention.org/ headers. It does
 	 * a check for the http://webmention.org/ headers first and returns that, if available. The
@@ -218,7 +202,7 @@ class Webmention_Sender {
 			return false;
 		}
 
-		// do not search for a WebMention server on our own uploads
+		// do not search for a Webmention server on our own uploads
 		$uploads_dir = wp_upload_dir();
 		if ( 0 === strpos( $url, $uploads_dir['baseurl'] ) ) {
 			return false;

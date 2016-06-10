@@ -1,18 +1,6 @@
 <?php
-
-// initialize plugin
-add_action( 'init', array( 'Webmention_Receiver', 'init' ) );
-
-if ( ! defined( 'WEBMENTION_COMMENT_APPROVE' ) ) {
-	define( 'WEBMENTION_COMMENT_APPROVE', 0 );
-}
-
-if ( ! defined( 'WEBMENTION_COMMENT_TYPE' ) ) {
-	define( 'WEBMENTION_COMMENT_TYPE', 'webmention' );
-}
-
 /**
- * WebMention Receiver Class
+ * Webmention Receiver Class
  *
  * @author Matthias Pfefferle
  */
@@ -46,14 +34,15 @@ class Webmention_Receiver {
 	 * @param array $vars
 	 * @return array
 	 */
-	public static function query_var($vars) {
+	public static function query_var( $vars ) {
 		$vars[] = 'webmention';
+		$vars[] = 'csrf';
 
 		return $vars;
 	}
 
 	/**
-	 * Parse the WebMention request and render the document
+	 * Parse the Webmention request and render the document
 	 *
 	 * @param WP $wp WordPress request context
 	 *
@@ -204,10 +193,10 @@ class Webmention_Receiver {
 		$comment_author_url = esc_url_raw( $source );
 		$comment_content = wp_slash( $content );
 
-		// change this if your theme can't handle the WebMentions comment type
+		// change this if your theme can't handle the Webmentions comment type
 		$comment_type = apply_filters( 'webmention_comment_type', WEBMENTION_COMMENT_TYPE );
 
-		// change this if you want to auto approve your WebMentions
+		// change this if you want to auto approve your Webmentions
 		$comment_approved = apply_filters( 'webmention_comment_approve', WEBMENTION_COMMENT_APPROVE );
 
 		// filter the parent id
@@ -329,7 +318,7 @@ class Webmention_Receiver {
 	 * @return array the filtert comment types
 	 */
 	public static function comment_types_dropdown( $types ) {
-		$types['webmention'] = __( 'WebMentions', 'webmention' );
+		$types['webmention'] = __( 'Webmentions', 'webmention' );
 
 		return $types;
 	}
@@ -408,67 +397,30 @@ class Webmention_Receiver {
 	}
 
 	/**
-	 * Return Webmention Endpoint
-	 */
-	public static function get_endpoint() {
-		return apply_filters( 'webmention_endpoint', site_url( '?webmention=endpoint' ) );
-	}
-
-	/**
-	 * The WebMention autodicovery meta-tags
+	 * The Webmention autodicovery meta-tags
 	 */
 	public static function html_header() {
-		$endpoint = self::get_endpoint();
 		// backwards compatibility with v0.1
-		echo '<link rel="http://webmention.org/" href="' . $endpoint . '" />' . "\n";
-		echo '<link rel="webmention" href="' . $endpoint . '" />' . "\n";
+		echo '<link rel="http://webmention.org/" href="' . get_webmention_endpoint() . '" />' . "\n";
+		echo '<link rel="webmention" href="' . get_webmention_endpoint() . '" />' . "\n";
 	}
 
 	/**
-	 * The WebMention autodicovery http-header
+	 * The Webmention autodicovery http-header
 	 */
 	public static function http_header() {
-		$endpoint = self::get_endpoint();
 		// backwards compatibility with v0.1
-		header( 'Link: <' . $endpoint . '>; rel="http://webmention.org/"', false );
-		header( 'Link: <' . $endpoint . '>; rel="webmention"', false );
+		header( 'Link: <' . get_webmention_endpoint() . '>; rel="http://webmention.org/"', false );
+		header( 'Link: <' . get_webmention_endpoint() . '>; rel="webmention"', false );
 	}
 
 	/**
 	 * Generates webfinger/host-meta links
 	 */
 	public static function jrd_links( $array ) {
-		$endpoint = self::get_endpoint();
-		$array['links'][] = array( 'rel' => 'webmention', 'href' => $endpoint );
-		$array['links'][] = array( 'rel' => 'http://webmention.org/', 'href' => $endpoint );
+		$array['links'][] = array( 'rel' => 'webmention', 'href' => get_webmention_endpoint() );
+		$array['links'][] = array( 'rel' => 'http://webmention.org/', 'href' => get_webmention_endpoint() );
 
 		return $array;
 	}
 }
-
-if ( ! function_exists( 'get_webmentions_number' ) ) :
-	/**
-	 * Return the Number of WebMentions
-	 *
-	 * @param int $post_id The post ID (optional)
-	 *
-	 * @return int the number of WebMentions for one Post
-	 */
-	function get_webmentions_number( $post_id = 0 ) {
-		$post = get_post( $post_id );
-
-		// change this if your theme can't handle the WebMentions comment type
-		$webmention_comment_type = defined( 'WEBMENTION_COMMENT_TYPE' ) ? WEBMENTION_COMMENT_TYPE : 'webmention';
-		$comment_type = apply_filters( 'webmention_comment_type', $webmention_comment_type );
-
-		$args = array(
-			'post_id' => $post->ID,
-			'type'	=> $comment_type,
-			'count'	 => true,
-			'status'	=> 'approve',
-		);
-
-		$comments_query = new WP_Comment_Query;
-		return $comments_query->query( $args );
-	}
-endif;

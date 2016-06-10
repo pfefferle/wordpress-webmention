@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name: WebMention
+ * Plugin Name: Webmention
  * Plugin URI: https://github.com/pfefferle/wordpress-webmention
- * Description: WebMention support for WordPress posts
+ * Description: Webmention support for WordPress posts
  * Author: pfefferle
  * Author URI: http://notizblog.org/
  * Version: 2.6.0
@@ -11,30 +11,48 @@
  * Text Domain: webmention
  */
 
-require_once( 'includes/class-webmention-sender.php' );
-require_once( 'includes/class-webmention-receiver.php' );
+defined( 'WEBMENTION_COMMENT_APPROVE' ) || define( 'WEBMENTION_COMMENT_APPROVE', 0 );
+defined( 'WEBMENTION_COMMENT_TYPE' ) || define( 'WEBMENTION_COMMENT_TYPE', 'webmention' );
 
-// initialize admin settings
-add_action( 'admin_init', array( 'WebMentionPlugin', 'admin_register_settings' ) );
+add_action( 'plugins_loaded', array( 'Webmention_Plugin', 'init' ) );
 
 /**
- * WebMention Plugin Class
+ * Webmention Plugin Class
  *
  * @author Matthias Pfefferle
  */
-class WebMentionPlugin {
+class Webmention_Plugin {
+
 	/**
-	 * Register WebMention admin settings.
+	 * Initialize Webmention Plugin
+	 */
+	public function init() {
+		require_once( dirname( __FILE__ ) . '/includes/functions.php' );
+
+		// initialize Webmention Sender
+		require_once( dirname( __FILE__ ) . '/includes/class-webmention-sender.php' );
+		add_action( 'init', array( 'Webmention_Sender', 'init' ) );
+
+		// initialize Webmention Receiver
+		require_once( dirname( __FILE__ ) . '/includes/class-webmention-receiver.php' );
+		add_action( 'init', array( 'Webmention_Receiver', 'init' ) );
+
+		// initialize admin settings
+		add_action( 'admin_init', array( 'Webmention_Plugin', 'admin_register_settings' ) );
+	}
+
+	/**
+	 * Register Webmention admin settings.
 	 */
 	public static function admin_register_settings() {
 		register_setting( 'discussion', 'webmention_disable_selfpings_same_url' );
 		register_setting( 'discussion', 'webmention_disable_selfpings_same_domain' );
 
-		add_settings_field( 'webmention_disucssion_settings', __( 'WebMention Settings', 'webmention' ), array( 'WebMentionPlugin', 'discussion_settings' ), 'discussion', 'default' );
+		add_settings_field( 'webmention_disucssion_settings', __( 'Webmention Settings', 'webmention' ), array( 'Webmention_Plugin', 'discussion_settings' ), 'discussion', 'default' );
 	}
 
 	/**
-	 * Add WebMention options to the WordPress discussion settings page.
+	 * Add Webmention options to the WordPress discussion settings page.
 	 */
 	public static function discussion_settings () {
 ?>
