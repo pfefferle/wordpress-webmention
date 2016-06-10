@@ -264,15 +264,9 @@ class Webmention_Sender {
 
 		$xpath = new DOMXPath( $doc );
 
-		// check <link> elements
-		// checks only head-links
-		foreach ( $xpath->query( '//head/link[contains(concat(" ", @rel, " "), " webmention ") or contains(@rel, "webmention.org")]/@href' ) as $result ) {
-			return WP_Http::make_absolute_url( $result->value, $url );
-		}
-
-		// check <a> elements
+		// check <link> and <a> elements
 		// checks only body>a-links
-		foreach ( $xpath->query( '//body//a[contains(concat(" ", @rel, " "), " webmention ") or contains(@rel, "webmention.org")]/@href' ) as $result ) {
+		foreach ( $xpath->query( '(//link|//a)[contains(concat(" ", @rel, " "), " webmention ") or contains(@rel, "webmention.org")]/@href' ) as $result ) {
 			return WP_Http::make_absolute_url( $result->value, $url );
 		}
 
