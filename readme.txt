@@ -1,9 +1,9 @@
 === WebMention ===
-Contributors: pfefferle
+Contributors: pfefferle, dshanske
 Donate link: http://14101978.de
 Tags: webmention, pingback, trackback, linkback
-Requires at least: 2.7
-Tested up to: 4.4
+Requires at least: 4.5
+Tested up to: 4.5.2
 Stable tag: 2.5.0
 License: MIT
 License URI: http://opensource.org/licenses/MIT
@@ -61,6 +61,12 @@ If you want to add a more complex request handler, you should take a look at the
 == Changelog ==
 
 Project maintined on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
+
+= 2.6.0 =
+
+* removed duplicate request for HTML via get_meta_tags
+* refactoring
+* limits to same domain
 
 = 2.5.0 =
 

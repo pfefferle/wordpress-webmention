@@ -60,6 +60,8 @@ class Webmention_Receiver {
 	 * @uses do_action() Calls 'webmention_request' on the default request
 	 */
 	public static function parse_query( $wp ) {
+		global $wp_version;
+
 		// check if it is a webmention request or not
 		if ( ! array_key_exists( 'webmention', $wp->query_vars ) ) {
 			return;
@@ -87,7 +89,17 @@ class Webmention_Receiver {
 			echo '"target" is not on this site';
 		}
 
-		$response = wp_remote_get( $_POST['source'], array( 'timeout' => 100 ) );
+		$remote_ip = preg_replace( '/[^0-9a-fA-F:., ]/', '', $_SERVER['REMOTE_ADDR'] );
+
+		$user_agent = apply_filters( 'http_headers_useragent', 'WordPress/' . $wp_version . '; ' . get_bloginfo( 'url' ) );
+		$args = array(
+			'timeout' => 100,
+			'limit_response_size' => 1048576,
+			'redirection' => 20,
+			'user-agent' => "$user_agent; verifying Webmention from $remote_ip",
+		);
+
+		$response = wp_remote_get( $_POST['source'], $args );
 
 		// check if source is accessible
 		if ( is_wp_error( $response ) ) {
@@ -324,13 +336,13 @@ class Webmention_Receiver {
 
 
 
-	/** 
+	/**
 	 * Parse meta tags from source content
 	 * Based on the Press This Meta Parsing Code
 	 *
 	 * @param string $source_content Source Content
-	 * 
-	 * @return array meta tags 
+	 *
+	 * @return array meta tags
 	 */
 	public static function get_meta_tags( $source_content ) {
 		if ( ! $source_content ) {

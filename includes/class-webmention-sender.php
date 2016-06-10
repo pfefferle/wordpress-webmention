@@ -57,6 +57,8 @@ class Webmention_Sender {
 	 * @return array of results including HTTP headers
 	 */
 	public static function send_webmention( $source, $target, $post_ID = null ) {
+		global $wp_version;
+
 		// stop selfpings on the same URL
 		if ( ( get_option( 'webmention_disable_selfpings_same_url' ) === '1' ) &&
 			 ( $source === $target ) ) {
@@ -78,6 +80,15 @@ class Webmention_Sender {
 		$args = array(
 			'body' => 'source=' . urlencode( $source ) . '&target=' . urlencode( $target ),
 			'timeout' => 100,
+		);
+
+		$user_agent = apply_filters( 'http_headers_useragent', 'WordPress/' . $wp_version . '; ' . get_bloginfo( 'url' ) );
+		$args = array(
+			'timeout' => 100,
+			'limit_response_size' => 1048576,
+			'redirection' => 20,
+			'user-agent' => "$user_agent; sending Webmention",
+			'body' => 'source=' . urlencode( $source ) . '&target=' . urlencode( $target ),
 		);
 
 		if ( $webmention_server_url ) {
@@ -203,6 +214,8 @@ class Webmention_Sender {
 	 * @return bool|string False on failure, string containing URI on success
 	 */
 	public static function discover_endpoint( $url ) {
+		global $wp_version;
+
 		/** @todo Should use Filter Extension or custom preg_match instead. */
 		$parsed_url = wp_parse_url( $url );
 
@@ -216,7 +229,15 @@ class Webmention_Sender {
 			return false;
 		}
 
-		$response = wp_remote_head( $url, array( 'timeout' => 100, 'httpversion' => '1.0' ) );
+		$user_agent = apply_filters( 'http_headers_useragent', 'WordPress/' . $wp_version . '; ' . get_bloginfo( 'url' ) );
+		$args = array(
+			'timeout' => 100,
+			'limit_response_size' => 1048576,
+			'redirection' => 20,
+			'user-agent' => "$user_agent; finding Webmention endpoint",
+		);
+
+		$response = wp_remote_head( $url, $args );
 
 		if ( is_wp_error( $response ) ) {
 			return false;
@@ -243,7 +264,7 @@ class Webmention_Sender {
 		}
 
 		// now do a GET since we're going to look in the html headers (and we're sure its not a binary file)
-		$response = wp_remote_get( $url, array( 'timeout' => 100, 'httpversion' => '1.0' ) );
+		$response = wp_remote_get( $url, $args );
 
 		if ( is_wp_error( $response ) ) {
 			return false;
