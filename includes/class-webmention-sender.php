@@ -77,11 +77,6 @@ class Webmention_Sender {
 		// if I can't find an endpoint, perhaps you can!
 		$webmention_server_url = apply_filters( 'webmention_server_url', $webmention_server_url, $target );
 
-		$args = array(
-			'body' => 'source=' . urlencode( $source ) . '&target=' . urlencode( $target ),
-			'timeout' => 100,
-		);
-
 		$user_agent = apply_filters( 'http_headers_useragent', 'WordPress/' . $wp_version . '; ' . get_bloginfo( 'url' ) );
 		$args = array(
 			'timeout' => 100,
