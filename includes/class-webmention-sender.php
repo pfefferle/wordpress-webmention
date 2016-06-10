@@ -251,9 +251,6 @@ class Webmention_Sender {
 
 		$contents = wp_remote_retrieve_body( $response );
 
-		// boost performance and use alreade the header
-		$header = substr( $contents, 0, stripos( $contents, '</head>' ) );
-
 		// unicode to HTML entities
 		$contents = mb_convert_encoding( $contents, 'HTML-ENTITIES', mb_detect_encoding( $contents ) );
 
