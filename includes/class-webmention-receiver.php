@@ -281,7 +281,7 @@ class Webmention_Receiver {
 	public static function check_dupes( $comment, $commentdata ) {
 		$args = array(
 			'comment_post_ID' => $commentdata['comment_post_ID'],
-			'author_url' => htmlentities( commentdata['comment_author_url'] ),
+			'author_url' => htmlentities( $commentdata['comment_author_url'] ),
 		);
 
 		$comments = get_comments( $args );
@@ -295,9 +295,9 @@ class Webmention_Receiver {
 		// but can use a _crossposting_link meta value.
 		// @link https://github.com/pfefferle/wordpress-salmon/blob/master/plugin.php#L192
 		$args = array(
-			'comment_post_ID' => commentdata['comment_post_ID'],
+			'comment_post_ID' => $commentdata['comment_post_ID'],
 			'meta_key' => '_crossposting_link',
-			'meta_value' => commentdata['comment_author_url'],
+			'meta_value' => $commentdata['comment_author_url'],
 		);
 		$comments = get_comments( $args );
 
