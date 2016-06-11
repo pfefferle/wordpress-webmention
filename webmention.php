@@ -26,7 +26,7 @@ class Webmention_Plugin {
 	/**
 	 * Initialize Webmention Plugin
 	 */
-	public function init() {
+	public static function init() {
 		require_once( dirname( __FILE__ ) . '/includes/functions.php' );
 
 		// initialize Webmention Sender
