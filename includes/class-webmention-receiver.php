@@ -61,7 +61,9 @@ class Webmention_Receiver {
 		// check if source url is transmitted
 		if ( ! isset( $_POST['source'] ) ) {
 			status_header( 400 );
-			echo '"source" 
+			echo '"source" is missing';
+			exit;
+		}
 
 		// check if target url is transmitted
 		if ( ! isset( $_POST['target'] ) ) {
