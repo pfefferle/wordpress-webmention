@@ -51,8 +51,6 @@ class Webmention_Receiver {
 	 * @uses do_action() Calls 'webmention_request' on the default request
 	 */
 	public static function parse_query( $wp ) {
-		global $wp_version;
-
 		// check if it is a webmention request or not
 		if ( ! array_key_exists( 'webmention', $wp->query_vars ) ) {
 			return;
@@ -63,9 +61,7 @@ class Webmention_Receiver {
 		// check if source url is transmitted
 		if ( ! isset( $_POST['source'] ) ) {
 			status_header( 400 );
-			echo '"source" is missing';
-			exit;
-		}
+			echo '"source" 
 
 		// check if target url is transmitted
 		if ( ! isset( $_POST['target'] ) ) {
@@ -155,6 +151,7 @@ class Webmention_Receiver {
 	 *	and trackback compatible
 	 */
 	public static function default_request_handler( $data ) {
+		global $wp_version;
 		$user_agent = apply_filters( 'http_headers_useragent', 'WordPress/' . $wp_version . '; ' . get_bloginfo( 'url' ) );
 		$args = array(
 			'timeout' => 100,
