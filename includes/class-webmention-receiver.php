@@ -73,9 +73,10 @@ class Webmention_Receiver {
 			exit;
 		}
 
-		if ( ! stristr( $_POST['target'], preg_replace( '/^https?:\/\//i', '', get_site_url() ) ) ) {
+		if ( ! stristr( $_POST['target'], preg_replace( '/^https?:\/\//i', '', home_url() ) ) ) {
 			status_header( 400 );
 			echo '"target" is not on this site';
+			exit;
 		}
 
 		$remote_ip = preg_replace( '/[^0-9a-fA-F:., ]/', '', $_SERVER['REMOTE_ADDR'] );
