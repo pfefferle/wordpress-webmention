@@ -5,7 +5,7 @@
  * Description: Webmention support for WordPress posts
  * Author: pfefferle
  * Author URI: http://notizblog.org/
- * Version: 2.6.0
+ * Version: 3.0.0
  * License: MIT
  * License URI: http://opensource.org/licenses/MIT
  * Text Domain: webmention

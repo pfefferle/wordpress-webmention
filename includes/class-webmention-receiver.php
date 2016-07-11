@@ -22,9 +22,9 @@ class Webmention_Receiver {
 		add_filter( 'webfinger_post_data', array( 'Webmention_Receiver', 'jrd_links' ) );
 
 		// default handlers
-		add_filter( 'webmention_title', array( 'Webmention_Receiver', 'default_title_filter' ), 10, 4 );
-		add_filter( 'webmention_content', array( 'Webmention_Receiver', 'default_content_filter' ), 10, 4 );
-		add_filter( 'webmention_check_dupes', array( 'Webmention_Receiver', 'check_dupes' ), 10, 2 );
+		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'check_dupes' ), 1, 1 );
+		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'default_title_filter' ), 9, 1 );
+		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'default_content_filter' ), 10, 1 );
 		add_action( 'webmention_request', array( 'Webmention_Receiver', 'default_request_handler' ), 10 );
 	}
 
@@ -37,8 +37,6 @@ class Webmention_Receiver {
 	public static function query_vars( $vars ) {
 		$vars[] = 'webmention';
 		$vars[] = 'csrf';
-		// Accept vouches for future use
-		$vars[] = 'vouch';
 
 		return $vars;
 	}
@@ -48,7 +46,8 @@ class Webmention_Receiver {
 	 *
 	 * @param WP $wp WordPress request context
 	 *
-	 * @uses do_action() Calls 'webmention_request' on the default request
+	 * @uses do_action calls 'webmention_request' on the default request
+	 * @uses apply_filters calls "webmention_post_id" on the post_ID
 	 */
 	public static function parse_query( $wp ) {
 		// check if it is a webmention request or not
@@ -58,6 +57,8 @@ class Webmention_Receiver {
 
 		// plain text header
 		header( 'Content-Type: text/plain; charset=' . get_option( 'blog_charset' ) );
+		header( 'Access-Control-Allow-Origin: *' );
+
 		// check if source url is transmitted
 		if ( ! isset( $_POST['source'] ) ) {
 			status_header( 400 );
@@ -76,17 +77,9 @@ class Webmention_Receiver {
 			status_header( 400 );
 			echo '"target" is not on this site';
 		}
-		// remove url-scheme
-		$schemeless_target = preg_replace( '/^https?:\/\//i', '', $_POST['target'] );
 
 		// check post with http only
-		$comment_post_ID = url_to_postid( 'http://' . $schemeless_target );
-
-		// if there is no post
-		if ( ! $comment_post_ID ) {
-			// try https url
-			$comment_post_ID = url_to_postid( 'https://' . $schemeless_target );
-		}
+		$comment_post_ID = url_to_postid( $_POST['target'] );
 
 		// add some kind of a "default" id to add all
 		// webmentions to a specific post/page
@@ -113,14 +106,9 @@ class Webmention_Receiver {
 
 		$comment_author_url = esc_url_raw( $_POST['source'] );
 		$target = esc_url_raw( $_POST['target'] );
-		$comment_author_IP = preg_replace( '/[^0-9a-fA-F:., ]/', '', $_SERVER['REMOTE_ADDR'] );
-		// change this if your theme can't handle the Webmentions comment type
-		$comment_type = apply_filters( 'webmention_comment_type', WEBMENTION_COMMENT_TYPE );
-		$csrf = isset( $_POST['csrf']) ? $_POST['csrf'] : false;
-		$vouch = isset( $_POST['vouch']) ? $_POST['vouch'] : false;
 
-		$commentdata = compact( 'comment_post_ID', 'comment_author_url', 'comment_author_IP',
-				'comment_type', 'target', 'csrf', 'vouch' ); 
+		$commentdata = compact( 'comment_post_ID', 'comment_author_url', 'target' );
+
 		// be sure to add an "exit;" to the end of your request handler
 		do_action( 'webmention_request', $commentdata );
 
@@ -139,14 +127,7 @@ class Webmention_Receiver {
 	 *
 	 * @param array $data
 	 *
-	 * @uses apply_filters calls "webmention_post_id" on the post_ID
-	 * @uses apply_filters calls "webmention_title" on the default comment-title
-	 * @uses apply_filters calls "webmention_content" on the default comment-content
-	 * @uses apply_filters calls "webmention_comment_type" on the default comment type
-	 *	the default is "webmention"
-	 * @uses apply_filters calls "webmention_comment_approve" to set the comment
-	 *	to auto-approve (for example)
-	 * @uses apply_filters calls "webmention_comment_parent" to add a parent comment-id
+	 * @uses apply_filters calls "webmention_comment_data" to filter the comment-data array
 	 * @uses apply_filters calls "webmention_success_header" on the default response
 	 *	header
 	 * @uses do_action calls "webmention_post" on the comment_ID to be pingback
@@ -154,6 +135,7 @@ class Webmention_Receiver {
 	 */
 	public static function default_request_handler( $data ) {
 		global $wp_version;
+
 		$user_agent = apply_filters( 'http_headers_useragent', 'WordPress/' . $wp_version . '; ' . get_bloginfo( 'url' ) );
 		$args = array(
 			'timeout' => 100,
@@ -174,8 +156,7 @@ class Webmention_Receiver {
 		$remote_source_original = wp_remote_retrieve_body( $response );
 
 		// check if source really links to target
-		if ( ! strpos( htmlspecialchars_decode( $remote_source_original ), str_replace( array( 'http://www.',
-							'http://', 'https://www.', 'https://' ), '', untrailingslashit( preg_replace( '/#.*/', '', $data['target'] ) ) ) ) ) {
+		if ( ! strpos( htmlspecialchars_decode( $remote_source_original ), str_replace( array( 'http://www.', 'http://', 'https://www.', 'https://' ), '', untrailingslashit( preg_replace( '/#.*/', '', $data['target'] ) ) ) ) ) {
 			status_header( 400 );
 			echo "Can't find target link.";
 			exit;
@@ -186,39 +167,34 @@ class Webmention_Receiver {
 			include_once( ABSPATH . 'wp-includes/kses.php' );
 		}
 		$remote_source = wp_kses_post( $remote_source_original );
-		$comment_author_email = '';
+
+		$comment_author_IP = preg_replace( '/[^0-9a-fA-F:., ]/', '', $_SERVER['REMOTE_ADDR'] );
+
+		// change this if your theme can't handle the Webmentions comment type
+		$comment_type = WEBMENTION_COMMENT_TYPE;
 
 		// change this if you want to auto approve your Webmentions
-		$comment_approved = apply_filters( 'webmention_comment_approve', WEBMENTION_COMMENT_APPROVE );
+		$comment_approved = WEBMENTION_COMMENT_APPROVE;
 
-		// filter the parent id
-		$comment_parent = apply_filters( 'webmention_comment_parent', null, $data['target'] );
+		// add empty fields
+		$comment_parent = $comment_author_email = $comment_author = $comment_content = '';
 
-		// filter title or content of the comment
-		$title = apply_filters( 'webmention_title', '', $remote_source, $data );
-		$content = apply_filters( 'webmention_content', '', $remote_source, $data );
-		$comment_author = wp_slash( $title );
-		$comment_content = wp_slash( $content );
+		$commentdata = compact( 'comment_author', 'comment_author_email', 'comment_content', 'comment_parent', 'remote_source', 'remote_source_original', 'comment_approved', 'comment_type' );
+		$commentdata = array_merge( $commentdata, $data );
 
-		$commentdata = compact( 'comment_author', 'comment_author_email', 'comment_content',
-				'comment_parent', 'comment_approved', 'remote_source', 'remote_source_original' );
-		$commentdata = array_merge( $data, $commentdata);
-		// check dupes
-		$comment = apply_filters( 'webmention_check_dupes', null, $commentdata );
+		$commentdata = apply_filters( 'webmention_comment_data', $commentdata );
 
 		// disable flood control
 		remove_filter( 'check_comment_flood', 'check_comment_flood_db', 10, 3 );
 
 		// update or save webmention
-		if ( $comment ) {
-			$commentdata['comment_ID'] = $comment->comment_ID;
-			$commentdata['comment_approved'] = $comment->comment_approved;
+		if ( empty( $commentdata['comment_ID'] ) ) {
+			// save comment
+			$comment_ID = wp_new_comment( $commentdata );
+		} else {
 			// save comment
 			wp_update_comment( $commentdata );
 			$comment_ID = $comment->comment_ID;
-		} else {
-			// save comment
-			$comment_ID = wp_new_comment( $commentdata );
 		}
 
 		// re-add flood control
@@ -237,15 +213,13 @@ class Webmention_Receiver {
 	/**
 	 * Try to make a nice comment
 	 *
-	 * @param string $context the comment-content
-	 * @param string $remote_source the HTML of the source
-	 * @param array $data Start of Comment Data
+	 * @param array $commentdata the comment-data
 	 *
-	 * @return string the filtered content
+	 * @return array the filtered comment-data
 	 */
-	public static function default_content_filter( $content, $remote_source, $data ) {
+	public static function default_content_filter( $commentdata ) {
 		// get post format
-		$post_ID = url_to_postid( $data['target'] );
+		$post_ID = $commentdata['comment_post_ID'];
 		$post_format = get_post_format( $post_ID );
 
 		// replace "standard" with "Article"
@@ -257,27 +231,25 @@ class Webmention_Receiver {
 			$post_format = $post_formatstrings[ $post_format ];
 		}
 
-		$host = parse_url( $data['comment_author_url'], PHP_URL_HOST );
+		$host = parse_url( $commentdata['comment_author_url'], PHP_URL_HOST );
 
 		// strip leading www, if any
 		$host = preg_replace( '/^www\./', '', $host );
 
 		// generate default text
-		$content = sprintf( __( 'This %s was mentioned on <a href="%s">%s</a>', 'webmention' ),
-				$post_format, esc_url( $data['comment_author_url'] ), $host );
+		$commentdata['comment_content'] = sprintf( __( 'This %s was mentioned on <a href="%s">%s</a>', 'webmention' ), $post_format, esc_url( $commentdata['comment_author_url'] ), $host );
 
-		return $content;
+		return $commentdata;
 	}
 
 	/**
 	 * Check if a comment already exists
 	 *
-	 * @param  array      $comment     the filtered comment
 	 * @param  array      $commentdata the comment, created for the webmention data
 	 *
 	 * @return array|null              the dupe or null
 	 */
-	public static function check_dupes( $comment, $commentdata ) {
+	public static function check_dupes( $commentdata ) {
 		$args = array(
 			'comment_post_ID' => $commentdata['comment_post_ID'],
 			'author_url' => htmlentities( $commentdata['comment_author_url'] ),
@@ -286,7 +258,11 @@ class Webmention_Receiver {
 		$comments = get_comments( $args );
 		// check result
 		if ( ! empty( $comments ) ) {
-			return $comments[0];
+			$comment = $comments[0];
+			$commentdata['comment_ID'] = $comment->comment_ID;
+			$commentdata['comment_approved'] = $comment->comment_approved;
+
+			return $commentdata;
 		}
 
 		// check comments sent via salmon are also dupes
@@ -302,10 +278,12 @@ class Webmention_Receiver {
 
 		// check result
 		if ( ! empty( $comments ) ) {
-			return $comments[0];
+			$comment = $comments[0];
+			$commentdata['comment_ID'] = $comment->comment_ID;
+			$commentdata['comment_approved'] = $comment->comment_approved;
 		}
 
-		return null;
+		return $commentdata;
 	}
 
 	/**
@@ -322,67 +300,32 @@ class Webmention_Receiver {
 		return $types;
 	}
 
-
-
-	/**
-	 * Parse meta tags from source content
-	 * Based on the Press This Meta Parsing Code
-	 *
-	 * @param string $source_content Source Content
-	 *
-	 * @return array meta tags
-	 */
-	public static function get_meta_tags( $source_content ) {
-		if ( ! $source_content ) {
-			return null;
-		}
-		$meta = array();
-		if ( preg_match_all( '/<meta [^>]+>/', $source_content, $matches ) ) {
-			$items = $matches[0];
-			foreach ( $items as $value ) {
-				if ( preg_match( '/(property|name)="([^"]+)"[^>]+content="([^"]+)"/', $value, $new_matches ) ) {
-					$meta_name  = $new_matches[2];
-					$meta_value = $new_matches[3];
-					// Sanity check. $key is usually things like 'title', 'description', 'keywords', etc.
-					if ( strlen( $meta_name ) > 100 ) {
-						continue;
-					}
-					$meta[ $meta_name ] = $meta_value;
-				}
-			}
-		}
-		return $meta;
-	}
-
-
 	/**
 	 * Try to make a nice title (username)
 	 *
-	 * @param string $title the comment-title (username)
-	 * @param string $remote_source the HTML of the source
-	 * @param array $data Start of Comment Data
+	 * @param array $commentdata the comment-data
 	 *
-	 * @return string the filtered title
+	 * @return array the filtered comment-data
 	 */
-	public static function default_title_filter( $title, $remote_source, $data ) {
-		$meta_tags = self::get_meta_tags( $remote_source );
+	public static function default_title_filter( $commentdata ) {
+		$meta_tags = wp_get_meta_tags( $commentdata['remote_source_original'] );
 
 		// use meta-author
-		if ( $meta_tags && is_array( $meta_tags ) && array_key_exists( 'author', $meta_tags ) ) {
-			return $meta_tags['author'];
+		if ( array_key_exists( 'author', $meta_tags ) ) {
+			$commentdata['comment_author'] = $meta_tags['author'];
+		} elseif ( array_key_exists( 'og:title', $meta_tags ) ) {
+			// Use Open Graph Title if set
+			$commentdata['comment_author'] = $meta_tags['og:title'];
+		} elseif ( preg_match( '/<title>(.+)<\/title>/i', $commentdata['remote_source_original'], $match ) ) { // use title
+			$commentdata['comment_author'] = trim( $match[1] );
+		} else {
+			// or host
+			$host = parse_url( $commentdata['comment_author_url'], PHP_URL_HOST );
+			$commentdata['comment_author'] = preg_replace( '/^www\./', '', $host );
 		}
-		// Use Open Graph Title if set
-	 	if ( $meta_tags && is_array( $meta_tags ) && array_key_exists( 'og:title', $meta_tags ) ) {
-			return $meta_tags['og:title'];
-		}
-		if ( preg_match( '/<title>(.+)<\/title>/i', $remote_source, $match ) ) { // use title
-			return trim( $match[1] );
-		} 
-		// or host
-		$host = parse_url( $data['comment_author_url'], PHP_URL_HOST );
 
 		// strip leading www, if any
-		return preg_replace( '/^www\./', '', $host );
+		return $commentdata;
 	}
 
 	/**

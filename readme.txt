@@ -1,10 +1,10 @@
 === Webmention ===
 Contributors: pfefferle, dshanske
 Donate link: http://14101978.de
-Tags: webmention, pingback, trackback, linkback
+Tags: webmention, pingback, trackback, linkback, indieweb
 Requires at least: 4.5
 Tested up to: 4.5.2
-Stable tag: 2.6.0
+Stable tag: 3.0.0
 License: MIT
 License URI: http://opensource.org/licenses/MIT
 
@@ -12,12 +12,12 @@ Webmention for WordPress!
 
 == Description ==
 
-[Webmention](http://webmention.org/) is a simple and modern alternative to the Pingback/Trackback protocol.
+[Webmention](http://www.w3.org/TR/webmention/) is a simple and modern alternative to the Pingback/Trackback protocol.
 
 [vimeo https://vimeo.com/85217592]
 -- Video by [Andy Sylvester](http://andysylvester.com/2014/01/27/working-with-webmention-video/)
 
-From the [spec](http://webmention.org/):
+From the [spec](http://www.w3.org/TR/webmention/):
 
 > Webmention is a simple way to automatically notify any URL when you link to it on your site.
 > From the receivers perpective, it's a way to request notification when other sites link to it.
@@ -27,7 +27,7 @@ From the [spec](http://webmention.org/):
 
 = What are Webmentions? =
 
-[Webmention](http://webmention.org) is a simple way to automatically notify any URL when you link to it on your site. From the receivers perpective, it's a way to request notification when other sites link to it.
+[Webmention](http://www.w3.org/TR/webmention/) is a simple way to automatically notify any URL when you link to it on your site. From the receivers perpective, it's a way to request notification when other sites link to it.
 
 It’s a modern alternative to Pingback and other forms of Linkback.
 
