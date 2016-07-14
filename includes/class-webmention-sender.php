@@ -69,17 +69,16 @@ class Webmention_Sender {
 			'user-agent' => "$user_agent; sending Webmention",
 			'body' => 'source=' . urlencode( $source ) . '&target=' . urlencode( $target ),
 		);
-
 		if ( $webmention_server_url ) {
 			$response = wp_remote_post( $webmention_server_url, $args );
-
-			// use the response to do something usefull
-			do_action( 'webmention_post_send', $response, $source, $target, $post_ID );
-
-			return $response;
 		}
+		else {
+			$response = false;
+		}
+		// use the response to do something useful
+		do_action( 'webmention_post_send', $response, $source, $target, $post_ID );
 
-		return false;
+		return $response;
 	}
 
 	/**
