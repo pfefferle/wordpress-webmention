@@ -31,6 +31,12 @@ From the [spec](http://www.w3.org/TR/webmention/):
 
 It’s a modern alternative to Pingback and other forms of Linkback.
 
+= That Sounds Like a Pingback or a Trackback =
+
+Webmention is an update/replacement for Pingback or Trackback. Unlike the older protocols, the
+specification has a working draft with the W3C as well as an active community of individuals using
+it on their sites.
+
 = How can I send Webmentions =
 
 Activate sending Webmentions by checking the "Attempt to notify any blogs linked to from the article" option on the Settings --> Discussion page in WordPress.
@@ -58,9 +64,23 @@ comments on a post or a page. The plugin provides a simple filter for that:
 If you want to add a more complex request handler, you should take a look at the
 `webmention_request` action and the `default_request_handler`.
 
+== Upgrade Notice ==
+
+= 3.0.0 = 
+This update brings the plugin into compliance with the draft standard. As a result, some filters and
+actions have changed. Please check any dependent code before updating.
+
 == Changelog ==
 
 Project maintined on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
+
+= 3.0.0 =
+
+* Plugin now compliant with draft specification although remains synchronous.
+* Deprecation of webmention_title and webmention_content filters in favor of a single targeted webmention comment data filter.
+* webmention_post_send action now fires on all attempts to send a webmention instead of only successful ones. Allows for logging functions to be added.
+* target is now verified before source which created significant structural changes
+
 
 = 2.6.0 =
 
@@ -156,4 +176,4 @@ initial release
 = 2.0.0 =
 
 This plugin doesn't support the microformts stuff mentioned in the IndieWebCamp Wiki.
-To enable semantik linkbacks you have to use <https://github.com/pfefferle/wordpress-semantic-linkbacks>
+To enable semantic linkbacks you have to use <https://github.com/pfefferle/wordpress-semantic-linkbacks>
