@@ -64,12 +64,6 @@ comments on a post or a page. The plugin provides a simple filter for that:
 If you want to add a more complex request handler, you should take a look at the
 `webmention_request` action and the `default_request_handler`.
 
-## Upgrade Notice ##
-
-### 3.0.0 ###
-This update brings the plugin into compliance with the draft standard. As a result, some filters and
-actions have changed. Please check any dependent code before updating.
-
 ## Changelog ##
 
 Project maintined on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
@@ -80,7 +74,6 @@ Project maintined on github at [pfefferle/wordpress-webmention](https://github.c
 * Deprecation of webmention_title and webmention_content filters in favor of a single targeted webmention comment data filter.
 * webmention_post_send action now fires on all attempts to send a webmention instead of only successful ones. Allows for logging functions to be added.
 * target is now verified before source which created significant structural changes
-
 
 ### 2.6.0 ###
 
@@ -172,6 +165,11 @@ initial release
 3. ...and that's it :)
 
 ## Upgrade Notice ##
+
+### 3.0.0 ###
+
+This update brings the plugin into compliance with the draft standard. As a result, some filters and
+actions have changed. Please check any dependent code before updating.
 
 ### 2.0.0 ###
 
