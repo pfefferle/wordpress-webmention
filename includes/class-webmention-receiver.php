@@ -23,8 +23,6 @@ class Webmention_Receiver {
 
 		// default handlers
 		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'check_dupes' ), 1, 1 );
-		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'default_title_filter' ), 9, 1 );
-		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'default_content_filter' ), 10, 1 );
 		add_action( 'webmention_request', array( 'Webmention_Receiver', 'default_request_handler' ), 10 );
 	}
 
@@ -157,7 +155,15 @@ class Webmention_Receiver {
 		$remote_source_original = wp_remote_retrieve_body( $response );
 
 		// check if source really links to target
-		if ( ! strpos( htmlspecialchars_decode( $remote_source_original ), str_replace( array( 'http://www.', 'http://', 'https://www.', 'https://' ), '', untrailingslashit( preg_replace( '/#.*/', '', $data['target'] ) ) ) ) ) {
+		$valid = strpos( htmlspecialchars_decode( $remote_source_original ),
+			str_replace( array( 'http://www.', 'http://', 'https://www.', 'https://' ),
+				'',
+			untrailingslashit( preg_replace( '/#.*/', '', $data['target'] ) ) )
+		);
+		// Allows for Content Type Detection
+		$valid = apply_filters( 'webmention_source_verify', $valid, $remote_source_original,
+		$data['target'], wp_remote_retrieve_header( $response, 'content-type' ) );
+		if ( ! $valid ) {
 			status_header( 400 );
 			echo "Can't find target link.";
 			exit;
@@ -183,7 +189,11 @@ class Webmention_Receiver {
 		$commentdata = compact( 'comment_author', 'comment_author_email', 'comment_content', 'comment_parent', 'remote_source', 'remote_source_original', 'comment_approved', 'comment_type' );
 		$commentdata = array_merge( $commentdata, $data );
 
-		$commentdata = apply_filters( 'webmention_comment_data', $commentdata );
+		// Add Default Content which can be overridden using preprocess_comment
+		$commentdata = self::default_content( $commentdata );
+		$commentdata = self::default_title( $commentdata );
+		// Check for Duplicates
+		$commentdata = self::check_dupes( $commentdata );
 
 		// disable flood control
 		remove_filter( 'check_comment_flood', 'check_comment_flood_db', 10, 3 );
@@ -191,11 +201,11 @@ class Webmention_Receiver {
 		// update or save webmention
 		if ( empty( $commentdata['comment_ID'] ) ) {
 			// save comment
-			$comment_ID = wp_new_comment( $commentdata );
+			$commentdata->comment_ID = wp_new_comment( $commentdata );
 		} else {
+			$commentdata = apply_filters( 'webmention_update', $commentdata );
 			// save comment
 			wp_update_comment( $commentdata );
-			$comment_ID = $comment->comment_ID;
 		}
 
 		// re-add flood control
@@ -205,9 +215,9 @@ class Webmention_Receiver {
 		status_header( apply_filters( 'webmention_success_header', 200 ) );
 
 		// render a simple and customizable text output
-		echo apply_filters( 'webmention_success_message', get_comment_link( $comment_ID ) );
+		echo apply_filters( 'webmention_success_message', get_comment_link( $commentdata->comment_ID ) );
 
-		do_action( 'webmention_post', $comment_ID );
+		do_action( 'webmention_post', $commentdata->comment_ID );
 		exit;
 	}
 
@@ -216,9 +226,9 @@ class Webmention_Receiver {
 	 *
 	 * @param array $commentdata the comment-data
 	 *
-	 * @return array the filtered comment-data
+	 * @return array the comment-data with generated content
 	 */
-	public static function default_content_filter( $commentdata ) {
+	public static function default_content( $commentdata ) {
 		// get post format
 		$post_ID = $commentdata['comment_post_ID'];
 		$post_format = get_post_format( $post_ID );
@@ -262,7 +272,6 @@ class Webmention_Receiver {
 			$comment = $comments[0];
 			$commentdata['comment_ID'] = $comment->comment_ID;
 			$commentdata['comment_approved'] = $comment->comment_approved;
-
 			return $commentdata;
 		}
 
@@ -283,8 +292,8 @@ class Webmention_Receiver {
 			$commentdata['comment_ID'] = $comment->comment_ID;
 			$commentdata['comment_approved'] = $comment->comment_approved;
 		}
-
-		return $commentdata;
+		// Add hook for Semantic Linkbacks to Add Duplicate Comment Data
+		return apply_filters( 'webmention_check_dupes', $commentdata );
 	}
 
 	/**
@@ -293,7 +302,7 @@ class Webmention_Receiver {
 	 *
 	 * @param array $types the different comment types
 	 *
-	 * @return array the filtert comment types
+	 * @return array the filtered comment types
 	 */
 	public static function comment_types_dropdown( $types ) {
 		$types['webmention'] = __( 'Webmentions', 'webmention' );
@@ -306,9 +315,9 @@ class Webmention_Receiver {
 	 *
 	 * @param array $commentdata the comment-data
 	 *
-	 * @return array the filtered comment-data
+	 * @return array the comment-data with generated title
 	 */
-	public static function default_title_filter( $commentdata ) {
+	public static function default_title( $commentdata ) {
 		$meta_tags = wp_get_meta_tags( $commentdata['remote_source_original'] );
 
 		// use meta-author
