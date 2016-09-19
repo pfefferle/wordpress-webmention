@@ -21,7 +21,7 @@
     "linkback"
   ],
   "author": "Matthias Pfefferle",
-  "license": "GPL",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/pfefferle/wordpress-webmention/issues"
   },
