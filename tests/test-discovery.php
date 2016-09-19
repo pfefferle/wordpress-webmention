@@ -6,7 +6,7 @@ class DiscoveryTest extends WP_UnitTestCase {
 			'server' => 'nginx/1.9.15',
 			'date' => 'Mon, 16 May 2016 01:21:08 GMT',
 			'content-type' => 'text/html; charset=UTF-8',
-			'link' => $link
+			'link' => $link,
 		);
 		return $headers;
 	}
@@ -14,13 +14,13 @@ class DiscoveryTest extends WP_UnitTestCase {
 	public function response( $code, $response ) {
 		$response = array(
 			'code' => $code,
-			'response' => $response
+			'response' => $response,
 		);
 		return $response;
 	}
 
-	public function httpreturn($headers, $response, $body) {
-		return compact( 'headers', 'response', 'body');
+	public function httpreturn( $headers, $response, $body ) {
+		return compact( 'headers', 'response', 'body' );
 	}
 
 	public function discover_relative_httplink() {
