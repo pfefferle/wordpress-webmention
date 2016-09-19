@@ -2,12 +2,9 @@
   "name": "wordpress-webmention",
   "description": "Webmention support for WordPress posts",
   "main": "webmention.php",
-  "dependencies": {
-    "grunt": "^0.4.5",
-    "grunt-wp-readme-to-markdown": "^0.8.0"
-  },
   "devDependencies": {
     "grunt": "^0.4.5",
+    "grunt-replace": "^1.0.1",
     "grunt-wp-readme-to-markdown": "^0.8.0"
   },
   "repository": {

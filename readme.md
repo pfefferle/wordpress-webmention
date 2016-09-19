@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/pfefferle/wordpress-webmention.svg?branch=master)](https://travis-ci.org/pfefferle/wordpress-webmention) 
+
 # Webmention #
 **Contributors:** pfefferle, dshanske  
 **Donate link:** http://14101978.de  
