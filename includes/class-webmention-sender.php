@@ -22,12 +22,12 @@ class Webmention_Sender {
 	/**
 	 * Marks the post as "no webmentions sent yet"
 	 *
-	 * @param int $post_ID
+	 * @param int $post_id
 	 */
-	public static function publish_post_hook( $post_ID ) {
+	public static function publish_post_hook( $post_id ) {
 		// check if pingbacks are enabled
 		if ( get_option( 'default_pingback_flag' ) ) {
-			add_post_meta( $post_ID, '_mentionme', '1', true );
+			add_post_meta( $post_id, '_mentionme', '1', true );
 		}
 	}
 
@@ -36,11 +36,11 @@ class Webmention_Sender {
 	 *
 	 * @param string $source source url
 	 * @param string $target target url
-	 * @param int $post_ID the post_ID (optional)
+	 * @param int $post_id the post_ID (optional)
 	 *
 	 * @return array of results including HTTP headers
 	 */
-	public static function send_webmention( $source, $target, $post_ID = null ) {
+	public static function send_webmention( $source, $target, $post_id = null ) {
 		global $wp_version;
 
 		// stop selfpings on the same URL
@@ -71,12 +71,11 @@ class Webmention_Sender {
 		);
 		if ( $webmention_server_url ) {
 			$response = wp_remote_post( $webmention_server_url, $args );
-		}
-		else {
+		} else {
 			$response = false;
 		}
 		// use the response to do something useful
-		do_action( 'webmention_post_send', $response, $source, $target, $post_ID );
+		do_action( 'webmention_post_send', $response, $source, $target, $post_id );
 
 		return $response;
 	}
@@ -90,14 +89,14 @@ class Webmention_Sender {
 	 *	 add_action('publish_post', array('Webmention_Sender', 'send_webmentions'));
 	 * </code>
 	 *
-	 * @param int $post_ID the post_ID
+	 * @param int $post_id the post_ID
 	 */
-	public static function send_webmentions($post_ID) {
+	public static function send_webmentions( $post_id ) {
 		// get source url
-		$source = get_permalink( $post_ID );
+		$source = get_permalink( $post_id );
 
 		// get post
-		$post = get_post( $post_ID );
+		$post = get_post( $post_id );
 
 		// initialize links array
 		$links = array();
@@ -108,28 +107,28 @@ class Webmention_Sender {
 		}
 
 		// filter links
-		$targets = apply_filters( 'webmention_links', $links, $post_ID );
+		$targets = apply_filters( 'webmention_links', $links, $post_id );
 		$targets = array_unique( $targets );
 
 		foreach ( $targets as $target ) {
 			// send webmention
-			$response = self::send_webmention( $source, $target, $post_ID );
+			$response = self::send_webmention( $source, $target, $post_id );
 
 			// check response
 			if ( ! is_wp_error( $response ) &&
 				wp_remote_retrieve_response_code( $response ) < 400 ) {
-				$pung = get_pung( $post_ID );
+				$pung = get_pung( $post_id );
 
 				// if not already added to punged urls
 				if ( ! in_array( $target, $pung ) ) {
 					// tell the pingback function not to ping these links again
-					add_ping( $post_ID, $target );
+					add_ping( $post_id, $target );
 				}
 			}
 
 			// rescedule if server responds with a http error 5xx
 			if ( wp_remote_retrieve_response_code( $response ) >= 500 ) {
-				self::reschedule( $post_ID );
+				self::reschedule( $post_id );
 			}
 		}
 	}
@@ -137,10 +136,10 @@ class Webmention_Sender {
 	/**
 	 * Rescedule Webmentions on HTTP code 500
 	 *
-	 * @param int $post_ID the post id
+	 * @param int $post_id the post id
 	 */
-	public static function reschedule( $post_ID ) {
-		$tries = get_post_meta( $post_ID, '_mentionme_tries', true );
+	public static function reschedule( $post_id ) {
+		$tries = get_post_meta( $post_id, '_mentionme_tries', true );
 
 		// check "tries" and set to 0 if null
 		if ( ! $tries ) {
@@ -153,14 +152,14 @@ class Webmention_Sender {
 		// rescedule only three times
 		if ( $tries <= 3 ) {
 			// save new tries value
-			update_post_meta( $post_ID, '_mentionme_tries', $tries );
+			update_post_meta( $post_id, '_mentionme_tries', $tries );
 
 			// and rescedule
-			add_post_meta( $post_ID, '_mentionme', '1', true );
+			add_post_meta( $post_id, '_mentionme', '1', true );
 
 			wp_schedule_single_event( time() + ( $tries * 900 ), 'do_pings' );
 		} else {
-			delete_post_meta( $post_ID, '_mentionme_tries' );
+			delete_post_meta( $post_id, '_mentionme_tries' );
 		}
 	}
 

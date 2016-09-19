@@ -54,7 +54,7 @@ class Webmention_Plugin {
 	/**
 	 * Add Webmention options to the WordPress discussion settings page.
 	 */
-	public static function discussion_settings () {
+	public static function discussion_settings() {
 ?>
 	<fieldset>
 		<label for="webmention_disable_selfpings_same_url">

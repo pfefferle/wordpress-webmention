@@ -80,24 +80,24 @@ class Webmention_Receiver {
 		}
 
 		// check post with http only
-		$comment_post_ID = url_to_postid( $_POST['target'] );
+		$comment_post_id = url_to_postid( $_POST['target'] );
 
 		// add some kind of a "default" id to add all
 		// webmentions to a specific post/page
-		$comment_post_ID = apply_filters( 'webmention_post_id', $comment_post_ID, $_POST['target'] );
+		$comment_post_id = apply_filters( 'webmention_post_id', $comment_post_id, $_POST['target'] );
 		// check if post id exists
-		if ( ! $comment_post_ID ) {
+		if ( ! $comment_post_id ) {
 			return;
 		}
 		// check if pings are allowed
-		if ( ! pings_open( $comment_post_ID ) ) {
+		if ( ! pings_open( $comment_post_id ) ) {
 			status_header( 400 );
 			echo 'Pings are disabled for this post';
 			exit;
 		}
 
-		$comment_post_ID = intval( $comment_post_ID );
-		$post = get_post( $comment_post_ID );
+		$comment_post_id = intval( $comment_post_id );
+		$post = get_post( $comment_post_id );
 		// check if post exists
 		if ( ! $post ) {
 			status_header( 400 );
@@ -169,7 +169,7 @@ class Webmention_Receiver {
 		}
 		$remote_source = wp_kses_post( $remote_source_original );
 
-		$comment_author_IP = preg_replace( '/[^0-9a-fA-F:., ]/', '', $_SERVER['REMOTE_ADDR'] );
+		//$comment_author_IP = preg_replace( '/[^0-9a-fA-F:., ]/', '', $_SERVER['REMOTE_ADDR'] );
 
 		// change this if your theme can't handle the Webmentions comment type
 		$comment_type = WEBMENTION_COMMENT_TYPE;
@@ -191,11 +191,11 @@ class Webmention_Receiver {
 		// update or save webmention
 		if ( empty( $commentdata['comment_ID'] ) ) {
 			// save comment
-			$comment_ID = wp_new_comment( $commentdata );
+			$comment_id = wp_new_comment( $commentdata );
 		} else {
 			// save comment
 			wp_update_comment( $commentdata );
-			$comment_ID = $comment->comment_ID;
+			$comment_id = $comment->comment_ID;
 		}
 
 		// re-add flood control
@@ -205,9 +205,9 @@ class Webmention_Receiver {
 		status_header( apply_filters( 'webmention_success_header', 200 ) );
 
 		// render a simple and customizable text output
-		echo apply_filters( 'webmention_success_message', get_comment_link( $comment_ID ) );
+		echo apply_filters( 'webmention_success_message', get_comment_link( $comment_id ) );
 
-		do_action( 'webmention_post', $comment_ID );
+		do_action( 'webmention_post', $comment_id );
 		exit;
 	}
 
@@ -220,8 +220,8 @@ class Webmention_Receiver {
 	 */
 	public static function default_content_filter( $commentdata ) {
 		// get post format
-		$post_ID = $commentdata['comment_post_ID'];
-		$post_format = get_post_format( $post_ID );
+		$post_id = $commentdata['comment_post_ID'];
+		$post_format = get_post_format( $post_id );
 
 		// replace "standard" with "Article"
 		if ( ! $post_format || 'standard' == $post_format ) {
@@ -238,7 +238,7 @@ class Webmention_Receiver {
 		$host = preg_replace( '/^www\./', '', $host );
 
 		// generate default text
-		$commentdata['comment_content'] = sprintf( __( 'This %s was mentioned on <a href="%s">%s</a>', 'webmention' ), $post_format, esc_url( $commentdata['comment_author_url'] ), $host );
+		$commentdata['comment_content'] = sprintf( __( 'This %1$s was mentioned on <a href="%2$s">%3$s</a>', 'webmention' ), $post_format, esc_url( $commentdata['comment_author_url'] ), $host );
 
 		return $commentdata;
 	}
@@ -332,12 +332,12 @@ class Webmention_Receiver {
 	/**
 	 * Marks the post as "no webmentions sent yet"
 	 *
-	 * @param int $post_ID
+	 * @param int $post_id
 	 */
-	public static function publish_post_hook( $post_ID ) {
+	public static function publish_post_hook( $post_id ) {
 		// check if pingbacks are enabled
 		if ( get_option( 'default_pingback_flag' ) ) {
-			add_post_meta( $post_ID, '_mentionme', '1', true );
+			add_post_meta( $post_id, '_mentionme', '1', true );
 		}
 	}
 
