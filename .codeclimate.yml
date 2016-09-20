@@ -1,0 +1,5 @@
+engines:
+  phpcodesniffer:
+    enabled: true
+    config:
+      standard: "WordPress-Core"
