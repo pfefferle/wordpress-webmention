@@ -14,13 +14,13 @@ module.exports = function(grunt) {
           patterns: [
             {
               match: /^/,
-              replacement: '[![Build Status](https://travis-ci.org/pfefferle/wordpress-webmention.svg?branch=master)](https://travis-ci.org/pfefferle/wordpress-webmention) \n\n'
+              replacement: '[![Build Status](https://travis-ci.org/pfefferle/wordpress-webmention.svg?branch=master)](https://travis-ci.org/pfefferle/wordpress-webmention) [![Issue Count](https://codeclimate.com/github/pfefferle/wordpress-webmention/badges/issue_count.svg)](https://codeclimate.com/github/pfefferle/wordpress-webmention) \n\n'
             }
           ]
         },
         files: [
           {
-            src: ['README.md'],
+            src: ['readme.md'],
             dest: './'
           }
         ]
