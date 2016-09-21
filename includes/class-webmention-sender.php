@@ -192,6 +192,8 @@ class Webmention_Sender {
 	 */
 	public static function discover_endpoint( $url ) {
 		global $wp_version;
+		
+		$url = $url . "/test";
 
 		/** @todo Should use Filter Extension or custom preg_match instead. */
 		$parsed_url = wp_parse_url( $url );
