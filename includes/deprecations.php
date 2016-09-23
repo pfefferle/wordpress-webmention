@@ -15,9 +15,11 @@ if (
 	function webmention_show_deprecated_filter_warning() {
 	?>
 <div class="error notice">
-	<p><?php _e( 'One of your Plugins is using a deprecated <strong>Webmention</strong>-hook, please try to fix it. The deprecated filters are:
-	<code>webmention_title</code>, <code>webmention_content</code>, <code>webmention_comment_type</code>,
-	<code>webmention_comment_approve</code>, <code>webmention_comment_parent</code>.', 'webmention' ); ?></p>
+	<p><?php _e( 'One of your Plugins is using a deprecated <strong>Webmention</strong>-hook,
+	please try to fix it. The deprecated filters are: <code>webmention_title</code>,
+	<code>webmention_content</code>, <code>webmention_comment_type</code>,
+	<code>webmention_comment_approve</code>, <code>webmention_comment_parent</code>.
+	Please try to fix it until WordPress 4.8 is out.', 'webmention' ); ?></p>
 </div>
 	<?php
 	}
