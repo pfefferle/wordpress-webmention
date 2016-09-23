@@ -27,6 +27,10 @@ class Webmention_Plugin {
 	 * Initialize Webmention Plugin
 	 */
 	public static function init() {
+		// will be removed in one of the following major releases
+		require_once( dirname( __FILE__ ) . '/includes/deprecations.php' );
+
+		// list of various public helper functions
 		require_once( dirname( __FILE__ ) . '/includes/functions.php' );
 
 		// initialize Webmention Sender
