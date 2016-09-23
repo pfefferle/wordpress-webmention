@@ -167,7 +167,17 @@ class Webmention_Sender {
 	 * Do webmentions
 	 */
 	public static function do_webmentions() {
-		$mentions = get_posts( array( 'meta_key' => '_mentionme', 'post_type' => 'any', 'fields' => 'ids', 'nopaging' => true ) );
+		$mentions = get_posts(
+			array(
+				'meta_key' => '_mentionme',
+				'post_type' => get_post_types(
+					array( 'publicly_queryable' => true )
+				),
+				'fields' => 'ids',
+				'nopaging' => true,
+			)
+		);
+
 		if ( empty( $mentions ) ) {
 			return;
 		}
