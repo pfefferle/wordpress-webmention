@@ -6,6 +6,7 @@
   },
   "type": "wordpress-plugin",
   "license": "MIT",
+  "type": "wordpress-plugin"
   "authors": [
     {
       "name": "Matthias Pfefferle",

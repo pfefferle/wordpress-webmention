@@ -108,7 +108,8 @@ class Webmention_Receiver {
 		$comment_author_url = esc_url_raw( $_POST['source'] );
 		$target = esc_url_raw( $_POST['target'] );
 
-		$commentdata = compact( 'comment_post_ID', 'comment_author_url', 'target' );
+		$commentdata = compact( 'comment_author_url', 'target' );
+		$commentdata['comment_post_ID'] = $comment_post_id;
 
 		// be sure to add an "exit;" to the end of your request handler
 		do_action( 'webmention_request', $commentdata );
