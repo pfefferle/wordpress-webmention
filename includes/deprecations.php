@@ -45,4 +45,4 @@ function webmention_deprecated_filters( $commentdata ) {
 
 	return $commentdata;
 }
-add_filter( 'webmention_comment_data', 'webmention_deprecated_filters' );
+add_filter( 'webmention_comment_data', 'webmention_deprecated_filters', 7 );

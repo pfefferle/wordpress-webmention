@@ -41,7 +41,7 @@ function get_webmentions_number( $post_id = 0 ) {
  * @return string the Webmention endpoint
  */
 function get_webmention_endpoint() {
-	return apply_filters( 'webmention_endpoint', site_url( '?webmention=endpoint' ) );
+	return apply_filters( 'webmention_endpoint', get_rest_url( null, '/webmention/endpoint' ) );
 }
 
 if ( ! function_exists( 'wp_get_meta_tags' ) ) :
