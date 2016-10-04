@@ -40,7 +40,7 @@ class Webmention_Receiver {
 	 * Register the Routes.
 	 */
 	public static function register_routes() {
-		register_rest_route( 'webmention', '/endpoint', array(
+		register_rest_route( 'webmention/1.0', '/endpoint', array(
 			array(
 				'methods' => WP_REST_Server::CREATABLE,
 				'callback' => array( 'Webmention_Receiver', 'post' ),
@@ -60,9 +60,8 @@ class Webmention_Receiver {
 			array(
 				'methods' => WP_REST_Server::READABLE,
 				'callback' => array( 'Webmention_Receiver', 'get' ),
-				),
-			)
-		);
+			),
+		));
 	}
 
 	/**
@@ -80,7 +79,7 @@ class Webmention_Receiver {
 	 * @return true
 	 */
 	public static function serve_request( $served, $result, $request, $server ) {
-		if ( '/webmention/endpoint' !== $request->get_route() ) {
+		if ( '/webmention/1.0/endpoint' !== $request->get_route() ) {
 			return $served;
 		}
 		if ( 'GET' !== $request->get_method() ) {
