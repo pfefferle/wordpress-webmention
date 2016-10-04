@@ -42,21 +42,21 @@ class Webmention_Receiver {
 	public static function register_routes() {
 		register_rest_route( 'webmention', '/endpoint', array(
 			array(
-					'methods' => WP_REST_Server::CREATABLE,
-					'callback' => array( 'Webmention_Receiver', 'post' ),
-					'args' => array(
-						'source' => array(
-							'required' => 'true',
-							'sanitize_callback' => 'esc_url_raw',
-							'validate_callback' => 'wp_http_validate_url',
-						),
-						'target' => array(
-							'required' => 'true',
-							'sanitize_callback' => 'esc_url_raw',
-							'validate_callback' => 'wp_http_validate_url',
-						),
+				'methods' => WP_REST_Server::CREATABLE,
+				'callback' => array( 'Webmention_Receiver', 'post' ),
+				'args' => array(
+					'source' => array(
+						'required' => 'true',
+						'sanitize_callback' => 'esc_url_raw',
+						'validate_callback' => 'wp_http_validate_url',
+					),
+					'target' => array(
+						'required' => 'true',
+						'sanitize_callback' => 'esc_url_raw',
+						'validate_callback' => 'wp_http_validate_url',
 					),
 				),
+			),
 			array(
 				'methods' => WP_REST_Server::READABLE,
 				'callback' => array( 'Webmention_Receiver', 'get' ),
@@ -112,12 +112,12 @@ class Webmention_Receiver {
 	 * Generates a webmention form
 	 */
 	public static function webmention_form() {
-		?> 
+		?>
 		<br />
 		<form id="webmention-form" action="<?php echo get_webmention_endpoint(); ?>" method="post">
 		<p>
 			<label for="webmention-source"><?php _e( 'Source URL:', 'webmention' ); ?></label>
-				<input id="webmention-source" size="15" type="url" name="source" placeholder="Where Did You Link to?" />
+			<input id="webmention-source" size="15" type="url" name="source" placeholder="Where Did You Link to?" />
 		</p>
 		<p>
 			<label for="webmention-target"><?php _e( 'Target URL(must be on this site):', 'webmention' ); ?></label>
@@ -205,10 +205,10 @@ class Webmention_Receiver {
 		}
 		// Return select data
 		$return = array(
-				'link' => apply_filters( 'webmention_success_message', get_comment_link( $data['comment_ID'] ) ),
-				'source' => $data['source'],
-				'target' => $data['target'],
-				);
+			'link' => apply_filters( 'webmention_success_message', get_comment_link( $data['comment_ID'] ) ),
+			'source' => $data['source'],
+			'target' => $data['target'],
+		);
 		return new WP_REST_Response( $return, 200 );
 	}
 
@@ -270,17 +270,18 @@ class Webmention_Receiver {
 	 * Verify a webmention and either return an error if not verified or return the array with retrieved
 	 * data.
 	 *
-	 * @param array                  $data {
-	 *              @param $comment_type
-	 *              @param $comment_author_url
-	 *              @param $comment_author_IP
-	 *              @param $target
+	 * @param array $data {
+	 * 	@param $comment_type
+	 * 	@param $comment_author_url
+	 * 	@param $comment_author_IP
+	 * 	@param $target
 	 * }
 	 *
 	 * @return array|WP_Error $data Return Error Object or array with added fields {
-	 *              @param $remote_source
-	 *              @param $remote_source_original
-	 *              @param $content_type
+	 * 	@param $remote_source
+	 * 	@param $remote_source_original
+	 * 	@param $content_type
+	 * }
 	 */
 	public static function webmention_verify( $data ) {
 		global $wp_version;
@@ -289,15 +290,17 @@ class Webmention_Receiver {
 		}
 		$user_agent = apply_filters( 'http_headers_useragent', 'WordPress/' . $wp_version . '; ' . get_bloginfo( 'url' ) );
 		$args = array(
-						'timeout' => 10,
-						'limit_response_size' => 153600,
-						'redirection' => 5,
-						'user-agent' => "$user_agent; verifying Webmention from " . $data['comment_author_IP'],
-						);
+			'timeout' => 10,
+			'limit_response_size' => 153600,
+			'redirection' => 5,
+			'user-agent' => "$user_agent; verifying Webmention from " . $data['comment_author_IP'],
+		);
+
 		$response = wp_safe_remote_head( $data['source'], $args );
-		  // check if source is accessible
+
+		// check if source is accessible
 		if ( is_wp_error( $response ) ) {
-			  return new WP_Error( 'sourceurl', 'Source URL not found', array( 'status' => 400 ) );
+			return new WP_Error( 'sourceurl', 'Source URL not found', array( 'status' => 400 ) );
 		}
 		// A valid response code from the other server would not be considered an error.
 		$response_code = wp_remote_retrieve_response_code( $response );
@@ -320,19 +323,20 @@ class Webmention_Receiver {
 
 		// check if source really links to target
 		if ( ! strpos( htmlspecialchars_decode( $remote_source_original ), str_replace( array(
-												'http://www.',
-											   'http://',
-												'https://www.',
-												'https://',
+			'http://www.',
+			'http://',
+			'https://www.',
+			'https://',
 		), '', untrailingslashit( preg_replace( '/#.*/', '', $data['target'] ) ) ) ) ) {
-				return new WP_Error( 'targeturl', 'Cannot find target link.', array( 'status' => 400 ) );
+			return new WP_Error( 'targeturl', 'Cannot find target link.', array( 'status' => 400 ) );
 		}
 		if ( ! function_exists( 'wp_kses_post' ) ) {
-				include_once( ABSPATH . 'wp-includes/kses.php' );
+			include_once( ABSPATH . 'wp-includes/kses.php' );
 		}
 		$remote_source = wp_kses_post( $remote_source_original );
 		$content_type = wp_remote_retrieve_header( $response, 'Content-Type' );
 		$commentdata = compact( 'remote_source', 'remote_source_original', 'content_type' );
+
 		return array_merge( $commentdata, $data );
 	}
 
