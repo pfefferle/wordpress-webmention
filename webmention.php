@@ -43,6 +43,8 @@ class Webmention_Plugin {
 
 		// initialize admin settings
 		add_action( 'admin_init', array( 'Webmention_Plugin', 'admin_register_settings' ) );
+
+		add_action( 'admin_comment_types_dropdown', array( 'Webmention_Plugin', 'comment_types_dropdown' ) );
 	}
 
 	/**
@@ -76,5 +78,19 @@ class Webmention_Plugin {
 		</label>
 	</fieldset>
 <?php
+	}
+
+	/**
+	 * Extend the "filter by comment type" of in the comments section
+	 * of the admin interface with "webmention"
+	 *
+	 * @param array $types the different comment types
+	 *
+	 * @return array the filtert comment types
+	 */
+	public static function comment_types_dropdown( $types ) {
+		$types['webmention'] = __( 'Webmentions', 'webmention' );
+
+		return $types;
 	}
 }
