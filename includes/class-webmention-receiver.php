@@ -127,7 +127,7 @@ class Webmention_Receiver {
 		// add some kind of a "default" id to add linkbacks to a specific post/page
 		$comment_post_id = apply_filters( 'webmention_post_id', $comment_post_id, $target );
 		if ( url_to_postid( $source ) === $comment_post_id ) {
-			//return new WP_Error( 'source_equals_target', __( 'Target and source cannot direct to the same resource', 'webmention' ), array( 'status' => 400 ) );
+			return new WP_Error( 'source_equals_target', __( 'Target and source cannot direct to the same resource', 'webmention' ), array( 'status' => 400 ) );
 		}
 
 		// check if post id exists
@@ -161,6 +161,10 @@ class Webmention_Receiver {
 
 		$commentdata['comment_post_ID'] = $comment_post_id;
 		$commentdata['comment_author_IP'] = $comment_author_ip;
+		// Set Comment Author URL to Source
+		$commentdata['comment_author_url'] = $commentdata['source'];
+		// add empty fields
+		$commentdata['comment_parent'] = $commentdata['comment_author_email'] = '';
 
 		// be sure to return an error message or response to the end of your request handler
 		$commentdata = apply_filters( 'webmention_comment_data', $commentdata );
@@ -171,15 +175,10 @@ class Webmention_Receiver {
 
 		if ( false ) {
 			// Schedule the Processing to Be Completed sometime in the next 3 minutes
-			wp_schedule_single_event( time() + wp_rand( 0, 120 ), 'async_process_webmention', array( $data ) );
+			//wp_schedule_single_event( time() + wp_rand( 0, 120 ), 'async_process_webmention', array( $data ) );
 
-			return new WP_REST_Response( $data, 202 );
+			//return new WP_REST_Response( $data, 202 );
 		}
-
-		// Set Comment Author URL to Source
-		$commentdata['comment_author_url'] = $commentdata['source'];
-		// add empty fields
-		$commentdata['comment_parent'] = $commentdata['comment_author_email'] = '';
 
 		// disable flood control
 		remove_filter( 'check_comment_flood', 'check_comment_flood_db', 10, 3 );
@@ -202,6 +201,7 @@ class Webmention_Receiver {
 			'link' => apply_filters( 'webmention_success_message', get_comment_link( $commentdata['comment_ID'] ) ),
 			'source' => $commentdata['source'],
 			'target' => $commentdata['target'],
+			'commentdata' => $commentdata,
 		);
 
 		return new WP_REST_Response( $return, 200 );
@@ -277,7 +277,7 @@ class Webmention_Receiver {
 			'https://www.',
 			'https://',
 		), '', untrailingslashit( preg_replace( '/#.*/', '', $data['target'] ) ) ) ) ) {
-			return new WP_Error( 'targeturl', __( 'Cannot find target link.', 'webmention' ), array( 'status' => 400 ) );
+			return new WP_Error( 'target_url', __( 'Cannot find target link.', 'webmention' ), array( 'status' => 400 ) );
 		}
 
 		if ( ! function_exists( 'wp_kses_post' ) ) {
@@ -351,6 +351,8 @@ class Webmention_Receiver {
 			return $commentdata;
 		}
 
+		$match = array();
+
 		$meta_tags = wp_get_meta_tags( $commentdata['remote_source_original'] );
 
 		// use meta-author
@@ -364,10 +366,10 @@ class Webmention_Receiver {
 		} else {
 			// or host
 			$host = parse_url( $commentdata['comment_author_url'], PHP_URL_HOST );
+			// strip leading www, if any
 			$commentdata['comment_author'] = preg_replace( '/^www\./', '', $host );
 		}
 
-		// strip leading www, if any
 		return $commentdata;
 	}
 
@@ -424,8 +426,8 @@ class Webmention_Receiver {
 	 */
 	public static function html_header() {
 		// backwards compatibility with v0.1
-		echo '<link rel="http://webmention.org/" href="' . get_webmention_endpoint() . '" />' . "\n";
-		echo '<link rel="webmention" href="' . get_webmention_endpoint() . '" />' . "\n";
+		echo '<link rel="http://webmention.org/" href="' . get_webmention_endpoint() . '" />' . PHP_EOL;
+		echo '<link rel="webmention" href="' . get_webmention_endpoint() . '" />' . PHP_EOL;
 	}
 
 	/**

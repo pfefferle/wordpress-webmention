@@ -41,11 +41,11 @@ function webmention_deprecated_filters( $commentdata ) {
 	$target = $commentdata['target'];
 	$source = $commentdata['comment_author_url'];
 
-	$commentdata['comment_author'] = apply_filters( 'webmention_title', '', $contents, $target, $source );
-	$commentdata['comment_content'] = apply_filters( 'webmention_content', '', $contents, $target, $source );
+	$commentdata['comment_author'] = apply_filters( 'webmention_title', $commentdata['comment_author'], $contents, $target, $source );
+	$commentdata['comment_content'] = apply_filters( 'webmention_content', $commentdata['comment_content'], $contents, $target, $source );
 	$commentdata['comment_type'] = apply_filters( 'webmention_comment_type', $commentdata['comment_type'] );
 	$commentdata['comment_approved'] = apply_filters( 'webmention_comment_approve', $commentdata['comment_approved'] );
-	$commentdata['comment_parent'] = apply_filters( 'webmention_comment_parent', null, $target );
+	$commentdata['comment_parent'] = apply_filters( 'webmention_comment_parent', $commentdata['comment_parent'], $target );
 
 	return $commentdata;
 }
