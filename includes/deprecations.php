@@ -33,6 +33,10 @@ if (
  * @return array              the filtert comment array
  */
 function webmention_deprecated_filters( $commentdata ) {
+	if ( ! $commentdata || is_wp_error( $commentdata ) ) {
+		return $commentdata;
+	}
+
 	$contents = $commentdata['comment_content'];
 	$target = $commentdata['target'];
 	$source = $commentdata['comment_author_url'];
@@ -45,4 +49,4 @@ function webmention_deprecated_filters( $commentdata ) {
 
 	return $commentdata;
 }
-add_filter( 'webmention_comment_data', 'webmention_deprecated_filters', 7 );
+add_filter( 'webmention_comment_data', 'webmention_deprecated_filters', 31 );
