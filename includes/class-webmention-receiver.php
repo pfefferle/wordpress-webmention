@@ -166,18 +166,18 @@ class Webmention_Receiver {
 		// add empty fields
 		$commentdata['comment_parent'] = $commentdata['comment_author_email'] = '';
 
+		//if ( false ) {
+			// Schedule the Processing to Be Completed sometime in the next 3 minutes
+			//wp_schedule_single_event( time() + wp_rand( 0, 120 ), 'async_process_webmention', array( $commentdata ) );
+
+			//return new WP_REST_Response( $commentdata, 202 );
+		//}
+
 		// be sure to return an error message or response to the end of your request handler
 		$commentdata = apply_filters( 'webmention_comment_data', $commentdata );
 
 		if ( ! $commentdata || is_wp_error( $commentdata ) ) {
 			return $commentdata;
-		}
-
-		if ( false ) {
-			// Schedule the Processing to Be Completed sometime in the next 3 minutes
-			//wp_schedule_single_event( time() + wp_rand( 0, 120 ), 'async_process_webmention', array( $data ) );
-
-			//return new WP_REST_Response( $data, 202 );
 		}
 
 		// disable flood control
@@ -201,7 +201,6 @@ class Webmention_Receiver {
 			'link' => apply_filters( 'webmention_success_message', get_comment_link( $commentdata['comment_ID'] ) ),
 			'source' => $commentdata['source'],
 			'target' => $commentdata['target'],
-			'commentdata' => $commentdata,
 		);
 
 		return new WP_REST_Response( $return, 200 );
