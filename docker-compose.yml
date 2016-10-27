@@ -27,3 +27,5 @@ services:
 
   testpinger:
     image: pfefferle/webmention-testpinger
+    ports:
+      - "9247:9247"
