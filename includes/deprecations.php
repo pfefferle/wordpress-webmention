@@ -5,7 +5,7 @@ if (
 	has_filter( 'webmention_comment_type' ) ||
 	has_filter( 'webmention_comment_approve' ) ||
 	has_filter( 'webmention_comment_parent' )
-	) {
+) {
 
 	/**
 	 * Show a warnging if someone still uses one of the old filers

@@ -102,7 +102,9 @@ class Webmention_Receiver {
 	 * @return WP_Error|WP_REST_Response
 	 *
 	 * @uses apply_filters calls "webmention_post_id" on the post_ID
-	 *
+	 * @uses apply_filters calls "webmention_comment_data" on the comment data
+	 * @uses apply_filters calls "webmention_update" on the comment data
+	 * @uses apply_filters calls "webmention_success_message" on the success message
 	 */
 	public static function post( $request ) {
 		$params = array_filter( $request->get_params() );
@@ -196,6 +198,8 @@ class Webmention_Receiver {
 		// re-add flood control
 		add_filter( 'check_comment_flood', 'check_comment_flood_db', 10, 3 );
 
+		do_action( 'webmention_post', $commentdata['comment_ID'] );
+
 		// Return select data
 		$return = array(
 			'link' => apply_filters( 'webmention_success_message', get_comment_link( $commentdata['comment_ID'] ) ),
@@ -222,6 +226,8 @@ class Webmention_Receiver {
 	 *     $remote_source_original
 	 *     $content_type
 	 * }
+	 *
+	 * @uses apply_filters calls "http_headers_useragent" on the user agent
 	 */
 	public static function webmention_verify( $data ) {
 		if ( ! $data || is_wp_error( $data ) ) {
