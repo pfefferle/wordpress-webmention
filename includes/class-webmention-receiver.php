@@ -168,12 +168,19 @@ class Webmention_Receiver {
 		// add empty fields
 		$commentdata['comment_parent'] = $commentdata['comment_author_email'] = '';
 
-		//if ( false ) {
-			// Schedule the Processing to Be Completed sometime in the next 3 minutes
-			//wp_schedule_single_event( time() + wp_rand( 0, 120 ), 'async_process_webmention', array( $commentdata ) );
+		// Define WEBMENTION_ASYNC as true if you want to define an asynchronous handler
+		if ( WEBMENTION_ASYNC ) {
+			// Schedule an action a random period of time in the next 2 minutes to handle webmentions.
+			wp_schedule_single_event( time() + wp_rand( 0, 120 ), 'async_handle_webmention', array( $commentdata ) );
 
-			//return new WP_REST_Response( $commentdata, 202 );
-		//}
+			// Return the source and target and the 202 Message
+			$return = array(
+				'source' => $commentdata['source'],
+				'target' => $commentdata['target'],
+				'message' => 'ACCEPTED'
+			);
+			return new WP_REST_Response( $return, 202 );
+		}
 
 		// be sure to return an error message or response to the end of your request handler
 		$commentdata = apply_filters( 'webmention_comment_data', $commentdata );
