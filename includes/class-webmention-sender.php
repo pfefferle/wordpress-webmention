@@ -69,12 +69,19 @@ class Webmention_Sender {
 			'user-agent' => "$user_agent; sending Webmention",
 			'body' => 'source=' . urlencode( $source ) . '&target=' . urlencode( $target ),
 		);
+		$body = array(
+			'source' => $source,
+			'target' => $target,
+		);
+		// Allows for additional URL parameters to be added such as Vouch.
+		$body = apply_filters( 'webmention_send_vars', $body, $post_id );
+		$args['body'] = build_query( $body );
 		if ( $webmention_server_url ) {
 			$response = wp_remote_post( $webmention_server_url, $args );
 		} else {
 			$response = false;
 		}
-		// use the response to do something useful
+		// use the response to do something useful such as logging success or failure.
 		do_action( 'webmention_post_send', $response, $source, $target, $post_id );
 
 		return $response;
@@ -126,7 +133,7 @@ class Webmention_Sender {
 				}
 			}
 
-			// rescedule if server responds with a http error 5xx
+			// reschedule if server responds with a http error 5xx
 			if ( wp_remote_retrieve_response_code( $response ) >= 500 ) {
 				self::reschedule( $post_id );
 			}
@@ -134,7 +141,7 @@ class Webmention_Sender {
 	}
 
 	/**
-	 * Rescedule Webmentions on HTTP code 500
+	 * Reschedule Webmentions on HTTP code 500
 	 *
 	 * @param int $post_id the post id
 	 */
@@ -192,9 +199,10 @@ class Webmention_Sender {
 	/**
 	 * Finds a Webmention server URI based on the given URL
 	 *
-	 * Checks the HTML for the rel="http://webmention.org/" link and http://webmention.org/ headers. It does
-	 * a check for the http://webmention.org/ headers first and returns that, if available. The
-	 * check for the rel="http://webmention.org/" has more overhead than just the header.
+	 * Checks the HTML for the rel="webmention" link and webmention headers. It does
+	 * a check for the webmention headers first and returns that, if available. The
+	 * check for the rel="webmention" has more overhead than just the header.
+	 * Supports backward compatability to webmention.org headers.
 	 *
 	 * @param string $url URL to ping
 	 *
