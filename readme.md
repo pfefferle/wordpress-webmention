@@ -4,7 +4,7 @@
 **Contributors:** pfefferle, dshanske  
 **Donate link:** http://14101978.de  
 **Tags:** webmention, pingback, trackback, linkback, indieweb  
-**Requires at least:** 4.5  
+**Requires at least:** 4.6  
 **Tested up to:** 4.6.2  
 **Stable tag:** 3.0.0  
 **License:** MIT  
@@ -63,19 +63,18 @@ comments on a post or a page. The plugin provides a simple filter for that:
     }
     add_filter("webmention_post_id", "handle_exotic_webmentions", 10, 2);
 
-If you want to add a more complex request handler, you should take a look at the
-`webmention_request` action and the `default_request_handler`.
-
 ## Changelog ##
 
-Project maintined on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
+Project maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
 
 ### 3.0.0 ###
 
+* Plugin refactored to use API infrastructure.
+* Visiting the endpoint in a web browser now returns a webmention form.
 * Plugin now compliant with draft specification although remains synchronous.
 * Deprecation of webmention_title and webmention_content filters in favor of a single targeted webmention comment data filter.
 * webmention_post_send action now fires on all attempts to send a webmention instead of only successful ones. Allows for logging functions to be added.
-* target is now verified before source which created significant structural changes
+* Supports adding additional parameters when sending webmentions
 
 ### 2.6.0 ###
 

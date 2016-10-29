@@ -13,6 +13,7 @@
 
 defined( 'WEBMENTION_COMMENT_APPROVE' ) || define( 'WEBMENTION_COMMENT_APPROVE', 0 );
 defined( 'WEBMENTION_COMMENT_TYPE' ) || define( 'WEBMENTION_COMMENT_TYPE', 'webmention' );
+defined( 'WEBMENTION_ASYNC' ) || define( 'WEBMENTION_ASYNC', false );
 
 add_action( 'plugins_loaded', array( 'Webmention_Plugin', 'init' ) );
 

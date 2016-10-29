@@ -11,7 +11,7 @@ class Webmention_Receiver {
 	public static function init() {
 		// Configure the REST API route
 		add_action( 'rest_api_init', array( 'Webmention_Receiver', 'register_routes' ) );
-		// Filter the response to allow plaintext
+		// Filter the response to allow a webmention form if no parameters are passed
 		add_filter( 'rest_pre_serve_request', array( 'Webmention_Receiver', 'serve_request' ), 9, 4 );
 
 		// endpoint discovery
@@ -30,7 +30,7 @@ class Webmention_Receiver {
 	}
 
 	/**
-	 * Register the Routes.
+	 * Register the Route.
 	 */
 	public static function register_routes() {
 		register_rest_route( 'webmention/1.0', '/endpoint', array(
@@ -46,7 +46,7 @@ class Webmention_Receiver {
 	}
 
 	/**
-	 * Hooks into the REST API output to output alternatives to JSON.
+	 * Hooks into the REST API output to output a webmention form.
 	 *
 	 * This is only done for the webmention endpoint.
 	 *
@@ -80,20 +80,20 @@ class Webmention_Receiver {
 	}
 
 	/**
-	 * Post Callback for the webmention endpoint.
+	 * GET Callback for the webmention endpoint.
 	 *
-	 * Returns the response.
+	 * Returns true. Any GET request is intercepted to return a webmention form.
 	 *
 	 * @param WP_REST_Request $request Full data about the request.
 	 *
-	 * @return WP_Error|WP_REST_Response
+	 * @return true
 	 */
 	public static function get( $request ) {
 		return true;
 	}
 
 	/**
-	 * Post Callback for the webmention endpoint.
+	 * POST Callback for the webmention endpoint.
 	 *
 	 * Returns the response.
 	 *
@@ -168,17 +168,39 @@ class Webmention_Receiver {
 		// add empty fields
 		$commentdata['comment_parent'] = $commentdata['comment_author_email'] = '';
 
-		//if ( false ) {
-			// Schedule the Processing to Be Completed sometime in the next 3 minutes
-			//wp_schedule_single_event( time() + wp_rand( 0, 120 ), 'async_process_webmention', array( $commentdata ) );
+		// Define WEBMENTION_ASYNC as true if you want to define an asynchronous handler
+		if ( WEBMENTION_ASYNC ) {
+			// Schedule an action a random period of time in the next 2 minutes to handle webmentions.
+			wp_schedule_single_event( time() + wp_rand( 0, 120 ), 'async_handle_webmention', array( $commentdata ) );
 
-			//return new WP_REST_Response( $commentdata, 202 );
-		//}
+			// Return the source and target and the 202 Message
+			$return = array(
+				'source' => $commentdata['source'],
+				'target' => $commentdata['target'],
+				'message' => 'ACCEPTED'
+			);
+			return new WP_REST_Response( $return, 202 );
+		}
 
-		// be sure to return an error message or response to the end of your request handler
+		/**
+		 * Filter Comment Data for Webmentions.
+		 *
+		 * All verification functions and content generation functions are added to the comment data.
+		 *
+		 * @param array $commentdata
+		 * @return array|null|WP_Error $commentdata The Filtered Comment Array or a WP_Error object.
+		 */
 		$commentdata = apply_filters( 'webmention_comment_data', $commentdata );
 
 		if ( ! $commentdata || is_wp_error( $commentdata ) ) {
+			/**
+			 * Fires if Error is Returned from Filter.
+			 *
+			 * Added to support deletion.
+			 *
+			 * @param array $commentdata
+			 */
+			do_action( 'webmention_data_error', $commentdata );
 			return $commentdata;
 		}
 
@@ -188,17 +210,23 @@ class Webmention_Receiver {
 		if ( empty( $commentdata['comment_ID'] ) ) {
 			// save comment
 			$commentdata['comment_ID'] = wp_new_comment( $commentdata );
+			/**
+			 * Fires when a webmention is created.
+			 *
+			 * Mirrors comment_post and pingback_post.
+			 *
+			 * @param int $comment_ID Comment ID.
+			 * @param array $commentdata Comment Array.
+			 */
 			do_action( 'webmention_post', $commentdata['comment_ID'], $commentdata );
 		} else {
-			// Temporary placeholder for webmention updates until Core supports an edit comment filter
+			// Temporary placeholder for webmention updates until 4.7 adds an edit comment filter
 			$commentdata = apply_filters( 'webmention_update', $commentdata );
 			// save comment
 			wp_update_comment( $commentdata );
 		}
 		// re-add flood control
 		add_filter( 'check_comment_flood', 'check_comment_flood_db', 10, 3 );
-
-		do_action( 'webmention_post', $commentdata['comment_ID'] );
 
 		// Return select data
 		$return = array(
@@ -271,7 +299,7 @@ class Webmention_Receiver {
 			case 452:
 				return new WP_Error( 'removed', __( 'Page Removed for Legal Reasons', 'webmention' ), array( 'status' => 400, 'data' => $data ) );
 			default:
-				return new WP_Error( 'sourceurl', wp_remote_retrieve_response_message( $response ), array( 'status' => 400 ) );
+				return new WP_Error( 'source_url', wp_remote_retrieve_response_message( $response ), array( 'status' => 400 ) );
 		}
 		$remote_source_original = wp_remote_retrieve_body( $response );
 
