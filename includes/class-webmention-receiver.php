@@ -299,7 +299,7 @@ class Webmention_Receiver {
 			case 452:
 				return new WP_Error( 'removed', __( 'Page Removed for Legal Reasons', 'webmention' ), array( 'status' => 400, 'data' => $data ) );
 			default:
-				return new WP_Error( 'sourceurl', wp_remote_retrieve_response_message( $response ), array( 'status' => 400 ) );
+				return new WP_Error( 'source_url', wp_remote_retrieve_response_message( $response ), array( 'status' => 400 ) );
 		}
 		$remote_source_original = wp_remote_retrieve_body( $response );
 
