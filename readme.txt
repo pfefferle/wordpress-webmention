@@ -73,6 +73,7 @@ Project maintained on github at [pfefferle/wordpress-webmention](https://github.
 * Deprecation of webmention_title and webmention_content filters in favor of a single targeted webmention comment data filter.
 * webmention_post_send action now fires on all attempts to send a webmention instead of only successful ones. Allows for logging functions to be added.
 * Supports adding additional parameters when sending webmentions
+* Fix incompatibility with Ultimate Category Excluder plugin.
 
 = 2.6.0 =
 
