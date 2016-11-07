@@ -177,7 +177,7 @@ class Webmention_Receiver {
 			$return = array(
 				'source' => $commentdata['source'],
 				'target' => $commentdata['target'],
-				'message' => 'ACCEPTED'
+				'message' => 'ACCEPTED',
 			);
 			return new WP_REST_Response( $return, 202 );
 		}
