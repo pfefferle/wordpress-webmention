@@ -28,6 +28,10 @@ class Webmention_Plugin {
 	 * Initialize Webmention Plugin
 	 */
 	public static function init() {
+		if ( WP_DEBUG ) {
+			require_once( dirname( __FILE__ ) . '/includes/debug.php' );
+		}
+
 		// will be removed in one of the following major releases
 		require_once( dirname( __FILE__ ) . '/includes/deprecations.php' );
 

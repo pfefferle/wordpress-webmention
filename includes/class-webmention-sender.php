@@ -77,7 +77,7 @@ class Webmention_Sender {
 		$body = apply_filters( 'webmention_send_vars', $body, $post_id );
 		$args['body'] = build_query( $body );
 		if ( $webmention_server_url ) {
-			$response = wp_remote_post( $webmention_server_url, $args );
+			$response = wp_safe_remote_post( $webmention_server_url, $args );
 		} else {
 			$response = false;
 		}
@@ -232,7 +232,7 @@ class Webmention_Sender {
 			'user-agent' => "$user_agent; finding Webmention endpoint",
 		);
 
-		$response = wp_remote_head( $url, $args );
+		$response = wp_safe_remote_head( $url, $args );
 
 		if ( is_wp_error( $response ) ) {
 			return false;
@@ -259,7 +259,7 @@ class Webmention_Sender {
 		}
 
 		// now do a GET since we're going to look in the html headers (and we're sure its not a binary file)
-		$response = wp_remote_get( $url, $args );
+		$response = wp_safe_remote_get( $url, $args );
 
 		if ( is_wp_error( $response ) ) {
 			return false;

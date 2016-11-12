@@ -193,6 +193,7 @@ class Webmention_Receiver {
 		$commentdata = apply_filters( 'webmention_comment_data', $commentdata );
 
 		if ( ! $commentdata || is_wp_error( $commentdata ) ) {
+
 			/**
 			 * Fires if Error is Returned from Filter.
 			 *
@@ -210,6 +211,7 @@ class Webmention_Receiver {
 		if ( empty( $commentdata['comment_ID'] ) ) {
 			// save comment
 			$commentdata['comment_ID'] = wp_new_comment( $commentdata );
+
 			/**
 			 * Fires when a webmention is created.
 			 *
@@ -276,7 +278,7 @@ class Webmention_Receiver {
 			'user-agent' => "$user_agent; verifying Webmention from " . $data['comment_author_IP'],
 		);
 
-		$response = wp_remote_get( $data['source'], $args );
+		$response = wp_safe_remote_get( $data['source'], $args );
 
 		// check if source is accessible
 		if ( is_wp_error( $response ) ) {
@@ -292,7 +294,7 @@ class Webmention_Receiver {
 
 		switch ( $response_code ) {
 			case 200:
-				$response = wp_remote_get( $data['source'], $args );
+				$response = wp_safe_remote_get( $data['source'], $args );
 				break;
 			case 410:
 				return new WP_Error( 'deleted', __( 'Page has Been Deleted', 'webmention' ), array( 'status' => 400, 'data' => $data ) );
@@ -459,8 +461,8 @@ class Webmention_Receiver {
 	 */
 	public static function html_header() {
 		// backwards compatibility with v0.1
-		echo '<link rel="http://webmention.org/" href="' . get_webmention_endpoint() . '" />' . PHP_EOL;
-		echo '<link rel="webmention" href="' . get_webmention_endpoint() . '" />' . PHP_EOL;
+		printf( '<link rel="http://webmention.org/" href="%s" />', get_webmention_endpoint() ) . PHP_EOL;
+		printf( '<link rel="webmention" href="%s" />', get_webmention_endpoint() ) . PHP_EOL;
 	}
 
 	/**
