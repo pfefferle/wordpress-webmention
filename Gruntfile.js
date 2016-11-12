@@ -25,11 +25,24 @@ module.exports = function(grunt) {
           }
         ]
       }
+    },
+    makepot: {
+      target: {
+        options: {
+          mainFile: 'webmention.php',
+          domainPath: '/languages',
+          exclude: ['bin/.*', '.git/.*', 'vendor/.*'],
+          potFilename: 'wordpress-webmention.pot',
+          type: 'wp-plugin',
+          updateTimestamp: true
+        }
+      }
     }
   });
 
   grunt.loadNpmTasks('grunt-wp-readme-to-markdown');
   grunt.loadNpmTasks('grunt-replace');
+  grunt.loadNpmTasks('grunt-wp-i18n');
 
   // Default task(s).
   grunt.registerTask('default', ['wp_readme_to_markdown', 'replace']);

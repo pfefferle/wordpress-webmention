@@ -9,10 +9,10 @@ class Webmention_Receiver {
 	 * Initialize the plugin, registering WordPress hooks
 	 */
 	public static function init() {
-		add_filter( 'query_vars', array( 'Webmention_Receiver', 'query_vars' ) );
-		add_action( 'parse_query', array( 'Webmention_Receiver', 'parse_query' ) );
-
-		add_action( 'admin_comment_types_dropdown', array( 'Webmention_Receiver', 'comment_types_dropdown' ) );
+		// Configure the REST API route
+		add_action( 'rest_api_init', array( 'Webmention_Receiver', 'register_routes' ) );
+		// Filter the response to allow a webmention form if no parameters are passed
+		add_filter( 'rest_pre_serve_request', array( 'Webmention_Receiver', 'serve_request' ), 9, 4 );
 
 		// endpoint discovery
 		add_action( 'wp_head', array( 'Webmention_Receiver', 'html_header' ), 99 );
@@ -21,156 +21,137 @@ class Webmention_Receiver {
 		add_filter( 'webfinger_user_data', array( 'Webmention_Receiver', 'jrd_links' ) );
 		add_filter( 'webfinger_post_data', array( 'Webmention_Receiver', 'jrd_links' ) );
 
-		// default handlers
-		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'check_dupes' ), 1, 1 );
-		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'default_title_filter' ), 9, 1 );
-		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'default_content_filter' ), 10, 1 );
-		add_action( 'webmention_request', array( 'Webmention_Receiver', 'default_request_handler' ), 10 );
+		// Webmention Handler
+		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'webmention_verify' ), 11, 1 );
+		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'check_dupes' ), 12, 1 );
+
+		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'default_title_filter' ), 21, 1 );
+		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'default_content_filter' ), 22, 1 );
 	}
 
 	/**
-	 * Adds some query vars
-	 *
-	 * @param array $vars
-	 * @return array
+	 * Register the Route.
 	 */
-	public static function query_vars( $vars ) {
-		$vars[] = 'webmention';
-		$vars[] = 'csrf';
-
-		return $vars;
+	public static function register_routes() {
+		register_rest_route( 'webmention/1.0', '/endpoint', array(
+			array(
+				'methods' => WP_REST_Server::CREATABLE,
+				'callback' => array( 'Webmention_Receiver', 'post' ),
+			),
+			array(
+				'methods' => WP_REST_Server::READABLE,
+				'callback' => array( 'Webmention_Receiver', 'get' ),
+			),
+		));
 	}
 
 	/**
-	 * Parse the Webmention request and render the document
+	 * Hooks into the REST API output to output a webmention form.
 	 *
-	 * @param WP $wp WordPress request context
+	 * This is only done for the webmention endpoint.
 	 *
-	 * @uses do_action calls 'webmention_request' on the default request
+	 * @access private
+	 * @since 0.1.0
+	 *
+	 * @param bool                      $served  Whether the request has already been served.
+	 * @param WP_HTTP_ResponseInterface $result  Result to send to the client. Usually a WP_REST_Response.
+	 * @param WP_REST_Request           $request Request used to generate the response.
+	 * @param WP_REST_Server            $server  Server instance.
+	 *
+	 * @return true
+	 */
+	public static function serve_request( $served, $result, $request, $server ) {
+		if ( '/webmention/1.0/endpoint' !== $request->get_route() ) {
+			return $served;
+		}
+		if ( 'GET' !== $request->get_method() ) {
+			return $served;
+		}
+		// If someone tries to poll the webmention endpoint return a webmention form.
+		if ( ! headers_sent() ) {
+			$server->send_header( 'Content-Type', 'text/html; charset=' . get_option( 'blog_charset' ) );
+		}
+
+		$template = apply_filters( 'webmention_endpoint_form', plugin_dir_path( __FILE__ ) . '../templates/webmention-endpoint-form.php' );
+
+		load_template( $template );
+
+		return true;
+	}
+
+	/**
+	 * GET Callback for the webmention endpoint.
+	 *
+	 * Returns true. Any GET request is intercepted to return a webmention form.
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 *
+	 * @return true
+	 */
+	public static function get( $request ) {
+		return true;
+	}
+
+	/**
+	 * POST Callback for the webmention endpoint.
+	 *
+	 * Returns the response.
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 *
 	 * @uses apply_filters calls "webmention_post_id" on the post_ID
+	 * @uses apply_filters calls "webmention_comment_data" on the comment data
+	 * @uses apply_filters calls "webmention_update" on the comment data
+	 * @uses apply_filters calls "webmention_success_message" on the success message
 	 */
-	public static function parse_query( $wp ) {
-		// check if it is a webmention request or not
-		if ( ! array_key_exists( 'webmention', $wp->query_vars ) ) {
-			return;
+	public static function post( $request ) {
+		$params = array_filter( $request->get_params() );
+
+		if ( ! isset( $params['source'] ) ) {
+			return new WP_Error( 'source_missing' , __( 'Source is missing', 'webmention' ), array( 'status' => 400 ) );
 		}
 
-		// plain text header
-		header( 'Content-Type: text/plain; charset=' . get_option( 'blog_charset' ) );
-		header( 'Access-Control-Allow-Origin: *' );
+		$source = $params['source'];
 
-		// check if source url is transmitted
-		if ( ! isset( $_POST['source'] ) ) {
-			status_header( 400 );
-			echo '"source" is missing';
-			exit;
+		if ( ! isset( $params['target'] ) ) {
+			return new WP_Error( 'target_missing', __( 'Target is missing', 'webmention' ), array( 'status' => 400 ) );
 		}
 
-		// check if target url is transmitted
-		if ( ! isset( $_POST['target'] ) ) {
-			status_header( 400 );
-			echo '"target" is missing';
-			exit;
+		$target = $params['target'];
+
+		if ( ! stristr( $target, preg_replace( '/^https?:\/\//i', '', home_url() ) ) ) {
+			return new WP_Error( 'target', __( 'Target is not on this domain', 'webmention' ), array( 'status' => 400 ) );
 		}
 
-		if ( ! stristr( $_POST['target'], preg_replace( '/^https?:\/\//i', '', home_url() ) ) ) {
-			status_header( 400 );
-			echo '"target" is not on this site';
-			exit;
+		$comment_post_id = url_to_postid( $target );
+		// add some kind of a "default" id to add linkbacks to a specific post/page
+		$comment_post_id = apply_filters( 'webmention_post_id', $comment_post_id, $target );
+		if ( url_to_postid( $source ) === $comment_post_id ) {
+			return new WP_Error( 'source_equals_target', __( 'Target and source cannot direct to the same resource', 'webmention' ), array( 'status' => 400 ) );
 		}
 
-		// check post with http only
-		$comment_post_id = url_to_postid( $_POST['target'] );
-
-		// add some kind of a "default" id to add all
-		// webmentions to a specific post/page
-		$comment_post_id = apply_filters( 'webmention_post_id', $comment_post_id, $_POST['target'] );
 		// check if post id exists
 		if ( ! $comment_post_id ) {
-			return;
+			return new WP_Error( 'target_not_valid', __( 'Target is not a valid post', 'webmention' ), array( 'status' => 400 ) );
 		}
+
 		// check if pings are allowed
 		if ( ! pings_open( $comment_post_id ) ) {
-			status_header( 400 );
-			echo 'Pings are disabled for this post';
-			exit;
+			return new WP_Error( 'pings_closed', __( 'Pings are disabled for this post', 'webmention' ), array( 'status' => 400 ) );
 		}
 
-		$comment_post_id = intval( $comment_post_id );
 		$post = get_post( $comment_post_id );
-		// check if post exists
 		if ( ! $post ) {
-			status_header( 400 );
-			echo 'Specified target URL not found.';
-			exit;
+			return new WP_Error( 'target_not_valid', __( 'Target is not a valid post', 'webmention' ), array( 'status' => 400 ) );
 		}
-
-		$comment_author_url = esc_url_raw( $_POST['source'] );
-		$target = esc_url_raw( $_POST['target'] );
-
-		$commentdata = compact( 'comment_author_url', 'target' );
-		$commentdata['comment_post_ID'] = $comment_post_id;
-
-		// be sure to add an "exit;" to the end of your request handler
-		do_action( 'webmention_request', $commentdata );
-
-		// if you get to this point the webmention handler failed for unknown reasons
-		status_header( 500 );
-		echo 'Webmention Handler failed';
-
-		exit;
-	}
-
-	/**
-	 * Default request handler
-	 *
-	 * Tries to map a target url to a specific post and generates a simple
-	 * "default" comment.
-	 *
-	 * @param array $data
-	 *
-	 * @uses apply_filters calls "webmention_comment_data" to filter the comment-data array
-	 * @uses apply_filters calls "webmention_success_header" on the default response
-	 *	header
-	 * @uses do_action calls "webmention_post" on the comment_ID to be pingback
-	 *	and trackback compatible
-	 */
-	public static function default_request_handler( $data ) {
-		global $wp_version;
-
-		$user_agent = apply_filters( 'http_headers_useragent', 'WordPress/' . $wp_version . '; ' . get_bloginfo( 'url' ) );
-		$args = array(
-			'timeout' => 100,
-			'limit_response_size' => 1048576,
-			'redirection' => 20,
-			'user-agent' => "$user_agent; verifying Webmention from " . $data['comment_author_IP'],
-		);
-
-		$response = wp_remote_get( $data['comment_author_url'], $args );
-
-		// check if source is accessible
-		if ( is_wp_error( $response ) ) {
-			status_header( 400 );
-			echo 'Source URL not found.';
-			exit;
-		}
-
-		$remote_source_original = wp_remote_retrieve_body( $response );
-
-		// check if source really links to target
-		if ( ! strpos( htmlspecialchars_decode( $remote_source_original ), str_replace( array( 'http://www.', 'http://', 'https://www.', 'https://' ), '', untrailingslashit( preg_replace( '/#.*/', '', $data['target'] ) ) ) ) ) {
-			status_header( 400 );
-			echo "Can't find target link.";
-			exit;
-		}
-
-		// if it does, get rid of all evil
-		if ( ! function_exists( 'wp_kses_post' ) ) {
-			include_once( ABSPATH . 'wp-includes/kses.php' );
-		}
-		$remote_source = wp_kses_post( $remote_source_original );
-
-		//$comment_author_IP = preg_replace( '/[^0-9a-fA-F:., ]/', '', $_SERVER['REMOTE_ADDR'] );
+		// In the event of async processing this needs to be stored here as it might not be available
+		// later.
+		$comment_author_ip = preg_replace( '/[^0-9a-fA-F:., ]/', '', $_SERVER['REMOTE_ADDR'] );
+		$comment_agent = isset( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT']: '';
+		$comment_date = current_time( 'mysql' );
+		$comment_date_gmt = current_time( 'mysql', 1 );
 
 		// change this if your theme can't handle the Webmentions comment type
 		$comment_type = WEBMENTION_COMMENT_TYPE;
@@ -178,80 +159,183 @@ class Webmention_Receiver {
 		// change this if you want to auto approve your Webmentions
 		$comment_approved = WEBMENTION_COMMENT_APPROVE;
 
+		$commentdata = compact( 'comment_type', 'comment_approved', 'comment_agent', 'comment_date', 'comment_date_gmt', 'source', 'target' );
+
+		$commentdata['comment_post_ID'] = $comment_post_id;
+		$commentdata['comment_author_IP'] = $comment_author_ip;
+		// Set Comment Author URL to Source
+		$commentdata['comment_author_url'] = $commentdata['source'];
 		// add empty fields
-		$comment_parent = $comment_author_email = $comment_author = $comment_content = '';
+		$commentdata['comment_parent'] = $commentdata['comment_author_email'] = '';
 
-		$commentdata = compact( 'comment_author', 'comment_author_email', 'comment_content', 'comment_parent', 'remote_source', 'remote_source_original', 'comment_approved', 'comment_type' );
-		$commentdata = array_merge( $commentdata, $data );
+		// Define WEBMENTION_ASYNC as true if you want to define an asynchronous handler
+		if ( WEBMENTION_ASYNC ) {
+			// Schedule an action a random period of time in the next 2 minutes to handle webmentions.
+			wp_schedule_single_event( time() + wp_rand( 0, 120 ), 'async_handle_webmention', array( $commentdata ) );
 
+			// Return the source and target and the 202 Message
+			$return = array(
+				'source' => $commentdata['source'],
+				'target' => $commentdata['target'],
+				'message' => 'ACCEPTED',
+			);
+			return new WP_REST_Response( $return, 202 );
+		}
+
+		/**
+		 * Filter Comment Data for Webmentions.
+		 *
+		 * All verification functions and content generation functions are added to the comment data.
+		 *
+		 * @param array $commentdata
+		 * @return array|null|WP_Error $commentdata The Filtered Comment Array or a WP_Error object.
+		 */
 		$commentdata = apply_filters( 'webmention_comment_data', $commentdata );
+
+		if ( ! $commentdata || is_wp_error( $commentdata ) ) {
+			/**
+			 * Fires if Error is Returned from Filter.
+			 *
+			 * Added to support deletion.
+			 *
+			 * @param array $commentdata
+			 */
+			do_action( 'webmention_data_error', $commentdata );
+			return $commentdata;
+		}
 
 		// disable flood control
 		remove_filter( 'check_comment_flood', 'check_comment_flood_db', 10, 3 );
-
 		// update or save webmention
 		if ( empty( $commentdata['comment_ID'] ) ) {
 			// save comment
-			$comment_id = wp_new_comment( $commentdata );
+			$commentdata['comment_ID'] = wp_new_comment( $commentdata );
+			/**
+			 * Fires when a webmention is created.
+			 *
+			 * Mirrors comment_post and pingback_post.
+			 *
+			 * @param int $comment_ID Comment ID.
+			 * @param array $commentdata Comment Array.
+			 */
+			do_action( 'webmention_post', $commentdata['comment_ID'], $commentdata );
 		} else {
+			// Temporary placeholder for webmention updates until 4.7 adds an edit comment filter
+			$commentdata = apply_filters( 'webmention_update', $commentdata );
 			// save comment
 			wp_update_comment( $commentdata );
-			$comment_id = $comment->comment_ID;
 		}
-
 		// re-add flood control
 		add_filter( 'check_comment_flood', 'check_comment_flood_db', 10, 3 );
 
-		// set header
-		status_header( apply_filters( 'webmention_success_header', 200 ) );
+		// Return select data
+		$return = array(
+			'link' => apply_filters( 'webmention_success_message', get_comment_link( $commentdata['comment_ID'] ) ),
+			'source' => $commentdata['source'],
+			'target' => $commentdata['target'],
+		);
 
-		// render a simple and customizable text output
-		echo apply_filters( 'webmention_success_message', get_comment_link( $comment_id ) );
-
-		do_action( 'webmention_post', $comment_id );
-		exit;
+		return new WP_REST_Response( $return, 200 );
 	}
 
 	/**
-	 * Try to make a nice comment
+	 * Verify a webmention and either return an error if not verified or return the array with retrieved
+	 * data.
 	 *
-	 * @param array $commentdata the comment-data
+	 * @param array $data {
+	 *     $comment_type
+	 *     $comment_author_url
+	 *     $comment_author_IP
+	 *     $target
+	 * }
 	 *
-	 * @return array the filtered comment-data
+	 * @return array|WP_Error $data Return Error Object or array with added fields {
+	 *     $remote_source
+	 *     $remote_source_original
+	 *     $content_type
+	 * }
+	 *
+	 * @uses apply_filters calls "http_headers_useragent" on the user agent
 	 */
-	public static function default_content_filter( $commentdata ) {
-		// get post format
-		$post_id = $commentdata['comment_post_ID'];
-		$post_format = get_post_format( $post_id );
-
-		// replace "standard" with "Article"
-		if ( ! $post_format || 'standard' == $post_format ) {
-			$post_format = 'Article';
-		} else {
-			$post_formatstrings = get_post_format_strings();
-			// get the "nice" name
-			$post_format = $post_formatstrings[ $post_format ];
+	public static function webmention_verify( $data ) {
+		if ( ! $data || is_wp_error( $data ) ) {
+			return $data;
 		}
 
-		$host = parse_url( $commentdata['comment_author_url'], PHP_URL_HOST );
+		global $wp_version;
 
-		// strip leading www, if any
-		$host = preg_replace( '/^www\./', '', $host );
+		if ( ! is_array( $data ) || empty( $data ) ) {
+			return new WP_Error( 'invalid_data', __( 'Invalid data passed', 'webmention' ), array( 'status' => 500 ) );
+		}
 
-		// generate default text
-		$commentdata['comment_content'] = sprintf( __( 'This %1$s was mentioned on <a href="%2$s">%3$s</a>', 'webmention' ), $post_format, esc_url( $commentdata['comment_author_url'] ), $host );
+		$user_agent = apply_filters( 'http_headers_useragent', 'WordPress/' . $wp_version . '; ' . get_bloginfo( 'url' ) );
+		$args = array(
+			'timeout' => 100,
+			'limit_response_size' => 153600,
+			'redirection' => 20,
+			'user-agent' => "$user_agent; verifying Webmention from " . $data['comment_author_IP'],
+		);
 
-		return $commentdata;
+		$response = wp_remote_get( $data['source'], $args );
+
+		// check if source is accessible
+		if ( is_wp_error( $response ) ) {
+			return new WP_Error( 'source_url', __( 'Source URL not found', 'webmention' ), array( 'status' => 400 ) );
+		}
+
+		// A valid response code from the other server would not be considered an error.
+		$response_code = wp_remote_retrieve_response_code( $response );
+		// not an (x)html, sgml, or xml page, no use going further
+		if ( preg_match( '#(image|audio|video|model)/#is', wp_remote_retrieve_header( $response, 'content-type' ) ) ) {
+			return new WP_Error( 'content-type', 'Content Type is Media', array( 'status' => 400 ) );
+		}
+
+		switch ( $response_code ) {
+			case 200:
+				$response = wp_remote_get( $data['source'], $args );
+				break;
+			case 410:
+				return new WP_Error( 'deleted', __( 'Page has Been Deleted', 'webmention' ), array( 'status' => 400, 'data' => $data ) );
+			case 452:
+				return new WP_Error( 'removed', __( 'Page Removed for Legal Reasons', 'webmention' ), array( 'status' => 400, 'data' => $data ) );
+			default:
+				return new WP_Error( 'source_url', wp_remote_retrieve_response_message( $response ), array( 'status' => 400 ) );
+		}
+		$remote_source_original = wp_remote_retrieve_body( $response );
+
+		// check if source really links to target
+		if ( ! strpos( htmlspecialchars_decode( $remote_source_original ), str_replace( array(
+			'http://www.',
+			'http://',
+			'https://www.',
+			'https://',
+		), '', untrailingslashit( preg_replace( '/#.*/', '', $data['target'] ) ) ) ) ) {
+			return new WP_Error( 'target_url', __( 'Cannot find target link.', 'webmention' ), array( 'status' => 400 ) );
+		}
+
+		if ( ! function_exists( 'wp_kses_post' ) ) {
+			include_once( ABSPATH . 'wp-includes/kses.php' );
+		}
+
+		$remote_source = wp_kses_post( $remote_source_original );
+		$content_type = wp_remote_retrieve_header( $response, 'Content-Type' );
+		$commentdata = compact( 'remote_source', 'remote_source_original', 'content_type' );
+
+		return array_merge( $commentdata, $data );
 	}
 
 	/**
 	 * Check if a comment already exists
 	 *
-	 * @param  array      $commentdata the comment, created for the webmention data
+	 * @param  array $commentdata the comment, created for the webmention data
 	 *
-	 * @return array|null              the dupe or null
+	 * @return array|null the dupe or null
 	 */
 	public static function check_dupes( $commentdata ) {
+		if ( ! $commentdata || is_wp_error( $commentdata ) ) {
+			return $commentdata;
+		}
+
 		$args = array(
 			'comment_post_ID' => $commentdata['comment_post_ID'],
 			'author_url' => htmlentities( $commentdata['comment_author_url'] ),
@@ -289,20 +373,6 @@ class Webmention_Receiver {
 	}
 
 	/**
-	 * Extend the "filter by comment type" of in the comments section
-	 * of the admin interface with "webmention"
-	 *
-	 * @param array $types the different comment types
-	 *
-	 * @return array the filtert comment types
-	 */
-	public static function comment_types_dropdown( $types ) {
-		$types['webmention'] = __( 'Webmentions', 'webmention' );
-
-		return $types;
-	}
-
-	/**
 	 * Try to make a nice title (username)
 	 *
 	 * @param array $commentdata the comment-data
@@ -310,6 +380,12 @@ class Webmention_Receiver {
 	 * @return array the filtered comment-data
 	 */
 	public static function default_title_filter( $commentdata ) {
+		if ( ! $commentdata || is_wp_error( $commentdata ) ) {
+			return $commentdata;
+		}
+
+		$match = array();
+
 		$meta_tags = wp_get_meta_tags( $commentdata['remote_source_original'] );
 
 		// use meta-author
@@ -323,10 +399,46 @@ class Webmention_Receiver {
 		} else {
 			// or host
 			$host = parse_url( $commentdata['comment_author_url'], PHP_URL_HOST );
+			// strip leading www, if any
 			$commentdata['comment_author'] = preg_replace( '/^www\./', '', $host );
 		}
 
+		return $commentdata;
+	}
+
+	/**
+	 * Try to make a nice comment
+	 *
+	 * @param array $commentdata the comment-data
+	 *
+	 * @return array the filtered comment-data
+	 */
+	public static function default_content_filter( $commentdata ) {
+		if ( ! $commentdata || is_wp_error( $commentdata ) ) {
+			return $commentdata;
+		}
+
+		// get post format
+		$post_id = $commentdata['comment_post_ID'];
+		$post_format = get_post_format( $post_id );
+
+		// replace "standard" with "Article"
+		if ( ! $post_format || 'standard' === $post_format ) {
+			$post_format = 'Article';
+		} else {
+			$post_formatstrings = get_post_format_strings();
+			// get the "nice" name
+			$post_format = $post_formatstrings[ $post_format ];
+		}
+
+		$host = parse_url( $commentdata['comment_author_url'], PHP_URL_HOST );
+
 		// strip leading www, if any
+		$host = preg_replace( '/^www\./', '', $host );
+
+		// generate default text
+		$commentdata['comment_content'] = sprintf( __( 'This %1$s was mentioned on <a href="%2$s">%3$s</a>', 'webmention' ), $post_format, esc_url( $commentdata['comment_author_url'] ), $host );
+
 		return $commentdata;
 	}
 
@@ -347,8 +459,8 @@ class Webmention_Receiver {
 	 */
 	public static function html_header() {
 		// backwards compatibility with v0.1
-		echo '<link rel="http://webmention.org/" href="' . get_webmention_endpoint() . '" />' . "\n";
-		echo '<link rel="webmention" href="' . get_webmention_endpoint() . '" />' . "\n";
+		echo '<link rel="http://webmention.org/" href="' . get_webmention_endpoint() . '" />' . PHP_EOL;
+		echo '<link rel="webmention" href="' . get_webmention_endpoint() . '" />' . PHP_EOL;
 	}
 
 	/**

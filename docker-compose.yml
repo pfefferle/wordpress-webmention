@@ -2,8 +2,6 @@ version: '2'
 services:
   db:
     image: mysql:5.7
-    volumes:
-      - "./.data/db:/var/lib/mysql"
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: wordpress
@@ -18,7 +16,7 @@ services:
     links:
       - db
     ports:
-      - "8000:80"
+      - "80:80"
     volumes:
       - .:/var/www/html/wp-content/plugins/webmention
     restart: always
@@ -26,3 +24,8 @@ services:
       WORDPRESS_DB_HOST: db:3306
       WORDPRESS_DB_PASSWORD: wordpress
       WORDPRESS_DEBUG: 1
+
+  testpinger:
+    image: pfefferle/webmention-testpinger
+    ports:
+      - "9247:9247"
