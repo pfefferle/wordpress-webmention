@@ -174,6 +174,12 @@ class Webmention_Sender {
 	 * Do webmentions
 	 */
 	public static function do_webmentions() {
+		// The Ultimate Category Excluder plugin filters get_posts to hide
+		// user-defined categories, but we're not displaying posts here, so
+		// temporarily disable it.
+		if ( function_exists( 'ksuce_exclude_categories' ) ) {
+			remove_filter( 'pre_get_posts', 'ksuce_exclude_categories' );
+		}
 		$mentions = get_posts(
 			array(
 				'meta_key' => '_mentionme',
@@ -184,6 +190,9 @@ class Webmention_Sender {
 				'nopaging' => true,
 			)
 		);
+		if ( function_exists( 'ksuce_exclude_categories' ) ) {
+			add_filter( 'pre_get_posts', 'ksuce_exclude_categories' );
+		}
 
 		if ( empty( $mentions ) ) {
 			return;
