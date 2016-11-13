@@ -211,22 +211,23 @@ class Webmention_Receiver {
 		if ( empty( $commentdata['comment_ID'] ) ) {
 			// save comment
 			$commentdata['comment_ID'] = wp_new_comment( $commentdata );
-
-			/**
-			 * Fires when a webmention is created.
-			 *
-			 * Mirrors comment_post and pingback_post.
-			 *
-			 * @param int $comment_ID Comment ID.
-			 * @param array $commentdata Comment Array.
-			 */
-			do_action( 'webmention_post', $commentdata['comment_ID'], $commentdata );
 		} else {
 			// Temporary placeholder for webmention updates until 4.7 adds an edit comment filter
 			$commentdata = apply_filters( 'webmention_update', $commentdata );
 			// save comment
 			wp_update_comment( $commentdata );
 		}
+
+		/**
+		 * Fires when a webmention is created.
+		 *
+		 * Mirrors comment_post and pingback_post.
+		 *
+		 * @param int $comment_ID Comment ID.
+		 * @param array $commentdata Comment Array.
+		 */
+		do_action( 'webmention_post', $commentdata['comment_ID'], $commentdata );
+
 		// re-add flood control
 		add_filter( 'check_comment_flood', 'check_comment_flood_db', 10, 3 );
 
