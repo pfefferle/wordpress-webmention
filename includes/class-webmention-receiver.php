@@ -164,7 +164,7 @@ class Webmention_Receiver {
 		$commentdata['comment_post_ID'] = $comment_post_id;
 		$commentdata['comment_author_IP'] = $comment_author_ip;
 		// Set Comment Author URL to Source
-		$commentdata['comment_author_url'] = $commentdata['source'];
+		$commentdata['comment_author_url'] = esc_url_raw( $commentdata['source'] );
 		// add empty fields
 		$commentdata['comment_parent'] = $commentdata['comment_author_email'] = '';
 
@@ -206,7 +206,7 @@ class Webmention_Receiver {
 		}
 
 		// disable flood control
-		remove_filter( 'check_comment_flood', 'check_comment_flood_db', 10, 3 );
+		remove_action( 'check_comment_flood', 'check_comment_flood_db', 10, 4 );
 		// update or save webmention
 		if ( empty( $commentdata['comment_ID'] ) ) {
 			// save comment
@@ -229,7 +229,7 @@ class Webmention_Receiver {
 		do_action( 'webmention_post', $commentdata['comment_ID'], $commentdata );
 
 		// re-add flood control
-		add_filter( 'check_comment_flood', 'check_comment_flood_db', 10, 3 );
+		add_action( 'check_comment_flood', 'check_comment_flood_db', 10, 4 );
 
 		// Return select data
 		$return = array(
