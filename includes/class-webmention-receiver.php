@@ -471,8 +471,8 @@ class Webmention_Receiver {
 	 */
 	public static function http_header() {
 		// backwards compatibility with v0.1
-		header( 'Link: <' . get_webmention_endpoint() . '>; rel="http://webmention.org/"', false );
-		header( 'Link: <' . get_webmention_endpoint() . '>; rel="webmention"', false );
+		header( sprintf( 'Link: <%s>; rel="http://webmention.org/"', get_webmention_endpoint() ), false );
+		header( sprintf( 'Link: <%s>; rel="webmention"', get_webmention_endpoint() ), false );
 	}
 
 	/**
