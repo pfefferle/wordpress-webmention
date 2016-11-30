@@ -106,12 +106,7 @@ class Webmention_Sender {
 		$post = get_post( $post_id );
 
 		// initialize links array
-		$links = array();
-
-		// Find all external links in the source
-		if ( preg_match_all( '/<a[^>]+href=.(https?:\/\/[^\'\"]+)/i', $post->post_content, $matches ) ) {
-			$links = $matches[1];
-		}
+		$links = wp_extract_urls( $post );
 
 		// filter links
 		$targets = apply_filters( 'webmention_links', $links, $post_id );
