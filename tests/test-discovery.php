@@ -36,7 +36,7 @@ class DiscoveryTest extends WP_UnitTestCase {
 
 		add_filter( 'pre_http_request', array( $this, 'discover_relative_httplink' ) );
 		$endpoint = Webmention_Sender::discover_endpoint( $url );
-		$this->assertSame( 'http://www.example.com/test/1/webmention'  , $endpoint );
+		$this->assertSame( 'http://www.example.com/test/1/webmention', $endpoint );
 	}
 
 	public function discover_absolute_httplink() {
@@ -52,7 +52,7 @@ class DiscoveryTest extends WP_UnitTestCase {
 
 		add_filter( 'pre_http_request', array( $this, 'discover_absolute_httplink' ) );
 		$endpoint = Webmention_Sender::discover_endpoint( $url );
-		$this->assertSame( 'http://www.example.com/test/2/webmention'  , $endpoint );
+		$this->assertSame( 'http://www.example.com/test/2/webmention', $endpoint );
 	}
 
 	public function discover_quoted_httplink() {
@@ -68,7 +68,7 @@ class DiscoveryTest extends WP_UnitTestCase {
 
 		add_filter( 'pre_http_request', array( $this, 'discover_quoted_httplink' ) );
 		$endpoint = Webmention_Sender::discover_endpoint( $url );
-		$this->assertSame( 'http://www.example.com/test/8/webmention'  , $endpoint );
+		$this->assertSame( 'http://www.example.com/test/8/webmention', $endpoint );
 	}
 
 	public function discover_multiple_httplink() {
@@ -84,7 +84,7 @@ class DiscoveryTest extends WP_UnitTestCase {
 
 		add_filter( 'pre_http_request', array( $this, 'discover_multiple_httplink' ) );
 		$endpoint = Webmention_Sender::discover_endpoint( $url );
-		$this->assertSame( 'http://www.example.com/test/10/webmention'  , $endpoint );
+		$this->assertSame( 'http://www.example.com/test/10/webmention', $endpoint );
 	}
 
 	public function discover_casesensitive_httplink() {
@@ -117,7 +117,7 @@ class DiscoveryTest extends WP_UnitTestCase {
 
 		add_filter( 'pre_http_request', array( $this, 'discover_relative_htmllink' ) );
 		$endpoint = Webmention_Sender::discover_endpoint( $url );
-		$this->assertSame( 'http://www.example.com/test/3/webmention' , $endpoint );
+		$this->assertSame( 'http://www.example.com/test/3/webmention', $endpoint );
 	}
 
 	public function discover_absolute_htmllink() {
@@ -132,7 +132,7 @@ class DiscoveryTest extends WP_UnitTestCase {
 
 		add_filter( 'pre_http_request', array( $this, 'discover_absolute_htmllink' ) );
 		$endpoint = Webmention_Sender::discover_endpoint( $url );
-		$this->assertSame( 'http://www.example.com/test/4/webmention' , $endpoint );
+		$this->assertSame( 'http://www.example.com/test/4/webmention', $endpoint );
 	}
 
 	public function discover_multiple_htmllink() {
@@ -147,7 +147,7 @@ class DiscoveryTest extends WP_UnitTestCase {
 
 		add_filter( 'pre_http_request', array( $this, 'discover_multiple_htmllink' ) );
 		$endpoint = Webmention_Sender::discover_endpoint( $url );
-		$this->assertSame( 'http://www.example.com/test/9/webmention' , $endpoint );
+		$this->assertSame( 'http://www.example.com/test/9/webmention', $endpoint );
 	}
 
 	public function discover_notwebmention_htmllink() {
@@ -162,7 +162,7 @@ class DiscoveryTest extends WP_UnitTestCase {
 
 		add_filter( 'pre_http_request', array( $this, 'discover_notwebmention_htmllink' ) );
 		$endpoint = Webmention_Sender::discover_endpoint( $url );
-		$this->assertSame( 'http://www.example.com/test/121/webmention' , $endpoint );
+		$this->assertSame( 'http://www.example.com/test/121/webmention', $endpoint );
 	}
 
 	public function discover_empty_htmllink() {
@@ -177,7 +177,7 @@ class DiscoveryTest extends WP_UnitTestCase {
 
 		add_filter( 'pre_http_request', array( $this, 'discover_empty_htmllink' ) );
 		$endpoint = Webmention_Sender::discover_endpoint( $url );
-		$this->assertSame( 'http://www.example.com/test/15' , $endpoint );
+		$this->assertSame( 'http://www.example.com/test/15', $endpoint );
 	}
 
 	public function discover_relative_hreflink() {
@@ -192,7 +192,7 @@ class DiscoveryTest extends WP_UnitTestCase {
 
 		add_filter( 'pre_http_request', array( $this, 'discover_relative_hreflink' ) );
 		$endpoint = Webmention_Sender::discover_endpoint( $url );
-		$this->assertSame( 'http://www.example.com/test/5/webmention' , $endpoint );
+		$this->assertSame( 'http://www.example.com/test/5/webmention', $endpoint );
 	}
 
 	public function discover_absolute_hreflink() {
@@ -207,7 +207,7 @@ class DiscoveryTest extends WP_UnitTestCase {
 
 		add_filter( 'pre_http_request', array( $this, 'discover_absolute_hreflink' ) );
 		$endpoint = Webmention_Sender::discover_endpoint( $url );
-		$this->assertSame( 'http://www.example.com/test/6/webmention' , $endpoint );
+		$this->assertSame( 'http://www.example.com/test/6/webmention', $endpoint );
 	}
 
 	public function discover_comment_hreflink() {
@@ -222,7 +222,7 @@ class DiscoveryTest extends WP_UnitTestCase {
 
 		add_filter( 'pre_http_request', array( $this, 'discover_comment_hreflink' ) );
 		$endpoint = Webmention_Sender::discover_endpoint( $url );
-		$this->assertSame( 'http://www.example.com/test/131/webmention' , $endpoint );
+		$this->assertSame( 'http://www.example.com/test/131/webmention', $endpoint );
 	}
 
 	public function discover_escaped_hreflink() {
@@ -237,7 +237,7 @@ class DiscoveryTest extends WP_UnitTestCase {
 
 		add_filter( 'pre_http_request', array( $this, 'discover_escaped_hreflink' ) );
 		$endpoint = Webmention_Sender::discover_endpoint( $url );
-		$this->assertSame( 'http://www.example.com/test/141/webmention' , $endpoint );
+		$this->assertSame( 'http://www.example.com/test/141/webmention', $endpoint );
 	}
 
 	public function discover_multiple_link() {
@@ -252,6 +252,6 @@ class DiscoveryTest extends WP_UnitTestCase {
 
 		add_filter( 'pre_http_request', array( $this, 'discover_multiple_link' ) );
 		$endpoint = Webmention_Sender::discover_endpoint( $url );
-		$this->assertSame( 'http://www.example.com/test/11/webmention' , $endpoint );
+		$this->assertSame( 'http://www.example.com/test/11/webmention', $endpoint );
 	}
 }
