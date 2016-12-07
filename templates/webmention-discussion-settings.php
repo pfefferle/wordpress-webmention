@@ -12,4 +12,12 @@
 			echo checked( true, get_option( 'webmention_disable_selfpings_same_domain' ) );  ?> />
 		<?php _e( 'Disable self-pings on the same Domain <small>(for example "example.com")</small>', 'webmention' ) ?>
 	</label>
+
+	<br />
+
+	<label for="webmention_show_comment_form">
+		<input type="checkbox" name="webmention_show_comment_form" id="webmention_show_comment_form" value="1" <?php
+			echo checked( true, get_option( 'webmention_show_comment_form' ) );  ?> />
+		<?php _e( 'Show a WebMention form at the comment section, to enable manual pings.', 'webmention' ) ?>
+	</label>
 </fieldset>
