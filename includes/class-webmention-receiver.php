@@ -212,8 +212,6 @@ class Webmention_Receiver {
 			// save comment
 			$commentdata['comment_ID'] = wp_new_comment( $commentdata );
 		} else {
-			// Temporary placeholder for webmention updates until 4.7 adds an edit comment filter
-			$commentdata = apply_filters( 'webmention_update', $commentdata );
 			// save comment
 			wp_update_comment( $commentdata );
 		}
