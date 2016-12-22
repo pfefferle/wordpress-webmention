@@ -57,11 +57,26 @@ class Webmention_Plugin {
 	 * Register Webmention admin settings.
 	 */
 	public static function admin_register_settings() {
-		register_setting( 'discussion', 'webmention_disable_selfpings_same_url' );
-		register_setting( 'discussion', 'webmention_disable_selfpings_same_domain' );
-		register_setting( 'discussion', 'webmention_show_comment_form' );
+		register_setting( 'discussion', 'webmention_disable_selfpings_same_url', array(
+			'type' => 'boolean',
+			'description' => 'Disable Self Webmentions on the Same URL',
+			'show_in_rest' => 'true',
+			'default' => 1
+		) );
+		register_setting( 'discussion', 'webmention_disable_selfpings_same_domain', array(
+			'type' => 'boolean',
+			'description' => 'Disable Self Webmentions on the Same Domain',
+			'show_in_rest' => 'true',
+			'default' => 0 
+		) );
+		register_setting( 'discussion', 'webmention_show_comment_form', array(
+			'type' => 'boolean',
+			'description' => 'Show Webmention Comment Form',
+			'show_in_rest' => 'true',
+			'default' => 1 
+		) );
 
-		add_settings_field( 'webmention_disucssion_settings', __( 'Webmention Settings', 'webmention' ), array( 'Webmention_Plugin', 'discussion_settings' ), 'discussion', 'default' );
+		add_settings_field( 'webmention_discussion_settings', __( 'Webmention Settings', 'webmention' ), array( 'Webmention_Plugin', 'discussion_settings' ), 'discussion', 'default' );
 	}
 
 	/**
