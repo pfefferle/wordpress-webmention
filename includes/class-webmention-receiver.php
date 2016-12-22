@@ -206,14 +206,18 @@ class Webmention_Receiver {
 		}
 
 		// disable flood control
-		remove_action( 'check_comment_flood', 'check_comment_flood_db', 10, 4 );
+		remove_filter( 'wp_is_comment_flood', 'wp_check_comment_flood', 10 );
 		// update or save webmention
 		if ( empty( $commentdata['comment_ID'] ) ) {
 			// save comment
-			$commentdata['comment_ID'] = wp_new_comment( $commentdata );
+			$commentdata['comment_ID'] = wp_new_comment( $commentdata, true );
 		} else {
 			// save comment
 			wp_update_comment( $commentdata );
+		}
+
+		if ( is_wp_error( $commentdata['comment_ID'] ) ) {
+			return new WP_REST_Response( $commentdata['comment_ID'], 500 );
 		}
 
 		/**
@@ -227,7 +231,7 @@ class Webmention_Receiver {
 		do_action( 'webmention_post', $commentdata['comment_ID'], $commentdata );
 
 		// re-add flood control
-		add_action( 'check_comment_flood', 'check_comment_flood_db', 10, 4 );
+		add_filter( 'wp_is_comment_flood', 'wp_check_comment_flood', 10, 5 );
 
 		// Return select data
 		$return = array(
