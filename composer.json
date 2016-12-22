@@ -13,6 +13,9 @@
       "homepage": "http://notizblog.org"
     }
   ],
+  "extra": {
+    "installer-name": "webmention"
+  },
   "require-dev": {
     "phpunit/phpunit": "5.5.*"
   },
