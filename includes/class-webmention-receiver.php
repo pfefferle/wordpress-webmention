@@ -14,6 +14,8 @@ class Webmention_Receiver {
 		// Filter the response to allow a webmention form if no parameters are passed
 		add_filter( 'rest_pre_serve_request', array( 'Webmention_Receiver', 'serve_request' ), 9, 4 );
 
+		add_action( 'comment_form_after', array( 'Webmention_Receiver', 'comment_form' ), 11 );
+
 		// endpoint discovery
 		add_action( 'wp_head', array( 'Webmention_Receiver', 'html_header' ), 99 );
 		add_action( 'send_headers', array( 'Webmention_Receiver', 'http_header' ) );
@@ -21,10 +23,11 @@ class Webmention_Receiver {
 		add_filter( 'webfinger_user_data', array( 'Webmention_Receiver', 'jrd_links' ) );
 		add_filter( 'webfinger_post_data', array( 'Webmention_Receiver', 'jrd_links' ) );
 
-		// Webmention Handler
+		// Webmention helper
 		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'webmention_verify' ), 11, 1 );
 		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'check_dupes' ), 12, 1 );
 
+		// Webmention data handler
 		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'default_title_filter' ), 21, 1 );
 		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'default_content_filter' ), 22, 1 );
 	}
@@ -457,6 +460,15 @@ class Webmention_Receiver {
 		if ( get_option( 'default_pingback_flag' ) ) {
 			add_post_meta( $post_id, '_mentionme', '1', true );
 		}
+	}
+
+	/**
+	 * Render the Webmention comment form
+	 */
+	public static function comment_form() {
+		$template = apply_filters( 'webmention_comment_form', plugin_dir_path( __FILE__ ) . '../templates/webmention-comment-form.php' );
+
+		load_template( $template );
 	}
 
 	/**
