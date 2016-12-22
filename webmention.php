@@ -59,19 +59,19 @@ class Webmention_Plugin {
 	public static function admin_register_settings() {
 		register_setting( 'discussion', 'webmention_disable_selfpings_same_url', array(
 			'type' => 'boolean',
-			'description' => __( 'Disable Self Webmentions on the Same URL' ),
+			'description' => __( 'Disable Self Webmentions on the Same URL', 'webmention' ),
 			'show_in_rest' => true,
 			'default' => 1,
 		) );
 		register_setting( 'discussion', 'webmention_disable_selfpings_same_domain', array(
 			'type' => 'boolean',
-			'description' => __( 'Disable Self Webmentions on the Same Domain' ),
+			'description' => __( 'Disable Self Webmentions on the Same Domain', 'webmention' ),
 			'show_in_rest' => true,
 			'default' => 0,
 		) );
 		register_setting( 'discussion', 'webmention_show_comment_form', array(
 			'type' => 'boolean',
-			'description' => __( 'Show Webmention Comment Form' ),
+			'description' => __( 'Show Webmention Comment Form', 'webmention' ),
 			'show_in_rest' => true,
 			'default' => 1,
 		) );

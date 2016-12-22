@@ -132,14 +132,14 @@
 			<?php do_action( 'webmention_endpoint_form_before_input_fields' ); ?>
 			<p>
 				<label for="webmention-source"><?php _e( 'Source URL' ); ?>:</label><br />
-				<input id="webmention-source" type="url" name="source" placeholder="URL/Permalink of your article" size="70" />
+				<input id="webmention-source" type="url" name="source" placeholder="<?php _e( 'URL/Permalink of your article', 'webmention' ); ?>" size="70" />
 			</p>
 			<p>
 				<label for="webmention-target"><?php _e( 'Target URL' ); ?>:</label><br />
-				<input id="webmention-target" type="url" name="target" placeholder="URL/Permalink of my article" size="70" />
+				<input id="webmention-target" type="url" name="target" placeholder="<?php _e( 'URL/Permalink of my article', 'webmention' ); ?>" size="70" />
 			</p>
 			<p>
-				<input id="webmention-submit" type="submit" name="submit" value="Ping me!" />
+				<input id="webmention-submit" type="submit" name="submit" value="<?php _e( 'Ping me!', 'webmention' ); ?>" />
 			</p>
 			<?php do_action( 'webmention_endpoint_form_after_input_fields' ); ?>
 		</form>
