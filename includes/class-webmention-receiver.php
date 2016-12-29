@@ -209,7 +209,7 @@ class Webmention_Receiver {
 		}
 
 		// disable flood control
-		remove_filter( 'wp_is_comment_flood', 'wp_check_comment_flood', 10 );
+		remove_action( 'check_comment_flood', 'check_comment_flood_db', 10 );
 		// update or save webmention
 		if ( empty( $commentdata['comment_ID'] ) ) {
 			// save comment
@@ -234,7 +234,7 @@ class Webmention_Receiver {
 		do_action( 'webmention_post', $commentdata['comment_ID'], $commentdata );
 
 		// re-add flood control
-		add_filter( 'wp_is_comment_flood', 'wp_check_comment_flood', 10, 5 );
+		add_action( 'check_comment_flood', 'check_comment_flood_db', 10, 4 );
 
 		// Return select data
 		$return = array(
