@@ -111,6 +111,8 @@ class Webmention_Sender {
 		// filter links
 		$targets = apply_filters( 'webmention_links', $links, $post_id );
 		$targets = array_unique( $targets );
+		$pung = get_pung( $post );
+		$ping = array();
 
 		foreach ( $targets as $target ) {
 			// send webmention
@@ -119,12 +121,10 @@ class Webmention_Sender {
 			// check response
 			if ( ! is_wp_error( $response ) &&
 				wp_remote_retrieve_response_code( $response ) < 400 ) {
-				$pung = get_pung( $post_id );
-
 				// if not already added to punged urls
 				if ( ! in_array( $target, $pung ) ) {
 					// tell the pingback function not to ping these links again
-					add_ping( $post_id, $target );
+					$ping[] = $target;
 				}
 			}
 
@@ -132,6 +132,9 @@ class Webmention_Sender {
 			if ( wp_remote_retrieve_response_code( $response ) >= 500 ) {
 				self::reschedule( $post_id );
 			}
+		}
+		if ( ! empty( $ping ) ) {
+			add_ping( $post, $ping );
 		}
 	}
 
