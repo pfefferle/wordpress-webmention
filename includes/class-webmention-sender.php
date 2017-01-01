@@ -106,7 +106,7 @@ class Webmention_Sender {
 		$post = get_post( $post_id );
 
 		// initialize links array
-		$links = wp_extract_urls( $post );
+		$links = wp_extract_urls( $post->post_content );
 
 		// filter links
 		$targets = apply_filters( 'webmention_links', $links, $post_id );
