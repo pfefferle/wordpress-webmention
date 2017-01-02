@@ -214,24 +214,24 @@ class Webmention_Receiver {
 		if ( empty( $commentdata['comment_ID'] ) ) {
 			// save comment
 			$commentdata['comment_ID'] = wp_new_comment( $commentdata, true );
+
+			/**
+			 * Fires when a webmention is created.
+			 *
+			 * Mirrors comment_post and pingback_post.
+			 *
+			 * @param int $comment_ID Comment ID.
+			 * @param array $commentdata Comment Array.
+			 */
+			do_action( 'webmention_post', $commentdata['comment_ID'], $commentdata );
 		} else {
-			// save comment
+			// update comment
 			wp_update_comment( $commentdata );
 		}
 
 		if ( is_wp_error( $commentdata['comment_ID'] ) ) {
 			return new WP_REST_Response( $commentdata['comment_ID'], 500 );
 		}
-
-		/**
-		 * Fires when a webmention is created.
-		 *
-		 * Mirrors comment_post and pingback_post.
-		 *
-		 * @param int $comment_ID Comment ID.
-		 * @param array $commentdata Comment Array.
-		 */
-		do_action( 'webmention_post', $commentdata['comment_ID'], $commentdata );
 
 		// re-add flood control
 		add_action( 'check_comment_flood', 'check_comment_flood_db', 10, 4 );
