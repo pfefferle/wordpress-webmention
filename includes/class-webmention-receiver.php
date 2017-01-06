@@ -270,11 +270,11 @@ class Webmention_Receiver {
 			return $data;
 		}
 
-		global $wp_version;
-
 		if ( ! is_array( $data ) || empty( $data ) ) {
 			return new WP_Error( 'invalid_data', __( 'Invalid data passed', 'webmention' ), array( 'status' => 500 ) );
 		}
+
+		$wp_version = get_bloginfo( 'version' );
 
 		$user_agent = apply_filters( 'http_headers_useragent', 'WordPress/' . $wp_version . '; ' . get_bloginfo( 'url' ) );
 		$args = array(

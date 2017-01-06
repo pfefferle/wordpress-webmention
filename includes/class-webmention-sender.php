@@ -41,8 +41,6 @@ class Webmention_Sender {
 	 * @return array of results including HTTP headers
 	 */
 	public static function send_webmention( $source, $target, $post_id = null ) {
-		global $wp_version;
-
 		// stop selfpings on the same URL
 		if ( ( get_option( 'webmention_disable_selfpings_same_url' ) === '1' ) &&
 			 ( $source === $target ) ) {
@@ -60,6 +58,8 @@ class Webmention_Sender {
 
 		// if I can't find an endpoint, perhaps you can!
 		$webmention_server_url = apply_filters( 'webmention_server_url', $webmention_server_url, $target );
+
+		$wp_version = get_bloginfo( 'version' );
 
 		$user_agent = apply_filters( 'http_headers_useragent', 'WordPress/' . $wp_version . '; ' . get_bloginfo( 'url' ) );
 		$args = array(
@@ -216,8 +216,6 @@ class Webmention_Sender {
 	 * @return bool|string False on failure, string containing URI on success
 	 */
 	public static function discover_endpoint( $url ) {
-		global $wp_version;
-
 		/** @todo Should use Filter Extension or custom preg_match instead. */
 		$parsed_url = wp_parse_url( $url );
 
@@ -230,6 +228,8 @@ class Webmention_Sender {
 		if ( 0 === strpos( $url, $uploads_dir['baseurl'] ) ) {
 			return false;
 		}
+
+		$wp_version = get_bloginfo( 'version' );
 
 		$user_agent = apply_filters( 'http_headers_useragent', 'WordPress/' . $wp_version . '; ' . get_bloginfo( 'url' ) );
 		$args = array(
