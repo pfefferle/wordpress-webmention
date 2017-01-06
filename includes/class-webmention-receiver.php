@@ -178,6 +178,7 @@ class Webmention_Receiver {
 
 			// Return the source and target and the 202 Message
 			$return = array(
+				'link' => '', // TODO add API link to check state of comment
 				'source' => $commentdata['source'],
 				'target' => $commentdata['target'],
 				'message' => 'ACCEPTED',
@@ -205,11 +206,13 @@ class Webmention_Receiver {
 			 * @param array $commentdata
 			 */
 			do_action( 'webmention_data_error', $commentdata );
+
 			return $commentdata;
 		}
 
 		// disable flood control
 		remove_action( 'check_comment_flood', 'check_comment_flood_db', 10 );
+
 		// update or save webmention
 		if ( empty( $commentdata['comment_ID'] ) ) {
 			// save comment
