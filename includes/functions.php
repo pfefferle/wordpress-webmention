@@ -38,10 +38,23 @@ function get_webmentions_number( $post_id = 0 ) {
 /**
  * Return Webmention Endpoint
  *
+ * @see https://www.w3.org/TR/webmention/#sender-discovers-receiver-webmention-endpoint
+ *
  * @return string the Webmention endpoint
  */
 function get_webmention_endpoint() {
 	return apply_filters( 'webmention_endpoint', get_rest_url( null, '/webmention/1.0/endpoint' ) );
+}
+
+/**
+ * Return Webmention process type
+ *
+ * @see https://www.w3.org/TR/webmention/#receiving-webmentions
+ *
+ * @return string the Webmention process type
+ */
+function get_webmention_process_type() {
+	return apply_filters( 'webmention_process_type', WEBMENTION_PROCESS_TYPE );
 }
 
 if ( ! function_exists( 'wp_get_meta_tags' ) ) :

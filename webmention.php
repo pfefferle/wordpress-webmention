@@ -13,7 +13,10 @@
 
 defined( 'WEBMENTION_COMMENT_APPROVE' ) || define( 'WEBMENTION_COMMENT_APPROVE', 0 );
 defined( 'WEBMENTION_COMMENT_TYPE' ) || define( 'WEBMENTION_COMMENT_TYPE', 'webmention' );
-defined( 'WEBMENTION_ASYNC' ) || define( 'WEBMENTION_ASYNC', false );
+defined( 'WEBMENTION_PROCESS_TYPE' ) || define( 'WEBMENTION_PROCESS_TYPE', 'async' );
+
+define( 'WEBMENTION_PROCESS_TYPE_ASYNC', 'async' );
+define( 'WEBMENTION_PROCESS_TYPE_SYNC', 'sync' );
 
 add_action( 'plugins_loaded', array( 'Webmention_Plugin', 'init' ) );
 

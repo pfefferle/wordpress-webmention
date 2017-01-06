@@ -211,6 +211,8 @@ class Webmention_Sender {
 	 * check for the rel="webmention" has more overhead than just the header.
 	 * Supports backward compatability to webmention.org headers.
 	 *
+	 * @see https://www.w3.org/TR/webmention/#sender-discovers-receiver-webmention-endpoint
+	 *
 	 * @param string $url URL to ping
 	 *
 	 * @return bool|string False on failure, string containing URI on success

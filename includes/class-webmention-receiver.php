@@ -171,8 +171,8 @@ class Webmention_Receiver {
 		// add empty fields
 		$commentdata['comment_parent'] = $commentdata['comment_author_email'] = '';
 
-		// Define WEBMENTION_ASYNC as true if you want to define an asynchronous handler
-		if ( WEBMENTION_ASYNC ) {
+		// Define WEBMENTION_PROCESS_TYPE as true if you want to define an asynchronous handler
+		if ( WEBMENTION_PROCESS_TYPE === WEBMENTION_PROCESS_TYPE_ASYNC ) {
 			// Schedule an action a random period of time in the next 2 minutes to handle webmentions.
 			wp_schedule_single_event( time() + wp_rand( 0, 120 ), 'async_handle_webmention', array( $commentdata ) );
 
