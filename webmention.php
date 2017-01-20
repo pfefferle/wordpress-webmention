@@ -9,6 +9,7 @@
  * License: MIT
  * License URI: http://opensource.org/licenses/MIT
  * Text Domain: webmention
+ * Domain Path: /languages
  */
 
 defined( 'WEBMENTION_COMMENT_APPROVE' ) || define( 'WEBMENTION_COMMENT_APPROVE', 0 );
