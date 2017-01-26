@@ -5,7 +5,7 @@
 **Donate link:** http://14101978.de  
 **Tags:** webmention, pingback, trackback, linkback, indieweb  
 **Requires at least:** 4.7  
-**Tested up to:** 4.7  
+**Tested up to:** 4.7.1  
 **Stable tag:** 3.0.0  
 **License:** MIT  
 **License URI:** http://opensource.org/licenses/MIT  
@@ -19,7 +19,7 @@ Webmention for WordPress!
 [vimeo https://vimeo.com/85217592]
 -- Video by [Andy Sylvester](http://andysylvester.com/2014/01/27/working-with-webmention-video/)
 
-From the [spec](http://www.w3.org/TR/webmention/):
+From the [W3C Recommendation specification](http://www.w3.org/TR/webmention/):
 
 > Webmention is a simple way to automatically notify any URL when you link to it on your site.
 > From the receivers perpective, it's a way to request notification when other sites link to it.
@@ -36,16 +36,18 @@ It’s a modern alternative to Pingback and other forms of Linkback.
 ### That Sounds Like a Pingback or a Trackback ###
 
 Webmention is an update/replacement for Pingback or Trackback. Unlike the older protocols, the
-specification has a working draft with the W3C as well as an active community of individuals using
+specification is recommended by the W3C as well as an active community of individuals using
 it on their sites.
 
-### How can I send Webmentions ###
+### How can I send and receive Webmentions? ###
 
-Activate sending Webmentions by checking the "Attempt to notify any blogs linked to from the article" option on the Settings --> Discussion page in WordPress.
+On the Settings --> Discussion Page in WordPress:
+* Activate sending Webmentions by checking the "Attempt to notify any blogs linked to from the article" option
+* Activate receiving Webmentions by checking the "Allow link notifications from other blogs (pingbacks and trackbacks) on new articles" option.
 
 You can use the `send_webmention($source, $target)` function and pass a source and a target or you can fire an action like `do_action('send_webmention', $source, $target)`.
 
-### How can I handle Homepage-Webmentions ###
+### How can I handle Webmentions to my Homepage or Archive Pages? ###
 
 Webmentions should be allowed on all URLs of a blog. The plugin currently supports only Webmentions on
 posts or pages, but it is very simple to add support for other types like homepages or archive pages.
