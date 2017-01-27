@@ -128,14 +128,6 @@ class Webmention_Receiver {
 			return new WP_Error( 'target', __( 'Target is not on this domain', 'webmention' ), array( 'status' => 400 ) );
 		}
 
-		//handle person tags
-		$santisedhome = strtolower(preg_replace( '/\/$//i', '',preg_replace( '/^https?:\/\//i', '', home_url() )));
-		$santisedtarget = strtolower(preg_replace( '/\/$//i', '',preg_replace( '/^https?:\/\//i', '', $target )));
-		if($santisedtarget == $santisedhome && get_option( 'webmention_person_tag_url' )){
-			$target =  get_option( 'webmention_person_tag_url' );
-		}
-
-
 		$comment_post_id = url_to_postid( $target );
 
 		// add some kind of a "default" id to add linkbacks to a specific post/page
