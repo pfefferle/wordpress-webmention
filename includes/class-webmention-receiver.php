@@ -30,6 +30,7 @@ class Webmention_Receiver {
 		// Webmention data handler
 		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'default_title_filter' ), 21, 1 );
 		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'default_content_filter' ), 22, 1 );
+
 	}
 
 	/**
@@ -110,9 +111,10 @@ class Webmention_Receiver {
 	 * @uses apply_filters calls "webmention_success_message" on the success message
 	 */
 	public static function post( $request ) {
+
 		$params = array_filter( $request->get_params() );
 
-		if ( ! isset( $params['source'] ) ) {
+		if ( ! isset( $params['source'] ) ){
 			return new WP_Error( 'source_missing' , __( 'Source is missing', 'webmention' ), array( 'status' => 400 ) );
 		}
 
@@ -127,14 +129,6 @@ class Webmention_Receiver {
 		if ( ! stristr( $target, preg_replace( '/^https?:\/\//i', '', home_url() ) ) ) {
 			return new WP_Error( 'target', __( 'Target is not on this domain', 'webmention' ), array( 'status' => 400 ) );
 		}
-
-		//handle person tags
-		$santisedhome = strtolower(preg_replace( '/\/$//i', '',preg_replace( '/^https?:\/\//i', '', home_url() )));
-		$santisedtarget = strtolower(preg_replace( '/\/$//i', '',preg_replace( '/^https?:\/\//i', '', $target )));
-		if($santisedtarget == $santisedhome && get_option( 'webmention_person_tag_url' )){
-			$target =  get_option( 'webmention_person_tag_url' );
-		}
-
 
 		$comment_post_id = url_to_postid( $target );
 
@@ -158,6 +152,7 @@ class Webmention_Receiver {
 		if ( ! $post ) {
 			return new WP_Error( 'target_not_valid', __( 'Target is not a valid post', 'webmention' ), array( 'status' => 400 ) );
 		}
+
 		// In the event of async processing this needs to be stored here as it might not be available
 		// later.
 		$comment_author_ip = preg_replace( '/[^0-9a-fA-F:., ]/', '', $_SERVER['REMOTE_ADDR'] );
@@ -254,7 +249,6 @@ class Webmention_Receiver {
 			'source' => $commentdata['source'],
 			'target' => $commentdata['target'],
 		);
-
 		return new WP_REST_Response( $return, 200 );
 	}
 
@@ -487,7 +481,7 @@ class Webmention_Receiver {
 	 * The Webmention autodicovery meta-tags
 	 */
 	public static function html_header() {
-		if ( is_singular() && pings_open() ) {
+		if ( is_front_page() ||(is_singular() && pings_open())) {
 			// backwards compatibility with v0.1
 			printf( '<link rel="http://webmention.org/" href="%s" />' . PHP_EOL, get_webmention_endpoint() );
 			printf( '<link rel="webmention" href="%s" />' . PHP_EOL, get_webmention_endpoint() );

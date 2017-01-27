@@ -14,7 +14,7 @@
 
 defined( 'WEBMENTION_COMMENT_APPROVE' ) || define( 'WEBMENTION_COMMENT_APPROVE', 0 );
 defined( 'WEBMENTION_COMMENT_TYPE' ) || define( 'WEBMENTION_COMMENT_TYPE', 'webmention' );
-defined( 'WEBMENTION_PROCESS_TYPE' ) || define( 'WEBMENTION_PROCESS_TYPE', 'async' );
+defined( 'WEBMENTION_PROCESS_TYPE' ) || define( 'WEBMENTION_PROCESS_TYPE', 'sync' );
 
 define( 'WEBMENTION_PROCESS_TYPE_ASYNC', 'async' );
 define( 'WEBMENTION_PROCESS_TYPE_SYNC', 'sync' );
