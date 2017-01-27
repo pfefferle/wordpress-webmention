@@ -14,7 +14,7 @@
 
 defined( 'WEBMENTION_COMMENT_APPROVE' ) || define( 'WEBMENTION_COMMENT_APPROVE', 0 );
 defined( 'WEBMENTION_COMMENT_TYPE' ) || define( 'WEBMENTION_COMMENT_TYPE', 'webmention' );
-defined( 'WEBMENTION_PROCESS_TYPE' ) || define( 'WEBMENTION_PROCESS_TYPE', 'async' );
+defined( 'WEBMENTION_PROCESS_TYPE' ) || define( 'WEBMENTION_PROCESS_TYPE', 'sync' );
 
 define( 'WEBMENTION_PROCESS_TYPE_ASYNC', 'async' );
 define( 'WEBMENTION_PROCESS_TYPE_SYNC', 'sync' );
@@ -78,7 +78,7 @@ class Webmention_Plugin {
 			'description' => __( 'Show Webmention Comment Form', 'webmention' ),
 			'show_in_rest' => true,
 			'default' => 1,
-		) );
+		) );		
 
 		add_settings_field( 'webmention_discussion_settings', __( 'Webmention Settings', 'webmention' ), array( 'Webmention_Plugin', 'discussion_settings' ), 'discussion', 'default' );
 	}
