@@ -3,7 +3,7 @@ Contributors: pfefferle, dshanske
 Donate link: http://14101978.de
 Tags: webmention, pingback, trackback, linkback, indieweb
 Requires at least: 4.7
-Tested up to: 4.7.1
+Tested up to: 4.7.2
 Stable tag: 3.0.0
 License: MIT
 License URI: http://opensource.org/licenses/MIT
