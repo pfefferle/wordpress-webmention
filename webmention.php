@@ -78,6 +78,12 @@ class Webmention_Plugin {
 			'description' => __( 'Show Webmention Comment Form', 'webmention' ),
 			'show_in_rest' => true,
 			'default' => 1,
+		) );		
+		register_setting( 'discussion', 'webmention_person_tag_url', array(
+			'type' => 'string',
+			'description' => __( 'Person Tag redirect URL', 'webmention' ),
+			'show_in_rest' => true,
+			'default' => 1,
 		) );
 
 		add_settings_field( 'webmention_discussion_settings', __( 'Webmention Settings', 'webmention' ), array( 'Webmention_Plugin', 'discussion_settings' ), 'discussion', 'default' );
