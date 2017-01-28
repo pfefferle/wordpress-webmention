@@ -128,9 +128,8 @@ class Webmention_Receiver {
 			return new WP_Error( 'target', __( 'Target is not on this domain', 'webmention' ), array( 'status' => 400 ) );
 		}
 
-		$comment_post_id = url_to_postid( $target );
-		// add some kind of a "default" id to add linkbacks to a specific post/page
-		$comment_post_id = apply_filters( 'webmention_post_id', $comment_post_id, $target );
+		// Returns a post id for a webmention target
+		$comment_post_id = webmention_post_id( $target );
 		if ( url_to_postid( $source ) === $comment_post_id ) {
 			return new WP_Error( 'source_equals_target', __( 'Target and source cannot direct to the same resource', 'webmention' ), array( 'status' => 400 ) );
 		}
@@ -478,7 +477,8 @@ class Webmention_Receiver {
 	 * The Webmention autodicovery meta-tags
 	 */
 	public static function html_header() {
-		if ( is_singular() && pings_open() ) {
+		$open = ( is_singular() && pings_open() ) ? true : mentions_open();
+		if ( $open ) {
 			// backwards compatibility with v0.1
 			printf( '<link rel="http://webmention.org/" href="%s" />' . PHP_EOL, get_webmention_endpoint() );
 			printf( '<link rel="webmention" href="%s" />' . PHP_EOL, get_webmention_endpoint() );
@@ -489,7 +489,8 @@ class Webmention_Receiver {
 	 * The Webmention autodicovery http-header
 	 */
 	public static function http_header() {
-		if ( is_singular() && pings_open() ) {
+		$open = ( is_singular() && pings_open() ) ? true : mentions_open();
+		if ( $open ) {
 			// backwards compatibility with v0.1
 			header( sprintf( 'Link: <%s>; rel="http://webmention.org/"', get_webmention_endpoint() ), false );
 			header( sprintf( 'Link: <%s>; rel="webmention"', get_webmention_endpoint() ), false );
