@@ -57,6 +57,37 @@ function get_webmention_process_type() {
 	return apply_filters( 'webmention_process_type', WEBMENTION_PROCESS_TYPE );
 }
 
+/**
+ * Are mentions open for a URL?
+ *
+ * @param string $url The URL.
+ * @return boolean
+ */
+function mentions_open( $url = null ) {
+	if ( ! $url ) {
+		$url = esc_url( set_url_scheme( 'http://' . wp_parse_url( home_url(), PHP_URL_HOST ) . wp_unslash( $_SERVER['REQUEST_URI'] ) ) );
+	}
+	/**
+	 * Filters whether the current URL is open for mentions.
+	 *
+	 *
+	 * @param bool        $open    Whether the current URL is open for mentions.
+	 * @param string $url The current URL.
+	 */
+	return apply_filters( 'mentions_open', false, $url );
+}
+
+/**
+ * Return the post_id for a URL filtered for webmentions.
+ * Allows redirecting to another id to add linkbacks to the home page or archive page or taxonomy page.
+ *
+ * @param string $url URL
+ * @param int Return 0 if no post ID found or a post ID
+ */
+function webmention_post_id( $url ) {
+	return apply_filters( 'webmention_post_id', url_to_postid( $url ), $url );
+}
+
 if ( ! function_exists( 'wp_get_meta_tags' ) ) :
 	/**
 	 * Parse meta tags from source content

@@ -49,7 +49,7 @@ You can use the `send_webmention($source, $target)` function and pass a source a
 
 Webmentions should be allowed on all URLs of a blog. The plugin currently supports only Webmentions on
 posts or pages, but it is very simple to add support for other types like homepages or archive pages.
-The easiest way is to provide some kind of a default post/page to show collect all mentions that are no
+The easiest way is to provide some kind of a default post/page to show collect all mentions that are not
 comments on a post or a page. The plugin provides a simple filter for that:
 
     function handle_exotic_webmentions($id, $target) {
@@ -76,6 +76,8 @@ Project maintained on github at [pfefferle/wordpress-webmention](https://github.
 * webmention_post_send action now fires on all attempts to send a webmention instead of only successful ones. Allows for logging functions to be added.
 * Supports adding additional parameters when sending webmentions
 * Fix incompatibility with Ultimate Category Excluder plugin.
+* webmention_post_id now is a function as well as a filter
+* New function and filter mentions_open that checks a URL for open mentions.
 
 = 2.6.0 =
 
