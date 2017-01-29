@@ -16,7 +16,8 @@ class Webmention_Sender {
 		// run webmentions before the other pinging stuff
 		add_action( 'do_pings', array( 'Webmention_Sender', 'do_webmentions' ), 5, 1 );
 
-		add_action( 'publish_post', array( 'Webmention_Sender', 'publish_post_hook' ) );
+		add_action( 'publish_post', array( 'Webmention_Sender', 'publish_hook' ) );
+		add_action( 'publish_page', array( 'Webmention_Sender', 'publish_hook' ) );
 	}
 
 	/**
@@ -24,7 +25,7 @@ class Webmention_Sender {
 	 *
 	 * @param int $post_id
 	 */
-	public static function publish_post_hook( $post_id ) {
+	public static function publish_hook( $post_id ) {
 		// check if pingbacks are enabled
 		if ( get_option( 'default_pingback_flag' ) ) {
 			add_post_meta( $post_id, '_mentionme', '1', true );
