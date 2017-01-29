@@ -6,7 +6,7 @@
 **Tags:** webmention, pingback, trackback, linkback, indieweb  
 **Requires at least:** 4.7  
 **Tested up to:** 4.7.2  
-**Stable tag:** 3.0.0  
+**Stable tag:** 3.0.1  
 **License:** MIT  
 **License URI:** http://opensource.org/licenses/MIT  
 
