@@ -57,6 +57,20 @@ function get_webmention_process_type() {
 	return apply_filters( 'webmention_process_type', WEBMENTION_PROCESS_TYPE );
 }
 
+/**
+ * Return the post_id for a URL filtered for webmentions.
+ * Allows redirecting to another id to add linkbacks to the home page or archive
+ * page or taxonomy page.
+ *
+ * @param string $url URL
+ * @param int Return 0 if no post ID found or a post ID
+ *
+ * @uses apply_filters calls "webmention_post_id" on the post_ID
+ */
+function webmention_url_to_postid( $url ) {
+	return apply_filters( 'webmention_post_id', url_to_postid( $url ), $url );
+}
+
 if ( ! function_exists( 'wp_get_meta_tags' ) ) :
 	/**
 	 * Parse meta tags from source content

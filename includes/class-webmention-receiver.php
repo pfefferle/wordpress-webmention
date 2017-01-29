@@ -104,7 +104,6 @@ class Webmention_Receiver {
 	 *
 	 * @return WP_Error|WP_REST_Response
 	 *
-	 * @uses apply_filters calls "webmention_post_id" on the post_ID
 	 * @uses apply_filters calls "webmention_comment_data" on the comment data
 	 * @uses apply_filters calls "webmention_update" on the comment data
 	 * @uses apply_filters calls "webmention_success_message" on the success message
@@ -128,9 +127,8 @@ class Webmention_Receiver {
 			return new WP_Error( 'target', __( 'Target is not on this domain', 'webmention' ), array( 'status' => 400 ) );
 		}
 
-		$comment_post_id = url_to_postid( $target );
-		// add some kind of a "default" id to add linkbacks to a specific post/page
-		$comment_post_id = apply_filters( 'webmention_post_id', $comment_post_id, $target );
+		$comment_post_id = webmention_url_to_postid( $target );
+
 		if ( url_to_postid( $source ) === $comment_post_id ) {
 			return new WP_Error( 'source_equals_target', __( 'Target and source cannot direct to the same resource', 'webmention' ), array( 'status' => 400 ) );
 		}
