@@ -69,6 +69,11 @@ comments on a post or a page. The plugin provides a simple filter for that:
 
 Project maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
 
+### 3.1.0 ###
+
+* added page support (server and client)
+* moved `webmention_post_id` filter to a global function (thanks @dshanske)
+
 ### 3.0.1 ###
 
 * Show endpoint discovery on every page again, to prevent several problems.
