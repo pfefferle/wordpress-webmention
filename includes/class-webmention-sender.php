@@ -183,12 +183,13 @@ class Webmention_Sender {
 			array(
 				'meta_key' => '_mentionme',
 				'post_type' => get_post_types(
-					array( 'publicly_queryable' => true )
+					array( 'public' => true )
 				),
 				'fields' => 'ids',
 				'nopaging' => true,
 			)
 		);
+
 		if ( function_exists( 'ksuce_exclude_categories' ) ) {
 			add_filter( 'pre_get_posts', 'ksuce_exclude_categories' );
 		}
