@@ -43,13 +43,13 @@ class Webmention_Sender {
 	 */
 	public static function send_webmention( $source, $target, $post_id = null ) {
 		// stop selfpings on the same URL
-		if ( ( get_option( 'webmention_disable_selfpings_same_url' ) === '1' ) &&
+		if ( ( 1 == get_option( 'webmention_disable_selfpings_same_url' ) ) &&
 			 ( $source === $target ) ) {
 			return false;
 		}
 
 		// stop selfpings on the same domain
-		if ( ( get_option( 'webmention_disable_selfpings_same_domain' ) === '1' ) &&
+		if ( ( 1 == get_option( 'webmention_disable_selfpings_same_domain' ) ) &&
 			 ( parse_url( $source, PHP_URL_HOST ) === parse_url( $target, PHP_URL_HOST ) ) ) {
 			return false;
 		}
