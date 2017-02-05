@@ -12,16 +12,16 @@ function send_webmention( $source, $target ) {
 }
 
 /**
- * Return the Number of WebMentions
+ * Return the Number of Webmentions
  *
  * @param int $post_id The post ID (optional)
  *
- * @return int the number of WebMentions for one Post
+ * @return int the number of Webmentions for one Post
  */
 function get_webmentions_number( $post_id = 0 ) {
 	$post = get_post( $post_id );
 
-	// change this if your theme can't handle the WebMentions comment type
+	// change this if your theme can't handle the Webmentions comment type
 	$comment_type = apply_filters( 'webmention_comment_type', WEBMENTION_COMMENT_TYPE );
 
 	$args = array(

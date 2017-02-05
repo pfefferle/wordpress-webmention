@@ -18,6 +18,6 @@
 	<label for="webmention_show_comment_form">
 		<input type="checkbox" name="webmention_show_comment_form" id="webmention_show_comment_form" value="1" <?php
 			echo checked( true, get_option( 'webmention_show_comment_form' ) );  ?> />
-		<?php _e( 'Show a WebMention form at the comment section, to enable manual pings.', 'webmention' ) ?>
+		<?php _e( 'Show a Webmention form at the comment section, to enable manual pings.', 'webmention' ) ?>
 	</label>
 </fieldset>
