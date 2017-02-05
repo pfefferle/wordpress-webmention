@@ -95,8 +95,10 @@ class Webmention_Plugin {
 	 * render the comment form
 	 */
 	public static function comment_form() {
+		$template = apply_filters( 'webmention_comment_form', plugin_dir_path( __FILE__ ) . 'templates/webmention-comment-form.php' );
+
 		if ( 1 == get_option( 'webmention_show_comment_form' ) ) {
-			load_template( plugin_dir_path( __FILE__ ) . 'templates/webmention-comment-form.php' );
+			load_template( $template );
 		}
 	}
 

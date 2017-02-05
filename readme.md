@@ -74,6 +74,7 @@ Project maintained on github at [pfefferle/wordpress-webmention](https://github.
 * added page support (server and client)
 * moved `webmention_post_id` filter to a global function (thanks @dshanske)
 * fixed https://wordpress.org/support/topic/form-for-entering-manual-pings-stays-on/
+* fixed some typos
 
 ### 3.0.1 ###
 
