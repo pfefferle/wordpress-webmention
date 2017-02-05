@@ -319,7 +319,7 @@ class Webmention_Receiver {
 			'https://www.',
 			'https://',
 		), '', untrailingslashit( preg_replace( '/#.*/', '', $data['target'] ) ) ) ) ) {
-			return new WP_Error( 'target_url', __( 'Cannot find target link.', 'webmention' ), array( 'status' => 400 ) );
+			return new WP_Error( 'target_url', __( 'Cannot find target link', 'webmention' ), array( 'status' => 400 ) );
 		}
 
 		if ( ! function_exists( 'wp_kses_post' ) ) {

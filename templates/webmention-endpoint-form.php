@@ -145,6 +145,6 @@
 		</form>
 
 		<p><?php _e( 'Webmention is a way for you to tell me "Hey, I have written a response to your post."', 'webmention' ); ?> </p>
-		<p><?php _e( 'Learn more about webmentions at <a href="http://webmention.net">webmention.net</a>', 'webmention' ); ?> </p>
+		<p><?php _e( 'Learn more about Webmentions at <a href="http://webmention.net">webmention.net</a>', 'webmention' ); ?> </p>
 	</body>
 </html>
