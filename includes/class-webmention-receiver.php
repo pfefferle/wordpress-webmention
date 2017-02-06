@@ -122,7 +122,7 @@ class Webmention_Receiver {
 		$target = $params['target'];
 
 		if ( ! stristr( $target, preg_replace( '/^https?:\/\//i', '', home_url() ) ) ) {
-			return new WP_Error( 'target', __( 'Target is not on this domain', 'webmention' ), array( 'status' => 400 ) );
+			return new WP_Error( 'target_mismatching_domain', __( 'Target is not on this domain', 'webmention' ), array( 'status' => 400 ) );
 		}
 
 		$comment_post_id = webmention_url_to_postid( $target );
@@ -170,15 +170,17 @@ class Webmention_Receiver {
 		// Define WEBMENTION_PROCESS_TYPE as true if you want to define an asynchronous handler
 		if ( WEBMENTION_PROCESS_TYPE_ASYNC === get_webmention_process_type() ) {
 			// Schedule an action a random period of time in the next 2 minutes to handle webmentions.
-			wp_schedule_single_event( time() + wp_rand( 0, 120 ), 'async_handle_webmention', array( $commentdata ) );
+			wp_schedule_single_event( time() + wp_rand( 0, 120 ), 'webmention_process_schedule', array( $commentdata ) );
 
 			// Return the source and target and the 202 Message
 			$return = array(
 				'link' => '', // TODO add API link to check state of comment
 				'source' => $commentdata['source'],
 				'target' => $commentdata['target'],
-				'message' => 'ACCEPTED',
+				'code' => 'scheduled',
+				'message' => apply_filters( 'webmention_schedule_message', __( 'Webmention is scheduled', 'webmention' ) ),
 			);
+
 			return new WP_REST_Response( $return, 202 );
 		}
 
@@ -237,9 +239,11 @@ class Webmention_Receiver {
 
 		// Return select data
 		$return = array(
-			'link' => apply_filters( 'webmention_success_message', get_comment_link( $commentdata['comment_ID'] ) ),
+			'link' => get_comment_link( $commentdata['comment_ID'] ),
 			'source' => $commentdata['source'],
 			'target' => $commentdata['target'],
+			'code' => 'success',
+			'message' => apply_filters( 'webmention_success_message', __( 'Webmention was successful', 'webmention' ) ),
 		);
 
 		return new WP_REST_Response( $return, 200 );
@@ -287,14 +291,14 @@ class Webmention_Receiver {
 
 		// check if source is accessible
 		if ( is_wp_error( $response ) ) {
-			return new WP_Error( 'source_url', __( 'Source URL not found', 'webmention' ), array( 'status' => 400 ) );
+			return new WP_Error( 'source_not_found', __( 'Source URL not found', 'webmention' ), array( 'status' => 400 ) );
 		}
 
 		// A valid response code from the other server would not be considered an error.
 		$response_code = wp_remote_retrieve_response_code( $response );
 		// not an (x)html, sgml, or xml page, no use going further
 		if ( preg_match( '#(image|audio|video|model)/#is', wp_remote_retrieve_header( $response, 'content-type' ) ) ) {
-			return new WP_Error( 'content-type', 'Content Type is Media', array( 'status' => 400 ) );
+			return new WP_Error( 'unsupported_content_type', __( 'Content Type is not supported', 'webmention' ), array( 'status' => 400 ) );
 		}
 
 		switch ( $response_code ) {
@@ -302,11 +306,11 @@ class Webmention_Receiver {
 				$response = wp_safe_remote_get( $data['source'], $args );
 				break;
 			case 410:
-				return new WP_Error( 'deleted', __( 'Page has Been Deleted', 'webmention' ), array( 'status' => 400, 'data' => $data ) );
+				return new WP_Error( 'resource_deleted', __( 'Resource has been deleted', 'webmention' ), array( 'status' => 400, 'data' => $data ) );
 			case 452:
-				return new WP_Error( 'removed', __( 'Page Removed for Legal Reasons', 'webmention' ), array( 'status' => 400, 'data' => $data ) );
+				return new WP_Error( 'resource_removed', __( 'Resource removed for legal reasons', 'webmention' ), array( 'status' => 400, 'data' => $data ) );
 			default:
-				return new WP_Error( 'source_url', wp_remote_retrieve_response_message( $response ), array( 'status' => 400 ) );
+				return new WP_Error( 'source_error', wp_remote_retrieve_response_message( $response ), array( 'status' => 400 ) );
 		}
 		$remote_source_original = wp_remote_retrieve_body( $response );
 
@@ -317,7 +321,7 @@ class Webmention_Receiver {
 			'https://www.',
 			'https://',
 		), '', untrailingslashit( preg_replace( '/#.*/', '', $data['target'] ) ) ) ) ) {
-			return new WP_Error( 'target_url', __( 'Cannot find target link', 'webmention' ), array( 'status' => 400 ) );
+			return new WP_Error( 'target_not_found', __( 'Cannot find target link', 'webmention' ), array( 'status' => 400 ) );
 		}
 
 		if ( ! function_exists( 'wp_kses_post' ) ) {
@@ -484,6 +488,7 @@ class Webmention_Receiver {
 	 */
 	public static function jrd_links( $array ) {
 		$array['links'][] = array( 'rel' => 'webmention', 'href' => get_webmention_endpoint() );
+		// backwards compatibility with v0.1
 		$array['links'][] = array( 'rel' => 'http://webmention.org/', 'href' => get_webmention_endpoint() );
 
 		return $array;
