@@ -469,18 +469,18 @@ class Webmention_Receiver {
 	 * The Webmention autodicovery meta-tags
 	 */
 	public static function html_header() {
+		printf( '<link rel="webmention" href="%s" />' . PHP_EOL, get_webmention_endpoint() );
 		// backwards compatibility with v0.1
 		printf( '<link rel="http://webmention.org/" href="%s" />' . PHP_EOL, get_webmention_endpoint() );
-		printf( '<link rel="webmention" href="%s" />' . PHP_EOL, get_webmention_endpoint() );
 	}
 
 	/**
 	 * The Webmention autodicovery http-header
 	 */
 	public static function http_header() {
+		header( sprintf( 'Link: <%s>; rel="webmention"', get_webmention_endpoint() ), false );
 		// backwards compatibility with v0.1
 		header( sprintf( 'Link: <%s>; rel="http://webmention.org/"', get_webmention_endpoint() ), false );
-		header( sprintf( 'Link: <%s>; rel="webmention"', get_webmention_endpoint() ), false );
 	}
 
 	/**
