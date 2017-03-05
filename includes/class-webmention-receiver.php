@@ -113,13 +113,13 @@ class Webmention_Receiver {
 			return new WP_Error( 'source_missing' , __( 'Source is missing', 'webmention' ), array( 'status' => 400 ) );
 		}
 
-		$source = $params['source'];
+		$source = urldecode( $params['source'] );
 
 		if ( ! isset( $params['target'] ) ) {
 			return new WP_Error( 'target_missing', __( 'Target is missing', 'webmention' ), array( 'status' => 400 ) );
 		}
 
-		$target = $params['target'];
+		$target = urldecode( $params['target'] );
 
 		if ( ! stristr( $target, preg_replace( '/^https?:\/\//i', '', home_url() ) ) ) {
 			return new WP_Error( 'target_mismatching_domain', __( 'Target is not on this domain', 'webmention' ), array( 'status' => 400 ) );

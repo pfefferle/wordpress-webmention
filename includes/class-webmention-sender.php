@@ -68,11 +68,10 @@ class Webmention_Sender {
 			'limit_response_size' => 1048576,
 			'redirection' => 20,
 			'user-agent' => "$user_agent; sending Webmention",
-			'body' => 'source=' . urlencode( $source ) . '&target=' . urlencode( $target ),
 		);
 		$body = array(
-			'source' => $source,
-			'target' => $target,
+			'source' => urlencode( $source ),
+			'target' => urlencode( $target ),
 		);
 		// Allows for additional URL parameters to be added such as Vouch.
 		$body = apply_filters( 'webmention_send_vars', $body, $post_id );
