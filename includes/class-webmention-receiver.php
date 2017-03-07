@@ -31,6 +31,21 @@ class Webmention_Receiver {
 
 		// Save Fragments
 		add_filter( 'preprocess_comment', array( 'Webmention_Receiver', 'save_fragment' ), 9, 1 );
+
+		// Allow for avatars on webmention comment types
+		add_filter( 'get_avatar_comment_types', array( 'Webmention_Receiver', 'get_avatar_comment_types' ) );
+	}
+
+	/**
+	 * Show avatars on webmentions if set
+ 	 *
+ 	 * @param array $types list of avatar enabled comment types
+	 *
+	 * @return array show avatars also on trackbacks and pingbacks
+	 */
+	public static function get_avatar_comment_types( $types ) {
+		$types[] = 'webmention';
+		return array_unique( $types );
 	}
 
 	/**
