@@ -34,6 +34,27 @@ class Webmention_Receiver {
 
 		// Allow for avatars on webmention comment types
 		add_filter( 'get_avatar_comment_types', array( 'Webmention_Receiver', 'get_avatar_comment_types' ) );
+		self::register_meta();
+	}
+
+	/**
+	 * This is more to lay out the data structure than anything else.
+	 */
+	public static function register_meta() {
+		$args = array( 
+			'type' => 'string',
+			'description' => 'Target for the Webmention',
+			'single' => true,
+			'show_in_rest' => true,
+		);
+		register_meta( 'comment', 'webmention_target', $args );
+		$args = array(
+			'type' => 'string',
+			'description' => 'Webmention Fragment',
+			'single' => true,
+			'show_in_rest' => true,
+		);
+		register_meta( 'comment', 'webmention_fragment', $args );
 	}
 
 	/**
@@ -367,8 +388,8 @@ class Webmention_Receiver {
 		$fragment = wp_parse_url( $commentdata['target'], PHP_URL_FRAGMENT );
 
 		$args = array(
-			'comment_post_ID' => $commentdata['comment_post_ID'],
-			'author_url' => htmlentities( $commentdata['comment_author_url'] ),
+			'post_id' => $commentdata['comment_post_ID'],
+			'author_url' => esc_url_raw( $commentdata['comment_author_url'] )
 		);
 
 		// If there is a fragment in the target URL then use this in the dupe search
@@ -392,7 +413,7 @@ class Webmention_Receiver {
 		// but can use a _crossposting_link meta value.
 		// @link https://github.com/pfefferle/wordpress-salmon/blob/master/plugin.php#L192
 		$args = array(
-			'comment_post_ID' => $commentdata['comment_post_ID'],
+			'post_id' => $commentdata['comment_post_ID'],
 			'meta_key' => '_crossposting_link',
 			'meta_value' => $commentdata['comment_author_url'],
 		);
@@ -479,7 +500,7 @@ class Webmention_Receiver {
 	}
 
 	/**
-	 * Save Target Fragment
+	 * Save Target and Fragment
 	 *
 	 * @param array $commentdata the comment-data
 	 *
@@ -496,6 +517,7 @@ class Webmention_Receiver {
 		if ( ! empty( $fragment ) ) {
 			$commentdata['comment_meta']['webmention_fragment'] = $fragment;
 		}
+		$commentdata['comment_meta']['webmention_target'] = $commentdata['target'];
 		return $commentdata;
 	}
 
