@@ -43,18 +43,18 @@ class Webmention_Receiver {
 	public static function register_meta() {
 		$args = array( 
 			'type' => 'string',
-			'description' => 'Target for the Webmention',
+			'description' => 'Target URL for the Webmention',
 			'single' => true,
 			'show_in_rest' => true,
 		);
-		register_meta( 'comment', 'webmention_target', $args );
+		register_meta( 'comment', 'webmention_target_url', $args );
 		$args = array(
 			'type' => 'string',
-			'description' => 'Webmention Fragment',
+			'description' => 'Target URL Fragment for the Webmention',
 			'single' => true,
 			'show_in_rest' => true,
 		);
-		register_meta( 'comment', 'webmention_fragment', $args );
+		register_meta( 'comment', 'webmention_target_fragment', $args );
 	}
 
 	/**
@@ -302,7 +302,7 @@ class Webmention_Receiver {
 	 * @return array|WP_Error $data Return Error Object or array with added fields {
 	 *     $remote_source
 	 *     $remote_source_original
-	 *     $content_type
+	 /*     $content_type
 	 * }
 	 *
 	 * @uses apply_filters calls "http_headers_useragent" on the user agent
@@ -394,7 +394,7 @@ class Webmention_Receiver {
 
 		// If there is a fragment in the target URL then use this in the dupe search
 		if( ! empty( $fragment ) ) {
-			$args['meta_key'] = 'webmention_fragment';
+			$args['meta_key'] = 'webmention_target_fragment';
 			$args['meta_value'] = $fragment;
 		}
 
@@ -515,9 +515,9 @@ class Webmention_Receiver {
 		}
 		$fragment = wp_parse_url( $commentdata['target'], PHP_URL_FRAGMENT );
 		if ( ! empty( $fragment ) ) {
-			$commentdata['comment_meta']['webmention_fragment'] = $fragment;
+			$commentdata['comment_meta']['webmention_target_fragment'] = $fragment;
 		}
-		$commentdata['comment_meta']['webmention_target'] = $commentdata['target'];
+		$commentdata['comment_meta']['webmention_target_url'] = $commentdata['target'];
 		return $commentdata;
 	}
 
