@@ -302,7 +302,7 @@ class Webmention_Receiver {
 	 * @return array|WP_Error $data Return Error Object or array with added fields {
 	 *     $remote_source
 	 *     $remote_source_original
-	 /*     $content_type
+	 *     $content_type
 	 * }
 	 *
 	 * @uses apply_filters calls "http_headers_useragent" on the user agent
