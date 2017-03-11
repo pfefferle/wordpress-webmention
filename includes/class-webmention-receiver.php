@@ -41,7 +41,7 @@ class Webmention_Receiver {
 	 * This is more to lay out the data structure than anything else.
 	 */
 	public static function register_meta() {
-		$args = array( 
+		$args = array(
 			'type' => 'string',
 			'description' => 'Target URL for the Webmention',
 			'single' => true,
@@ -59,8 +59,8 @@ class Webmention_Receiver {
 
 	/**
 	 * Show avatars on webmentions if set
- 	 *
- 	 * @param array $types list of avatar enabled comment types
+		 *
+		 * @param array $types list of avatar enabled comment types
 	 *
 	 * @return array show avatars also on trackbacks and pingbacks
 	 */
@@ -389,11 +389,11 @@ class Webmention_Receiver {
 
 		$args = array(
 			'post_id' => $commentdata['comment_post_ID'],
-			'author_url' => esc_url_raw( $commentdata['comment_author_url'] )
+			'author_url' => esc_url_raw( $commentdata['comment_author_url'] ),
 		);
 
 		// If there is a fragment in the target URL then use this in the dupe search
-		if( ! empty( $fragment ) ) {
+		if ( ! empty( $fragment ) ) {
 			$args['meta_key'] = 'webmention_target_fragment';
 			$args['meta_value'] = $fragment;
 		}
