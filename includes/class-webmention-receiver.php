@@ -28,6 +28,45 @@ class Webmention_Receiver {
 		// Webmention data handler
 		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'default_title_filter' ), 21, 1 );
 		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'default_content_filter' ), 22, 1 );
+
+		// Save Fragments
+		add_filter( 'preprocess_comment', array( 'Webmention_Receiver', 'save_fragment' ), 9, 1 );
+
+		// Allow for avatars on webmention comment types
+		add_filter( 'get_avatar_comment_types', array( 'Webmention_Receiver', 'get_avatar_comment_types' ) );
+		self::register_meta();
+	}
+
+	/**
+	 * This is more to lay out the data structure than anything else.
+	 */
+	public static function register_meta() {
+		$args = array(
+			'type' => 'string',
+			'description' => 'Target URL for the Webmention',
+			'single' => true,
+			'show_in_rest' => true,
+		);
+		register_meta( 'comment', 'webmention_target_url', $args );
+		$args = array(
+			'type' => 'string',
+			'description' => 'Target URL Fragment for the Webmention',
+			'single' => true,
+			'show_in_rest' => true,
+		);
+		register_meta( 'comment', 'webmention_target_fragment', $args );
+	}
+
+	/**
+	 * Show avatars on webmentions if set
+	 *
+	 * @param array $types list of avatar enabled comment types
+	 *
+	 * @return array show avatars also on trackbacks and pingbacks
+	 */
+	public static function get_avatar_comment_types( $types ) {
+		$types[] = 'webmention';
+		return array_unique( $types );
 	}
 
 	/**
@@ -195,7 +234,6 @@ class Webmention_Receiver {
 		$commentdata = apply_filters( 'webmention_comment_data', $commentdata );
 
 		if ( ! $commentdata || is_wp_error( $commentdata ) ) {
-
 			/**
 			 * Fires if Error is Returned from Filter.
 			 *
@@ -346,11 +384,18 @@ class Webmention_Receiver {
 		if ( ! $commentdata || is_wp_error( $commentdata ) ) {
 			return $commentdata;
 		}
+		$fragment = wp_parse_url( $commentdata['target'], PHP_URL_FRAGMENT );
 
 		$args = array(
-			'comment_post_ID' => $commentdata['comment_post_ID'],
-			'author_url' => htmlentities( $commentdata['comment_author_url'] ),
+			'post_id' => $commentdata['comment_post_ID'],
+			'author_url' => esc_url_raw( $commentdata['comment_author_url'] ),
 		);
+
+		// If there is a fragment in the target URL then use this in the dupe search
+		if ( ! empty( $fragment ) ) {
+			$args['meta_key'] = 'webmention_target_fragment';
+			$args['meta_value'] = $fragment;
+		}
 
 		$comments = get_comments( $args );
 		// check result
@@ -367,7 +412,7 @@ class Webmention_Receiver {
 		// but can use a _crossposting_link meta value.
 		// @link https://github.com/pfefferle/wordpress-salmon/blob/master/plugin.php#L192
 		$args = array(
-			'comment_post_ID' => $commentdata['comment_post_ID'],
+			'post_id' => $commentdata['comment_post_ID'],
 			'meta_key' => '_crossposting_link',
 			'meta_value' => $commentdata['comment_author_url'],
 		);
@@ -450,6 +495,28 @@ class Webmention_Receiver {
 		// generate default text
 		$commentdata['comment_content'] = sprintf( __( 'This %1$s was mentioned on <a href="%2$s">%3$s</a>', 'webmention' ), $post_format, esc_url( $commentdata['comment_author_url'] ), $host );
 
+		return $commentdata;
+	}
+
+	/**
+	 * Save Target and Fragment
+	 *
+	 * @param array $commentdata the comment-data
+	 *
+	 * @return array with added meta field
+	 */
+	public static function save_fragment( $commentdata ) {
+		if ( ! isset( $commentdata['target'] ) ) {
+			return $commentdata;
+		}
+		if ( ! isset( $commentdata['comment_meta'] ) ) {
+			$commentdata['comment_meta'] = array();
+		}
+		$fragment = wp_parse_url( $commentdata['target'], PHP_URL_FRAGMENT );
+		if ( ! empty( $fragment ) ) {
+			$commentdata['comment_meta']['webmention_target_fragment'] = $fragment;
+		}
+		$commentdata['comment_meta']['webmention_target_url'] = $commentdata['target'];
 		return $commentdata;
 	}
 
