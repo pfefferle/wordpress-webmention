@@ -59,8 +59,8 @@ class Webmention_Receiver {
 
 	/**
 	 * Show avatars on webmentions if set
-		 *
-		 * @param array $types list of avatar enabled comment types
+	 *
+	 * @param array $types list of avatar enabled comment types
 	 *
 	 * @return array show avatars also on trackbacks and pingbacks
 	 */
@@ -234,7 +234,6 @@ class Webmention_Receiver {
 		$commentdata = apply_filters( 'webmention_comment_data', $commentdata );
 
 		if ( ! $commentdata || is_wp_error( $commentdata ) ) {
-
 			/**
 			 * Fires if Error is Returned from Filter.
 			 *
