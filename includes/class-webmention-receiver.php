@@ -90,9 +90,6 @@ class Webmention_Receiver {
 	 *
 	 * This is only done for the webmention endpoint.
 	 *
-	 * @access private
-	 * @since 0.1.0
-	 *
 	 * @param bool                      $served  Whether the request has already been served.
 	 * @param WP_HTTP_ResponseInterface $result  Result to send to the client. Usually a WP_REST_Response.
 	 * @param WP_REST_Request           $request Request used to generate the response.
