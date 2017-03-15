@@ -14,24 +14,17 @@ Webmention for WordPress!
 
 ## Description ##
 
-[Webmention](http://www.w3.org/TR/webmention/) is a simple and modern alternative to the Pingback/Trackback protocol.
+[Webmention](http://www.w3.org/TR/webmention/) is a web standard that enables conversations across the web, a powerful building block that is used for 
+a growing federated network of comments, likes, reposts, and other rich interactions across the decentralized social web.
 
-[vimeo https://vimeo.com/85217592]
--- Video by [Andy Sylvester](http://andysylvester.com/2014/01/27/working-with-webmention-video/)
-
-From the [W3C Recommendation specification](http://www.w3.org/TR/webmention/):
-
-> Webmention is a simple way to automatically notify any URL when you link to it on your site.
-> From the receivers perpective, it's a way to request notification when other sites link to it.
-> It’s a modern alternative to Pingback and other forms of Linkback.
+When you link to a website, you can send it a Webmention to notify it. If it supports Webmentions, then that website may display your post as a comment,
+like, or other response, and presto, you’re having a conversation from one site to another! 
 
 ## Frequently Asked Questions ##
 
 ### What are Webmentions? ###
 
 [Webmention](http://www.w3.org/TR/webmention/) is a simple way to automatically notify any URL when you link to it on your site. From the receivers perpective, it's a way to request notification when other sites link to it.
-
-It’s a modern alternative to Pingback and other forms of Linkback.
 
 ### That Sounds Like a Pingback or a Trackback ###
 
@@ -46,6 +39,9 @@ On the Settings --> Discussion Page in WordPress:
 * Activate receiving Webmentions by checking the "Allow link notifications from other blogs (pingbacks and trackbacks) on new articles" option.
 
 You can use the `send_webmention($source, $target)` function and pass a source and a target or you can fire an action like `do_action('send_webmention', $source, $target)`.
+
+[vimeo https://vimeo.com/85217592]
+ 19 -- Video by [Andy Sylvester](http://andysylvester.com/2014/01/27/working-with-webmention-video/)
 
 ### How can I handle Webmentions to my Homepage or Archive Pages? ###
 
@@ -65,9 +61,23 @@ comments on a post or a page. The plugin provides a simple filter for that:
     }
     add_filter("webmention_post_id", "handle_exotic_webmentions", 10, 2);
 
+## Other Notes ##
+
+### Caching ###
+
+The URL for the webmention endpoint, which you can view in the source of your pages, should be excluded from any server or plugin caching. 
+
 ## Changelog ##
 
-Project maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
+Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
+
+### 3.1.1 ###
+
+* URLEncode/Decode source and target
+* Webmention Comment Type now declares support for avatars
+* Meta keys are now registered for `webmention_target_url` and `webmention_target_fragment`
+* Target URL is stored instead of derived from the permalink to ensure permanance
+* Target fragment is stored to support fragmentions. Can also suport comments when reply is to a comment.
 
 ### 3.1.0 ###
 
