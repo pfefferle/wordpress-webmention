@@ -12,11 +12,9 @@ Webmention for WordPress!
 
 == Description ==
 
-[Webmention](http://www.w3.org/TR/webmention/) is a web standard that enables conversations across the web, a powerful building block that is used for 
-a growing federated network of comments, likes, reposts, and other rich interactions across the decentralized social web.
+[Webmention](http://www.w3.org/TR/webmention/) is a web standard that enables conversations across the web, a powerful building block that is used for a growing federated network of comments, likes, reposts, and other rich interactions across the decentralized social web.
 
-When you link to a website, you can send it a Webmention to notify it. If it supports Webmentions, then that website may display your post as a comment,
-like, or other response, and presto, you’re having a conversation from one site to another! 
+When you link to a website, you can send it a Webmention to notify it. If it supports Webmentions, then that website may display your post as a comment, like, or other response, and presto, you’re having a conversation from one site to another! 
 
 == Frequently Asked Questions ==
 
@@ -39,7 +37,7 @@ On the Settings --> Discussion Page in WordPress:
 You can use the `send_webmention($source, $target)` function and pass a source and a target or you can fire an action like `do_action('send_webmention', $source, $target)`.
 
 [vimeo https://vimeo.com/85217592]
- 19 -- Video by [Andy Sylvester](http://andysylvester.com/2014/01/27/working-with-webmention-video/)
+-- Video by [Andy Sylvester](http://andysylvester.com/2014/01/27/working-with-webmention-video/)
 
 = How can I handle Webmentions to my Homepage or Archive Pages? =
 
