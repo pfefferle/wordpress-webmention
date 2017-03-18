@@ -35,9 +35,9 @@ class Webmention_Plugin {
 	public static function init() {
 		// Add a new feature type to posts for webmentions
 		add_post_type_support( 'post', 'webmentions' );
-		//	if ( 1 == get_option( 'webmention_support_pages' ) ) {
-			add_post_type_support( 'page', array( 'webmentions' ) );
-		//	}
+		if ( 1 == get_option( 'webmention_support_pages' ) ) {
+			add_post_type_support( 'page', 'webmentions' );
+		}
 		if ( WP_DEBUG ) {
 			require_once( dirname( __FILE__ ) . '/includes/debug.php' );
 		}
