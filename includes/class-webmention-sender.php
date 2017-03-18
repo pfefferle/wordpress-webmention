@@ -15,9 +15,11 @@ class Webmention_Sender {
 
 		// run webmentions before the other pinging stuff
 		add_action( 'do_pings', array( 'Webmention_Sender', 'do_webmentions' ), 5, 1 );
-
-		add_action( 'publish_post', array( 'Webmention_Sender', 'publish_hook' ) );
-		add_action( 'publish_page', array( 'Webmention_Sender', 'publish_hook' ) );
+		// Send Webmentions from Every Type that Declared Webmention Support
+		$post_types = get_post_types_by_support( 'webmentions' );
+		foreach ( $post_types as $post_type ) {
+			add_action( 'publish_' . $post_type, array( 'Webmention_Sender', 'publish_hook' ) );
+		}
 	}
 
 	/**
@@ -181,9 +183,7 @@ class Webmention_Sender {
 		$mentions = get_posts(
 			array(
 				'meta_key' => '_mentionme',
-				'post_type' => get_post_types(
-					array( 'public' => true )
-				),
+				'post_type' => get_post_types_by_support( 'webmentions' ),
 				'fields' => 'ids',
 				'nopaging' => true,
 			)

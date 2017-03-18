@@ -39,6 +39,11 @@ You can use the `send_webmention($source, $target)` function and pass a source a
 [vimeo https://vimeo.com/85217592]
 -- Video by [Andy Sylvester](http://andysylvester.com/2014/01/27/working-with-webmention-video/)
 
+= How do I support Webmentions for my custom post type? =
+
+When declaring your custom post type, add post type support for webmentions by either including it in your register_post_type entry or adding it later using add_post_type_support. This
+will also add support for receiving pingbacks and trackbacks as WordPress cannot currently distinguish between different linkback types.
+
 = How can I handle Webmentions to my Homepage or Archive Pages? =
 
 Webmentions should be allowed on all URLs of a blog. The plugin currently supports only Webmentions on
@@ -66,6 +71,10 @@ The URL for the webmention endpoint, which you can view in the source of your pa
 == Changelog ==
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
+
+= 3.1.2 =
+* Enable option for page support
+* Allow custom post types to declare support for webmentions as a feature which will enable pings.
 
 = 3.1.1 =
 

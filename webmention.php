@@ -33,6 +33,11 @@ class Webmention_Plugin {
 	 * Initialize Webmention Plugin
 	 */
 	public static function init() {
+		// Add a new feature type to posts for webmentions
+		add_post_type_support( 'post', 'webmentions' );
+		//	if ( 1 == get_option( 'webmention_support_pages' ) ) {
+			add_post_type_support( 'page', array( 'webmentions' ) );
+		//	}
 		if ( WP_DEBUG ) {
 			require_once( dirname( __FILE__ ) . '/includes/debug.php' );
 		}
@@ -51,11 +56,26 @@ class Webmention_Plugin {
 		require_once( dirname( __FILE__ ) . '/includes/class-webmention-receiver.php' );
 		add_action( 'init', array( 'Webmention_Receiver', 'init' ) );
 
+		// Default Comment Status
+		add_filter( 'get_default_comment_status', array( 'Webmention_Plugin', 'get_default_comment_status' ), 11, 3 );
+
 		// initialize admin settings
 		add_action( 'admin_init', array( 'Webmention_Plugin', 'admin_register_settings' ) );
 
 		add_action( 'admin_comment_types_dropdown', array( 'Webmention_Plugin', 'comment_types_dropdown' ) );
 		add_action( 'comment_form_after', array( 'Webmention_Plugin', 'comment_form' ), 11 );
+	}
+
+	public static function get_default_comment_status( $status, $post_type, $comment_type ) {
+		if ( 'webmention' === $comment_type ) {
+			return post_type_supports( $post_type, 'webmentions' ) ? 'open' : 'closed' ;
+		}
+		// Since support for the pingback comment type is used to keep pings open...
+		if ( ( 'pingback' === $comment_type ) ) {
+			return ( post_type_supports( $post_type, 'webmentions' ) ? 'open' : $status );
+		}
+
+		return $status;
 	}
 
 	/**
@@ -73,6 +93,12 @@ class Webmention_Plugin {
 			'description' => __( 'Disable Self Webmentions on the Same Domain', 'webmention' ),
 			'show_in_rest' => true,
 			'default' => 0,
+		) );
+		register_setting( 'discussion', 'webmention_support_pages', array(
+			'type' => 'boolean',
+			'description' => __( 'Enable Webmention Support for Pages', 'webmention' ),
+			'show_in_rest' => true,
+			'default' => 1,
 		) );
 		register_setting( 'discussion', 'webmention_show_comment_form', array(
 			'type' => 'boolean',

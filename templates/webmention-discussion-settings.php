@@ -15,6 +15,14 @@
 
 	<br />
 
+	<label for="webmention_support_pages">
+		<input type="checkbox" name="webmention_support_pages" id="webmention_support_pages" value="1" <?php
+			echo checked( true, get_option( 'webmention_support_pages' ) );  ?> />
+		<?php _e( 'Enable Webmention Support for Pages', 'webmention' ) ?>
+	</label>
+
+	<br />
+
 	<label for="webmention_show_comment_form">
 		<input type="checkbox" name="webmention_show_comment_form" id="webmention_show_comment_form" value="1" <?php
 			echo checked( true, get_option( 'webmention_show_comment_form' ) );  ?> />
