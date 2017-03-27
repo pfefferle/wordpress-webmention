@@ -32,6 +32,9 @@ class Webmention_Receiver {
 		// Save Fragments
 		add_filter( 'preprocess_comment', array( 'Webmention_Receiver', 'save_fragment' ), 9, 1 );
 
+		// Save Original Creation Time in GMT
+		add_filter( 'preprocess_comment', array( 'Webmention_Receiver', 'save_original_time' ), 9, 1 );
+
 		// Allow for avatars on webmention comment types
 		add_filter( 'get_avatar_comment_types', array( 'Webmention_Receiver', 'get_avatar_comment_types' ) );
 		self::register_meta();
@@ -55,6 +58,15 @@ class Webmention_Receiver {
 			'show_in_rest' => true,
 		);
 		register_meta( 'comment', 'webmention_target_fragment', $args );
+		// Purpose of this is to store the original time as there is no modified time in the comment table.
+		$args = array(
+			'type' => 'string',
+			'description' => 'Original Creation Time for the Webmention (GMT)',
+			'single' => true,
+			'show_in_rest' => true,
+		);
+		register_meta( 'comment', 'webmention_creation_time', $args );
+
 	}
 
 	/**
@@ -516,6 +528,23 @@ class Webmention_Receiver {
 		$commentdata['comment_meta']['webmention_target_url'] = $commentdata['target'];
 		return $commentdata;
 	}
+
+	/** 
+	 * Save Original Time
+	 * @param array $commentdata the comment-data
+	 *
+	 * @return array with added meta field
+	 */
+	public static function save_original_time( $commentdata ) {
+		if ( ! isset( $commentdata['comment_meta'] ) ) {
+			$commentdata['comment_meta'] = array();
+		}
+		// Save in GMT
+		$commentdata['comment_meta']['webmention_creation_time'] = current_time( mysql, true );
+		return $commentdata;
+	}
+
+
 
 	/**
 	 * Marks the post as "no webmentions sent yet"
