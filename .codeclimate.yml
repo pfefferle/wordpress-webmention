@@ -2,4 +2,8 @@ engines:
   phpcodesniffer:
     enabled: true
     config:
-      standard: "WordPress-Core"
+      file_extensions: "php"
+      standard: "phpcs.xml"
+ratings:
+  paths:
+  - "**.php"
