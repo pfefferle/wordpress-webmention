@@ -29,12 +29,6 @@ class Webmention_Receiver {
 		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'default_title_filter' ), 21, 1 );
 		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'default_content_filter' ), 22, 1 );
 
-		// Save Fragments
-		add_filter( 'preprocess_comment', array( 'Webmention_Receiver', 'save_fragment' ), 9, 1 );
-
-		// Save Original Creation Time in GMT
-		add_filter( 'preprocess_comment', array( 'Webmention_Receiver', 'save_original_time' ), 9, 1 );
-
 		// Allow for avatars on webmention comment types
 		add_filter( 'get_avatar_comment_types', array( 'Webmention_Receiver', 'get_avatar_comment_types' ) );
 		self::register_meta();
@@ -51,6 +45,14 @@ class Webmention_Receiver {
 			'show_in_rest' => true,
 		);
 		register_meta( 'comment', 'webmention_target_url', $args );
+		// For pingbacks the source URL is stored in the author URL. This means you cannot have an author URL that is different than the source.
+		$args = array(
+			'type' => 'string',
+			'description' => 'Source URL for the Webmention',
+			'single' => true,
+			'show_in_rest' => true,
+		);
+		register_meta( 'comment', 'webmention_source_url', $args );
 		$args = array(
 			'type' => 'string',
 			'description' => 'Target URL Fragment for the Webmention',
@@ -195,10 +197,12 @@ class Webmention_Receiver {
 		}
 		// In the event of async processing this needs to be stored here as it might not be available
 		// later.
+		$comment_meta = array();
 		$comment_author_ip = preg_replace( '/[^0-9a-fA-F:., ]/', '', $_SERVER['REMOTE_ADDR'] );
 		$comment_agent = isset( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT']: '';
 		$comment_date = current_time( 'mysql' );
 		$comment_date_gmt = current_time( 'mysql', 1 );
+				$comment_meta['webmention_creation_time'] = $comment_date_gmt;
 
 		// change this if your theme can't handle the Webmentions comment type
 		$comment_type = WEBMENTION_COMMENT_TYPE;
@@ -206,12 +210,21 @@ class Webmention_Receiver {
 		// change this if you want to auto approve your Webmentions
 		$comment_approved = WEBMENTION_COMMENT_APPROVE;
 
-		$commentdata = compact( 'comment_type', 'comment_approved', 'comment_agent', 'comment_date', 'comment_date_gmt', 'source', 'target' );
+		$commentdata = compact( 'comment_type', 'comment_approved', 'comment_agent', 'comment_date', 'comment_date_gmt', 'comment_meta', 'source', 'target' );
 
 		$commentdata['comment_post_ID'] = $comment_post_id;
 		$commentdata['comment_author_IP'] = $comment_author_ip;
 		// Set Comment Author URL to Source
 		$commentdata['comment_author_url'] = esc_url_raw( $commentdata['source'] );
+		// Save Source to Meta to Allow Author URL to be Changed and Parsed
+		$commentdata['comment_meta']['webmention_source_url'] = $commentdata['comment_author_url'];
+
+		$fragment = wp_parse_url( $commentdata['target'], PHP_URL_FRAGMENT );
+		if ( ! empty( $fragment ) ) {
+			$commentdata['comment_meta']['webmention_target_fragment'] = $fragment;
+		}
+		$commentdata['comment_meta']['webmention_target_url'] = $commentdata['target'];
+
 		// add empty fields
 		$commentdata['comment_parent'] = $commentdata['comment_author_email'] = '';
 
@@ -394,16 +407,29 @@ class Webmention_Receiver {
 			return $commentdata;
 		}
 		$fragment = wp_parse_url( $commentdata['target'], PHP_URL_FRAGMENT );
-
-		$args = array(
-			'post_id' => $commentdata['comment_post_ID'],
-			'author_url' => esc_url_raw( $commentdata['comment_author_url'] ),
-		);
-
-		// If there is a fragment in the target URL then use this in the dupe search
 		if ( ! empty( $fragment ) ) {
-			$args['meta_key'] = 'webmention_target_fragment';
-			$args['meta_value'] = $fragment;
+			// Check for the newer meta value before checking for the more traditional location
+			$args = array(
+				'post_id' => $commentdata['comment_post_ID'],
+				'meta_query' => array(
+					array(
+						'key' => 'webmention_source_url',
+						'value' => $commentdata['comment_author_url'],
+						'compare' => '=',
+					),
+					array(
+						'key' => 'webmention_target_fragment',
+						'value' => $fragment,
+						'compare' => '=',
+					),
+				),
+			);
+		} else {
+			$args = array(
+				'post_id' => $commentdata['comment_post_ID'],
+				'meta_key' => 'webmention_source_url',
+				'meta_value' => $commentdata['comment_author_url'],
+			);
 		}
 
 		$comments = get_comments( $args );
@@ -413,6 +439,25 @@ class Webmention_Receiver {
 			$commentdata['comment_ID'] = $comment->comment_ID;
 			$commentdata['comment_approved'] = $comment->comment_approved;
 
+			return $commentdata;
+		}
+
+		// Check in comment_author_url if the newer location is empty
+		$args = array(
+			'post_id' => $commentdata['comment_post_ID'],
+			'author_url' => $commentdata['comment_author_url'],
+		);
+		// If there is a fragment in the target URL then use this in the dupe search
+		if ( ! empty( $fragment ) ) {
+			$args['meta_key'] = 'webmention_target_fragment';
+			$args['meta_value'] = $fragment;
+		}
+		$comments = get_comments( $args );
+		// check result
+		if ( ! empty( $comments ) ) {
+			$comment = $comments[0];
+			$commentdata['comment_ID'] = $comment->comment_ID;
+			$commentdata['comment_approved'] = $comment->comment_approved;
 			return $commentdata;
 		}
 
@@ -506,44 +551,6 @@ class Webmention_Receiver {
 
 		return $commentdata;
 	}
-
-	/**
-	 * Save Target and Fragment
-	 *
-	 * @param array $commentdata the comment-data
-	 *
-	 * @return array with added meta field
-	 */
-	public static function save_fragment( $commentdata ) {
-		if ( ! isset( $commentdata['target'] ) ) {
-			return $commentdata;
-		}
-		if ( ! isset( $commentdata['comment_meta'] ) ) {
-			$commentdata['comment_meta'] = array();
-		}
-		$fragment = wp_parse_url( $commentdata['target'], PHP_URL_FRAGMENT );
-		if ( ! empty( $fragment ) ) {
-			$commentdata['comment_meta']['webmention_target_fragment'] = $fragment;
-		}
-		$commentdata['comment_meta']['webmention_target_url'] = $commentdata['target'];
-		return $commentdata;
-	}
-
-	/** 
-	 * Save Original Time
-	 * @param array $commentdata the comment-data
-	 *
-	 * @return array with added meta field
-	 */
-	public static function save_original_time( $commentdata ) {
-		if ( ! isset( $commentdata['comment_meta'] ) ) {
-			$commentdata['comment_meta'] = array();
-		}
-		// Save in GMT
-		$commentdata['comment_meta']['webmention_creation_time'] = current_time( mysql, true );
-		return $commentdata;
-	}
-
 
 
 	/**

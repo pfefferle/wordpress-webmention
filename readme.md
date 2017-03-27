@@ -6,7 +6,7 @@
 **Tags:** webmention, pingback, trackback, linkback, indieweb  
 **Requires at least:** 4.7  
 **Tested up to:** 4.7.3  
-**Stable tag:** 3.1.1  
+**Stable tag:** 3.1.2  
 **License:** MIT  
 **License URI:** http://opensource.org/licenses/MIT  
 
@@ -77,6 +77,10 @@ Project and support maintained on github at [pfefferle/wordpress-webmention](htt
 ### 3.1.2 ###
 * Enable option for page support
 * Allow custom post types to declare support for webmentions as a feature which will enable pings.
+* Remove new meta properties from being added during preprocessing as these are added after Semantic Linkbacks Enhancement. 
+* Move new meta properties to being built into webmention code
+* Store webmention source in comment meta but fall back to checking `comment_author_url` if not set.
+* Store webmention creation time in comment meta as comment time is overridden by Semantic Linkbacks allowing to determine if a comment has been modified.
 
 ### 3.1.1 ###
 
