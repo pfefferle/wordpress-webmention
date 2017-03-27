@@ -3,7 +3,3 @@ engines:
     enabled: true
     config:
       file_extensions: "php"
-      standard: "phpcs.xml"
-ratings:
-  paths:
-  - "**.php"
