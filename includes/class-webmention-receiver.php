@@ -202,7 +202,7 @@ class Webmention_Receiver {
 		$comment_agent = isset( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT']: '';
 		$comment_date = current_time( 'mysql' );
 		$comment_date_gmt = current_time( 'mysql', 1 );
-				$comment_meta['webmention_creation_time'] = $comment_date_gmt;
+		$comment_meta['webmention_created_at'] = $comment_date_gmt;
 
 		// change this if your theme can't handle the Webmentions comment type
 		$comment_type = WEBMENTION_COMMENT_TYPE;
