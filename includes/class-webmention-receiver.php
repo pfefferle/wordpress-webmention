@@ -177,13 +177,13 @@ class Webmention_Receiver {
 
 		$comment_post_id = webmention_url_to_postid( $target );
 
-		if ( url_to_postid( $source ) === $comment_post_id ) {
-			return new WP_Error( 'source_equals_target', __( 'Target and source cannot direct to the same resource', 'webmention' ), array( 'status' => 400 ) );
-		}
-
 		// check if post id exists
 		if ( ! $comment_post_id ) {
 			return new WP_Error( 'target_not_valid', __( 'Target is not a valid post', 'webmention' ), array( 'status' => 400 ) );
+		}
+
+		if ( url_to_postid( $source ) === $comment_post_id ) {
+			return new WP_Error( 'source_equals_target', __( 'Target and source cannot direct to the same resource', 'webmention' ), array( 'status' => 400 ) );
 		}
 
 		// check if pings are allowed
