@@ -121,9 +121,9 @@
 	</style>
 	</head>
 	<body id="webmention-endpint-page">
-		<h1><?php _e( 'Send a Webmention', 'webmention_form' ); ?></h1>
+		<h1><?php _e( 'Send a Webmention', 'webmention' ); ?></h1>
 		<p>
-			<?php _e( 'Responding with a post on your own blog? Send me a <a href="http://indieweb.org/webmention">Webmention</a> by writing something on your website that links to this post and then enter your post URL below.', 'webmention_form' ); ?>
+			<?php _e( 'Responding with a post on your own blog? Send me a <a href="http://indieweb.org/webmention">Webmention</a> by writing something on your website that links to this post and then enter your post URL below.', 'webmention' ); ?>
 		</p>
 
 		<?php do_action( 'webmention_endpoint_form_before_form' ); ?>
@@ -131,11 +131,11 @@
 		<form id="webmention-form" action="<?php echo get_webmention_endpoint(); ?>" method="post">
 			<?php do_action( 'webmention_endpoint_form_before_input_fields' ); ?>
 			<p>
-				<label for="webmention-source"><?php _e( 'Source URL' ); ?>:</label><br />
+				<label for="webmention-source"><?php _e( 'Source URL', 'webmention' ); ?>:</label><br />
 				<input id="webmention-source" type="url" name="source" placeholder="<?php _e( 'URL/Permalink of your article', 'webmention' ); ?>" size="70" />
 			</p>
 			<p>
-				<label for="webmention-target"><?php _e( 'Target URL' ); ?>:</label><br />
+				<label for="webmention-target"><?php _e( 'Target URL', 'webmention' ); ?>:</label><br />
 				<input id="webmention-target" type="url" name="target" placeholder="<?php _e( 'URL/Permalink of my article', 'webmention' ); ?>" size="70" />
 			</p>
 			<p>
