@@ -3,8 +3,8 @@ Contributors: pfefferle, dshanske
 Donate link: http://14101978.de
 Tags: webmention, pingback, trackback, linkback, indieweb
 Requires at least: 4.7
-Tested up to: 4.7.3
-Stable tag: 3.1.2
+Tested up to: 4.7.5
+Stable tag: 3.2.0
 License: MIT
 License URI: http://opensource.org/licenses/MIT
 
@@ -14,7 +14,7 @@ Webmention for WordPress!
 
 [Webmention](http://www.w3.org/TR/webmention/) is a web standard that enables conversations across the web, a powerful building block that is used for a growing federated network of comments, likes, reposts, and other rich interactions across the decentralized social web.
 
-When you link to a website, you can send it a Webmention to notify it. If it supports Webmentions, then that website may display your post as a comment, like, or other response, and presto, you’re having a conversation from one site to another! 
+When you link to a website, you can send it a Webmention to notify it. If it supports Webmentions, then that website may display your post as a comment, like, or other response, and presto, you’re having a conversation from one site to another!
 
 == Frequently Asked Questions ==
 
@@ -64,18 +64,18 @@ comments on a post or a page. The plugin provides a simple filter for that:
 
 == Other Notes ==
 
-= Caching = 
+= Caching =
 
-The URL for the webmention endpoint, which you can view in the source of your pages, should be excluded from any server or plugin caching. 
+The URL for the webmention endpoint, which you can view in the source of your pages, should be excluded from any server or plugin caching.
 
 == Changelog ==
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
 
-= 3.1.2 =
+= 3.2.0 =
 * Enable option for page support
 * Allow custom post types to declare support for webmentions as a feature which will enable pings.
-* Remove new meta properties from being added during preprocessing as these are added after Semantic Linkbacks Enhancement. 
+* Remove new meta properties from being added during preprocessing as these are added after Semantic Linkbacks Enhancement.
 * Move new meta properties to being built into webmention code
 * Store webmention source in comment meta but fall back to checking `comment_author_url` if not set.
 * Store webmention creation time in comment meta as comment time is overridden by Semantic Linkbacks allowing to determine if a comment has been modified.

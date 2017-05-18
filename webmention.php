@@ -3,9 +3,9 @@
  * Plugin Name: Webmention
  * Plugin URI: https://github.com/pfefferle/wordpress-webmention
  * Description: Webmention support for WordPress posts
- * Author: pfefferle
- * Author URI: http://notiz.blog/
- * Version: 3.1.2
+ * Author: Matthias Pfefferle
+ * Author URI: https://notiz.blog/
+ * Version: 3.2.0
  * License: MIT
  * License URI: http://opensource.org/licenses/MIT
  * Text Domain: webmention
