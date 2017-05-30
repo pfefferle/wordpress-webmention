@@ -71,6 +71,98 @@ function webmention_url_to_postid( $url ) {
 	return apply_filters( 'webmention_post_id', url_to_postid( $url ), $url );
 }
 
+/**
+ * Finds a Webmention server URI based on the given URL
+ *
+ * Checks the HTML for the rel="webmention" link and webmention headers. It does
+ * a check for the webmention headers first and returns that, if available. The
+ * check for the rel="webmention" has more overhead than just the header.
+ * Supports backward compatability to webmention.org headers.
+ *
+ * @see https://www.w3.org/TR/webmention/#sender-discovers-receiver-webmention-endpoint
+ *
+ * @param string $url URL to ping
+ *
+ * @return bool|string False on failure, string containing URI on success
+ */
+function webmention_discover_endpoint( $url ) {
+	/** @todo Should use Filter Extension or custom preg_match instead. */
+	$parsed_url = wp_parse_url( $url );
+
+	if ( ! isset( $parsed_url['host'] ) ) { // Not an URL. This should never happen.
+		return false;
+	}
+
+	// do not search for a Webmention server on our own uploads
+	$uploads_dir = wp_upload_dir();
+	if ( 0 === strpos( $url, $uploads_dir['baseurl'] ) ) {
+		return false;
+	}
+
+	$wp_version = get_bloginfo( 'version' );
+
+	$user_agent = apply_filters( 'http_headers_useragent', 'WordPress/' . $wp_version . '; ' . get_bloginfo( 'url' ) );
+	$args = array(
+		'timeout' => 100,
+		'limit_response_size' => 1048576,
+		'redirection' => 20,
+		'user-agent' => "$user_agent; finding Webmention endpoint",
+	);
+
+	$response = wp_safe_remote_head( $url, $args );
+
+	if ( is_wp_error( $response ) ) {
+		return false;
+	}
+
+	// check link header
+	if ( $links = wp_remote_retrieve_header( $response, 'link' ) ) {
+		if ( is_array( $links ) ) {
+			foreach ( $links as $link ) {
+				if ( preg_match( '/<(.[^>]+)>;\s+rel\s?=\s?[\"\']?(http:\/\/)?webmention(\.org)?\/?[\"\']?/i', $link, $result ) ) {
+					return WP_Http::make_absolute_url( $result[1], $url );
+				}
+			}
+		} else {
+			if ( preg_match( '/<(.[^>]+)>;\s+rel\s?=\s?[\"\']?(http:\/\/)?webmention(\.org)?\/?[\"\']?/i', $links, $result ) ) {
+				return WP_Http::make_absolute_url( $result[1], $url );
+			}
+		}
+	}
+
+	// not an (x)html, sgml, or xml page, no use going further
+	if ( preg_match( '#(image|audio|video|model)/#is', wp_remote_retrieve_header( $response, 'content-type' ) ) ) {
+		return false;
+	}
+
+	// now do a GET since we're going to look in the html headers (and we're sure its not a binary file)
+	$response = wp_safe_remote_get( $url, $args );
+
+	if ( is_wp_error( $response ) ) {
+		return false;
+	}
+
+	$contents = wp_remote_retrieve_body( $response );
+
+	// unicode to HTML entities
+	$contents = mb_convert_encoding( $contents, 'HTML-ENTITIES', mb_detect_encoding( $contents ) );
+
+	libxml_use_internal_errors( true );
+
+	$doc = new DOMDocument();
+	$doc->loadHTML( $contents );
+
+	$xpath = new DOMXPath( $doc );
+
+	// check <link> and <a> elements
+	// checks only body>a-links
+	foreach ( $xpath->query( '(//link|//a)[contains(concat(" ", @rel, " "), " webmention ") or contains(@rel, "webmention.org")]/@href' ) as $result ) {
+		return WP_Http::make_absolute_url( $result->value, $url );
+	}
+
+	return false;
+}
+
 if ( ! function_exists( 'wp_get_meta_tags' ) ) :
 	/**
 	 * Parse meta tags from source content
