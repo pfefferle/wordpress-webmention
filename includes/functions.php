@@ -104,34 +104,3 @@ if ( ! function_exists( 'wp_get_meta_tags' ) ) :
 		return $meta_tags;
 	}
 endif;
-
-if ( ! function_exists( 'wp_extract_urls' ) ) :
-	/**
-	 * Use RegEx to extract URLs from arbitrary content.
-	 *
-	 * @since 3.7.0
-	 *
-	 * @param string $content Content to extract URLs from.
-	 * @return array URLs found in passed string.
-	 */
-	function wp_extract_urls( $content ) {
-		preg_match_all(
-			'#(["\']?)('
-				. '(?:([\w-]+:)?//?)'
-				. '[^\s()<>]+'
-				. '[.]'
-				. '(?:'
-					. '\([\w\d]+\)|'
-					. '(?:'
-						. '[^`!()\[\]{};:\'".,<>«»“”‘’\s]|'
-						. '(?:[:]\d+)?/?'
-					. ')+'
-				. ')'
-			. ')\\1#',
-			$content,
-			$post_links
-		);
-		$post_links = array_unique( array_map( 'html_entity_decode', $post_links[2] ) );
-		return array_values( $post_links );
-	}
-endif;
