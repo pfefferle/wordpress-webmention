@@ -74,7 +74,13 @@ The URL for the webmention endpoint, which you can view in the source of your pa
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
 
+### 3.2.1 ###
+
+* added missing i18n strings
+* removed polyfill
+
 ### 3.2.0 ###
+
 * Enable option for page support
 * Allow custom post types to declare support for webmentions as a feature which will enable pings.
 * Remove new meta properties from being added during preprocessing as these are added after Semantic Linkbacks Enhancement.
