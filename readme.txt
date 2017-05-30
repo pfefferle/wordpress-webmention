@@ -74,6 +74,7 @@ Project and support maintained on github at [pfefferle/wordpress-webmention](htt
 
 = 3.2.1 =
 
+* moved endpoint discovery to functions.php
 * added missing i18n strings
 * removed polyfill
 
