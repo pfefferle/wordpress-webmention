@@ -40,35 +40,37 @@ class Webmention_Receiver {
 	public static function register_meta() {
 		$args = array(
 			'type' => 'string',
-			'description' => 'Target URL for the Webmention',
+			'description' => __( 'Target URL for the Webmention', 'webmention' ),
 			'single' => true,
 			'show_in_rest' => true,
 		);
 		register_meta( 'comment', 'webmention_target_url', $args );
+
 		// For pingbacks the source URL is stored in the author URL. This means you cannot have an author URL that is different than the source.
 		$args = array(
 			'type' => 'string',
-			'description' => 'Source URL for the Webmention',
+			'description' => __( 'Source URL for the Webmention', 'webmention' ),
 			'single' => true,
 			'show_in_rest' => true,
 		);
 		register_meta( 'comment', 'webmention_source_url', $args );
+
 		$args = array(
 			'type' => 'string',
-			'description' => 'Target URL Fragment for the Webmention',
+			'description' => __( 'Target URL Fragment for the Webmention', 'webmention' ),
 			'single' => true,
 			'show_in_rest' => true,
 		);
 		register_meta( 'comment', 'webmention_target_fragment', $args );
+
 		// Purpose of this is to store the original time as there is no modified time in the comment table.
 		$args = array(
 			'type' => 'string',
-			'description' => 'Original Creation Time for the Webmention (GMT)',
+			'description' => __( 'Original Creation Time for the Webmention (GMT)', 'webmention' ),
 			'single' => true,
 			'show_in_rest' => true,
 		);
 		register_meta( 'comment', 'webmention_creation_time', $args );
-
 	}
 
 	/**
