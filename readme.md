@@ -35,6 +35,7 @@ it on their sites.
 On the Settings --> Discussion Page in WordPress:
 * Activate sending Webmentions by checking the "Attempt to notify any blogs linked to from the article" option
 * Activate receiving Webmentions by checking the "Allow link notifications from other blogs (pingbacks and trackbacks) on new articles" option.
+* Set a page to redirect homepage mentions to. The page must accept comments and Pings/Trackbacks/Webmentions
 
 You can use the `send_webmention($source, $target)` function and pass a source and a target or you can fire an action like `do_action('send_webmention', $source, $target)`.
 
@@ -48,12 +49,11 @@ will also add support for receiving pingbacks and trackbacks as WordPress cannot
 
 ### How can I handle Webmentions to my Homepage or Archive Pages? ###
 
-Webmentions should be allowed on all URLs of a blog. The plugin currently supports only Webmentions on
-posts or pages, but it is very simple to add support for other types like homepages or archive pages.
-The easiest way is to provide some kind of a default post/page to show collect all mentions that are no
+Webmentions should be allowed on all URLs of a blog. The plugin currently supports only Webmentions on posts or pages, but has a setting to set a page to receive homepage mentions.
+It is very simple to add support for other types like homepages or archive pages. The easiest way is to provide some kind of a default post/page to show collect all mentions that are no
 comments on a post or a page. The plugin provides a simple filter for that:
 
-    function handle_exotic_webmentions($id, $target) {
+    function handle_other_webmentions($id, $target) {
       // do nothing if id is set
       if ($id) {
         return $id;
@@ -62,7 +62,7 @@ comments on a post or a page. The plugin provides a simple filter for that:
       // return "default" id if plugin can't find a post/page
       return 9247;
     }
-    add_filter("webmention_post_id", "handle_exotic_webmentions", 10, 2);
+    add_filter("webmention_post_id", "handle_other_webmentions", 10, 2);
 
 ## Other Notes ##
 
@@ -73,6 +73,10 @@ The URL for the webmention endpoint, which you can view in the source of your pa
 ## Changelog ##
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
+
+### 3.3.0 ###
+* Add setting for homepage mentions
+* Remove deprecated functions due 4.8 release
 
 ### 3.2.1 ###
 
