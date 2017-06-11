@@ -107,7 +107,7 @@ class Webmention_Plugin {
 			'type' => 'int',
 			'description' => __( 'Where to Direct Mentions of the Home Page', 'webmention' ),
 			'show_in_rest' => true,
-			'default' => 0
+			'default' => 0,
 		) );
 
 		add_settings_field( 'webmention_discussion_settings', __( 'Webmention Settings', 'webmention' ), array( 'Webmention_Plugin', 'discussion_settings' ), 'discussion', 'default' );

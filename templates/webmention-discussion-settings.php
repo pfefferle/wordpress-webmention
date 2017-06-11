@@ -30,11 +30,13 @@
 	</label>
 	<br />
 	<label for="webmention_home_mentions">
-	<?php wp_dropdown_pages( array(
-		'show_option_none' => __( 'No Homepage Mentions', 'webmention' ),
-		'name' => 'webmention_home_mentions',
-		'id' => 'webmention_home_mentions',
-		'selected' => get_option( 'webmention_home_mentions' )
-	) );
-		_e( 'Set a page for mentions of the homepage to be sent to.', 'webmention' ); ?>
+		<?php
+		wp_dropdown_pages( array(
+			'show_option_none' => __( 'No Homepage Mentions', 'webmention' ),
+			'name' => 'webmention_home_mentions',
+			'id' => 'webmention_home_mentions',
+			'selected' => get_option( 'webmention_home_mentions' ),
+		) );
+		_e( 'Set a page for mentions of the homepage to be sent to.', 'webmention' );
+		?>
 </fieldset>
