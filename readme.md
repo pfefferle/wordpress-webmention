@@ -6,7 +6,7 @@
 **Tags:** webmention, pingback, trackback, linkback, indieweb  
 **Requires at least:** 4.7  
 **Tested up to:** 4.8  
-**Stable tag:** 3.2.1  
+**Stable tag:** 3.3.0  
 **License:** MIT  
 **License URI:** http://opensource.org/licenses/MIT  
 
@@ -75,7 +75,7 @@ The URL for the webmention endpoint, which you can view in the source of your pa
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
 
 ### 3.3.0 ###
-* Add setting for homepage mentions
+* Add setting for homepage mentions (thanks @dshanske)
 * Remove deprecated functions due 4.8 release
 
 ### 3.2.1 ###
