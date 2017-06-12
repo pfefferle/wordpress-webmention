@@ -68,7 +68,7 @@ function get_webmention_process_type() {
  * @uses apply_filters calls "webmention_post_id" on the post_ID
  */
 function webmention_url_to_postid( $url ) {
-	if ( home_url() === $url ) {
+	if ( '/' === wp_make_link_relative( trailingslashit( $url ) ) ) {
 		return apply_filters( 'webmention_post_id', get_option( 'webmention_home_mentions' ), $url );
 	}
 	return apply_filters( 'webmention_post_id', url_to_postid( $url ), $url );
