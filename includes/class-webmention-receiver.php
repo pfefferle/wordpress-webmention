@@ -14,6 +14,8 @@ class Webmention_Receiver {
 		// Filter the response to allow a webmention form if no parameters are passed
 		add_filter( 'rest_pre_serve_request', array( 'Webmention_Receiver', 'serve_request' ), 9, 4 );
 
+		add_filter( 'duplicate_comment_id', array( 'Webmention_Receiver', 'disable_wp_check_dupes' ), 20, 2 );
+
 		// endpoint discovery
 		add_action( 'wp_head', array( 'Webmention_Receiver', 'html_header' ), 99 );
 		add_action( 'send_headers', array( 'Webmention_Receiver', 'http_header' ) );
@@ -395,6 +397,35 @@ class Webmention_Receiver {
 		$commentdata = compact( 'remote_source', 'remote_source_original', 'content_type' );
 
 		return array_merge( $commentdata, $data );
+	}
+
+	/**
+	 * Disable the WordPress `check dupes` functionality
+	 *
+	 * @param int $dupe_id ID of the comment identified as a duplicate.
+	 * @param array $commentdata Data for the comment being created.
+	 *
+	 * @return int
+	 */
+	public static function disable_wp_check_dupes( $dupe_id, $commentdata ) {
+		if ( ! $dupe_id ) {
+			return $dupe_id;
+		}
+
+		$comment_dupe = get_comment( $dupe_id, ARRAY_A );
+
+		if ( $comment_dupe['comment_post_ID'] === $commentdata['comment_post_ID'] ) {
+			return $dupe_id;
+		}
+
+		if (
+			( isset( $commentdata['comment_type'] ) && 'webmention' === $commentdata['comment_type'] ) ||
+			( isset( $commentdata['comment_meta'] ) && ! empty( $commentdata['comment_meta']['semantic_linkbacks_type'] ) )
+		) {
+			return 0;
+		}
+
+		return $dupe_id;
 	}
 
 	/**
