@@ -28,7 +28,9 @@
 			echo checked( true, get_option( 'webmention_show_comment_form' ) );  ?> />
 		<?php _e( 'Show a Webmention form at the comment section, to enable manual pings.', 'webmention' ) ?>
 	</label>
+
 	<br />
+
 	<label for="webmention_home_mentions">
 		<?php
 		wp_dropdown_pages( array(
@@ -39,4 +41,5 @@
 		) );
 		_e( 'Set a page for mentions of the homepage to be sent to.', 'webmention' );
 		?>
+	</label>
 </fieldset>
