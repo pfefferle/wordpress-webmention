@@ -33,6 +33,7 @@ it on their sites.
 ### How can I send and receive Webmentions? ###
 
 On the Settings --> Discussion Page in WordPress:
+
 * Activate sending Webmentions by checking the "Attempt to notify any blogs linked to from the article" option
 * Activate receiving Webmentions by checking the "Allow link notifications from other blogs (pingbacks and trackbacks) on new articles" option.
 * Set a page to redirect homepage mentions to. The page must accept comments and Pings/Trackbacks/Webmentions
@@ -74,7 +75,10 @@ The URL for the webmention endpoint, which you can view in the source of your pa
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
 
+### 3.3.1 ###
+
 ### 3.3.0 ###
+
 * Add setting for homepage mentions (thanks @dshanske)
 * Remove deprecated functions due 4.8 release
 

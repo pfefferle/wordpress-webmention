@@ -1,4 +1,4 @@
-<fieldset>
+<fieldset id="webmention">
 	<label for="webmention_disable_selfpings_same_url">
 		<input type="checkbox" name="webmention_disable_selfpings_same_url" id="webmention_disable_selfpings_same_url" value="1" <?php
 			echo checked( true, get_option( 'webmention_disable_selfpings_same_url' ) );  ?> />
@@ -32,6 +32,8 @@
 	<br />
 
 	<label for="webmention_home_mentions">
+		<?php _e( 'Set a page for mentions of the homepage to be sent to:', 'webmention' ); ?>
+
 		<?php
 		wp_dropdown_pages( array(
 			'show_option_none' => __( 'No Homepage Mentions', 'webmention' ),
@@ -39,7 +41,12 @@
 			'id' => 'webmention_home_mentions',
 			'selected' => get_option( 'webmention_home_mentions' ),
 		) );
-		_e( 'Set a page for mentions of the homepage to be sent to.', 'webmention' );
+		?>
+
+		<?php
+		if ( get_option( 'webmention_home_mentions' ) ) {
+			printf( '<a href="%s">%s</a>', get_permalink( get_option( 'webmention_home_mentions' ) ), __( 'Visit site', 'webmention' ) );
+		}
 		?>
 	</label>
 </fieldset>

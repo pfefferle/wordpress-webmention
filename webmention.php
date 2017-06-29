@@ -57,7 +57,7 @@ class Webmention_Plugin {
 		add_filter( 'get_default_comment_status', array( 'Webmention_Plugin', 'get_default_comment_status' ), 11, 3 );
 
 		// initialize admin settings
-		add_action( 'admin_init', array( 'Webmention_Plugin', 'admin_register_settings' ) );
+		add_action( 'admin_init', array( 'Webmention_Plugin', 'admin_init' ) );
 
 		add_action( 'admin_comment_types_dropdown', array( 'Webmention_Plugin', 'comment_types_dropdown' ) );
 		add_action( 'comment_form_after', array( 'Webmention_Plugin', 'comment_form' ), 11 );
@@ -78,7 +78,7 @@ class Webmention_Plugin {
 	/**
 	 * Register Webmention admin settings.
 	 */
-	public static function admin_register_settings() {
+	public static function admin_init() {
 		register_setting( 'discussion', 'webmention_disable_selfpings_same_url', array(
 			'type' => 'boolean',
 			'description' => __( 'Disable Self Webmentions on the Same URL', 'webmention' ),
@@ -111,6 +111,9 @@ class Webmention_Plugin {
 		) );
 
 		add_settings_field( 'webmention_discussion_settings', __( 'Webmention Settings', 'webmention' ), array( 'Webmention_Plugin', 'discussion_settings' ), 'discussion', 'default' );
+
+		add_filter( 'plugin_action_links', array( 'Webmention_Plugin', 'plugin_action_links' ), 10, 2 );
+		add_filter( 'plugin_row_meta', array( 'Webmention_Plugin', 'plugin_row_meta' ), 10, 2 );
 	}
 
 	/**
@@ -143,5 +146,45 @@ class Webmention_Plugin {
 		$types['webmention'] = __( 'Webmentions', 'webmention' );
 
 		return $types;
+	}
+
+	/**
+	 * Add an action link
+	 *
+	 * @param array $links the settings links
+	 * @param string $file the plugin filename
+	 *
+	 * @return array the filtered array
+	 */
+	public static function plugin_action_links( $links, $file ) {
+		if ( stripos( $file, 'webmention' ) === false || ! function_exists( 'admin_url' ) ) {
+			return $links;
+		}
+
+		$links[] = sprintf( '<a href="%s">%s</a>', admin_url( 'options-discussion.php#webmention' ), __( 'Settings', 'webmention' ) );
+
+		return $links;
+	}
+
+	/**
+	 * Add a plugin meta link
+	 *
+	 * @param array $links the settings links
+	 * @param string $file the plugin filename
+	 *
+	 * @return array the filtered array
+	 */
+	public static function plugin_row_meta( $links, $file ) {
+		if ( stripos( $file, 'webmention' ) === false || ! function_exists( 'admin_url' ) ) {
+			return $links;
+		}
+
+		$home_mentions = get_option( 'webmention_home_mentions' );
+
+		if ( $home_mentions ) {
+			$links[] = sprintf( '<a href="%s">%s</a>', get_the_permalink( $home_mentions ), __( 'Homepage Webmentions', 'webmention' ) );
+		}
+
+		return $links;
 	}
 }
