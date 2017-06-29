@@ -55,6 +55,7 @@ class Webmention_Plugin {
 
 		// Default Comment Status
 		add_filter( 'get_default_comment_status', array( 'Webmention_Plugin', 'get_default_comment_status' ), 11, 3 );
+		add_filter( 'pings_open', array( 'Webmention_Plugin', 'pings_open' ), 10, 2 );
 
 		// initialize admin settings
 		add_action( 'admin_init', array( 'Webmention_Plugin', 'admin_init' ) );
@@ -186,5 +187,21 @@ class Webmention_Plugin {
 		}
 
 		return $links;
+	}
+
+	/**
+	 * Return true if page is enabled for Homepage Webmentions
+	 *
+	 * @param bool $open    Whether the current post is open for pings.
+	 * @param int  $post_id The post ID.
+	 *
+	 * @return boolean if pings are open
+	 */
+	public static function pings_open( $open, $post_id ) {
+		if ( get_option( 'webmention_home_mentions' ) == $post_id ) {
+			return true;
+		}
+
+		return $open;
 	}
 }
