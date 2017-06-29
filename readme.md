@@ -75,7 +75,11 @@ The URL for the webmention endpoint, which you can view in the source of your pa
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
 
-### 3.3.1 ###
+### 3.4.0 ###
+
+* Added settings link
+* Added link to Homepage Webmention page
+* Enable pings for Homepage Webmentions
 
 ### 3.3.0 ###
 

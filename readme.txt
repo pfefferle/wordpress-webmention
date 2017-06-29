@@ -77,6 +77,7 @@ Project and support maintained on github at [pfefferle/wordpress-webmention](htt
 
 * Added settings link
 * Added link to Homepage Webmention page
+* Enable pings for Homepage Webmentions
 
 = 3.3.0 =
 
