@@ -292,6 +292,15 @@ class Webmention_Receiver {
 		} else {
 			// update comment
 			wp_update_comment( $commentdata );
+			/**
+			 * Fires after a webmention is updated in the database.
+			 *
+			 * The hook is needed as the comment_post hook uses filtered data
+			 *
+			 * @param int   $comment_ID The comment ID.
+			 * @param array $data       Comment data.
+			 */
+			do_action( 'edit_webmention', $commentdata['comment_ID'], $commentdata );
 		}
 
 		if ( is_wp_error( $commentdata['comment_ID'] ) ) {
