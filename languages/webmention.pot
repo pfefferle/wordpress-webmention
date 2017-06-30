@@ -2,9 +2,9 @@
 # This file is distributed under the MIT.
 msgid ""
 msgstr ""
-"Project-Id-Version: Webmention 3.3.0\n"
+"Project-Id-Version: Webmention 3.4.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/webmention\n"
-"POT-Creation-Date: 2017-06-29 21:09:29+00:00\n"
+"POT-Creation-Date: 2017-06-30 18:45:49+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -13,89 +13,112 @@ msgstr ""
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "X-Generator: grunt-wp-i18n 0.5.4\n"
 
-#: includes/class-webmention-receiver.php:45
+#: includes/class-webmention-receiver.php:49
 msgid "Target URL for the Webmention"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:54
+#: includes/class-webmention-receiver.php:58
 msgid "Source URL for the Webmention"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:62
+#: includes/class-webmention-receiver.php:66
 msgid "Target URL Fragment for the Webmention"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:71
+#: includes/class-webmention-receiver.php:75
 msgid "Original Creation Time for the Webmention (GMT)"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:167
+#: includes/class-webmention-receiver.php:84
+msgid "Response Code Returned During Webmention Verification"
+msgstr ""
+
+#: includes/class-webmention-receiver.php:180
 msgid "Source is missing"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:173
+#: includes/class-webmention-receiver.php:186
 msgid "Target is missing"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:179
+#: includes/class-webmention-receiver.php:192
 msgid "Target is not on this domain"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:186
-#: includes/class-webmention-receiver.php:200
+#: includes/class-webmention-receiver.php:199
+#: includes/class-webmention-receiver.php:213
 msgid "Target is not a valid post"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:190
+#: includes/class-webmention-receiver.php:203
 msgid "Target and source cannot direct to the same resource"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:195
+#: includes/class-webmention-receiver.php:208
 msgid "Pings are disabled for this post"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:246
+#: includes/class-webmention-receiver.php:259
 msgid "Webmention is scheduled"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:310
+#: includes/class-webmention-receiver.php:332
 msgid "Webmention was successful"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:341
+#: includes/class-webmention-receiver.php:363
 msgid "Invalid data passed"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:358
+#: includes/class-webmention-receiver.php:380
 msgid "Source URL not found"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:365
+#: includes/class-webmention-receiver.php:387
 msgid "Content Type is not supported"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:373
+#: includes/class-webmention-receiver.php:395
 msgid "Resource has been deleted"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:375
+#: includes/class-webmention-receiver.php:397
 msgid "Resource removed for legal reasons"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:388
+#: includes/class-webmention-receiver.php:410
 msgid "Cannot find target link"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:583
+#: includes/class-webmention-receiver.php:605
 msgid "This %1$s was mentioned on <a href=\"%2$s\">%3$s</a>"
 msgstr ""
 
-#: templates/webmention-comment-form.php:3
-#: templates/webmention-endpoint-form.php:126
+#: includes/class-webmention-receiver.php:666
+msgid "Webmention Data"
+msgstr ""
+
+#: includes/class-webmention-receiver.php:681
+msgid "Webmention Target"
+msgstr ""
+
+#: includes/class-webmention-receiver.php:688
+msgid "Webmention Target Fragment"
+msgstr ""
+
+#: includes/class-webmention-receiver.php:695
+msgid "Webmention Source"
+msgstr ""
+
+#: includes/class-webmention-receiver.php:702
+msgid "Webmention Creation Time"
+msgstr ""
+
+#: includes/functions.php:21
 msgid ""
-"Responding with a post on your own blog? Send me a <a "
-"href=\"http://indieweb.org/webmention\">Webmention</a> by writing something "
-"on your website that links to this post and then enter your post URL below."
+"Respond on your own site? Send me a <a href=    "
+"\"http://indieweb.org/webmention\">Webmention</a> by writing something on "
+"your website that links to this post and then enter your post URL below."
 msgstr ""
 
 #: templates/webmention-comment-form.php:4
@@ -120,7 +143,7 @@ msgid ""
 "\"example.com\")</small>"
 msgstr ""
 
-#: templates/webmention-discussion-settings.php:21 webmention.php:97
+#: templates/webmention-discussion-settings.php:21 webmention.php:80
 msgid "Enable Webmention Support for Pages"
 msgstr ""
 
@@ -172,19 +195,19 @@ msgid ""
 "href=\"http://webmention.net\">webmention.net</a>"
 msgstr ""
 
-#: webmention.php:85
+#: webmention.php:68
 msgid "Disable Self Webmentions on the Same URL"
 msgstr ""
 
-#: webmention.php:91
+#: webmention.php:74
 msgid "Disable Self Webmentions on the Same Domain"
 msgstr ""
 
-#: webmention.php:103
+#: webmention.php:86
 msgid "Show Webmention Comment Form"
 msgstr ""
 
-#: webmention.php:109
+#: webmention.php:92
 msgid "Where to Direct Mentions of the Home Page"
 msgstr ""
 
