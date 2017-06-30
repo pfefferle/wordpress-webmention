@@ -14,14 +14,11 @@ may display your post as a comment, like, or other response, and presto, you’r
 
 == Description ==
 
-A [Webmention](http://www.w3.org/TR/webmention/) is a notification that one URL links to another. Sending a Webmention is not 
-limited to blog posts, and can be used for additional kinds of content and responses as well. 
+A [Webmention](http://www.w3.org/TR/webmention/) is a notification that one URL links to another. Sending a Webmention is not limited to blog posts, and can be used for additional kinds of content and responses as well.
 
-For example, a response can be an RSVP to an event, an indication that someone "likes" another post, a "bookmark" of another post, 
-and many others. Webmention enables these interactions to happen across different websites, enabling a distributed social web.
+For example, a response can be an RSVP to an event, an indication that someone "likes" another post, a "bookmark" of another post, and many others. Webmention enables these interactions to happen across different websites, enabling a distributed social web.
 
-The Webmention plugin supports the webmention protocol, giving you support for sending and receiving webmentions. It offers a 
-simple built in presentation. To further enhance the presentation, you can install Semantic Linkbacks.
+The Webmention plugin supports the webmention protocol, giving you support for sending and receiving webmentions. It offers a simple built in presentation. To further enhance the presentation, you can install Semantic Linkbacks.
 
 == Frequently Asked Questions ==
 
@@ -31,9 +28,7 @@ simple built in presentation. To further enhance the presentation, you can insta
 
 = That Sounds Like a Pingback or a Trackback =
 
-Webmention is an update/replacement for Pingback or Trackback. Unlike the older protocols, the
-specification is recommended by the W3C as well as an active community of individuals using
-it on their sites.
+Webmention is an update/replacement for Pingback or Trackback. Unlike the older protocols, the specification is recommended by the W3C as well as an active community of individuals using it on their sites.
 
 = How can I send and receive Webmentions? =
 
@@ -52,17 +47,14 @@ You can use the `send_webmention($source, $target)` function and pass a source a
 
 = How do I support Webmentions for my custom post type? =
 
-When declaring your custom post type, add post type support for webmentions by either including it in your register_post_type entry
-or adding it later using add_post_type_support. This will also add support for receiving pingbacks and trackbacks as WordPress
-cannot currently distinguish between different linkback types.
+When declaring your custom post type, add post type support for webmentions by either including it in your register_post_type entry or adding it later using add_post_type_support. This will also add support for receiving pingbacks and trackbacks as WordPress cannot currently distinguish between different linkback types.
 
 = How can I handle Webmentions to my Homepage or Archive Pages? =
 
-Webmentions should be allowed on all URLs of a blog, however WordPress does not support this. The plugin currently supports only 
+Webmentions should be allowed on all URLs of a blog, however WordPress does not support this. The plugin currently supports only
 Webmentions on posts by default, but has a setting to enable for pages and allows you to set a page to receive homepage mentions.
 
-It is very simple to add support for archives and other parts of your site that do not support them. You can provide a post/page 
-to show collect mentions. The plugin provides a simple filter for that:
+It is very simple to add support for archives and other parts of your site that do not support them. You can provide a post/page to show collect mentions. The plugin provides a simple filter for that:
 
     function handle_other_webmentions($id, $target) {
       // do nothing if id is set
@@ -80,8 +72,6 @@ to show collect mentions. The plugin provides a simple filter for that:
 The URL for the webmention endpoint, which you can view in the source of your pages, should be excluded from any server or plugin caching.
 
 As Webmention uses the REST API endpoint system, most up to date caching plugins should exclude it by default.
-
-== Other Notes ==
 
 == Changelog ==
 

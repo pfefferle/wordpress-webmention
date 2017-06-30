@@ -18,7 +18,7 @@ function send_webmention( $source, $target ) {
  *
  */
 function get_webmention_form_text( $post_id ) {
-	return apply_filters( 'webmention_form_text', __( 'Respond on your own site? Send me a <a href=    "http://indieweb.org/webmention">Webmention</a> by writing something on your website that links to this post and then enter your post URL below.',     'webmention' ), $post_id );
+	return apply_filters( 'webmention_form_text', __( 'Respond on your own site? Send me a <a href="http://indieweb.org/webmention">Webmention</a> by writing something on your website that links to this post and then enter your post URL below.', 'webmention' ), $post_id );
 }
 
 /**

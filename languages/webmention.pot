@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Webmention 3.4.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/webmention\n"
-"POT-Creation-Date: 2017-06-30 18:45:49+00:00\n"
+"POT-Creation-Date: 2017-06-30 19:20:42+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -13,105 +13,85 @@ msgstr ""
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "X-Generator: grunt-wp-i18n 0.5.4\n"
 
-#: includes/class-webmention-receiver.php:49
+#: includes/class-webmention-receiver.php:46
 msgid "Target URL for the Webmention"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:58
+#: includes/class-webmention-receiver.php:55
 msgid "Source URL for the Webmention"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:66
+#: includes/class-webmention-receiver.php:63
 msgid "Target URL Fragment for the Webmention"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:75
+#: includes/class-webmention-receiver.php:72
 msgid "Original Creation Time for the Webmention (GMT)"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:84
+#: includes/class-webmention-receiver.php:81
 msgid "Response Code Returned During Webmention Verification"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:180
+#: includes/class-webmention-receiver.php:177
 msgid "Source is missing"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:186
+#: includes/class-webmention-receiver.php:183
 msgid "Target is missing"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:192
+#: includes/class-webmention-receiver.php:189
 msgid "Target is not on this domain"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:199
-#: includes/class-webmention-receiver.php:213
+#: includes/class-webmention-receiver.php:196
+#: includes/class-webmention-receiver.php:210
 msgid "Target is not a valid post"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:203
+#: includes/class-webmention-receiver.php:200
 msgid "Target and source cannot direct to the same resource"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:208
+#: includes/class-webmention-receiver.php:205
 msgid "Pings are disabled for this post"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:259
+#: includes/class-webmention-receiver.php:256
 msgid "Webmention is scheduled"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:332
+#: includes/class-webmention-receiver.php:329
 msgid "Webmention was successful"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:363
+#: includes/class-webmention-receiver.php:360
 msgid "Invalid data passed"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:380
+#: includes/class-webmention-receiver.php:377
 msgid "Source URL not found"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:387
+#: includes/class-webmention-receiver.php:384
 msgid "Content Type is not supported"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:395
+#: includes/class-webmention-receiver.php:392
 msgid "Resource has been deleted"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:397
+#: includes/class-webmention-receiver.php:394
 msgid "Resource removed for legal reasons"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:410
+#: includes/class-webmention-receiver.php:407
 msgid "Cannot find target link"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:605
+#: includes/class-webmention-receiver.php:602
 msgid "This %1$s was mentioned on <a href=\"%2$s\">%3$s</a>"
-msgstr ""
-
-#: includes/class-webmention-receiver.php:666
-msgid "Webmention Data"
-msgstr ""
-
-#: includes/class-webmention-receiver.php:681
-msgid "Webmention Target"
-msgstr ""
-
-#: includes/class-webmention-receiver.php:688
-msgid "Webmention Target Fragment"
-msgstr ""
-
-#: includes/class-webmention-receiver.php:695
-msgid "Webmention Source"
-msgstr ""
-
-#: includes/class-webmention-receiver.php:702
-msgid "Webmention Creation Time"
 msgstr ""
 
 #: includes/functions.php:21
@@ -215,16 +195,36 @@ msgstr ""
 msgid "Webmention Settings"
 msgstr ""
 
-#: webmention.php:147
+#: webmention.php:150
 msgid "Webmentions"
 msgstr ""
 
-#: webmention.php:165
+#: webmention.php:168
 msgid "Settings"
 msgstr ""
 
-#: webmention.php:186
+#: webmention.php:189
 msgid "Homepage Webmentions"
+msgstr ""
+
+#: webmention.php:217
+msgid "Webmention Data"
+msgstr ""
+
+#: webmention.php:232
+msgid "Webmention Target"
+msgstr ""
+
+#: webmention.php:236
+msgid "Webmention Target Fragment"
+msgstr ""
+
+#: webmention.php:240
+msgid "Webmention Source"
+msgstr ""
+
+#: webmention.php:244
+msgid "Webmention Creation Time"
 msgstr ""
 
 #. Plugin Name of the plugin/theme

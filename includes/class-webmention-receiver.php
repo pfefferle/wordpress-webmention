@@ -34,9 +34,6 @@ class Webmention_Receiver {
 		// Allow for avatars on webmention comment types
 		add_filter( 'get_avatar_comment_types', array( 'Webmention_Receiver', 'get_avatar_comment_types' ) );
 
-		// Add Comment Data Metabox
-		add_action( 'admin_init', array( 'Webmention_Receiver', 'setup_metabox' ) );
-
 		self::register_meta();
 	}
 
@@ -647,63 +644,5 @@ class Webmention_Receiver {
 		$array['links'][] = array( 'rel' => 'http://webmention.org/', 'href' => get_webmention_endpoint() );
 
 		return $array;
-	}
-
-	/**
-	 * Meta box setup function.
-	 */
-	public static function setup_metabox() {
-		/* Add meta boxes on the 'add_meta_boxes' hook. */
-		add_action( 'add_meta_boxes', array( 'Webmention_Receiver', 'add_meta_boxes' ) );
-	}
-
-	/*
-     * Create a  meta boxes to be displayed on the comment editor screen.
-	 */
-	public static function add_meta_boxes() {
-		add_meta_box(
-			'webmention-meta',      // Unique ID
-			esc_html__( 'Webmention Data', 'webmention' ),    // Title
-			array( 'Webmention_Receiver', 'metabox' ),   // Callback function
-			'comment',
-			'normal',         // Context
-			'default'         // Priority
-		);
-	}
-
-	public static function metabox( $object, $box ) {
-		wp_nonce_field( 'webmention_comment_metabox', 'webmention_comment_nonce' );
-		if ( ! $object instanceof WP_Comment ) {
-			return;
-		}
-		if ( get_comment_meta( $object->comment_ID, 'webmention_target_url', true ) ) {
-			echo '<label>';
-			_e( 'Webmention Target', 'webmention' );
-			echo '</label>';
-			echo '<input type="url" class="widefat" disabled value="' . get_comment_meta( $object->comment_ID, 'webmention_target_url', true ) . '" />';
-			echo '<br />';
-		}
-		if ( get_comment_meta( $object->comment_ID, 'webmention_target_fragment', true ) ) {
-			echo '<label>';
-			_e( 'Webmention Target Fragment', 'webmention' );
-			echo '</label>';
-			echo '<input type="text" class="widefat" disabled value="' . get_comment_meta( $object->comment_ID, 'webmention_target_fragment', true ) . '" />';
-			echo '<br />';
-		}
-		if ( get_comment_meta( $object->comment_ID, 'webmention_source_url', true ) ) {
-			echo '<label>';
-			_e( 'Webmention Source', 'webmention' );
-			echo '</label>';
-			echo '<input type="url" class="widefat" disabled value="' . get_comment_meta( $object->comment_ID, 'webmention_source_url', true ) . '" />';
-			echo '<br />';
-		}
-		if ( get_comment_meta( $object->comment_ID, 'webmention_created_at', true ) ) {
-			echo '<label>';
-			_e( 'Webmention Creation Time', 'webmention' );
-			echo '</label>';
-			echo '<input type="url" class="widefat" disabled value="' . get_comment_meta( $object->comment_ID, 'webmention_created_at', true ) . '" />';
-			echo '<br />';
-		}
-
 	}
 }

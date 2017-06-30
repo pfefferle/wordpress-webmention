@@ -113,6 +113,9 @@ class Webmention_Plugin {
 	public static function admin_init() {
 		add_settings_field( 'webmention_discussion_settings', __( 'Webmention Settings', 'webmention' ), array( 'Webmention_Plugin', 'discussion_settings' ), 'discussion', 'default' );
 
+		/* Add meta boxes on the 'add_meta_boxes' hook. */
+		add_action( 'add_meta_boxes', array( 'Webmention_Plugin', 'add_meta_boxes' ) );
+
 		add_filter( 'plugin_action_links', array( 'Webmention_Plugin', 'plugin_action_links' ), 10, 2 );
 		add_filter( 'plugin_row_meta', array( 'Webmention_Plugin', 'plugin_row_meta' ), 10, 2 );
 	}
@@ -203,5 +206,44 @@ class Webmention_Plugin {
 		}
 
 		return $open;
+	}
+
+	/*
+	 * Create a  meta boxes to be displayed on the comment editor screen.
+	 */
+	public static function add_meta_boxes() {
+		add_meta_box(
+			'webmention-meta',      // Unique ID
+			esc_html__( 'Webmention Data', 'webmention' ),    // Title
+			array( 'Webmention_Plugin', 'meta_boxes' ),   // Callback function
+			'comment',
+			'normal',         // Context
+			'default'         // Priority
+		);
+	}
+
+	public static function meta_boxes( $object, $box ) {
+		wp_nonce_field( 'webmention_comment_metabox', 'webmention_comment_nonce' );
+
+		if ( ! $object instanceof WP_Comment ) {
+			return;
+		}
+?>
+<label><?php _e( 'Webmention Target', 'webmention' ); ?></label>
+<input type="url" class="widefat" disabled value="<?php echo get_comment_meta( $object->comment_ID, 'webmention_target_url', true ); ?>" />
+<br />
+
+<label><?php _e( 'Webmention Target Fragment', 'webmention' ); ?></label>
+<input type="text" class="widefat" disabled value="<?php echo get_comment_meta( $object->comment_ID, 'webmention_target_fragment', true ); ?>" />
+<br />
+
+<label><?php _e( 'Webmention Source', 'webmention' ); ?></label>
+<input type="url" class="widefat" disabled value="<?php echo get_comment_meta( $object->comment_ID, 'webmention_source_url', true ); ?>" />
+<br />
+
+<label><?php _e( 'Webmention Creation Time', 'webmention' ); ?></label>
+<input type="url" class="widefat" disabled value="<?php echo get_comment_meta( $object->comment_ID, 'webmention_created_at', true ); ?>" />
+<br />
+<?php
 	}
 }
