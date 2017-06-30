@@ -3,20 +3,27 @@
 # Webmention #
 **Contributors:** pfefferle, dshanske  
 **Donate link:** http://14101978.de  
-**Tags:** webmention, pingback, trackback, linkback, indieweb  
+**Tags:** webmention, pingback, trackback, linkback, indieweb, comment, response  
 **Requires at least:** 4.7  
 **Tested up to:** 4.8  
 **Stable tag:** 3.4.0  
 **License:** MIT  
 **License URI:** http://opensource.org/licenses/MIT  
 
-Webmention for WordPress!
+Enable conversation across the web. When you link to a website you can send it a webmention to notify it and then that website
+may display your post as a comment, like, or other response, and presto, you’re having a conversation from one site to another!
+
 
 ## Description ##
 
-[Webmention](http://www.w3.org/TR/webmention/) is a web standard that enables conversations across the web, a powerful building block that is used for a growing federated network of comments, likes, reposts, and other rich interactions across the decentralized social web.
+A [Webmention](http://www.w3.org/TR/webmention/) is a notification that one URL links to another. Sending a Webmention is not 
+limited to blog posts, and can be used for additional kinds of content and responses as well. 
 
-When you link to a website, you can send it a Webmention to notify it. If it supports Webmentions, then that website may display your post as a comment, like, or other response, and presto, you’re having a conversation from one site to another!
+For example, a response can be an RSVP to an event, an indication that someone "likes" another post, a "bookmark" of another post, 
+and many others. Webmention enables these interactions to happen across different websites, enabling a distributed social web.
+
+The Webmention plugin supports the webmention protocol, giving you support for sending and receiving webmentions. It offers a 
+simple built in presentation. To further enhance the presentation, you can install Semantic Linkbacks.
 
 ## Frequently Asked Questions ##
 
@@ -36,7 +43,9 @@ On the Settings --> Discussion Page in WordPress:
 
 * Activate sending Webmentions by checking the "Attempt to notify any blogs linked to from the article" option
 * Activate receiving Webmentions by checking the "Allow link notifications from other blogs (pingbacks and trackbacks) on new articles" option.
-* Set a page to redirect homepage mentions to. The page must accept comments and Pings/Trackbacks/Webmentions
+* Set a page to redirect homepage mentions to. This will automatically enable webmentions for that page.
+* WordPress disables notification to pages by default. Check the Enable Webmentions for Pages option to enable this.
+* If you want to enable a webmention form in the comment section, check the box.
 
 You can use the `send_webmention($source, $target)` function and pass a source and a target or you can fire an action like `do_action('send_webmention', $source, $target)`.
 
@@ -45,14 +54,17 @@ You can use the `send_webmention($source, $target)` function and pass a source a
 
 ### How do I support Webmentions for my custom post type? ###
 
-When declaring your custom post type, add post type support for webmentions by either including it in your register_post_type entry or adding it later using add_post_type_support. This
-will also add support for receiving pingbacks and trackbacks as WordPress cannot currently distinguish between different linkback types.
+When declaring your custom post type, add post type support for webmentions by either including it in your register_post_type entry
+or adding it later using add_post_type_support. This will also add support for receiving pingbacks and trackbacks as WordPress
+cannot currently distinguish between different linkback types.
 
 ### How can I handle Webmentions to my Homepage or Archive Pages? ###
 
-Webmentions should be allowed on all URLs of a blog. The plugin currently supports only Webmentions on posts or pages, but has a setting to set a page to receive homepage mentions.
-It is very simple to add support for other types like homepages or archive pages. The easiest way is to provide some kind of a default post/page to show collect all mentions that are no
-comments on a post or a page. The plugin provides a simple filter for that:
+Webmentions should be allowed on all URLs of a blog, however WordPress does not support this. The plugin currently supports only 
+Webmentions on posts by default, but has a setting to enable for pages and allows you to set a page to receive homepage mentions.
+
+It is very simple to add support for archives and other parts of your site that do not support them. You can provide a post/page 
+to show collect mentions. The plugin provides a simple filter for that:
 
     function handle_other_webmentions($id, $target) {
       // do nothing if id is set
@@ -65,15 +77,24 @@ comments on a post or a page. The plugin provides a simple filter for that:
     }
     add_filter("webmention_post_id", "handle_other_webmentions", 10, 2);
 
-## Other Notes ##
-
-### Caching ###
+### Will a caching plugin affect my ability to use this? ###
 
 The URL for the webmention endpoint, which you can view in the source of your pages, should be excluded from any server or plugin caching.
+
+As Webmention uses the REST API endpoint system, most up to date caching plugins should exclude it by default.
+
+## Other Notes ##
 
 ## Changelog ##
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
+
+### 3.4.1 ###
+
+* Add filter to allow setting of webmention form text
+* Move register settings to init due new default options not being set if admin only
+* Add `edit_webmention` hook due comment array filtering
+* Display Webmention Meta on Edit Comment page
 
 ### 3.4.0 ###
 
