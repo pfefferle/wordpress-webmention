@@ -62,24 +62,7 @@ class Webmention_Plugin {
 
 		add_action( 'admin_comment_types_dropdown', array( 'Webmention_Plugin', 'comment_types_dropdown' ) );
 		add_action( 'comment_form_after', array( 'Webmention_Plugin', 'comment_form' ), 11 );
-	}
 
-	public static function get_default_comment_status( $status, $post_type, $comment_type ) {
-		if ( 'webmention' === $comment_type ) {
-			return post_type_supports( $post_type, 'webmentions' ) ? 'open' : 'closed' ;
-		}
-		// Since support for the pingback comment type is used to keep pings open...
-		if ( ( 'pingback' === $comment_type ) ) {
-			return ( post_type_supports( $post_type, 'webmentions' ) ? 'open' : $status );
-		}
-
-		return $status;
-	}
-
-	/**
-	 * Register Webmention admin settings.
-	 */
-	public static function admin_init() {
 		register_setting( 'discussion', 'webmention_disable_selfpings_same_url', array(
 			'type' => 'boolean',
 			'description' => __( 'Disable Self Webmentions on the Same URL', 'webmention' ),
@@ -110,7 +93,24 @@ class Webmention_Plugin {
 			'show_in_rest' => true,
 			'default' => 0,
 		) );
+	}
 
+	public static function get_default_comment_status( $status, $post_type, $comment_type ) {
+		if ( 'webmention' === $comment_type ) {
+			return post_type_supports( $post_type, 'webmentions' ) ? 'open' : 'closed' ;
+		}
+		// Since support for the pingback comment type is used to keep pings open...
+		if ( ( 'pingback' === $comment_type ) ) {
+			return ( post_type_supports( $post_type, 'webmentions' ) ? 'open' : $status );
+		}
+
+		return $status;
+	}
+
+	/**
+	 * Register Webmention admin settings.
+	 */
+	public static function admin_init() {
 		add_settings_field( 'webmention_discussion_settings', __( 'Webmention Settings', 'webmention' ), array( 'Webmention_Plugin', 'discussion_settings' ), 'discussion', 'default' );
 
 		add_filter( 'plugin_action_links', array( 'Webmention_Plugin', 'plugin_action_links' ), 10, 2 );
