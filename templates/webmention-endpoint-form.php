@@ -123,7 +123,7 @@
 	<body id="webmention-endpint-page">
 		<h1><?php _e( 'Send a Webmention', 'webmention' ); ?></h1>
 		<p>
-			<?php _e( 'Responding with a post on your own blog? Send me a <a href="http://indieweb.org/webmention">Webmention</a> by writing something on your website that links to this post and then enter your post URL below.', 'webmention' ); ?>
+			<?php echo get_webmention_form_text( get_the_ID() ); ?>
 		</p>
 
 		<?php do_action( 'webmention_endpoint_form_before_form' ); ?>

@@ -12,6 +12,16 @@ function send_webmention( $source, $target ) {
 }
 
 /**
+ * Return the text for a webmention form allowing customization by post_id
+ *
+ * @param int $post_id Post ID
+ *
+ */
+function get_webmention_form_text( $post_id ) {
+	return apply_filters( 'webmention_form_text', __( 'Respond on your own site? Send me a <a href=    "http://indieweb.org/webmention">Webmention</a> by writing something on your website that links to this post and then enter your post URL below.',     'webmention' ), $post_id );
+}
+
+/**
  * Return the Number of Webmentions
  *
  * @param int $post_id The post ID (optional)
