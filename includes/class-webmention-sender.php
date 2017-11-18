@@ -45,14 +45,12 @@ class Webmention_Sender {
 	 */
 	public static function send_webmention( $source, $target, $post_id = null ) {
 		// stop selfpings on the same URL
-		if ( ( 1 == get_option( 'webmention_disable_selfpings_same_url' ) ) &&
-			 ( $source === $target ) ) {
+		if ( ( 1 === (int) get_option( 'webmention_disable_selfpings_same_url' ) ) && ( $source === $target ) ) {
 			return false;
 		}
 
 		// stop selfpings on the same domain
-		if ( ( 1 == get_option( 'webmention_disable_selfpings_same_domain' ) ) &&
-			 ( parse_url( $source, PHP_URL_HOST ) === parse_url( $target, PHP_URL_HOST ) ) ) {
+		if ( ( 1 === (int) get_option( 'webmention_disable_selfpings_same_domain' ) ) && ( wp_parse_url( $source, PHP_URL_HOST ) === wp_parse_url( $target, PHP_URL_HOST ) ) ) {
 			return false;
 		}
 
@@ -65,18 +63,18 @@ class Webmention_Sender {
 		$wp_version = get_bloginfo( 'version' );
 
 		$user_agent = apply_filters( 'http_headers_useragent', 'WordPress/' . $wp_version . '; ' . get_bloginfo( 'url' ) );
-		$args = array(
-			'timeout' => 100,
+		$args       = array(
+			'timeout'             => 100,
 			'limit_response_size' => 1048576,
-			'redirection' => 20,
-			'user-agent' => "$user_agent; sending Webmention",
+			'redirection'         => 20,
+			'user-agent'          => "$user_agent; sending Webmention",
 		);
-		$body = array(
+		$body       = array(
 			'source' => urlencode( $source ),
 			'target' => urlencode( $target ),
 		);
 		// Allows for additional URL parameters to be added such as Vouch.
-		$body = apply_filters( 'webmention_send_vars', $body, $post_id );
+		$body         = apply_filters( 'webmention_send_vars', $body, $post_id );
 		$args['body'] = build_query( $body );
 		if ( $webmention_server_url ) {
 			$response = wp_safe_remote_post( $webmention_server_url, $args );
@@ -95,7 +93,7 @@ class Webmention_Sender {
 	 * You can still hook this function directly into the `publish_post` action:
 	 *
 	 * <code>
-	 *	 add_action('publish_post', array('Webmention_Sender', 'send_webmentions'));
+	 *   add_action('publish_post', array('Webmention_Sender', 'send_webmentions'));
 	 * </code>
 	 *
 	 * @param int $post_id the post_ID
@@ -113,8 +111,8 @@ class Webmention_Sender {
 		// filter links
 		$targets = apply_filters( 'webmention_links', $links, $post_id );
 		$targets = array_unique( $targets );
-		$pung = get_pung( $post );
-		$ping = array();
+		$pung    = get_pung( $post );
+		$ping    = array();
 
 		foreach ( $targets as $target ) {
 			// send webmention
@@ -124,7 +122,7 @@ class Webmention_Sender {
 			if ( ! is_wp_error( $response ) &&
 				wp_remote_retrieve_response_code( $response ) < 400 ) {
 				// if not already added to punged urls
-				if ( ! in_array( $target, $pung ) ) {
+				if ( ! in_array( $target, $pung, true ) ) {
 					// tell the pingback function not to ping these links again
 					$ping[] = $target;
 				}
@@ -154,7 +152,7 @@ class Webmention_Sender {
 		}
 
 		// raise "tries" counter
-		$tries = $tries + 1;
+		$tries++;
 
 		// rescedule only three times
 		if ( $tries <= 3 ) {
@@ -182,10 +180,10 @@ class Webmention_Sender {
 		}
 		$mentions = get_posts(
 			array(
-				'meta_key' => '_mentionme',
+				'meta_key'  => '_mentionme',
 				'post_type' => get_post_types_by_support( 'webmentions' ),
-				'fields' => 'ids',
-				'nopaging' => true,
+				'fields'    => 'ids',
+				'nopaging'  => true,
 			)
 		);
 
@@ -198,7 +196,7 @@ class Webmention_Sender {
 		}
 
 		foreach ( $mentions as $mention ) {
-			delete_post_meta( $mention , '_mentionme' );
+			delete_post_meta( $mention, '_mentionme' );
 			// send them Webmentions
 			self::send_webmentions( $mention );
 		}

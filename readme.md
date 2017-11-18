@@ -5,7 +5,7 @@
 **Donate link:** http://14101978.de  
 **Tags:** webmention, pingback, trackback, linkback, indieweb, comment, response  
 **Requires at least:** 4.7  
-**Tested up to:** 4.8  
+**Tested up to:** 4.9  
 **Stable tag:** 3.4.1  
 **License:** MIT  
 **License URI:** http://opensource.org/licenses/MIT  

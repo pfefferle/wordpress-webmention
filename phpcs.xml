@@ -6,7 +6,7 @@
 	<file>./includes/</file>
 	<exclude-pattern>*/includes/*\.(inc|css|js|svg)</exclude-pattern>
 	<rule ref="PHPCompatibility"/>
-	<config name="testVersion" value="5.3-"/>
+	<config name="testVersion" value="5.2-"/>
 	<rule ref="WordPress-Core" />	
 	<rule ref="WordPress.Files.FileName">
 		<properties>
@@ -25,5 +25,6 @@
 		<exclude name="WordPress.CSRF.NonceVerification" />
 		<exclude name="WordPress.XSS.EscapeOutput" />
 		<exclude name="WordPress.VIP.PostsPerPage.posts_per_page" />
+		<exclude name="WordPress.VIP.PostsPerPage.posts_per_page_nopaging" />
 	</rule>
 </ruleset>

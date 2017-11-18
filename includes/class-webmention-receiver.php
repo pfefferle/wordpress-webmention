@@ -42,44 +42,44 @@ class Webmention_Receiver {
 	 */
 	public static function register_meta() {
 		$args = array(
-			'type' => 'string',
-			'description' => __( 'Target URL for the Webmention', 'webmention' ),
-			'single' => true,
+			'type'         => 'string',
+			'description'  => __( 'Target URL for the Webmention', 'webmention' ),
+			'single'       => true,
 			'show_in_rest' => true,
 		);
 		register_meta( 'comment', 'webmention_target_url', $args );
 
 		// For pingbacks the source URL is stored in the author URL. This means you cannot have an author URL that is different than the source.
 		$args = array(
-			'type' => 'string',
-			'description' => __( 'Source URL for the Webmention', 'webmention' ),
-			'single' => true,
+			'type'         => 'string',
+			'description'  => __( 'Source URL for the Webmention', 'webmention' ),
+			'single'       => true,
 			'show_in_rest' => true,
 		);
 		register_meta( 'comment', 'webmention_source_url', $args );
 
 		$args = array(
-			'type' => 'string',
-			'description' => __( 'Target URL Fragment for the Webmention', 'webmention' ),
-			'single' => true,
+			'type'         => 'string',
+			'description'  => __( 'Target URL Fragment for the Webmention', 'webmention' ),
+			'single'       => true,
 			'show_in_rest' => true,
 		);
 		register_meta( 'comment', 'webmention_target_fragment', $args );
 
 		// Purpose of this is to store the original time as there is no modified time in the comment table.
 		$args = array(
-			'type' => 'string',
-			'description' => __( 'Original Creation Time for the Webmention (GMT)', 'webmention' ),
-			'single' => true,
+			'type'         => 'string',
+			'description'  => __( 'Original Creation Time for the Webmention (GMT)', 'webmention' ),
+			'single'       => true,
 			'show_in_rest' => true,
 		);
 		register_meta( 'comment', 'webmention_created_at', $args );
 
 		// Purpose of this is to store the response code returned during verification
 		$args = array(
-			'type' => 'string',
-			'description' => __( 'Response Code Returned During Webmention Verification', 'webmention' ),
-			'single' => true,
+			'type'         => 'string',
+			'description'  => __( 'Response Code Returned During Webmention Verification', 'webmention' ),
+			'single'       => true,
 			'show_in_rest' => true,
 		);
 		register_meta( 'comment', 'webmention_response_code', $args );
@@ -101,16 +101,18 @@ class Webmention_Receiver {
 	 * Register the Route.
 	 */
 	public static function register_routes() {
-		register_rest_route( 'webmention/1.0', '/endpoint', array(
-			array(
-				'methods' => WP_REST_Server::CREATABLE,
-				'callback' => array( 'Webmention_Receiver', 'post' ),
-			),
-			array(
-				'methods' => WP_REST_Server::READABLE,
-				'callback' => array( 'Webmention_Receiver', 'get' ),
-			),
-		));
+		register_rest_route(
+			'webmention/1.0', '/endpoint', array(
+				array(
+					'methods'  => WP_REST_Server::CREATABLE,
+					'callback' => array( 'Webmention_Receiver', 'post' ),
+				),
+				array(
+					'methods'  => WP_REST_Server::READABLE,
+					'callback' => array( 'Webmention_Receiver', 'get' ),
+				),
+			)
+		);
 	}
 
 	/**
@@ -174,7 +176,7 @@ class Webmention_Receiver {
 		$params = array_filter( $request->get_params() );
 
 		if ( ! isset( $params['source'] ) ) {
-			return new WP_Error( 'source_missing' , __( 'Source is missing', 'webmention' ), array( 'status' => 400 ) );
+			return new WP_Error( 'source_missing', __( 'Source is missing', 'webmention' ), array( 'status' => 400 ) );
 		}
 
 		$source = urldecode( $params['source'] );
@@ -211,11 +213,11 @@ class Webmention_Receiver {
 		}
 		// In the event of async processing this needs to be stored here as it might not be available
 		// later.
-		$comment_meta = array();
-		$comment_author_ip = preg_replace( '/[^0-9a-fA-F:., ]/', '', $_SERVER['REMOTE_ADDR'] );
-		$comment_agent = isset( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT']: '';
-		$comment_date = current_time( 'mysql' );
-		$comment_date_gmt = current_time( 'mysql', 1 );
+		$comment_meta                          = array();
+		$comment_author_ip                     = preg_replace( '/[^0-9a-fA-F:., ]/', '', $_SERVER['REMOTE_ADDR'] );
+		$comment_agent                         = isset( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT'] : '';
+		$comment_date                          = current_time( 'mysql' );
+		$comment_date_gmt                      = current_time( 'mysql', 1 );
 		$comment_meta['webmention_created_at'] = $comment_date_gmt;
 
 		// change this if your theme can't handle the Webmentions comment type
@@ -226,7 +228,7 @@ class Webmention_Receiver {
 
 		$commentdata = compact( 'comment_type', 'comment_approved', 'comment_agent', 'comment_date', 'comment_date_gmt', 'comment_meta', 'source', 'target' );
 
-		$commentdata['comment_post_ID'] = $comment_post_id;
+		$commentdata['comment_post_ID']   = $comment_post_id;
 		$commentdata['comment_author_IP'] = $comment_author_ip;
 		// Set Comment Author URL to Source
 		$commentdata['comment_author_url'] = esc_url_raw( $commentdata['source'] );
@@ -240,7 +242,8 @@ class Webmention_Receiver {
 		$commentdata['comment_meta']['webmention_target_url'] = $commentdata['target'];
 
 		// add empty fields
-		$commentdata['comment_parent'] = $commentdata['comment_author_email'] = '';
+		$commentdata['comment_parent']       = '';
+		$commentdata['comment_author_email'] = '';
 
 		// Define WEBMENTION_PROCESS_TYPE as true if you want to define an asynchronous handler
 		if ( WEBMENTION_PROCESS_TYPE_ASYNC === get_webmention_process_type() ) {
@@ -249,10 +252,10 @@ class Webmention_Receiver {
 
 			// Return the source and target and the 202 Message
 			$return = array(
-				'link' => '', // TODO add API link to check state of comment
-				'source' => $commentdata['source'],
-				'target' => $commentdata['target'],
-				'code' => 'scheduled',
+				'link'    => '', // TODO add API link to check state of comment
+				'source'  => $commentdata['source'],
+				'target'  => $commentdata['target'],
+				'code'    => 'scheduled',
 				'message' => apply_filters( 'webmention_schedule_message', __( 'Webmention is scheduled', 'webmention' ) ),
 			);
 
@@ -322,10 +325,10 @@ class Webmention_Receiver {
 
 		// Return select data
 		$return = array(
-			'link' => get_comment_link( $commentdata['comment_ID'] ),
-			'source' => $commentdata['source'],
-			'target' => $commentdata['target'],
-			'code' => 'success',
+			'link'    => get_comment_link( $commentdata['comment_ID'] ),
+			'source'  => $commentdata['source'],
+			'target'  => $commentdata['target'],
+			'code'    => 'success',
 			'message' => apply_filters( 'webmention_success_message', __( 'Webmention was successful', 'webmention' ) ),
 		);
 
@@ -363,11 +366,11 @@ class Webmention_Receiver {
 		$wp_version = get_bloginfo( 'version' );
 
 		$user_agent = apply_filters( 'http_headers_useragent', 'WordPress/' . $wp_version . '; ' . get_bloginfo( 'url' ) );
-		$args = array(
-			'timeout' => 100,
+		$args       = array(
+			'timeout'             => 100,
 			'limit_response_size' => 153600,
-			'redirection' => 20,
-			'user-agent' => "$user_agent; verifying Webmention from " . $data['comment_author_IP'],
+			'redirection'         => 20,
+			'user-agent'          => "$user_agent; verifying Webmention from " . $data['comment_author_IP'],
 		);
 
 		$response = wp_safe_remote_get( $data['source'], $args );
@@ -389,31 +392,45 @@ class Webmention_Receiver {
 				$response = wp_safe_remote_get( $data['source'], $args );
 				break;
 			case 410:
-				return new WP_Error( 'resource_deleted', __( 'Resource has been deleted', 'webmention' ), array( 'status' => 400, 'data' => $data ) );
+				return new WP_Error(
+					'resource_deleted', __( 'Resource has been deleted', 'webmention' ), array(
+						'status' => 400,
+						'data'   => $data,
+					)
+				);
 			case 452:
-				return new WP_Error( 'resource_removed', __( 'Resource removed for legal reasons', 'webmention' ), array( 'status' => 400, 'data' => $data ) );
+				return new WP_Error(
+					'resource_removed', __( 'Resource removed for legal reasons', 'webmention' ), array(
+						'status' => 400,
+						'data'   => $data,
+					)
+				);
 			default:
 				return new WP_Error( 'source_error', wp_remote_retrieve_response_message( $response ), array( 'status' => 400 ) );
 		}
 		$remote_source_original = wp_remote_retrieve_body( $response );
 
 		// check if source really links to target
-		if ( ! strpos( htmlspecialchars_decode( $remote_source_original ), str_replace( array(
-			'http://www.',
-			'http://',
-			'https://www.',
-			'https://',
-		), '', untrailingslashit( preg_replace( '/#.*/', '', $data['target'] ) ) ) ) ) {
+		if ( ! strpos(
+			htmlspecialchars_decode( $remote_source_original ), str_replace(
+				array(
+					'http://www.',
+					'http://',
+					'https://www.',
+					'https://',
+				), '', untrailingslashit( preg_replace( '/#.*/', '', $data['target'] ) )
+			)
+		) ) {
 			return new WP_Error( 'target_not_found', __( 'Cannot find target link', 'webmention' ), array( 'status' => 400 ) );
 		}
 
 		if ( ! function_exists( 'wp_kses_post' ) ) {
-			include_once( ABSPATH . 'wp-includes/kses.php' );
+			include_once ABSPATH . 'wp-includes/kses.php';
 		}
 
 		$remote_source = wp_kses_post( $remote_source_original );
-		$content_type = wp_remote_retrieve_header( $response, 'Content-Type' );
-		$commentdata = compact( 'remote_source', 'remote_source_original', 'content_type' );
+		$content_type  = wp_remote_retrieve_header( $response, 'Content-Type' );
+		$commentdata   = compact( 'remote_source', 'remote_source_original', 'content_type' );
 
 		return array_merge( $commentdata, $data );
 	}
@@ -462,24 +479,24 @@ class Webmention_Receiver {
 		if ( ! empty( $fragment ) ) {
 			// Check for the newer meta value before checking for the more traditional location
 			$args = array(
-				'post_id' => $commentdata['comment_post_ID'],
+				'post_id'    => $commentdata['comment_post_ID'],
 				'meta_query' => array(
 					array(
-						'key' => 'webmention_source_url',
-						'value' => $commentdata['comment_author_url'],
+						'key'     => 'webmention_source_url',
+						'value'   => $commentdata['comment_author_url'],
 						'compare' => '=',
 					),
 					array(
-						'key' => 'webmention_target_fragment',
-						'value' => $fragment,
+						'key'     => 'webmention_target_fragment',
+						'value'   => $fragment,
 						'compare' => '=',
 					),
 				),
 			);
 		} else {
 			$args = array(
-				'post_id' => $commentdata['comment_post_ID'],
-				'meta_key' => 'webmention_source_url',
+				'post_id'    => $commentdata['comment_post_ID'],
+				'meta_key'   => 'webmention_source_url',
 				'meta_value' => $commentdata['comment_author_url'],
 			);
 		}
@@ -487,8 +504,8 @@ class Webmention_Receiver {
 		$comments = get_comments( $args );
 		// check result
 		if ( ! empty( $comments ) ) {
-			$comment = $comments[0];
-			$commentdata['comment_ID'] = $comment->comment_ID;
+			$comment                         = $comments[0];
+			$commentdata['comment_ID']       = $comment->comment_ID;
 			$commentdata['comment_approved'] = $comment->comment_approved;
 
 			return $commentdata;
@@ -496,19 +513,19 @@ class Webmention_Receiver {
 
 		// Check in comment_author_url if the newer location is empty
 		$args = array(
-			'post_id' => $commentdata['comment_post_ID'],
+			'post_id'    => $commentdata['comment_post_ID'],
 			'author_url' => $commentdata['comment_author_url'],
 		);
 		// If there is a fragment in the target URL then use this in the dupe search
 		if ( ! empty( $fragment ) ) {
-			$args['meta_key'] = 'webmention_target_fragment';
+			$args['meta_key']   = 'webmention_target_fragment';
 			$args['meta_value'] = $fragment;
 		}
 		$comments = get_comments( $args );
 		// check result
 		if ( ! empty( $comments ) ) {
-			$comment = $comments[0];
-			$commentdata['comment_ID'] = $comment->comment_ID;
+			$comment                         = $comments[0];
+			$commentdata['comment_ID']       = $comment->comment_ID;
 			$commentdata['comment_approved'] = $comment->comment_approved;
 			return $commentdata;
 		}
@@ -517,17 +534,17 @@ class Webmention_Receiver {
 		// or anyone else who can't use comment_author_url as the original link,
 		// but can use a _crossposting_link meta value.
 		// @link https://github.com/pfefferle/wordpress-salmon/blob/master/plugin.php#L192
-		$args = array(
-			'post_id' => $commentdata['comment_post_ID'],
-			'meta_key' => '_crossposting_link',
+		$args     = array(
+			'post_id'    => $commentdata['comment_post_ID'],
+			'meta_key'   => '_crossposting_link',
 			'meta_value' => $commentdata['comment_author_url'],
 		);
 		$comments = get_comments( $args );
 
 		// check result
 		if ( ! empty( $comments ) ) {
-			$comment = $comments[0];
-			$commentdata['comment_ID'] = $comment->comment_ID;
+			$comment                         = $comments[0];
+			$commentdata['comment_ID']       = $comment->comment_ID;
 			$commentdata['comment_approved'] = $comment->comment_approved;
 		}
 
@@ -560,7 +577,7 @@ class Webmention_Receiver {
 			$commentdata['comment_author'] = trim( $match[1] );
 		} else {
 			// or host
-			$host = parse_url( $commentdata['comment_author_url'], PHP_URL_HOST );
+			$host = wp_parse_url( $commentdata['comment_author_url'], PHP_URL_HOST );
 			// strip leading www, if any
 			$commentdata['comment_author'] = preg_replace( '/^www\./', '', $host );
 		}
@@ -581,7 +598,7 @@ class Webmention_Receiver {
 		}
 
 		// get post format
-		$post_id = $commentdata['comment_post_ID'];
+		$post_id     = $commentdata['comment_post_ID'];
 		$post_format = get_post_format( $post_id );
 
 		// replace "standard" with "Article"
@@ -593,12 +610,13 @@ class Webmention_Receiver {
 			$post_format = $post_formatstrings[ $post_format ];
 		}
 
-		$host = parse_url( $commentdata['comment_author_url'], PHP_URL_HOST );
+		$host = wp_parse_url( $commentdata['comment_author_url'], PHP_URL_HOST );
 
 		// strip leading www, if any
 		$host = preg_replace( '/^www\./', '', $host );
 
 		// generate default text
+		// translators: This post format was mentioned on this URL with this domain name
 		$commentdata['comment_content'] = sprintf( __( 'This %1$s was mentioned on <a href="%2$s">%3$s</a>', 'webmention' ), $post_format, esc_url( $commentdata['comment_author_url'] ), $host );
 
 		return $commentdata;
@@ -639,9 +657,15 @@ class Webmention_Receiver {
 	 * Generates webfinger/host-meta links
 	 */
 	public static function jrd_links( $array ) {
-		$array['links'][] = array( 'rel' => 'webmention', 'href' => get_webmention_endpoint() );
+		$array['links'][] = array(
+			'rel'  => 'webmention',
+			'href' => get_webmention_endpoint(),
+		);
 		// backwards compatibility with v0.1
-		$array['links'][] = array( 'rel' => 'http://webmention.org/', 'href' => get_webmention_endpoint() );
+		$array['links'][] = array(
+			'rel'  => 'http://webmention.org/',
+			'href' => get_webmention_endpoint(),
+		);
 
 		return $array;
 	}

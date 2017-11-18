@@ -35,13 +35,13 @@ function get_webmentions_number( $post_id = 0 ) {
 	$comment_type = apply_filters( 'webmention_comment_type', WEBMENTION_COMMENT_TYPE );
 
 	$args = array(
-		'post_id'	=> $post->ID,
-		'type'		=> $comment_type,
-		'count'		=> true,
-		'status'	=> 'approve',
+		'post_id' => $post->ID,
+		'type'    => $comment_type,
+		'count'   => true,
+		'status'  => 'approve',
 	);
 
-	$comments_query = new WP_Comment_Query;
+	$comments_query = new WP_Comment_Query();
 	return $comments_query->query( $args );
 }
 
@@ -115,11 +115,11 @@ function webmention_discover_endpoint( $url ) {
 	$wp_version = get_bloginfo( 'version' );
 
 	$user_agent = apply_filters( 'http_headers_useragent', 'WordPress/' . $wp_version . '; ' . get_bloginfo( 'url' ) );
-	$args = array(
-		'timeout' => 100,
+	$args       = array(
+		'timeout'             => 100,
 		'limit_response_size' => 1048576,
-		'redirection' => 20,
-		'user-agent' => "$user_agent; finding Webmention endpoint",
+		'redirection'         => 20,
+		'user-agent'          => "$user_agent; finding Webmention endpoint",
 	);
 
 	$response = wp_safe_remote_head( $url, $args );
@@ -129,7 +129,8 @@ function webmention_discover_endpoint( $url ) {
 	}
 
 	// check link header
-	if ( $links = wp_remote_retrieve_header( $response, 'link' ) ) {
+	$links = wp_remote_retrieve_header( $response, 'link' );
+	if ( $links ) {
 		if ( is_array( $links ) ) {
 			foreach ( $links as $link ) {
 				if ( preg_match( '/<(.[^>]+)>;\s+rel\s?=\s?[\"\']?(http:\/\/)?webmention(\.org)?\/?[\"\']?/i', $link, $result ) ) {
