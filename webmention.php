@@ -60,6 +60,9 @@ class Webmention_Plugin {
 		// initialize admin settings
 		add_action( 'admin_init', array( 'Webmention_Plugin', 'admin_init' ) );
 
+		// Load language files
+		self::plugin_textdomain();
+
 		add_action( 'admin_comment_types_dropdown', array( 'Webmention_Plugin', 'comment_types_dropdown' ) );
 		add_action( 'comment_form_after', array( 'Webmention_Plugin', 'comment_form' ), 11 );
 
@@ -255,5 +258,11 @@ class Webmention_Plugin {
 <input type="url" class="widefat" disabled value="<?php echo get_comment_meta( $object->comment_ID, 'webmention_created_at', true ); ?>" />
 <br />
 <?php
+	}
+	/**
+	 * Load language files
+	 */
+	public static function plugin_textdomain() {
+		load_plugin_textdomain( 'webmention', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 	}
 }
