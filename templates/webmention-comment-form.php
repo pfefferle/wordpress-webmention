@@ -6,5 +6,6 @@
 	<p>
 		<input id="webmention-submit" type="submit" name="submit" value="<?php _e( 'Ping me!', 'webmention' ); ?>" />
 	</p>
+	<input id="webmention-format" type="hidden" name="format" value="html" />
 	<input id="webmention-target" type="hidden" name="target" value="<?php the_permalink(); ?>" />
 </form>

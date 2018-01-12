@@ -113,39 +113,16 @@
 			-ms-transform: translateY(1px);
 			transform: translateY(1px);
 		}
-		<?php
-		if ( 'rtl' == $text_direction ) {
-			echo 'body { font-family: Tahoma, Arial; }';
-		}
-		?>
 	</style>
 	</head>
 	<body id="webmention-endpint-page">
-		<h1><?php _e( 'Send a Webmention', 'webmention' ); ?></h1>
-		<p>
-			<?php echo get_webmention_form_text( get_the_ID() ); ?>
-		</p>
+		<p><?php echo $data['message']; ?></p>
 
-		<?php do_action( 'webmention_endpoint_form_before_form' ); ?>
-
-		<form id="webmention-form" action="<?php echo get_webmention_endpoint(); ?>" method="post">
-			<?php do_action( 'webmention_endpoint_form_before_input_fields' ); ?>
-			<p>
-				<label for="webmention-source"><?php _e( 'Source URL', 'webmention' ); ?>:</label><br />
-				<input id="webmention-source" type="url" name="source" placeholder="<?php _e( 'URL/Permalink of your article', 'webmention' ); ?>" size="70" />
-			</p>
-			<p>
-				<label for="webmention-target"><?php _e( 'Target URL', 'webmention' ); ?>:</label><br />
-				<input id="webmention-target" type="url" name="target" placeholder="<?php _e( 'URL/Permalink of my article', 'webmention' ); ?>" size="70" />
-			</p>
-			<p>
-				<input id="webmention-submit" type="submit" name="submit" value="<?php _e( 'Ping me!', 'webmention' ); ?>" />
-			</p>
-			<input id="webmention-format" type="hidden" name="format" value="html" />
-			<?php do_action( 'webmention_endpoint_form_after_input_fields' ); ?>
-		</form>
-
-		<p><?php _e( 'Webmention is a way for you to tell me "Hey, I have written a response to your post."', 'webmention' ); ?> </p>
-		<p><?php _e( 'Learn more about Webmentions at <a href="http://webmention.net">webmention.net</a>', 'webmention' ); ?> </p>
+		<p id="backtoblog"><a href="<?php echo esc_url( home_url( '/' ) ); ?>">
+			<?php
+			/* translators: %s: site title */
+			printf( _x( '&larr; Back to %s', 'site' ), get_bloginfo( 'title', 'display' ) );
+			?>
+		</a></p>
 	</body>
 </html>

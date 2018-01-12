@@ -12,7 +12,7 @@ class Webmention_Receiver {
 		// Configure the REST API route
 		add_action( 'rest_api_init', array( 'Webmention_Receiver', 'register_routes' ) );
 		// Filter the response to allow a webmention form if no parameters are passed
-		add_filter( 'rest_pre_serve_request', array( 'Webmention_Receiver', 'serve_request' ), 9, 4 );
+		add_filter( 'rest_pre_serve_request', array( 'Webmention_Receiver', 'serve_request' ), 11, 4 );
 
 		add_filter( 'duplicate_comment_id', array( 'Webmention_Receiver', 'disable_wp_check_dupes' ), 20, 2 );
 
@@ -129,19 +129,35 @@ class Webmention_Receiver {
 		if ( '/webmention/1.0/endpoint' !== $request->get_route() ) {
 			return $served;
 		}
-		if ( 'GET' !== $request->get_method() ) {
-			return $served;
+
+		if ( 'GET' === $request->get_method() ) {
+			// If someone tries to poll the webmention endpoint return a webmention form.
+			if ( ! headers_sent() ) {
+				$server->send_header( 'Content-Type', 'text/html; charset=' . get_option( 'blog_charset' ) );
+			}
+
+			$template = apply_filters( 'webmention_endpoint_form', plugin_dir_path( __FILE__ ) . '../templates/webmention-endpoint-form.php' );
+
+			load_template( $template );
+
+			return true;
 		}
-		// If someone tries to poll the webmention endpoint return a webmention form.
-		if ( ! headers_sent() ) {
-			$server->send_header( 'Content-Type', 'text/html; charset=' . get_option( 'blog_charset' ) );
+
+		// render nice HTML views for non API-calls
+		if ( $request->get_param( 'format' ) === 'html' ) {
+			// If someone tries to poll the webmention endpoint return a webmention form.
+			if ( ! headers_sent() ) {
+				$server->send_header( 'Content-Type', 'text/html; charset=' . get_option( 'blog_charset' ) );
+			}
+
+			// Embed links inside the request.
+			$data = $server->response_to_data( $result, false );
+
+			require_once plugin_dir_path( __FILE__ ) . '../templates/webmention-api-message.php';
+			return true;
 		}
 
-		$template = apply_filters( 'webmention_endpoint_form', plugin_dir_path( __FILE__ ) . '../templates/webmention-endpoint-form.php' );
-
-		load_template( $template );
-
-		return true;
+		return $served;
 	}
 
 	/**
