@@ -79,6 +79,11 @@ As Webmention uses the REST API endpoint system, most up to date caching plugins
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
 
+### 3.5.0 ###
+
+* Added nicer HTML views for non API calls
+* Added german translations (thanks to @deponeWD)
+
 ### 3.4.1 ###
 
 * Add filter to allow setting of webmention form text
