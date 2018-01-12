@@ -2,7 +2,7 @@
 
 # Webmention #
 **Contributors:** pfefferle, dshanske  
-**Donate link:** http://14101978.de  
+**Donate link:** https://notiz.blog/donate/  
 **Tags:** webmention, pingback, trackback, linkback, indieweb, comment, response  
 **Requires at least:** 4.7  
 **Tested up to:** 4.8  
