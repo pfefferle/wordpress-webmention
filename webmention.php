@@ -35,22 +35,22 @@ class Webmention_Plugin {
 	public static function init() {
 		// Add a new feature type to posts for webmentions
 		add_post_type_support( 'post', 'webmentions' );
-		if ( 1 == get_option( 'webmention_support_pages' ) ) {
+		if ( 1 === (int) get_option( 'webmention_support_pages' ) ) {
 			add_post_type_support( 'page', 'webmentions' );
 		}
 		if ( WP_DEBUG ) {
-			require_once( dirname( __FILE__ ) . '/includes/debug.php' );
+			require_once dirname( __FILE__ ) . '/includes/debug.php';
 		}
 
 		// list of various public helper functions
-		require_once( dirname( __FILE__ ) . '/includes/functions.php' );
+		require_once dirname( __FILE__ ) . '/includes/functions.php';
 
 		// initialize Webmention Sender
-		require_once( dirname( __FILE__ ) . '/includes/class-webmention-sender.php' );
+		require_once dirname( __FILE__ ) . '/includes/class-webmention-sender.php';
 		add_action( 'init', array( 'Webmention_Sender', 'init' ) );
 
 		// initialize Webmention Receiver
-		require_once( dirname( __FILE__ ) . '/includes/class-webmention-receiver.php' );
+		require_once dirname( __FILE__ ) . '/includes/class-webmention-receiver.php';
 		add_action( 'init', array( 'Webmention_Receiver', 'init' ) );
 
 		// Default Comment Status
@@ -60,44 +60,57 @@ class Webmention_Plugin {
 		// initialize admin settings
 		add_action( 'admin_init', array( 'Webmention_Plugin', 'admin_init' ) );
 
+		// Load language files
+		self::plugin_textdomain();
+
 		add_action( 'admin_comment_types_dropdown', array( 'Webmention_Plugin', 'comment_types_dropdown' ) );
 		add_action( 'comment_form_after', array( 'Webmention_Plugin', 'comment_form' ), 11 );
 
-		register_setting( 'discussion', 'webmention_disable_selfpings_same_url', array(
-			'type' => 'boolean',
-			'description' => __( 'Disable Self Webmentions on the Same URL', 'webmention' ),
-			'show_in_rest' => true,
-			'default' => 1,
-		) );
-		register_setting( 'discussion', 'webmention_disable_selfpings_same_domain', array(
-			'type' => 'boolean',
-			'description' => __( 'Disable Self Webmentions on the Same Domain', 'webmention' ),
-			'show_in_rest' => true,
-			'default' => 0,
-		) );
-		register_setting( 'discussion', 'webmention_support_pages', array(
-			'type' => 'boolean',
-			'description' => __( 'Enable Webmention Support for Pages', 'webmention' ),
-			'show_in_rest' => true,
-			'default' => 1,
-		) );
-		register_setting( 'discussion', 'webmention_show_comment_form', array(
-			'type' => 'boolean',
-			'description' => __( 'Show Webmention Comment Form', 'webmention' ),
-			'show_in_rest' => true,
-			'default' => 1,
-		) );
-		register_setting( 'discussion', 'webmention_home_mentions', array(
-			'type' => 'int',
-			'description' => __( 'Where to Direct Mentions of the Home Page', 'webmention' ),
-			'show_in_rest' => true,
-			'default' => 0,
-		) );
+		register_setting(
+			'discussion', 'webmention_disable_selfpings_same_url', array(
+				'type'         => 'boolean',
+				'description'  => __( 'Disable Self Webmentions on the Same URL', 'webmention' ),
+				'show_in_rest' => true,
+				'default'      => 1,
+			)
+		);
+		register_setting(
+			'discussion', 'webmention_disable_selfpings_same_domain', array(
+				'type'         => 'boolean',
+				'description'  => __( 'Disable Self Webmentions on the Same Domain', 'webmention' ),
+				'show_in_rest' => true,
+				'default'      => 0,
+			)
+		);
+		register_setting(
+			'discussion', 'webmention_support_pages', array(
+				'type'         => 'boolean',
+				'description'  => __( 'Enable Webmention Support for Pages', 'webmention' ),
+				'show_in_rest' => true,
+				'default'      => 1,
+			)
+		);
+		register_setting(
+			'discussion', 'webmention_show_comment_form', array(
+				'type'         => 'boolean',
+				'description'  => __( 'Show Webmention Comment Form', 'webmention' ),
+				'show_in_rest' => true,
+				'default'      => 1,
+			)
+		);
+		register_setting(
+			'discussion', 'webmention_home_mentions', array(
+				'type'         => 'int',
+				'description'  => __( 'Where to Direct Mentions of the Home Page', 'webmention' ),
+				'show_in_rest' => true,
+				'default'      => 0,
+			)
+		);
 	}
 
 	public static function get_default_comment_status( $status, $post_type, $comment_type ) {
 		if ( 'webmention' === $comment_type ) {
-			return post_type_supports( $post_type, 'webmentions' ) ? 'open' : 'closed' ;
+			return post_type_supports( $post_type, 'webmentions' ) ? 'open' : 'closed';
 		}
 		// Since support for the pingback comment type is used to keep pings open...
 		if ( ( 'pingback' === $comment_type ) ) {
@@ -133,7 +146,7 @@ class Webmention_Plugin {
 	public static function comment_form() {
 		$template = apply_filters( 'webmention_comment_form', plugin_dir_path( __FILE__ ) . 'templates/webmention-comment-form.php' );
 
-		if ( 1 == get_option( 'webmention_show_comment_form' ) ) {
+		if ( 1 === (int) get_option( 'webmention_show_comment_form' ) ) {
 			load_template( $template );
 		}
 	}
@@ -201,7 +214,7 @@ class Webmention_Plugin {
 	 * @return boolean if pings are open
 	 */
 	public static function pings_open( $open, $post_id ) {
-		if ( get_option( 'webmention_home_mentions' ) == $post_id ) {
+		if ( get_option( 'webmention_home_mentions' ) === $post_id ) {
 			return true;
 		}
 
@@ -245,5 +258,11 @@ class Webmention_Plugin {
 <input type="url" class="widefat" disabled value="<?php echo get_comment_meta( $object->comment_ID, 'webmention_created_at', true ); ?>" />
 <br />
 <?php
+	}
+	/**
+	 * Load language files
+	 */
+	public static function plugin_textdomain() {
+		load_plugin_textdomain( 'webmention', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 	}
 }
