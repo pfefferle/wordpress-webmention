@@ -5,7 +5,7 @@
 **Donate link:** https://notiz.blog/donate/  
 **Tags:** webmention, pingback, trackback, linkback, indieweb, comment, response  
 **Requires at least:** 4.7  
-**Tested up to:** 4.9  
+**Tested up to:** 4.9.2  
 **Stable tag:** 3.4.1  
 **License:** MIT  
 **License URI:** http://opensource.org/licenses/MIT  
@@ -83,6 +83,7 @@ Project and support maintained on github at [pfefferle/wordpress-webmention](htt
 
 * Added nicer HTML views for non API calls
 * Added german translations (thanks to @deponeWD)
+* Be sure to disable the old `webmention-for-comments` plugin
 
 ### 3.4.1 ###
 

@@ -20,6 +20,9 @@ define( 'WEBMENTION_PROCESS_TYPE_SYNC', 'sync' );
 
 defined( 'WEBMENTION_PROCESS_TYPE' ) || define( 'WEBMENTION_PROCESS_TYPE', WEBMENTION_PROCESS_TYPE_SYNC );
 
+// remove old WebMentionFormPlugin code
+remove_action( 'init', array( 'WebMentionFormPlugin', 'init' ) );
+
 add_action( 'plugins_loaded', array( 'Webmention_Plugin', 'init' ) );
 
 /**
