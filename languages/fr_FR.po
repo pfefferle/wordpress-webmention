@@ -1,0 +1,264 @@
+# Copyright (C) 2017 Matthias Pfefferle
+# This file is distributed under the MIT.
+msgid ""
+msgstr ""
+"Project-Id-Version: Webmention 3.4.1\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/webmention\n"
+"POT-Creation-Date: 2017-06-30 19:24:15+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2018-01-25 16:14+0100\n"
+"Language-Team: \n"
+"X-Generator: Poedit 2.0.6\n"
+"Last-Translator: \n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Language: fr_FR\n"
+
+#: includes/class-webmention-receiver.php:46
+msgid "Target URL for the Webmention"
+msgstr "Adresse cible pour la webmention"
+
+#: includes/class-webmention-receiver.php:55
+msgid "Source URL for the Webmention"
+msgstr "Adresse source pour la webmention"
+
+#: includes/class-webmention-receiver.php:63
+msgid "Target URL Fragment for the Webmention"
+msgstr "Ancre  dans l’adresse cible pour la pour la webmention"
+
+#: includes/class-webmention-receiver.php:72
+msgid "Original Creation Time for the Webmention (GMT)"
+msgstr "Heure de création d’organe pour la webmention (GMT)"
+
+#: includes/class-webmention-receiver.php:81
+msgid "Response Code Returned During Webmention Verification"
+msgstr "Code de réponse retourné lors de la vérification de la webmention"
+
+#: includes/class-webmention-receiver.php:177
+msgid "Source is missing"
+msgstr "La source est manquante"
+
+#: includes/class-webmention-receiver.php:183
+msgid "Target is missing"
+msgstr "La cible est manquante"
+
+#: includes/class-webmention-receiver.php:189
+msgid "Target is not on this domain"
+msgstr "La cible n’est pas sur ce domaine"
+
+#: includes/class-webmention-receiver.php:196
+#: includes/class-webmention-receiver.php:210
+msgid "Target is not a valid post"
+msgstr "La cible n’est pas un article valide"
+
+#: includes/class-webmention-receiver.php:200
+msgid "Target and source cannot direct to the same resource"
+msgstr "Cible et source ne peuvent pas pointer vers la même ressource"
+
+#: includes/class-webmention-receiver.php:205
+msgid "Pings are disabled for this post"
+msgstr "Les pings sont désactivés pour cet article"
+
+#: includes/class-webmention-receiver.php:256
+msgid "Webmention is scheduled"
+msgstr "La webmention est programmée"
+
+#: includes/class-webmention-receiver.php:329
+msgid "Webmention was successful"
+msgstr "La webmention a réussi avec succès"
+
+#: includes/class-webmention-receiver.php:360
+msgid "Invalid data passed"
+msgstr "Données transmises invalides"
+
+#: includes/class-webmention-receiver.php:377
+msgid "Source URL not found"
+msgstr "Adresse source introuvable"
+
+#: includes/class-webmention-receiver.php:384
+msgid "Content Type is not supported"
+msgstr "Type de contenu n’est pas supporté"
+
+#: includes/class-webmention-receiver.php:392
+msgid "Resource has been deleted"
+msgstr "La ressource a été effacée"
+
+#: includes/class-webmention-receiver.php:394
+msgid "Resource removed for legal reasons"
+msgstr "La ressource a été retirée pour des raisons juridiques"
+
+#: includes/class-webmention-receiver.php:407
+msgid "Cannot find target link"
+msgstr "Lien destination introuvable"
+
+#: includes/class-webmention-receiver.php:602
+msgid "This %1$s was mentioned on <a href=\"%2$s\">%3$s</a>"
+msgstr "Cet(te) %1$s a été mentionné sur <a href=« %2$s »>%3$s</a>"
+
+#: includes/functions.php:21
+msgid ""
+"Respond on your own site? Send me a <a href=\"http://indieweb.org/webmention"
+"\">Webmention</a> by writing something on your website that links to this "
+"post and then enter your post URL below."
+msgstr ""
+"Vous répondez sur votre propre site ? Envoyez-moi une <a href=\"http://"
+"indieweb.org/webmention\">Webmention</a> en écrivant quelque chose qui "
+"pointe ici sur votre site web et entrez l’adresse de votre billet ci-dessous."
+
+#: templates/webmention-comment-form.php:4
+#: templates/webmention-endpoint-form.php:135
+msgid "URL/Permalink of your article"
+msgstr "Adresse/Permalien de votre article"
+
+#: templates/webmention-comment-form.php:7
+#: templates/webmention-endpoint-form.php:142
+msgid "Ping me!"
+msgstr "Faites-moi un ping!"
+
+#: templates/webmention-discussion-settings.php:5
+msgid ""
+"Disable self-pings on the same URL <small>(for example \"http://example.com/?"
+"p=123\")</small>"
+msgstr ""
+"Désactiver les auto-pings sur la même adresse <small>(for example « http://"
+"example.com/?p=123 »)</small>"
+
+#: templates/webmention-discussion-settings.php:13
+msgid ""
+"Disable self-pings on the same Domain <small>(for example \"example.com\")</"
+"small>"
+msgstr ""
+"Désactiver les auto-pings sur la même adresse <small>(for example « http://"
+"example.com/?p=123 »)</small>"
+
+#: templates/webmention-discussion-settings.php:21 webmention.php:80
+msgid "Enable Webmention Support for Pages"
+msgstr "Activer le support des web mentions pour les pages"
+
+#: templates/webmention-discussion-settings.php:29
+msgid "Show a Webmention form at the comment section, to enable manual pings."
+msgstr ""
+"Afficher un formulaire webmention pour permettre les pings manuels au niveau "
+"de la section de commentaires."
+
+#: templates/webmention-discussion-settings.php:35
+msgid "Set a page for mentions of the homepage to be sent to:"
+msgstr ""
+"Définir la page où les webmention de la page d’accueil seront envoyées :"
+
+#: templates/webmention-discussion-settings.php:39
+msgid "No Homepage Mentions"
+msgstr "Pas de webmention pour la page d’accueil"
+
+#: templates/webmention-discussion-settings.php:48
+msgid "Visit site"
+msgstr "Visiter le site"
+
+#: templates/webmention-endpoint-form.php:11
+msgid "Webmention Endpoint"
+msgstr "Point d’entrée webmention"
+
+#: templates/webmention-endpoint-form.php:124
+msgid "Send a Webmention"
+msgstr "Envoyer une webmention"
+
+#: templates/webmention-endpoint-form.php:134
+msgid "Source URL"
+msgstr "Adresse source"
+
+#: templates/webmention-endpoint-form.php:138
+msgid "Target URL"
+msgstr "Adresse cible"
+
+#: templates/webmention-endpoint-form.php:139
+msgid "URL/Permalink of my article"
+msgstr "Adresse/Permalien de mon article"
+
+#: templates/webmention-endpoint-form.php:147
+msgid ""
+"Webmention is a way for you to tell me \"Hey, I have written a response to "
+"your post.\""
+msgstr ""
+"Les web mentions sont un moyen pour vous de me dire «  Hey, j’ai écrit une "
+"réponse à ton article. »"
+
+#: templates/webmention-endpoint-form.php:148
+msgid ""
+"Learn more about Webmentions at <a href=\"http://webmention.net\">webmention."
+"net</a>"
+msgstr ""
+"Plus d’informations à propos de webmention sur <a href=« http://webmention."
+"net »>webmention.net</a>"
+
+#: webmention.php:68
+msgid "Disable Self Webmentions on the Same URL"
+msgstr "Désactiver les auto-webmention sur la même adresse"
+
+#: webmention.php:74
+msgid "Disable Self Webmentions on the Same Domain"
+msgstr "Désactiver les auto-webmention sur le même domaine"
+
+#: webmention.php:86
+msgid "Show Webmention Comment Form"
+msgstr "Montrer le formulaire de commentaire webmention"
+
+#: webmention.php:92
+msgid "Where to Direct Mentions of the Home Page"
+msgstr "Où envoyer les webmention de la page d’accueil"
+
+#: webmention.php:114
+msgid "Webmention Settings"
+msgstr "Paramètres webmention"
+
+#: webmention.php:150
+msgid "Webmentions"
+msgstr "Webmentions"
+
+#: webmention.php:168
+msgid "Settings"
+msgstr "Paramètres"
+
+#: webmention.php:189
+msgid "Homepage Webmentions"
+msgstr "Webmentions de la page d’accueil"
+
+#: webmention.php:217
+msgid "Webmention Data"
+msgstr "Données webmention"
+
+#: webmention.php:232
+msgid "Webmention Target"
+msgstr "Cible webmention"
+
+#: webmention.php:236
+msgid "Webmention Target Fragment"
+msgstr "Ancre de la cible webmention"
+
+#: webmention.php:240
+msgid "Webmention Source"
+msgstr "Source webmention"
+
+#: webmention.php:244
+msgid "Webmention Creation Time"
+msgstr "Date de création webmention"
+
+#. Plugin Name of the plugin/theme
+msgid "Webmention"
+msgstr "Webmention"
+
+#. Plugin URI of the plugin/theme
+msgid "https://github.com/pfefferle/wordpress-webmention"
+msgstr "https://github.com/pfefferle/wordpress-webmention"
+
+#. Description of the plugin/theme
+msgid "Webmention support for WordPress posts"
+msgstr "Support des web mentions pour les articles WordPress"
+
+#. Author of the plugin/theme
+msgid "Matthias Pfefferle"
+msgstr "Matthias Pfefferle"
+
+#. Author URI of the plugin/theme
+msgid "https://notiz.blog/"
+msgstr "https://notiz.blog/"
