@@ -420,6 +420,13 @@ class Webmention_Receiver {
 			case 200:
 				$response = wp_safe_remote_get( $data['source'], $args );
 				break;
+			case 404:
+				return new WP_Error(
+					'resource_not_found', __( 'Resource not found', 'webmention' ), array(
+						'status' => 400,
+						'data'   => $data,
+					)
+				);
 			case 410:
 				return new WP_Error(
 					'resource_deleted', __( 'Resource has been deleted', 'webmention' ), array(
@@ -679,7 +686,11 @@ class Webmention_Receiver {
 	 * @param WP_Error $error
 	 */
 	public static function delete( $error ) {
-		$error_codes = apply_filters( 'webmention_supported_delete_codes', array( 'resource_deleted', 'resource_removed' ) );
+		$error_codes = apply_filters( 'webmention_supported_delete_codes', array(
+			'resource_not_found',
+			'resource_deleted',
+			'resource_removed',
+		) );
 
 		if ( ! in_array( $error->get_error_code(), $error_codes ) ) {
 			return;
