@@ -71,6 +71,8 @@ class Webmention_Plugin {
 		self::plugin_textdomain();
 
 		add_action( 'admin_comment_types_dropdown', array( 'Webmention_Plugin', 'comment_types_dropdown' ) );
+		add_filter( 'manage_edit-comments_columns', array( 'Webmention_Plugin', 'comment_columns' ) );
+		add_filter( 'manage_comments_custom_column', array( 'Webmention_Plugin', 'manage_comments_custom_column' ), 10, 2 );
 		add_action( 'comment_form_after', array( 'Webmention_Plugin', 'comment_form' ), 11 );
 
 		register_setting(
@@ -170,6 +172,29 @@ class Webmention_Plugin {
 		$types['webmention'] = __( 'Webmentions', 'webmention' );
 
 		return $types;
+	}
+
+	/**
+	 * Add comment-type as column in WP-Admin
+	 *
+	 * @param array $columns the list of column names
+	 */
+	public static function comment_columns( $columns ) {
+		$columns['comment_type'] = __( 'Comment-Type', 'webmention' );
+
+		return $columns;
+	}
+
+	/**
+	 * Add comment-type as column in WP-Admin
+	 *
+	 * @param array $column the column to implement
+	 * @param int $comment_ID the comment id
+	 */
+	public static function manage_comments_custom_column( $column, $comment_ID ) {
+		if ( 'comment_type' == $column ) {
+			_e( get_comment_type( $comment_ID ), 'webmention' );
+		}
 	}
 
 	/**
