@@ -34,6 +34,9 @@ class Webmention_Receiver {
 		// Allow for avatars on webmention comment types
 		add_filter( 'get_avatar_comment_types', array( 'Webmention_Receiver', 'get_avatar_comment_types' ) );
 
+		// Support Webmention delete
+		add_action( 'webmention_data_error', array( 'Webmention_Receiver', 'delete' ) );
+
 		self::register_meta();
 	}
 
@@ -393,14 +396,24 @@ class Webmention_Receiver {
 
 		// check if source is accessible
 		if ( is_wp_error( $response ) ) {
-			return new WP_Error( 'source_not_found', __( 'Source URL not found', 'webmention' ), array( 'status' => 400 ) );
+			return new WP_Error(
+				'source_not_found', __( 'Source URL not found', 'webmention' ), array(
+					'status' => 400,
+					'data'   => $data,
+				)
+			);
 		}
 
 		// A valid response code from the other server would not be considered an error.
 		$response_code = wp_remote_retrieve_response_code( $response );
 		// not an (x)html, sgml, or xml page, no use going further
 		if ( preg_match( '#(image|audio|video|model)/#is', wp_remote_retrieve_header( $response, 'content-type' ) ) ) {
-			return new WP_Error( 'unsupported_content_type', __( 'Content Type is not supported', 'webmention' ), array( 'status' => 400 ) );
+			return new WP_Error(
+				'unsupported_content_type', __( 'Content Type is not supported', 'webmention' ), array(
+					'status' => 400,
+					'data'   => $data,
+				)
+			);
 		}
 
 		switch ( $response_code ) {
@@ -422,7 +435,12 @@ class Webmention_Receiver {
 					)
 				);
 			default:
-				return new WP_Error( 'source_error', wp_remote_retrieve_response_message( $response ), array( 'status' => 400 ) );
+				return new WP_Error(
+					'source_error', wp_remote_retrieve_response_message( $response ), array(
+						'status' => 400,
+						'data'   => $data,
+					)
+				);
 		}
 		$remote_source_original = wp_remote_retrieve_body( $response );
 
@@ -437,7 +455,12 @@ class Webmention_Receiver {
 				), '', untrailingslashit( preg_replace( '/#.*/', '', $data['target'] ) )
 			)
 		) ) {
-			return new WP_Error( 'target_not_found', __( 'Cannot find target link', 'webmention' ), array( 'status' => 400 ) );
+			return new WP_Error(
+				'target_not_found', __( 'Cannot find target link', 'webmention' ), array(
+					'status' => 400,
+					'data'   => $data,
+				)
+			);
 		}
 
 		if ( ! function_exists( 'wp_kses_post' ) ) {
@@ -638,7 +661,6 @@ class Webmention_Receiver {
 		return $commentdata;
 	}
 
-
 	/**
 	 * Marks the post as "no webmentions sent yet"
 	 *
@@ -648,6 +670,26 @@ class Webmention_Receiver {
 		// check if pingbacks are enabled
 		if ( get_option( 'default_pingback_flag' ) ) {
 			add_post_meta( $post_id, '_mentionme', '1', true );
+		}
+	}
+
+	/**
+	 * Delete comment if source returns error 410 or 452
+	 *
+	 * @param WP_Error $error
+	 */
+	public static function delete( $error ) {
+		$error_codes = apply_filters( 'webmention_supported_delete_codes', array( 'resource_deleted', 'resource_removed' ) );
+
+		if ( ! in_array( $error->get_error_code(), $error_codes ) ) {
+			return;
+		}
+
+		$commentdata = $error->get_error_data();
+		$commentdata = self::check_dupes($commentdata);
+
+		if ( isset( $commentdata['comment_ID'] ) ) {
+			wp_delete_comment( $commentdata['comment_ID'] );
 		}
 	}
 

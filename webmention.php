@@ -48,6 +48,10 @@ class Webmention_Plugin {
 		// list of various public helper functions
 		require_once dirname( __FILE__ ) . '/includes/functions.php';
 
+		// load HTTP 410 support
+		require_once dirname( __FILE__ ) . '/includes/class-webmention-410.php';
+		add_action( 'init', array( 'Webmention_410', 'init' ) );
+
 		// initialize Webmention Sender
 		require_once dirname( __FILE__ ) . '/includes/class-webmention-sender.php';
 		add_action( 'init', array( 'Webmention_Sender', 'init' ) );

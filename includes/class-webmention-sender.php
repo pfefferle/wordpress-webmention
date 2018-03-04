@@ -20,6 +20,10 @@ class Webmention_Sender {
 		foreach ( $post_types as $post_type ) {
 			add_action( 'publish_' . $post_type, array( 'Webmention_Sender', 'publish_hook' ) );
 		}
+
+		// remote delete posts
+		add_action( 'trashed_post', array( 'Webmention_Sender', 'trash_hook' ) );
+		add_action( 'webmention_delete', array( 'Webmention_Sender', 'send_webmentions' ) );
 	}
 
 	/**
@@ -32,6 +36,15 @@ class Webmention_Sender {
 		if ( get_option( 'default_pingback_flag' ) ) {
 			add_post_meta( $post_id, '_mentionme', '1', true );
 		}
+	}
+
+	/**
+	 * Send Webmention delete
+	 *
+	 * @param int $post_id
+	 */
+	public static function trash_hook( $post_id ) {
+		wp_schedule_single_event( time() + wp_rand( 0, 120 ), 'webmention_delete', array( $post_id ) );
 	}
 
 	/**
@@ -101,6 +114,9 @@ class Webmention_Sender {
 	public static function send_webmentions( $post_id ) {
 		// get source url
 		$source = get_permalink( $post_id );
+
+		// remove `__trashed` from the url
+		$source = str_replace( '__trashed', '', $source );
 
 		// get post
 		$post = get_post( $post_id );
@@ -178,6 +194,7 @@ class Webmention_Sender {
 		if ( function_exists( 'ksuce_exclude_categories' ) ) {
 			remove_filter( 'pre_get_posts', 'ksuce_exclude_categories' );
 		}
+
 		$mentions = get_posts(
 			array(
 				'meta_key'  => '_mentionme',
