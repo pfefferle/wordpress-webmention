@@ -20,9 +20,6 @@ define( 'WEBMENTION_PROCESS_TYPE_SYNC', 'sync' );
 
 defined( 'WEBMENTION_PROCESS_TYPE' ) || define( 'WEBMENTION_PROCESS_TYPE', WEBMENTION_PROCESS_TYPE_SYNC );
 
-// remove old WebMentionFormPlugin code
-remove_action( 'init', array( 'WebMentionFormPlugin', 'init' ) );
-
 add_action( 'plugins_loaded', array( 'Webmention_Plugin', 'init' ) );
 
 /**
@@ -115,6 +112,9 @@ class Webmention_Plugin {
 				'default'      => 0,
 			)
 		);
+
+		// remove old WebMentionFormPlugin code
+		remove_action( 'init', array( 'WebMentionFormPlugin', 'init' ) );
 	}
 
 	public static function get_default_comment_status( $status, $post_type, $comment_type ) {
