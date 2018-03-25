@@ -24,7 +24,7 @@ if ( $comment->comment_parent ) {
 		</script>
 	</head>
 
-	<body <?php body_class( 'h-comment h-as-comment h-entry' ); ?>>
+	<body <?php body_class( 'h-entry' ); ?>>
 		<div id="page">
 			<?php do_action( 'before' ); ?>
 
@@ -42,7 +42,7 @@ if ( $comment->comment_parent ) {
 					</time></a>
 					<ul>
 					<?php if ( $target ) { ?>
-						<li><a href="<?php echo $target; ?>" rel="in-reply-to" class="u-in-reply-to"><?php echo $target; ?></a></li>
+						<li><a href="<?php echo $target; ?>" rel="in-reply-to" class="u-in-reply-to u-reply-of"><?php echo $target; ?></a></li>
 					<?php } ?>
 					</ul>
 				</footer>
