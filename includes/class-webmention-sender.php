@@ -21,6 +21,8 @@ class Webmention_Sender {
 			add_action( 'publish_' . $post_type, array( 'Webmention_Sender', 'publish_hook' ) );
 		}
 
+		add_action( 'comment_post', array( 'Webmention_Sender', 'comment_post' ) );
+
 		// remote delete posts
 		add_action( 'trashed_post', array( 'Webmention_Sender', 'trash_hook' ) );
 		add_action( 'webmention_delete', array( 'Webmention_Sender', 'send_webmentions' ) );
@@ -35,6 +37,30 @@ class Webmention_Sender {
 		// check if pingbacks are enabled
 		if ( get_option( 'default_pingback_flag' ) ) {
 			add_post_meta( $post_id, '_mentionme', '1', true );
+		}
+	}
+
+	/**
+	 * send webmentions on new comments
+	 *
+	 * @param int $id the post id
+	 * @param obj $comment the comment object
+	 */
+	public static function comment_post( $id ) {
+		$comment = get_comment( $id );
+
+		// check parent comment
+		if ( $comment->comment_parent ) {
+			// get parent comment...
+			$parent = get_comment( $comment->comment_parent );
+			// ...and gernerate target url
+			$target = $parent->comment_author_url;
+
+			if ( $target ) {
+				$source = add_query_arg( 'replytocom', $comment->comment_ID, get_permalink( $comment->comment_post_ID ) );
+
+				do_action( 'send_webmention', $source, $target );
+			}
 		}
 	}
 

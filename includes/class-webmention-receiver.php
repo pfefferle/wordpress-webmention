@@ -9,6 +9,8 @@ class Webmention_Receiver {
 	 * Initialize the plugin, registering WordPress hooks
 	 */
 	public static function init() {
+		add_filter( 'query_vars', array( 'Webmention_Receiver', 'query_var' ) );
+
 		// Configure the REST API route
 		add_action( 'rest_api_init', array( 'Webmention_Receiver', 'register_routes' ) );
 		// Filter the response to allow a webmention form if no parameters are passed
@@ -33,6 +35,9 @@ class Webmention_Receiver {
 
 		// Allow for avatars on webmention comment types
 		add_filter( 'get_avatar_comment_types', array( 'Webmention_Receiver', 'get_avatar_comment_types' ) );
+
+		// Threaded comments support
+		add_filter( 'template_include', array( 'Webmention_Receiver', 'comment_template_include' ) );
 
 		// Support Webmention delete
 		add_action( 'webmention_data_error', array( 'Webmention_Receiver', 'delete' ) );
@@ -86,6 +91,17 @@ class Webmention_Receiver {
 			'show_in_rest' => true,
 		);
 		register_meta( 'comment', 'webmention_response_code', $args );
+	}
+
+	/**
+	 * adds some query vars
+	 *
+	 * @param array $vars
+	 * @return array
+	 */
+	public static function query_var( $vars ) {
+		$vars[] = 'replytocom';
+		return $vars;
 	}
 
 	/**
@@ -260,8 +276,17 @@ class Webmention_Receiver {
 		}
 		$commentdata['comment_meta']['webmention_target_url'] = $commentdata['target'];
 
+		$commentdata['comment_parent'] = '';
+		// check if there is a parent comment
+		if ( $query_string = parse_url( $commentdata['target'], PHP_URL_QUERY ) ) {
+			$query_array = array();
+			parse_str( $query_string, $query_array );
+			if ( isset( $query_array['replytocom'] ) && get_comment( $query_array['replytocom'] ) ) {
+				$commentdata['comment_parent'] = $replytocom;
+			}
+		}
+
 		// add empty fields
-		$commentdata['comment_parent']       = '';
 		$commentdata['comment_author_email'] = '';
 
 		// Define WEBMENTION_PROCESS_TYPE as true if you want to define an asynchronous handler
@@ -702,6 +727,23 @@ class Webmention_Receiver {
 		if ( isset( $commentdata['comment_ID'] ) ) {
 			wp_delete_comment( $commentdata['comment_ID'] );
 		}
+	}
+
+	/**
+	 * replace the template for all URLs with a "replytocom" query-param
+	 *
+	 * @param string $template the template url
+	 * @return string
+	 */
+	public static function comment_template_include( $template ) {
+		global $wp_query;
+
+		// replace template
+		if ( isset( $wp_query->query['replytocom'] ) ) {
+			return apply_filters( 'webmention_comment_template', dirname( __FILE__ ) . '/templates/webmention-comment.php' );
+		}
+
+		return $template;
 	}
 
 	/**
