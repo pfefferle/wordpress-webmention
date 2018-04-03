@@ -2,14 +2,20 @@
 global $wp_query, $post;
 $comment_id = $wp_query->query['replytocom'];
 $comment = get_comment( $comment_id );
-$target = null;
+$target = '';
+
+if ( $comment->comment_author_url ) {
+	$target = $comment->comment_author_url;
+}
 
 // check parent comment
 if ( $comment->comment_parent ) {
 	// get parent comment...
 	$parent = get_comment( $comment->comment_parent );
 	// ...and gernerate target url
-	$target = $parent->comment_author_url;
+	if ( $parent->comment_author_url ) {
+		$target = $parent->comment_author_url;
+	}
 }
 ?><!DOCTYPE htmL>
 <html>

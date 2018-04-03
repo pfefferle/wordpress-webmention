@@ -282,7 +282,7 @@ class Webmention_Receiver {
 			$query_array = array();
 			parse_str( $query_string, $query_array );
 			if ( isset( $query_array['replytocom'] ) && get_comment( $query_array['replytocom'] ) ) {
-				$commentdata['comment_parent'] = $replytocom;
+				$commentdata['comment_parent'] = $query_array['replytocom'];
 			}
 		}
 
@@ -740,7 +740,7 @@ class Webmention_Receiver {
 
 		// replace template
 		if ( isset( $wp_query->query['replytocom'] ) ) {
-			return apply_filters( 'webmention_comment_template', dirname( __FILE__ ) . '/templates/webmention-comment.php' );
+			return apply_filters( 'webmention_comment_template', dirname( __FILE__ ) . '/../templates/webmention-comment.php' );
 		}
 
 		return $template;
