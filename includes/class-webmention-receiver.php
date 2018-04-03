@@ -361,7 +361,7 @@ class Webmention_Receiver {
 		}
 
 		if ( is_wp_error( $commentdata['comment_ID'] ) ) {
-			return new WP_REST_Response( $commentdata['comment_ID'], 500 );
+			return $commentdata['comment_ID'];
 		}
 
 		// re-add flood control
