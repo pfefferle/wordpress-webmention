@@ -1,4 +1,6 @@
 <?php
+add_action( 'admin_menu', array( 'Webmention_Admin', 'admin_menu' ) );
+
 /**
  * Webmention Admin Class
  *
@@ -9,6 +11,8 @@ class Webmention_Admin {
 	 * Register Webmention admin settings.
 	 */
 	public static function init() {
+		self::register_settings();
+
 		add_settings_field( 'webmention_discussion_settings', __( 'Webmention Settings', 'webmention' ), array( 'Webmention_Admin', 'discussion_settings' ), 'discussion', 'default' );
 
 		/* Add meta boxes on the 'add_meta_boxes' hook. */
@@ -28,7 +32,7 @@ class Webmention_Admin {
 	 * Add Webmention options to the WordPress discussion settings page.
 	 */
 	public static function discussion_settings() {
-		load_template( plugin_dir_path( __FILE__ ) . '../templates/webmention-discussion-settings.php' );
+		_e( 'We decided to move the settings to a dedicated page.', 'webmention' );
 	}
 
 	public static function meta_boxes( $object, $box ) {
@@ -145,6 +149,69 @@ class Webmention_Admin {
 		$columns['comment_type'] = __( 'Comment-Type', 'webmention' );
 
 		return $columns;
+	}
+
+	/**
+	 * Add admin menu entry
+	 */
+	public static function admin_menu() {
+		add_options_page(
+			'Webmention',
+			'Webmention',
+			'manage_options',
+			'webmention',
+			array( 'Webmention_Admin', 'settings_page' )
+		);
+	}
+
+	/**
+	 * Load settings page
+	 */
+	public static function settings_page() {
+		load_template( dirname( __FILE__ ) . '/../templates/webmention-settings.php' );
+	}
+
+	public static function register_settings() {
+		register_setting(
+			'webmention', 'webmention_disable_selfpings_same_url', array(
+				'type'         => 'boolean',
+				'description'  => __( 'Disable Self Webmentions on the Same URL', 'webmention' ),
+				'show_in_rest' => true,
+				'default'      => 1,
+			)
+		);
+		register_setting(
+			'webmention', 'webmention_disable_selfpings_same_domain', array(
+				'type'         => 'boolean',
+				'description'  => __( 'Disable Self Webmentions on the Same Domain', 'webmention' ),
+				'show_in_rest' => true,
+				'default'      => 0,
+			)
+		);
+		register_setting(
+			'webmention', 'webmention_support_pages', array(
+				'type'         => 'boolean',
+				'description'  => __( 'Enable Webmention Support for Pages', 'webmention' ),
+				'show_in_rest' => true,
+				'default'      => 1,
+			)
+		);
+		register_setting(
+			'webmention', 'webmention_show_comment_form', array(
+				'type'         => 'boolean',
+				'description'  => __( 'Show Webmention Comment Form', 'webmention' ),
+				'show_in_rest' => true,
+				'default'      => 1,
+			)
+		);
+		register_setting(
+			'webmention', 'webmention_home_mentions', array(
+				'type'         => 'int',
+				'description'  => __( 'Where to Direct Mentions of the Home Page', 'webmention' ),
+				'show_in_rest' => true,
+				'default'      => 0,
+			)
+		);
 	}
 
 	/**

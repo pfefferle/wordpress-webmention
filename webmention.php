@@ -70,47 +70,6 @@ class Webmention_Plugin {
 
 		add_action( 'comment_form_after', array( 'Webmention_Plugin', 'comment_form' ), 11 );
 
-		register_setting(
-			'discussion', 'webmention_disable_selfpings_same_url', array(
-				'type'         => 'boolean',
-				'description'  => __( 'Disable Self Webmentions on the Same URL', 'webmention' ),
-				'show_in_rest' => true,
-				'default'      => 1,
-			)
-		);
-		register_setting(
-			'discussion', 'webmention_disable_selfpings_same_domain', array(
-				'type'         => 'boolean',
-				'description'  => __( 'Disable Self Webmentions on the Same Domain', 'webmention' ),
-				'show_in_rest' => true,
-				'default'      => 0,
-			)
-		);
-		register_setting(
-			'discussion', 'webmention_support_pages', array(
-				'type'         => 'boolean',
-				'description'  => __( 'Enable Webmention Support for Pages', 'webmention' ),
-				'show_in_rest' => true,
-				'default'      => 1,
-			)
-		);
-		register_setting(
-			'discussion', 'webmention_show_comment_form', array(
-				'type'         => 'boolean',
-				'description'  => __( 'Show Webmention Comment Form', 'webmention' ),
-				'show_in_rest' => true,
-				'default'      => 1,
-			)
-		);
-		register_setting(
-			'discussion', 'webmention_home_mentions', array(
-				'type'         => 'int',
-				'description'  => __( 'Where to Direct Mentions of the Home Page', 'webmention' ),
-				'show_in_rest' => true,
-				'default'      => 0,
-			)
-		);
-
 		// remove old Webmention code
 		remove_action( 'init', array( 'WebMentionFormPlugin', 'init' ) );
 		remove_action( 'init', array( 'WebMentionForCommentsPlugin', 'init' ) );
