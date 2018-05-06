@@ -1,96 +1,158 @@
-# Copyright (C) 2017 Matthias Pfefferle
+# Copyright (C) 2018 Matthias Pfefferle
 # This file is distributed under the MIT.
 msgid ""
 msgstr ""
-"Project-Id-Version: Webmention 3.4.1\n"
+"Project-Id-Version: Webmention 3.8.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/webmention\n"
-"POT-Creation-Date: 2017-06-30 19:24:15+00:00\n"
+"POT-Creation-Date: 2018-05-06 20:11:08+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2018-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "X-Generator: grunt-wp-i18n 0.5.4\n"
 
-#: includes/class-webmention-receiver.php:46
+#: includes/class-webmention-admin.php:12
+msgid "Webmention Settings"
+msgstr ""
+
+#: includes/class-webmention-admin.php:41
+msgid "Webmention Target"
+msgstr ""
+
+#: includes/class-webmention-admin.php:45
+msgid "Webmention Target Fragment"
+msgstr ""
+
+#: includes/class-webmention-admin.php:49
+msgid "Webmention Source"
+msgstr ""
+
+#: includes/class-webmention-admin.php:53
+msgid "Webmention Creation Time"
+msgstr ""
+
+#: includes/class-webmention-admin.php:84
+msgid "Settings"
+msgstr ""
+
+#: includes/class-webmention-admin.php:105
+msgid "Homepage Webmentions"
+msgstr ""
+
+#: includes/class-webmention-admin.php:120
+msgid "Webmentions"
+msgstr ""
+
+#: includes/class-webmention-admin.php:131
+msgid "Comment-Type"
+msgstr ""
+
+#: includes/class-webmention-admin.php:138
+msgid ""
+"Webmentions are an explicit feature of your content management system: by "
+"sending a webmention to the webmention endpoint of this website, you "
+"request the server to take notice of that referral and process it. As long "
+"as public content is concerned (i.e. you are not sending a private "
+"webmention), such use of this website’s webmention endpoint implies that "
+"you are aware of it being published."
+msgstr ""
+
+#: includes/class-webmention-admin.php:139
+msgid ""
+"You can at any time request the removal of one or all webmentions "
+"originating from your website."
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "Webmention"
+msgstr ""
+
+#: includes/class-webmention-receiver.php:54
 msgid "Target URL for the Webmention"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:55
+#: includes/class-webmention-receiver.php:63
 msgid "Source URL for the Webmention"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:63
+#: includes/class-webmention-receiver.php:71
 msgid "Target URL Fragment for the Webmention"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:72
+#: includes/class-webmention-receiver.php:80
 msgid "Original Creation Time for the Webmention (GMT)"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:81
+#: includes/class-webmention-receiver.php:89
 msgid "Response Code Returned During Webmention Verification"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:177
+#: includes/class-webmention-receiver.php:214
 msgid "Source is missing"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:183
+#: includes/class-webmention-receiver.php:220
 msgid "Target is missing"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:189
+#: includes/class-webmention-receiver.php:226
 msgid "Target is not on this domain"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:196
-#: includes/class-webmention-receiver.php:210
+#: includes/class-webmention-receiver.php:233
+#: includes/class-webmention-receiver.php:247
 msgid "Target is not a valid post"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:200
+#: includes/class-webmention-receiver.php:237
 msgid "Target and source cannot direct to the same resource"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:205
+#: includes/class-webmention-receiver.php:242
 msgid "Pings are disabled for this post"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:256
+#: includes/class-webmention-receiver.php:303
 msgid "Webmention is scheduled"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:329
+#: includes/class-webmention-receiver.php:376
 msgid "Webmention was successful"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:360
+#: includes/class-webmention-receiver.php:407
 msgid "Invalid data passed"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:377
+#: includes/class-webmention-receiver.php:425
 msgid "Source URL not found"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:384
+#: includes/class-webmention-receiver.php:437
 msgid "Content Type is not supported"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:392
+#: includes/class-webmention-receiver.php:450
+msgid "Resource not found"
+msgstr ""
+
+#: includes/class-webmention-receiver.php:457
 msgid "Resource has been deleted"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:394
+#: includes/class-webmention-receiver.php:464
 msgid "Resource removed for legal reasons"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:407
+#: includes/class-webmention-receiver.php:491
 msgid "Cannot find target link"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:602
+#: includes/class-webmention-receiver.php:691
+#. translators: This post format was mentioned on this URL with this domain
+#. name
 msgid "This %1$s was mentioned on <a href=\"%2$s\">%3$s</a>"
 msgstr ""
 
@@ -101,6 +163,11 @@ msgid ""
 "on your website that links to this post and then enter your post URL below."
 msgstr ""
 
+#: templates/webmention-api-message.php:11
+#: templates/webmention-endpoint-form.php:11
+msgid "Webmention Endpoint"
+msgstr ""
+
 #: templates/webmention-comment-form.php:4
 #: templates/webmention-endpoint-form.php:135
 msgid "URL/Permalink of your article"
@@ -109,6 +176,11 @@ msgstr ""
 #: templates/webmention-comment-form.php:7
 #: templates/webmention-endpoint-form.php:142
 msgid "Ping me!"
+msgstr ""
+
+#: templates/webmention-comment.php:47
+#. translators: 1: date, 2: time
+msgid "%1$s at %2$s"
 msgstr ""
 
 #: templates/webmention-discussion-settings.php:5
@@ -123,7 +195,7 @@ msgid ""
 "\"example.com\")</small>"
 msgstr ""
 
-#: templates/webmention-discussion-settings.php:21 webmention.php:80
+#: templates/webmention-discussion-settings.php:21 webmention.php:92
 msgid "Enable Webmention Support for Pages"
 msgstr ""
 
@@ -143,10 +215,6 @@ msgstr ""
 msgid "Visit site"
 msgstr ""
 
-#: templates/webmention-endpoint-form.php:11
-msgid "Webmention Endpoint"
-msgstr ""
-
 #: templates/webmention-endpoint-form.php:124
 msgid "Send a Webmention"
 msgstr ""
@@ -163,72 +231,36 @@ msgstr ""
 msgid "URL/Permalink of my article"
 msgstr ""
 
-#: templates/webmention-endpoint-form.php:147
+#: templates/webmention-endpoint-form.php:148
 msgid ""
 "Webmention is a way for you to tell me \"Hey, I have written a response to "
 "your post.\""
 msgstr ""
 
-#: templates/webmention-endpoint-form.php:148
+#: templates/webmention-endpoint-form.php:149
 msgid ""
 "Learn more about Webmentions at <a "
 "href=\"http://webmention.net\">webmention.net</a>"
 msgstr ""
 
-#: webmention.php:68
+#: webmention.php:76
 msgid "Disable Self Webmentions on the Same URL"
 msgstr ""
 
-#: webmention.php:74
+#: webmention.php:84
 msgid "Disable Self Webmentions on the Same Domain"
 msgstr ""
 
-#: webmention.php:86
+#: webmention.php:100
 msgid "Show Webmention Comment Form"
 msgstr ""
 
-#: webmention.php:92
+#: webmention.php:108
 msgid "Where to Direct Mentions of the Home Page"
 msgstr ""
 
-#: webmention.php:114
-msgid "Webmention Settings"
-msgstr ""
-
-#: webmention.php:150
-msgid "Webmentions"
-msgstr ""
-
-#: webmention.php:168
-msgid "Settings"
-msgstr ""
-
-#: webmention.php:189
-msgid "Homepage Webmentions"
-msgstr ""
-
-#: webmention.php:217
+#: webmention.php:164
 msgid "Webmention Data"
-msgstr ""
-
-#: webmention.php:232
-msgid "Webmention Target"
-msgstr ""
-
-#: webmention.php:236
-msgid "Webmention Target Fragment"
-msgstr ""
-
-#: webmention.php:240
-msgid "Webmention Source"
-msgstr ""
-
-#: webmention.php:244
-msgid "Webmention Creation Time"
-msgstr ""
-
-#. Plugin Name of the plugin/theme
-msgid "Webmention"
 msgstr ""
 
 #. Plugin URI of the plugin/theme
@@ -245,4 +277,10 @@ msgstr ""
 
 #. Author URI of the plugin/theme
 msgid "https://notiz.blog/"
+msgstr ""
+
+#: templates/webmention-api-message.php:124
+#. translators: %s: site title
+msgctxt "site"
+msgid "&larr; Back to %s"
 msgstr ""

@@ -5,7 +5,7 @@
  * Description: Webmention support for WordPress posts
  * Author: Matthias Pfefferle
  * Author URI: https://notiz.blog/
- * Version: 3.7.0
+ * Version: 3.8.0
  * License: MIT
  * License URI: http://opensource.org/licenses/MIT
  * Text Domain: webmention
@@ -57,19 +57,17 @@ class Webmention_Plugin {
 		require_once dirname( __FILE__ ) . '/includes/class-webmention-receiver.php';
 		add_action( 'init', array( 'Webmention_Receiver', 'init' ) );
 
+		// initialize admin settings
+		require_once dirname( __FILE__ ) . '/includes/class-webmention-admin.php';
+		add_action( 'admin_init', array( 'Webmention_Admin', 'init' ) );
+
 		// Default Comment Status
 		add_filter( 'get_default_comment_status', array( 'Webmention_Plugin', 'get_default_comment_status' ), 11, 3 );
 		add_filter( 'pings_open', array( 'Webmention_Plugin', 'pings_open' ), 10, 2 );
 
-		// initialize admin settings
-		add_action( 'admin_init', array( 'Webmention_Plugin', 'admin_init' ) );
-
 		// Load language files
 		self::plugin_textdomain();
 
-		add_action( 'admin_comment_types_dropdown', array( 'Webmention_Plugin', 'comment_types_dropdown' ) );
-		add_filter( 'manage_edit-comments_columns', array( 'Webmention_Plugin', 'comment_columns' ) );
-		add_filter( 'manage_comments_custom_column', array( 'Webmention_Plugin', 'manage_comments_custom_column' ), 10, 2 );
 		add_action( 'comment_form_after', array( 'Webmention_Plugin', 'comment_form' ), 11 );
 
 		register_setting(
@@ -131,26 +129,6 @@ class Webmention_Plugin {
 	}
 
 	/**
-	 * Register Webmention admin settings.
-	 */
-	public static function admin_init() {
-		add_settings_field( 'webmention_discussion_settings', __( 'Webmention Settings', 'webmention' ), array( 'Webmention_Plugin', 'discussion_settings' ), 'discussion', 'default' );
-
-		/* Add meta boxes on the 'add_meta_boxes' hook. */
-		add_action( 'add_meta_boxes', array( 'Webmention_Plugin', 'add_meta_boxes' ) );
-
-		add_filter( 'plugin_action_links', array( 'Webmention_Plugin', 'plugin_action_links' ), 10, 2 );
-		add_filter( 'plugin_row_meta', array( 'Webmention_Plugin', 'plugin_row_meta' ), 10, 2 );
-	}
-
-	/**
-	 * Add Webmention options to the WordPress discussion settings page.
-	 */
-	public static function discussion_settings() {
-		load_template( plugin_dir_path( __FILE__ ) . 'templates/webmention-discussion-settings.php' );
-	}
-
-	/**
 	 * render the comment form
 	 */
 	public static function comment_form() {
@@ -159,83 +137,6 @@ class Webmention_Plugin {
 		if ( 1 === (int) get_option( 'webmention_show_comment_form' ) ) {
 			load_template( $template );
 		}
-	}
-
-	/**
-	 * Extend the "filter by comment type" of in the comments section
-	 * of the admin interface with "webmention"
-	 *
-	 * @param array $types the different comment types
-	 *
-	 * @return array the filtert comment types
-	 */
-	public static function comment_types_dropdown( $types ) {
-		$types['webmention'] = __( 'Webmentions', 'webmention' );
-
-		return $types;
-	}
-
-	/**
-	 * Add comment-type as column in WP-Admin
-	 *
-	 * @param array $columns the list of column names
-	 */
-	public static function comment_columns( $columns ) {
-		$columns['comment_type'] = __( 'Comment-Type', 'webmention' );
-
-		return $columns;
-	}
-
-	/**
-	 * Add comment-type as column in WP-Admin
-	 *
-	 * @param array $column the column to implement
-	 * @param int $comment_ID the comment id
-	 */
-	public static function manage_comments_custom_column( $column, $comment_ID ) {
-		if ( 'comment_type' == $column ) {
-			_e( get_comment_type( $comment_ID ), 'webmention' );
-		}
-	}
-
-	/**
-	 * Add an action link
-	 *
-	 * @param array $links the settings links
-	 * @param string $file the plugin filename
-	 *
-	 * @return array the filtered array
-	 */
-	public static function plugin_action_links( $links, $file ) {
-		if ( stripos( $file, 'webmention' ) === false || ! function_exists( 'admin_url' ) ) {
-			return $links;
-		}
-
-		$links[] = sprintf( '<a href="%s">%s</a>', admin_url( 'options-discussion.php#webmention' ), __( 'Settings', 'webmention' ) );
-
-		return $links;
-	}
-
-	/**
-	 * Add a plugin meta link
-	 *
-	 * @param array $links the settings links
-	 * @param string $file the plugin filename
-	 *
-	 * @return array the filtered array
-	 */
-	public static function plugin_row_meta( $links, $file ) {
-		if ( stripos( $file, 'webmention' ) === false || ! function_exists( 'admin_url' ) ) {
-			return $links;
-		}
-
-		$home_mentions = get_option( 'webmention_home_mentions' );
-
-		if ( $home_mentions ) {
-			$links[] = sprintf( '<a href="%s">%s</a>', get_the_permalink( $home_mentions ), __( 'Homepage Webmentions', 'webmention' ) );
-		}
-
-		return $links;
 	}
 
 	/**
@@ -254,44 +155,6 @@ class Webmention_Plugin {
 		return $open;
 	}
 
-	/*
-	 * Create a  meta boxes to be displayed on the comment editor screen.
-	 */
-	public static function add_meta_boxes() {
-		add_meta_box(
-			'webmention-meta',      // Unique ID
-			esc_html__( 'Webmention Data', 'webmention' ),    // Title
-			array( 'Webmention_Plugin', 'meta_boxes' ),   // Callback function
-			'comment',
-			'normal',         // Context
-			'default'         // Priority
-		);
-	}
-
-	public static function meta_boxes( $object, $box ) {
-		wp_nonce_field( 'webmention_comment_metabox', 'webmention_comment_nonce' );
-
-		if ( ! $object instanceof WP_Comment ) {
-			return;
-		}
-?>
-<label><?php _e( 'Webmention Target', 'webmention' ); ?></label>
-<input type="url" class="widefat" disabled value="<?php echo get_comment_meta( $object->comment_ID, 'webmention_target_url', true ); ?>" />
-<br />
-
-<label><?php _e( 'Webmention Target Fragment', 'webmention' ); ?></label>
-<input type="text" class="widefat" disabled value="<?php echo get_comment_meta( $object->comment_ID, 'webmention_target_fragment', true ); ?>" />
-<br />
-
-<label><?php _e( 'Webmention Source', 'webmention' ); ?></label>
-<input type="url" class="widefat" disabled value="<?php echo get_comment_meta( $object->comment_ID, 'webmention_source_url', true ); ?>" />
-<br />
-
-<label><?php _e( 'Webmention Creation Time', 'webmention' ); ?></label>
-<input type="url" class="widefat" disabled value="<?php echo get_comment_meta( $object->comment_ID, 'webmention_created_at', true ); ?>" />
-<br />
-<?php
-	}
 	/**
 	 * Load language files
 	 */
