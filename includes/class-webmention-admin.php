@@ -41,35 +41,38 @@ class Webmention_Admin {
 		if ( ! $object instanceof WP_Comment ) {
 			return;
 		}
-?>
-<label><?php _e( 'Webmention Target', 'webmention' ); ?></label>
-<input type="url" class="widefat" disabled value="<?php echo get_comment_meta( $object->comment_ID, 'webmention_target_url', true ); ?>" />
-<br />
-
-<label><?php _e( 'Webmention Target Fragment', 'webmention' ); ?></label>
-<input type="text" class="widefat" disabled value="<?php echo get_comment_meta( $object->comment_ID, 'webmention_target_fragment', true ); ?>" />
-<br />
-
-<label><?php _e( 'Webmention Source', 'webmention' ); ?></label>
-<input type="url" class="widefat" disabled value="<?php echo get_comment_meta( $object->comment_ID, 'webmention_source_url', true ); ?>" />
-<br />
-
-<label><?php _e( 'Webmention Creation Time', 'webmention' ); ?></label>
-<input type="url" class="widefat" disabled value="<?php echo get_comment_meta( $object->comment_ID, 'webmention_created_at', true ); ?>" />
-<br />
-<?php
+		load_template( dirname( __FILE__ ) . '/../templates/webmention-edit-comment-form.php' );
+		// Allow adding of additional fields to the Webmention, for example by the Semantic Linkbacks plugin
+		do_action( 'webmention_edit_comment_metabox' );
 	}
 
 	/**
 	 * Add comment-type as column in WP-Admin
 	 *
 	 * @param array $column the column to implement
-	 * @param int $comment_ID the comment id
+	 * @param int $comment_id the comment id
 	 */
-	public static function manage_comments_custom_column( $column, $comment_ID ) {
-		if ( 'comment_type' == $column ) {
-			_e( get_comment_type( $comment_ID ), 'webmention' );
+	public static function manage_comments_custom_column( $column, $comment_id ) {
+		if ( 'comment_type' !== $column ) {
+			return;
 		}
+		$type = get_comment_type( $comment_id );
+		switch ( $type ) {
+			case 'trackback':
+				_e( 'Trackback', 'webmention' );
+				break;
+			case 'pingback':
+				_e( 'Pingback', 'webmention' );
+				break;
+			case 'comment':
+				_ex( 'Comment', 'noun', 'webmention' );
+				break;
+			case 'webmention':
+				_e( 'Webmention', 'webmention' );
+				break;
+			default:
+				echo $type;
+		};
 	}
 
 	/**
@@ -84,8 +87,12 @@ class Webmention_Admin {
 		if ( stripos( $file, 'webmention' ) === false || ! function_exists( 'admin_url' ) ) {
 			return $links;
 		}
-
-		$links[] = sprintf( '<a href="%s">%s</a>', admin_url( 'options-discussion.php#webmention' ), __( 'Settings', 'webmention' ) );
+		if ( class_exists( 'Indieweb_Plugin' ) ) {
+			$path = 'admin.php?page=webmention';
+		} else {
+			$path = 'options-general.php?page=webmention';
+		}
+		$links[] = sprintf( '<a href="%s">%s</a>', admin_url( $path ), __( 'Settings', 'webmention' ) );
 
 		return $links;
 	}
@@ -119,7 +126,7 @@ class Webmention_Admin {
 		add_meta_box(
 			'webmention-meta',
 			esc_html__( 'Webmention Data', 'webmention' ),
-			array( 'Webmention_Plugin', 'meta_boxes' ),
+			array( 'Webmention_Admin', 'meta_boxes' ),
 			'comment',
 			'normal',
 			'default'
@@ -136,7 +143,6 @@ class Webmention_Admin {
 	 */
 	public static function comment_types_dropdown( $types ) {
 		$types['webmention'] = __( 'Webmentions', 'webmention' );
-
 		return $types;
 	}
 
@@ -155,13 +161,26 @@ class Webmention_Admin {
 	 * Add admin menu entry
 	 */
 	public static function admin_menu() {
-		add_options_page(
-			'Webmention',
-			'Webmention',
-			'manage_options',
-			'webmention',
-			array( 'Webmention_Admin', 'settings_page' )
-		);
+		$title = __( 'Webmention', 'webmention' );
+		// If the IndieWeb Plugin is installed use its menu.
+		if ( class_exists( 'IndieWeb_Plugin' ) ) {
+			add_submenu_page(
+				'indieweb',
+				$title,
+				$title,
+				'manage_options',
+				'webmention',
+				array( 'Webmention_Admin', 'settings_page' )
+			);
+		} else {
+			add_options_page(
+				$title,
+				$title,
+				'manage_options',
+				'webmention',
+				array( 'Webmention_Admin', 'settings_page' )
+			);
+		}
 	}
 
 	/**
