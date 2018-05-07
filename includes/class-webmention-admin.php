@@ -53,10 +53,26 @@ class Webmention_Admin {
 	 * @param int $comment_id the comment id
 	 */
 	public static function manage_comments_custom_column( $column, $comment_id ) {
-		$comment_type = get_comment_type( $comment_id );
-		if ( 'comment_type' === $column ) {
-			_e( $comment_type, 'webmention' );
+		if ( 'comment_type' !== $column ) {
+			return;
 		}
+		$type = get_comment_type( $comment_id );
+		switch ( $type ) {
+			case 'trackback':
+				_e( 'Trackback', 'webmention' );
+				break;
+			case 'pingback':
+				_e( 'Pingback', 'webmention' );
+				break;
+			case 'comment':
+				_ex( 'Comment', 'noun', 'webmention' );
+				break;
+			case 'webmention':
+				_e( 'Webmention', 'webmention' );
+				break;
+			default:
+				echo $type;
+		};
 	}
 
 	/**
