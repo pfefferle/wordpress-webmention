@@ -1,5 +1,5 @@
 <div class="wrap">
-	<h2><?php esc_html_e( 'Webmention Settings', 'ostatus-for-wordpress' ); ?></h2>
+	<h1><?php esc_html_e( 'Webmention Settings', 'ostatus-for-wordpress' ); ?></h1>
 
 	<form method="post" action="options.php">
 		<fieldset id="webmention">

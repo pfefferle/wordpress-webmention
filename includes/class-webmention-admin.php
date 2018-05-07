@@ -119,7 +119,7 @@ class Webmention_Admin {
 		add_meta_box(
 			'webmention-meta',
 			esc_html__( 'Webmention Data', 'webmention' ),
-			array( 'Webmention_Plugin', 'meta_boxes' ),
+			array( 'Webmention_Admin', 'meta_boxes' ),
 			'comment',
 			'normal',
 			'default'
@@ -155,13 +155,15 @@ class Webmention_Admin {
 	 * Add admin menu entry
 	 */
 	public static function admin_menu() {
-		add_options_page(
+		$options_page = add_options_page(
 			'Webmention',
 			'Webmention',
 			'manage_options',
 			'webmention',
 			array( 'Webmention_Admin', 'settings_page' )
 		);
+
+		add_action( 'load-' . $options_page, array( 'Webmention_Admin', 'add_help_tab' ) );
 	}
 
 	/**
@@ -169,6 +171,56 @@ class Webmention_Admin {
 	 */
 	public static function settings_page() {
 		load_template( dirname( __FILE__ ) . '/../templates/webmention-settings.php' );
+	}
+
+	public static function add_help_tab() {
+		get_current_screen()->add_help_tab(
+			array(
+				'id'      => 'overview',
+				'title'   => __( 'Overview', 'webmention' ),
+				'content' =>
+					'<p>' . __( 'Webmention is a simple way to notify any URL when you mention it on your site. From the receiver\'s perspective, it\'s a way to request notifications when other sites mention it.', 'webmention' ) . '</p>' .
+					'<p>' . __( 'A Webmention is a notification that one URL links to another. For example, Alice writes an interesting post on her blog. Bob then writes a response to her post on his own site, linking back to Alice\'s original post. Bob\'s publishing software sends a Webmention to Alice notifying that her article was replied to, and Alice\'s software can show that reply as a comment on the original post.', 'webmention' ) . '</p>' .
+					'<p>' . __( 'Sending a Webmention is not limited to blog posts, and can be used for additional kinds of content and responses as well. For example, a response can be an RSVP to an event, an indication that someone "likes" another post, a "bookmark" of another post, and many others. Webmention enables these interactions to happen across different websites, enabling a distributed social web.', 'webmention' ) . '</p>',
+			)
+		);
+
+		get_current_screen()->add_help_tab(
+			array(
+				'id'      => 'screencast',
+				'title'   => __( 'Screencast', 'webmention' ),
+				'content' =>
+					'<p><iframe src="https://player.vimeo.com/video/85217592?app_id=122963" width="640" height="480" frameborder="0" title="Add the Webmention plugin to your WordPress weblog" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></p>',
+			)
+		);
+
+		get_current_screen()->add_help_tab(
+			array(
+				'id'      => 'indieweb',
+				'title'   => __( 'The IndieWeb', 'webmention' ),
+				'content' =>
+					'<p>' . __( 'The IndieWeb is a people-focused alternative to the "corporate web".', 'webmention' ) . '</p>' .
+					'<p>
+						<strong>' . __( 'Your content is yours', 'webmention' ) . '</strong><br />' .
+						__( 'When you post something on the web, it should belong to you, not a corporation. Too many companies have gone out of business and lost all of their users’ data. By joining the IndieWeb, your content stays yours and in your control.', 'webmention' ) .
+					'</p>' .
+					'<p>
+						<strong>' . __( 'You are better connected', 'webmention' ) . '</strong><br />' .
+						__( 'Your articles and status messages can go to all services, not just one, allowing you to engage with everyone. Even replies and likes on other services can come back to your site so they’re all in one place.', 'webmention' ) .
+					'</p>' .
+					'<p>
+						<strong>' . __( 'You are in control', 'webmention' ) . '</strong><br />' .
+						__( 'You can post anything you want, in any format you want, with no one monitoring you. In addition, you share simple readable links such as example.com/ideas. These links are permanent and will always work.', 'webmention' ) .
+					'</p>',
+			)
+		);
+
+		get_current_screen()->set_help_sidebar(
+			'<p><strong>' . __( 'For more information:', 'webmention' ) . '</strong></p>' .
+			'<p>' . __( '<a href="https://indieweb.org/Webmention">IndieWeb Wiki page</a>' ) . '</p>' .
+			'<p>' . __( '<a href="https://webmention.rocks/">Test suite</a>' ) . '</p>' .
+			'<p>' . __( '<a href="https://www.w3.org/TR/webmention/">W3C Spec</a>' ) . '</p>'
+		);
 	}
 
 	public static function register_settings() {
