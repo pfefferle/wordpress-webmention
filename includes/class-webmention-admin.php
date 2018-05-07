@@ -87,8 +87,12 @@ class Webmention_Admin {
 		if ( stripos( $file, 'webmention' ) === false || ! function_exists( 'admin_url' ) ) {
 			return $links;
 		}
-
-		$links[] = sprintf( '<a href="%s">%s</a>', admin_url( 'options-discussion.php#webmention' ), __( 'Settings', 'webmention' ) );
+		if ( class_exists( 'Indieweb_Plugin' ) ) {
+			$path = 'admin.php?page=webmention';
+		} else {
+			$path = 'options-general.php?page=webmention';
+		}
+		$links[] = sprintf( '<a href="%s">%s</a>', admin_url( $path ), __( 'Settings', 'webmention' ) );
 
 		return $links;
 	}
