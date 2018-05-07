@@ -64,12 +64,29 @@ class Webmention_Admin {
 	 * Add comment-type as column in WP-Admin
 	 *
 	 * @param array $column the column to implement
-	 * @param int $comment_ID the comment id
+	 * @param int $comment_id the comment id
 	 */
-	public static function manage_comments_custom_column( $column, $comment_ID ) {
-		if ( 'comment_type' == $column ) {
-			_e( get_comment_type( $comment_ID ), 'webmention' );
+	public static function manage_comments_custom_column( $column, $comment_id ) {
+		if ( 'comment_type' !== $column ) {
+			return;
 		}
+		$type = get_comment_type( $comment_id );
+		switch ( $type ) {
+			case 'trackback':
+				_e( 'Trackback', 'webmention' );
+				break;
+			case 'pingback':
+				_e( 'Pingback', 'webmention' );
+				break;
+			case 'comment':
+				_ex( 'Comment', 'noun', 'webmention' );
+				break;
+			case 'webmention':
+				_e( 'Webmention', 'webmention' );
+				break;
+			default:
+				echo $type;
+		};
 	}
 
 	/**
@@ -84,8 +101,12 @@ class Webmention_Admin {
 		if ( stripos( $file, 'webmention' ) === false || ! function_exists( 'admin_url' ) ) {
 			return $links;
 		}
-
-		$links[] = sprintf( '<a href="%s">%s</a>', admin_url( 'options-discussion.php#webmention' ), __( 'Settings', 'webmention' ) );
+		if ( class_exists( 'Indieweb_Plugin' ) ) {
+			$path = 'admin.php?page=webmention';
+		} else {
+			$path = 'options-general.php?page=webmention';
+		}
+		$links[] = sprintf( '<a href="%s">%s</a>', admin_url( $path ), __( 'Settings', 'webmention' ) );
 
 		return $links;
 	}
@@ -136,7 +157,6 @@ class Webmention_Admin {
 	 */
 	public static function comment_types_dropdown( $types ) {
 		$types['webmention'] = __( 'Webmentions', 'webmention' );
-
 		return $types;
 	}
 
@@ -155,13 +175,26 @@ class Webmention_Admin {
 	 * Add admin menu entry
 	 */
 	public static function admin_menu() {
-		$options_page = add_options_page(
-			'Webmention',
-			'Webmention',
-			'manage_options',
-			'webmention',
-			array( 'Webmention_Admin', 'settings_page' )
-		);
+		$title = __( 'Webmention', 'webmention' );
+		// If the IndieWeb Plugin is installed use its menu.
+		if ( class_exists( 'IndieWeb_Plugin' ) ) {
+			$options_page = add_submenu_page(
+				'indieweb',
+				$title,
+				$title,
+				'manage_options',
+				'webmention',
+				array( 'Webmention_Admin', 'settings_page' )
+			);
+		} else {
+			$options_page = add_options_page(
+				$title,
+				$title,
+				'manage_options',
+				'webmention',
+				array( 'Webmention_Admin', 'settings_page' )
+			);
+		}
 
 		add_action( 'load-' . $options_page, array( 'Webmention_Admin', 'add_help_tab' ) );
 	}
