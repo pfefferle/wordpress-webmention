@@ -81,5 +81,5 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-checktextdomain');
 
   // Default task(s).
-  grunt.registerTask('default', ['wp_readme_to_markdown', 'replace', 'makepot']);
+  grunt.registerTask('default', ['wp_readme_to_markdown', 'replace', 'makepot', 'checktextdomain']);
 };

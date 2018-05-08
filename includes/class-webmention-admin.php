@@ -258,9 +258,9 @@ class Webmention_Admin {
 
 		get_current_screen()->set_help_sidebar(
 			'<p><strong>' . __( 'For more information:', 'webmention' ) . '</strong></p>' .
-			'<p>' . __( '<a href="https://indieweb.org/Webmention">IndieWeb Wiki page</a>' ) . '</p>' .
-			'<p>' . __( '<a href="https://webmention.rocks/">Test suite</a>' ) . '</p>' .
-			'<p>' . __( '<a href="https://www.w3.org/TR/webmention/">W3C Spec</a>' ) . '</p>'
+			'<p>' . __( '<a href="https://indieweb.org/Webmention">IndieWeb Wiki page</a>', 'webmention' ) . '</p>' .
+			'<p>' . __( '<a href="https://webmention.rocks/">Test suite</a>', 'webmention' ) . '</p>' .
+			'<p>' . __( '<a href="https://www.w3.org/TR/webmention/">W3C Spec</a>', 'webmention' ) . '</p>'
 		);
 	}
 
