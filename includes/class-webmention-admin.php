@@ -13,7 +13,7 @@ class Webmention_Admin {
 	public static function init() {
 		self::register_settings();
 
-		add_settings_field( 'webmention_discussion_settings', __( 'Webmention Settings', 'webmention' ), array( 'Webmention_Admin', 'discussion_settings' ), 'discussion', 'default' );
+		add_settings_field( 'discussion_settings', __( 'Webmention Settings', 'webmention' ), array( 'Webmention_Admin', 'discussion_settings' ), 'discussion', 'default' );
 
 		/* Add meta boxes on the 'add_meta_boxes' hook. */
 		add_action( 'add_meta_boxes', array( 'Webmention_Admin', 'add_meta_boxes' ) );
@@ -157,6 +157,7 @@ class Webmention_Admin {
 	 */
 	public static function comment_types_dropdown( $types ) {
 		$types['webmention'] = __( 'Webmentions', 'webmention' );
+
 		return $types;
 	}
 
@@ -204,6 +205,13 @@ class Webmention_Admin {
 	 */
 	public static function settings_page() {
 		load_template( dirname( __FILE__ ) . '/../templates/webmention-settings.php' );
+	}
+
+	/**
+	 * Load settings page
+	 */
+	public static function default_settings() {
+		load_template( dirname( __FILE__ ) . '/../templates/webmention-settings-default.php' );
 	}
 
 	public static function add_help_tab() {
