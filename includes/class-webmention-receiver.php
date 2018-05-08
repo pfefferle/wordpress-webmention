@@ -29,6 +29,9 @@ class Webmention_Receiver {
 		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'webmention_verify' ), 11, 1 );
 		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'check_dupes' ), 12, 1 );
 
+		// Webmention whitelist
+		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'whitelist_approved' ), 13, 1 );
+
 		// Webmention data handler
 		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'default_title_filter' ), 21, 1 );
 		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'default_content_filter' ), 22, 1 );
@@ -278,7 +281,8 @@ class Webmention_Receiver {
 
 		$commentdata['comment_parent'] = '';
 		// check if there is a parent comment
-		if ( $query_string = parse_url( $commentdata['target'], PHP_URL_QUERY ) ) {
+		$query_string = wp_parse_url( $commentdata['target'], PHP_URL_QUERY );
+		if ( $query_string ) {
 			$query_array = array();
 			parse_str( $query_string, $query_array );
 			if ( isset( $query_array['replytocom'] ) && get_comment( $query_array['replytocom'] ) ) {
@@ -711,22 +715,64 @@ class Webmention_Receiver {
 	 * @param WP_Error $error
 	 */
 	public static function delete( $error ) {
-		$error_codes = apply_filters( 'webmention_supported_delete_codes', array(
-			'resource_not_found',
-			'resource_deleted',
-			'resource_removed',
-		) );
+		$error_codes = apply_filters(
+			'webmention_supported_delete_codes', array(
+				'resource_not_found',
+				'resource_deleted',
+				'resource_removed',
+			)
+		);
 
 		if ( ! in_array( $error->get_error_code(), $error_codes ) ) {
 			return;
 		}
 
 		$commentdata = $error->get_error_data();
-		$commentdata = self::check_dupes($commentdata);
+		$commentdata = self::check_dupes( $commentdata );
 
 		if ( isset( $commentdata['comment_ID'] ) ) {
 			wp_delete_comment( $commentdata['comment_ID'] );
 		}
+	}
+
+
+	public static function whitelist_approved( $commentdata ) {
+		if ( ! $commentdata || is_wp_error( $commentdata ) ) {
+			return $commentdata;
+		}
+		if ( self::whitelist_check( $commentdata['source'] ) ) {
+			$commentdata['comment_approved'] = 1;
+		}
+		return $commentdata;
+	}
+
+	/**
+	 *
+	 * @param array $author_url
+	 *
+	 * @return boolean
+	 *
+	 */
+	public static function whitelist_check( $url ) {
+		$whitelist = get_option( 'whitelist_domains' );
+		$whitelist = trim( $whitelist );
+		$host      = wp_parse_url( $url, PHP_URL_HOST );
+		// strip leading www, if any
+		$host = preg_replace( '/^www\./', '', $host );
+		if ( '' === $whitelist ) {
+			return false;
+		}
+		$domains = explode( ',', $whitelist );
+		foreach ( (array) $domains as $domain ) {
+			$domain = trim( $domain );
+			if ( empty( $domain ) ) {
+				continue;
+			}
+			if ( 0 === strcasecmp( $domain, $host ) ) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**

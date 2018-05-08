@@ -1,5 +1,3 @@
-[![Build Status](https://travis-ci.org/pfefferle/wordpress-webmention.svg?branch=master)](https://travis-ci.org/pfefferle/wordpress-webmention) [![Issue Count](https://codeclimate.com/github/pfefferle/wordpress-webmention/badges/issue_count.svg)](https://codeclimate.com/github/pfefferle/wordpress-webmention) 
-
 # Webmention #
 **Contributors:** pfefferle, dshanske  
 **Donate link:** https://notiz.blog/donate/  
@@ -84,6 +82,7 @@ Project and support maintained on github at [pfefferle/wordpress-webmention](htt
 * Added GDPR recommendation text
 * Implemented help tab
 * Form Improvements
+* Domain whitelist
 
 ### 3.7.0 ###
 

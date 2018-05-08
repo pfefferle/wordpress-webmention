@@ -305,6 +305,14 @@ class Webmention_Admin {
 				'default'      => 0,
 			)
 		);
+		register_setting(
+			'webmention', 'whitelist_domains', array(
+				'type'         => 'array',
+				'description'  => __( 'Domain Whitelist for Linkbacks', 'webmention' ),
+				'show_in_rest' => false,
+				'default'      => '',
+			)
+		);
 	}
 
 	/**

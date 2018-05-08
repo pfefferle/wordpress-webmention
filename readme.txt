@@ -82,6 +82,7 @@ Project and support maintained on github at [pfefferle/wordpress-webmention](htt
 * Added GDPR recommendation text
 * Implemented help tab
 * Form Improvements
+* Domain whitelist
 
 = 3.7.0 =
 

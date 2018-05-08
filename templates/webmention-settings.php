@@ -74,6 +74,15 @@
 				</td>
 			</tr>
 			<tr>
+				<th scope="row"><?php _e( 'Whitelist domains. Separated by commas.', 'webmention' ); ?></p></th>
+				<td>
+					<fieldset>
+			                        <label for="whitelist_domains">
+							<textarea name='whitelist_domains' rows='3' cols='50' class='large-text code'><?php echo get_option( 'whitelist_domains' ); ?></textarea>
+						</label>
+				</td>
+			</tr>
+			<tr>
 				<th scope="row"><?php _e( 'Comment settings', 'webmention' ); ?></th>
 				<td>
 					<fieldset>
