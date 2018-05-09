@@ -305,6 +305,14 @@ class Webmention_Admin {
 				'default'      => 0,
 			)
 		);
+		register_setting(
+			'webmention', 'webmention_avatars', array(
+				'type'         => 'int',
+				'description'  => __( 'Show Avatars on Webmentions', 'webmention' ),
+				'show_in_rest' => true,
+				'default'      => 1,
+			)
+		);
 	}
 
 	/**
