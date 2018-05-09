@@ -30,7 +30,7 @@ class Webmention_Receiver {
 		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'check_dupes' ), 12, 1 );
 
 		// Webmention whitelist
-		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'whitelist_approved' ), 13, 1 );
+		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'domain_whitelist_approved' ), 13, 1 );
 
 		// Webmention data handler
 		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'default_title_filter' ), 21, 1 );
@@ -735,26 +735,31 @@ class Webmention_Receiver {
 		}
 	}
 
-
-	public static function whitelist_approved( $commentdata ) {
+	/**
+	 * Use the whitelist check function to approve a comment if the source domain is on the whitelist.
+	 *
+	 * @param array $commentdata
+	 * @return array $commentdata
+	 */
+	public static function domain_whitelist_approved( $commentdata ) {
 		if ( ! $commentdata || is_wp_error( $commentdata ) ) {
 			return $commentdata;
 		}
-		if ( self::whitelist_check( $commentdata['source'] ) ) {
+		if ( self::domain_whitelist_check( $commentdata['source'] ) ) {
 			$commentdata['comment_approved'] = 1;
 		}
 		return $commentdata;
 	}
 
 	/**
-	 *
+	 * Check the $url to see if it is on the domain whitelist.
 	 * @param array $author_url
 	 *
 	 * @return boolean
 	 *
 	 */
-	public static function whitelist_check( $url ) {
-		$whitelist = get_option( 'whitelist_domains' );
+	public static function domain_whitelist_check( $url ) {
+		$whitelist = get_option( 'webmention_approve_domains' );
 		$whitelist = trim( $whitelist );
 		$host      = wp_parse_url( $url, PHP_URL_HOST );
 		// strip leading www, if any
@@ -762,7 +767,7 @@ class Webmention_Receiver {
 		if ( '' === $whitelist ) {
 			return false;
 		}
-		$domains = explode( ',', $whitelist );
+		$domains = explode( '\n', $whitelist );
 		foreach ( (array) $domains as $domain ) {
 			$domain = trim( $domain );
 			if ( empty( $domain ) ) {

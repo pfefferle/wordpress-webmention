@@ -74,11 +74,13 @@
 				</td>
 			</tr>
 			<tr>
-				<th scope="row"><?php _e( 'Whitelist domains. Separated by commas.', 'webmention' ); ?></p></th>
+				<th scope="row"><?php _e( 'Automatically Approve Mentions from these domains', 'webmention' ); ?></p></th>
 				<td>
 					<fieldset>
-			                        <label for="whitelist_domains">
-							<textarea name='whitelist_domains' rows='3' cols='50' class='large-text code'><?php echo get_option( 'whitelist_domains' ); ?></textarea>
+			                        <label for="webmention_approve_domains">
+							<textarea name='webmention_approve_domains' rows='3' cols='50' class='large-text code'><?php echo get_option( 'webmention_approve_domains' ); ?></textarea>
+							<br /><?php _e( 'A Webmention received from a site that matches a domain in this list will be auto-approved. One domain (e.g. indieweb.org) per line.
+', 'webmention' ); ?>
 						</label>
 				</td>
 			</tr>
@@ -89,7 +91,7 @@
 						<label for="webmention_show_comment_form">
 							<input type="checkbox" name="webmention_show_comment_form" id="webmention_show_comment_form" value="1" <?php
 								echo checked( true, get_option( 'webmention_show_comment_form' ) );  ?> />
-							<?php _e( 'Show a Webmention form at the comment section, to enable manual pings.', 'webmention' ) ?>
+							<?php _e( 'Show a Webmention form at the comment section, to allow anyone to notify you of a mention.', 'webmention' ) ?>
 						</label>
 					</fieldset>
 				</td>

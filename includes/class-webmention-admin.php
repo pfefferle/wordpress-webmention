@@ -306,11 +306,11 @@ class Webmention_Admin {
 			)
 		);
 		register_setting(
-			'webmention', 'whitelist_domains', array(
+			'webmention', 'webmention_approve_domains', array(
 				'type'         => 'array',
-				'description'  => __( 'Domain Whitelist for Linkbacks', 'webmention' ),
+				'description'  => __( 'Automatically Approve Webmentions from These Domains', 'webmention' ),
 				'show_in_rest' => false,
-				'default'      => '',
+				'default'      => 'indieweb.org',
 			)
 		);
 	}
