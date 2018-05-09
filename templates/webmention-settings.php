@@ -96,6 +96,18 @@
 					</fieldset>
 				</td>
 			</tr>
+			<tr>
+				<th scope="row"><?php _e( 'Avatars', 'webmention' ); ?></th>
+				<td>
+					<fieldset>
+						<label for="webmention_avatars">
+							<input type="checkbox" name="webmention_avatars" id="webmention_avatars" value="1" <?php
+								echo checked( true, get_option( 'webmention_avatars' ) );  ?> />
+							<?php _e( 'Show avatars on webmentions if available.', 'webmention' ) ?>
+						</label>
+					</fieldset>
+				</td>
+			</tr>
 		</table>
 
 		<?php do_settings_fields( 'webmention', 'receiver' ); ?>

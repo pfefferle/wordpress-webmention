@@ -311,6 +311,14 @@ class Webmention_Admin {
 				'description'  => __( 'Automatically Approve Webmentions from These Domains', 'webmention' ),
 				'show_in_rest' => false,
 				'default'      => 'indieweb.org',
+      )
+    );
+    register_setting(
+			'webmention', 'webmention_avatars', array(
+				'type'         => 'int',
+				'description'  => __( 'Show Avatars on Webmentions', 'webmention' ),
+				'show_in_rest' => true,
+				'default'      => 1,
 			)
 		);
 	}
