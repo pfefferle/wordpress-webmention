@@ -30,7 +30,7 @@ class Webmention_Receiver {
 		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'check_dupes' ), 12, 1 );
 
 		// Webmention whitelist
-		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'domain_whitelist_approved' ), 13, 1 );
+		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'auto_approve' ), 13, 1 );
 
 		// Webmention data handler
 		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'default_title_filter' ), 21, 1 );
@@ -102,6 +102,7 @@ class Webmention_Receiver {
 	 * adds some query vars
 	 *
 	 * @param array $vars
+	 *
 	 * @return array
 	 */
 	public static function query_var( $vars ) {
@@ -318,6 +319,7 @@ class Webmention_Receiver {
 		 * All verification functions and content generation functions are added to the comment data.
 		 *
 		 * @param array $commentdata
+		 *
 		 * @return array|null|WP_Error $commentdata The Filtered Comment Array or a WP_Error object.
 		 */
 		$commentdata = apply_filters( 'webmention_comment_data', $commentdata );
@@ -741,13 +743,14 @@ class Webmention_Receiver {
 	 * Use the whitelist check function to approve a comment if the source domain is on the whitelist.
 	 *
 	 * @param array $commentdata
+	 *
 	 * @return array $commentdata
 	 */
-	public static function domain_whitelist_approved( $commentdata ) {
+	public static function auto_approve( $commentdata ) {
 		if ( ! $commentdata || is_wp_error( $commentdata ) ) {
 			return $commentdata;
 		}
-		if ( self::domain_whitelist_check( $commentdata['source'] ) ) {
+		if ( self::is_domain_whitelisted( $commentdata['source'] ) ) {
 			$commentdata['comment_approved'] = 1;
 		}
 		return $commentdata;
@@ -755,12 +758,12 @@ class Webmention_Receiver {
 
 	/**
 	 * Check the $url to see if it is on the domain whitelist.
+	 *
 	 * @param array $author_url
 	 *
 	 * @return boolean
-	 *
 	 */
-	public static function domain_whitelist_check( $url ) {
+	public static function is_domain_whitelisted( $url ) {
 		$whitelist = get_option( 'webmention_approve_domains' );
 		$whitelist = trim( $whitelist );
 		$host      = wp_parse_url( $url, PHP_URL_HOST );
@@ -786,6 +789,7 @@ class Webmention_Receiver {
 	 * replace the template for all URLs with a "replytocom" query-param
 	 *
 	 * @param string $template the template url
+	 *
 	 * @return string
 	 */
 	public static function comment_template_include( $template ) {

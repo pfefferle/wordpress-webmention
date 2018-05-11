@@ -84,6 +84,9 @@ Project and support maintained on github at [pfefferle/wordpress-webmention](htt
 * Form Improvements
 * Domain whitelist
 * Add avatar settings control
+* Text improvements
+
+Thanks David Shanske and Chris Aldrich
 
 = 3.7.0 =
 

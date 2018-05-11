@@ -32,7 +32,7 @@ class Webmention_Admin {
 	 * Add Webmention options to the WordPress discussion settings page.
 	 */
 	public static function discussion_settings() {
-		_e( 'We decided to move the settings to a dedicated page.', 'webmention' );
+		printf ( __( 'Based on your feedback and to improve the user experience, we decided to move the settings to a separate <a href="%1$s">settings-page</a>.', 'webmention' ), admin_url( '/admin.php?page=webmention' ) );
 	}
 
 	public static function meta_boxes( $object, $box ) {
@@ -204,14 +204,9 @@ class Webmention_Admin {
 	 * Load settings page
 	 */
 	public static function settings_page() {
+		add_thickbox();
+		wp_enqueue_script( 'plugin-install' );
 		load_template( dirname( __FILE__ ) . '/../templates/webmention-settings.php' );
-	}
-
-	/**
-	 * Load settings page
-	 */
-	public static function default_settings() {
-		load_template( dirname( __FILE__ ) . '/../templates/webmention-settings-default.php' );
 	}
 
 	public static function add_help_tab() {
@@ -311,9 +306,9 @@ class Webmention_Admin {
 				'description'  => __( 'Automatically Approve Webmentions from These Domains', 'webmention' ),
 				'show_in_rest' => false,
 				'default'      => 'indieweb.org',
-      )
-    );
-    register_setting(
+			)
+		);
+		register_setting(
 			'webmention', 'webmention_avatars', array(
 				'type'         => 'int',
 				'description'  => __( 'Show Avatars on Webmentions', 'webmention' ),

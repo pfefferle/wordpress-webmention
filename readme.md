@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/pfefferle/wordpress-webmention.svg?branch=master)](https://travis-ci.org/pfefferle/wordpress-webmention) [![Issue Count](https://codeclimate.com/github/pfefferle/wordpress-webmention/badges/issue_count.svg)](https://codeclimate.com/github/pfefferle/wordpress-webmention) 
+
 # Webmention #
 **Contributors:** pfefferle, dshanske  
 **Donate link:** https://notiz.blog/donate/  
@@ -84,6 +86,9 @@ Project and support maintained on github at [pfefferle/wordpress-webmention](htt
 * Form Improvements
 * Domain whitelist
 * Add avatar settings control
+* Text improvements
+
+Thanks David Shanske and Chris Aldrich
 
 ### 3.7.0 ###
 
