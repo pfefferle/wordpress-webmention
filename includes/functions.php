@@ -22,6 +22,17 @@ function get_webmention_form_text( $post_id ) {
 }
 
 /**
+ * Check the $url to see if it is on the domain whitelist.
+ *
+ * @param array $author_url
+ *
+ * @return boolean
+ */
+function is_webmention_source_whitelisted( $url ) {
+	return Webmention_Receiver::is_source_whitelisted( $url );
+}
+
+/**
  * Return the Number of Webmentions
  *
  * @param int $post_id The post ID (optional)

@@ -750,20 +750,20 @@ class Webmention_Receiver {
 		if ( ! $commentdata || is_wp_error( $commentdata ) ) {
 			return $commentdata;
 		}
-		if ( self::is_domain_whitelisted( $commentdata['source'] ) ) {
+		if ( self::is_source_whitelisted( $commentdata['source'] ) ) {
 			$commentdata['comment_approved'] = 1;
 		}
 		return $commentdata;
 	}
 
 	/**
-	 * Check the $url to see if it is on the domain whitelist.
+	 * Check the source $url to see if it is on the domain whitelist.
 	 *
 	 * @param array $author_url
 	 *
 	 * @return boolean
 	 */
-	public static function is_domain_whitelisted( $url ) {
+	public static function is_source_whitelisted( $url ) {
 		$whitelist = get_option( 'webmention_approve_domains' );
 		$whitelist = trim( $whitelist );
 		$host      = wp_parse_url( $url, PHP_URL_HOST );
