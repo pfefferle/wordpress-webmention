@@ -324,7 +324,23 @@ class Webmention_Admin {
 	public static function add_privacy_policy_content() {
 		$content =
 			'<p>' . __( 'Webmentions are an explicit feature of your content management system: by sending a webmention to the webmention endpoint of this website, you request the server to take notice of that referral and process it. As long as public content is concerned (i.e. you are not sending a private webmention), such use of this website’s webmention endpoint implies that you are aware of it being published.', 'webmention' ) . '</p>' .
-			'<p>' . __( 'You can at any time request the removal of one or all webmentions originating from your website.', 'webmention' ) . '</p>';
+			'<p>' . __( 'You can at any time request the removal of one or all webmentions originating from your website.', 'webmention' ) . '</p>' .
+
+			'<h3>' . __( 'Processing', 'webmention' ) . '</h3>' .
+			'<p>' . __( 'Incoming Webmentions are handled as a request to process personal data that you make available by explicitly providing metadata in your website\'s markup.', 'webmention' ) . '</p>' .
+
+			'<h3>' . __( 'Publishing', 'webmention' ) . '</h3>' .
+			'<p>' . __( 'An incoming Webmention request is by design a request for publishing a comment from elsewhere on the web; this is what the protocol was designed for and why it is active on your website.', 'webmention' ) . '</p>' .
+
+			'<h3>' . __( 'Personal data', 'webmention' ) . '</h3>' .
+			'<p>' . __( 'The processed data:', 'webmention' ) . '</p>' .
+
+			'<ul>' .
+				'<li>' . __( 'Your name', 'webmention' ) . '</li>' .
+				'<li>' . __( 'The profile picture from your website', 'webmention' ) . '</li>' .
+				'<li>' . __( 'The URL of your website', 'webmention' ) . '</li>' .
+				'<li>' . __( 'Personal information you include in your post', 'webmention' ) . '</li>' .
+			'<ul>';
 
 		if ( function_exists( 'wp_add_privacy_policy_content' ) ) {
 			wp_add_privacy_policy_content( __( 'Webmention', 'webmention' ), $content );
