@@ -86,11 +86,15 @@
 				<th scope="row"><?php _e( 'Automatically approve Webmention from these domains', 'webmention' ); ?></p></th>
 				<td>
 					<fieldset>
-						<label for="webmention_approve_domains">
-							<textarea name='webmention_approve_domains' rows='10' cols='50' class='large-text code'><?php echo get_option( 'webmention_approve_domains' ); ?></textarea>
-							<p class="description"><?php _e( 'A Webmention received from a site that matches a domain in this list will be auto-approved. One domain (e.g. indieweb.org) per line.
-', 'webmention' ); ?></p>
-						</label>
+						<p>
+							<textarea name="webmention_approve_domains" id="webmention_approve_domains" rows="10" cols="50" class="large-text code"><?php echo get_option( 'webmention_approve_domains' ); ?></textarea>
+						</p>
+						<p class="description">
+							<label for="webmention_approve_domains">
+								<?php _e( 'A Webmention received from a site that matches a domain in this list will be auto-approved. One domain (e.g. indieweb.org) per line.
+', 'webmention' ); ?>
+							</label>
+						</p>
 					</fieldset>
 				</td>
 			</tr>
@@ -98,11 +102,22 @@
 				<th scope="row"><?php _e( 'Comment settings', 'webmention' ); ?></th>
 				<td>
 					<fieldset>
-						<label for="webmention_show_comment_form">
-							<input type="checkbox" name="webmention_show_comment_form" id="webmention_show_comment_form" value="1" <?php
-								echo checked( true, get_option( 'webmention_show_comment_form' ) );  ?> />
-							<?php _e( 'Show a Webmention form at the comment section, to allow anyone to notify you of a mention.', 'webmention' ) ?>
-						</label>
+						<p>
+							<label for="webmention_show_comment_form">
+								<input type="checkbox" name="webmention_show_comment_form" id="webmention_show_comment_form" value="1" <?php
+									echo checked( true, get_option( 'webmention_show_comment_form' ) );  ?> />
+								<?php _e( 'Show a Webmention form at the comment section, to allow anyone to notify you of a mention.', 'webmention' ) ?>
+							</label>
+						</p>
+
+						<p>
+							<textarea name="webmention_comment_form_text" id="webmention_comment_form_text" rows="10" cols="50" class="large-text code" placeholder="<?php echo esc_html( get_default_webmention_form_text() ); ?>"><?php echo get_option( 'webmention_comment_form_text', '' ); ?></textarea>
+						</p>
+						<p class="description">
+							<label for="webmention_comment_form_text">
+								<?php _e( 'Change the default help text of the Webmention form', 'webmention' ); ?>
+							</label>
+						</p>
 					</fieldset>
 				</td>
 			</tr>

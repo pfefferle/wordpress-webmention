@@ -18,7 +18,22 @@ function send_webmention( $source, $target ) {
  *
  */
 function get_webmention_form_text( $post_id ) {
-	return apply_filters( 'webmention_form_text', __( 'To respond on your own website, enter the URL of your response which should contain a link to this post\'s permalink URL. Your response will then appear (possibly after moderation) on this page. Want to update or remove your response? Update or delete your post and re-enter your post\'s URL again. (<a href="http://indieweb.org/webmention">Learn More</a>)', 'webmention' ), $post_id );
+	if ( ! empty( get_option( 'webmention_comment_form_text', '' ) ) ) {
+		$text = get_option( 'webmention_comment_form_text', '' );
+	} else {
+		$text = get_default_webmention_form_text();
+	}
+	return wp_kses_post( wpautop( apply_filters( 'webmention_form_text', $text ), $post_id ) );
+}
+
+/**
+ * Return the default text for a webmention form
+ *
+ * @param int $post_id Post ID
+ *
+ */
+function get_default_webmention_form_text() {
+	return __( 'To respond on your own website, enter the URL of your response which should contain a link to this post\'s permalink URL. Your response will then appear (possibly after moderation) on this page. Want to update or remove your response? Update or delete your post and re-enter your post\'s URL again. (<a href="http://indieweb.org/webmention">Learn More</a>)', 'webmention' );
 }
 
 /**
