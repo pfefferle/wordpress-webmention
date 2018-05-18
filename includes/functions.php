@@ -18,9 +18,8 @@ function send_webmention( $source, $target ) {
  *
  */
 function get_webmention_form_text( $post_id ) {
-	if ( ! empty( get_option( 'webmention_comment_form_text' ) ) ) {
-		$text = get_option( 'webmention_comment_form_text' );
-	} else {
+	$text = get_option( 'webmention_comment_form_text', '' );
+	if ( empty( $text ) ) {
 		$text = get_default_webmention_form_text();
 	}
 	return wp_kses_post( wpautop( apply_filters( 'webmention_form_text', $text ), $post_id ) );
