@@ -333,7 +333,7 @@ class Webmention_Admin {
 			'<p>' . __( 'An incoming Webmention request is by design a request for publishing a comment from elsewhere on the web; this is what the protocol was designed for and why it is active on your website.', 'webmention' ) . '</p>' .
 
 			'<h3>' . __( 'Personal data', 'webmention' ) . '</h3>' .
-			'<p>' . __( 'The processed data:', 'webmention' ) . '</p>' .
+			'<p>' . __( 'The processed data (if available):', 'webmention' ) . '</p>' .
 
 			'<ul>' .
 				'<li>' . __( 'Your name', 'webmention' ) . '</li>' .
