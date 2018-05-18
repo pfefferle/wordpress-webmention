@@ -18,8 +18,8 @@ function send_webmention( $source, $target ) {
  *
  */
 function get_webmention_form_text( $post_id ) {
-	if ( ! empty( get_option( 'webmention_comment_form_text', '' ) ) ) {
-		$text = get_option( 'webmention_comment_form_text', '' );
+	if ( ! empty( get_option( 'webmention_comment_form_text' ) ) ) {
+		$text = get_option( 'webmention_comment_form_text' );
 	} else {
 		$text = get_default_webmention_form_text();
 	}
