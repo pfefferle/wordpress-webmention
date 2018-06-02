@@ -39,7 +39,7 @@ class Webmention_Admin {
 			$path = 'options-general.php?page=webmention';
 		}
 
-		printf ( __( 'Based on your feedback and to improve the user experience, we decided to move the settings to a separate <a href="%1$s">settings-page</a>.', 'webmention' ), $path );
+		printf( __( 'Based on your feedback and to improve the user experience, we decided to move the settings to a separate <a href="%1$s">settings-page</a>.', 'webmention' ), $path );
 	}
 
 	public static function meta_boxes( $object, $box ) {
@@ -203,6 +203,9 @@ class Webmention_Admin {
 				array( 'Webmention_Admin', 'settings_page' )
 			);
 		}
+		add_action( $options_page, array( 'Webmention_Admin', 'settings_sender' ), 12 );
+		add_action( $options_page, array( 'Webmention_Admin', 'settings_receiver' ), 12 );
+		add_action( $options_page, array( 'Webmention_Admin', 'settings_submit' ), 99 );
 
 		add_action( 'load-' . $options_page, array( 'Webmention_Admin', 'add_help_tab' ) );
 	}
@@ -214,6 +217,18 @@ class Webmention_Admin {
 		add_thickbox();
 		wp_enqueue_script( 'plugin-install' );
 		load_template( dirname( __FILE__ ) . '/../templates/webmention-settings.php' );
+	}
+
+	public static function settings_sender() {
+		load_template( dirname( __FILE__ ) . '/../templates/webmention-sender-settings.php' );
+	}
+
+	public static function settings_receiver() {
+		load_template( dirname( __FILE__ ) . '/../templates/webmention-receiver-settings.php' );
+	}
+
+	public static function settings_submit() {
+		load_template( dirname( __FILE__ ) . '/../templates/webmention-settings-submit.php' );
 	}
 
 	public static function add_help_tab() {

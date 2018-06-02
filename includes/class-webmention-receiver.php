@@ -37,7 +37,7 @@ class Webmention_Receiver {
 		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'default_content_filter' ), 22, 1 );
 
 		// Allow for avatars on webmention comment types
-		if ( 1 === (int) get_option( 'webmention_avatars' ) ) {
+		if ( 0 !== (int) get_option( 'webmention_avatars' ) ) {
 			add_filter( 'get_avatar_comment_types', array( 'Webmention_Receiver', 'get_avatar_comment_types' ), 99 );
 		}
 
