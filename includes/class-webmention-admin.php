@@ -39,7 +39,7 @@ class Webmention_Admin {
 			$path = 'options-general.php?page=webmention';
 		}
 
-		printf ( __( 'Based on your feedback and to improve the user experience, we decided to move the settings to a separate <a href="%1$s">settings-page</a>.', 'webmention' ), $path );
+		printf( __( 'Based on your feedback and to improve the user experience, we decided to move the settings to a separate <a href="%1$s">settings-page</a>.', 'webmention' ), $path );
 	}
 
 	public static function meta_boxes( $object, $box ) {
