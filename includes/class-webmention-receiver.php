@@ -521,11 +521,11 @@ class Webmention_Receiver {
 				)
 			);
 		}
-		if ( '200' !== $response_code ) {
+		if ( 200 !== $response_code ) {
 				return new WP_Error(
 					'vouch_error', array(
 						'status' => 449,
-						'data'   => $data,
+						'data'   => array( $data, $response_code ),
 					)
 				);
 		}
@@ -539,6 +539,7 @@ class Webmention_Receiver {
 		$urls     = wp_extract_urls( wp_remote_retrieve_body( $response ) );
 		foreach ( $urls as $url ) {
 			if ( wp_parse_url( $url, PHP_URL_HOST ) === wp_parse_url( $data['source'] ) ) {
+				$data['comment_meta']['webmention_vouched'] = '1';
 				return $data;
 			}
 		}
