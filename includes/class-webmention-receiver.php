@@ -475,7 +475,7 @@ class Webmention_Receiver {
 		if ( ! is_array( $data ) || empty( $data ) ) {
 			return new WP_Error( 'invalid_data', __( 'Invalid data passed', 'webmention' ), array( 'status' => 500 ) );
 		}
-
+		// The remaining instructions only apply if there is a vouch parameter
 		if ( ! isset( $data['vouch'] ) ) {
 			return $data;
 		}
@@ -500,11 +500,11 @@ class Webmention_Receiver {
 
 		$response = wp_safe_remote_head( $data['vouch'], $args );
 
-		// check if vouch is accessible if not tell the sender to retry
+		// check if vouch is accessible if not reject
 		if ( is_wp_error( $response ) ) {
 			return new WP_Error(
 				'vouch_not_found', __( 'Vouch Not Found', 'webmention' ), array(
-					'status' => 449,
+					'status' => 400,
 					'data'   => $data,
 				)
 			);
@@ -524,7 +524,7 @@ class Webmention_Receiver {
 		if ( 200 !== $response_code ) {
 				return new WP_Error(
 					'vouch_error', array(
-						'status' => 449,
+						'status' => 400,
 						'data'   => array( $data, $response_code ),
 					)
 				);
@@ -545,7 +545,7 @@ class Webmention_Receiver {
 		}
 		return new WP_Error(
 			'vouch_error', __( 'Vouch Not Found', 'webmention' ), array(
-				'status' => 449,
+				'status' => 400,
 				'data'   => $data,
 			)
 		);
