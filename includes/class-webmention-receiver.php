@@ -26,7 +26,7 @@ class Webmention_Receiver {
 		add_filter( 'webfinger_post_data', array( 'Webmention_Receiver', 'jrd_links' ) );
 
 		// Webmention helper
-		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'webmention_vouch' ), 10, 1 );
+		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'webmention_store_vouch' ), 10, 1 );
 		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'webmention_verify' ), 11, 1 );
 		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'check_dupes' ), 12, 1 );
 
@@ -134,16 +134,7 @@ class Webmention_Receiver {
 		);
 		register_meta( 'comment', 'webmention_response_code', $args );
 
-		// Purpose of this is to store whether something has been vouched for
-		$args = array(
-			'type'         => 'int',
-			'description'  => __( 'Has this Webmention Been Vouched for', 'webmention' ),
-			'single'       => true,
-			'show_in_rest' => true,
-		);
-		register_meta( 'comment', 'webmention_vouched', $args );
-
-		// Purpose of this is to store the Vouch
+		// Purpose of this is to store a vouch URL
 		$args = array(
 			'type'         => 'string',
 			'description'  => __( 'Webmention Vouch URL', 'webmention' ),
@@ -448,8 +439,7 @@ class Webmention_Receiver {
 	}
 
 	/**
-	 * Verifies vouch is valid and either return an error if not verified or return the array with retrieved
-	 * data. For right now, it just sets a parameter whether or not it would be vouched
+	 * Stores Vouch
 	 *
 	 * @param array $data {
 	 *     $comment_type
@@ -465,9 +455,8 @@ class Webmention_Receiver {
 	 *     $content_type
 	 * }
 	 *
-	 * @uses apply_filters calls "http_headers_useragent" on the user agent
 	 */
-	public static function webmention_vouch( $data ) {
+	public static function webmention_store_vouch( $data ) {
 		if ( ! $data || is_wp_error( $data ) ) {
 			return $data;
 		}
@@ -476,79 +465,10 @@ class Webmention_Receiver {
 			return new WP_Error( 'invalid_data', __( 'Invalid data passed', 'webmention' ), array( 'status' => 500 ) );
 		}
 		// The remaining instructions only apply if there is a vouch parameter
-		if ( ! isset( $data['vouch'] ) ) {
-			return $data;
+		if ( isset( $data['vouch'] ) ) {
+			$data['comment_meta']['webmention_vouch_url'] = esc_url_raw( $data['vouch'] );
 		}
-		$data['comment_meta']['webmention_vouch_url'] = esc_url_raw( $data['vouch'] );
-
-		// Is the person vouching for the relationship using a page on your own site?
-		$vouch_id = url_to_postid( $data['vouch'] );
-		if ( $vouch_id ) {
-			$data['comment_meta']['webmention_vouched'] = '1';
-			return $data;
-		}
-
-		$wp_version = get_bloginfo( 'version' );
-
-		$user_agent = apply_filters( 'http_headers_useragent', 'WordPress/' . $wp_version . '; ' . get_bloginfo( 'url' ) );
-		$args       = array(
-			'timeout'             => 100,
-			'limit_response_size' => 153600,
-			'redirection'         => 20,
-			'user-agent'          => "$user_agent; verifying Vouch from " . $data['comment_author_IP'],
-		);
-
-		$response = wp_safe_remote_head( $data['vouch'], $args );
-
-		// check if vouch is accessible if not reject
-		if ( is_wp_error( $response ) ) {
-			return new WP_Error(
-				'vouch_not_found', __( 'Vouch Not Found', 'webmention' ), array(
-					'status' => 400,
-					'data'   => $data,
-				)
-			);
-		}
-
-		// A valid response code from the other server would not be considered an error.
-		$response_code = wp_remote_retrieve_response_code( $response );
-		// not an (x)html, sgml, or xml page, so asking the sender to try again
-		if ( preg_match( '#(image|audio|video|model)/#is', wp_remote_retrieve_header( $response, 'content-type' ) ) ) {
-			return new WP_Error(
-				'vouch_not_found', __( 'Vouch Not Found', 'webmention' ), array(
-					'status' => 449,
-					'data'   => $data,
-				)
-			);
-		}
-		if ( 200 !== $response_code ) {
-				return new WP_Error(
-					'vouch_error', array(
-						'status' => 400,
-						'data'   => array( $data, $response_code ),
-					)
-				);
-		}
-		// If this is not
-		if ( ! self::is_source_whitelisted( $data['vouch'] ) ) {
-			$data['comment_meta']['webmention_vouched'] = '0';
-			return $data;
-		}
-
-		$response = wp_safe_remote_get( $data['vouch'], $args );
-		$urls     = wp_extract_urls( wp_remote_retrieve_body( $response ) );
-		foreach ( $urls as $url ) {
-			if ( wp_parse_url( $url, PHP_URL_HOST ) === wp_parse_url( $data['source'] ) ) {
-				$data['comment_meta']['webmention_vouched'] = '1';
-				return $data;
-			}
-		}
-		return new WP_Error(
-			'vouch_error', __( 'Vouch Not Found', 'webmention' ), array(
-				'status' => 400,
-				'data'   => $data,
-			)
-		);
+		return $data;
 	}
 
 	/**

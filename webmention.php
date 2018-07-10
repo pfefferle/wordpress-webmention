@@ -20,6 +20,8 @@ define( 'WEBMENTION_PROCESS_TYPE_SYNC', 'sync' );
 
 defined( 'WEBMENTION_PROCESS_TYPE' ) || define( 'WEBMENTION_PROCESS_TYPE', WEBMENTION_PROCESS_TYPE_SYNC );
 
+defined( 'WEBMENTION_VOUCH' ) || define( 'WEBMENTION_VOUCH', false );
+
 add_action( 'plugins_loaded', array( 'Webmention_Plugin', 'init' ) );
 
 // initialize admin settings
@@ -59,6 +61,12 @@ class Webmention_Plugin {
 		// initialize Webmention Receiver
 		require_once dirname( __FILE__ ) . '/includes/class-webmention-receiver.php';
 		add_action( 'init', array( 'Webmention_Receiver', 'init' ) );
+
+		// initialize Webmention Vouch
+		if ( WEBMENTION_VOUCH ) {
+			require_once dirname( __FILE__ ) . '/includes/class-webmention-vouch.php';
+			add_action( 'init', array( 'Webmention_Vouch', 'init' ) );
+		}
 
 		// Default Comment Status
 		add_filter( 'get_default_comment_status', array( 'Webmention_Plugin', 'get_default_comment_status' ), 11, 3 );
