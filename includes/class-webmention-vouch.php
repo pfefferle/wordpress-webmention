@@ -10,7 +10,7 @@ class Webmention_Vouch {
 	 */
 	public static function init() {
 		// Webmention helper
-		add_filter( 'webmention_comment_data', array( 'Webmention_Vouch', 'vouch' ), 10, 1 );
+		add_filter( 'webmention_comment_data', array( 'Webmention_Vouch', 'verify_vouch' ), 10, 1 );
 
 		self::register_meta();
 	}
@@ -49,7 +49,7 @@ class Webmention_Vouch {
 	 *
 	 * @uses apply_filters calls "http_headers_useragent" on the user agent
 	 */
-	public static function vouch( $data ) {
+	public static function verify_vouch( $data ) {
 		if ( ! $data || is_wp_error( $data ) ) {
 			return $data;
 		}
