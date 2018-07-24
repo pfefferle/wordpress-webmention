@@ -113,11 +113,6 @@
 			-ms-transform: translateY(1px);
 			transform: translateY(1px);
 		}
-		<?php
-		if ( 'rtl' == $text_direction ) {
-			echo 'body { font-family: Tahoma, Arial; }';
-		}
-		?>
 	</style>
 	</head>
 	<body id="webmention-endpint-page">
