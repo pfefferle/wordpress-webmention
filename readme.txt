@@ -274,7 +274,7 @@ Follow the normal instructions for [installing WordPress plugins](https://codex.
 To add a WordPress Plugin using the [built-in plugin installer](https://codex.wordpress.org/Administration_Screens#Add_New_Plugins):
 
 1. Go to [Plugins](https://codex.wordpress.org/Administration_Screens#Plugins) > [Add New](https://codex.wordpress.org/Plugins_Add_New_Screen).
-1. Type in the "`webmention`" into the **Search Plugins** box.
+1. Type "`webmention`" into the **Search Plugins** box.
 1. Find the WordPress Plugin you wish to install.
     1. Click **Details** for more information about the Plugin and instructions you may wish to print or save to help setup the Plugin.
     1. Click **Install Now** to install the WordPress Plugin.
