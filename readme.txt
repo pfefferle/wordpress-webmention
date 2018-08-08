@@ -5,6 +5,7 @@ Tags: webmention, pingback, trackback, linkback, indieweb, comment, response
 Requires at least: 4.7
 Tested up to: 4.9.6
 Stable tag: 3.8.3
+Requires PHP: 5.2
 License: MIT
 License URI: http://opensource.org/licenses/MIT
 
