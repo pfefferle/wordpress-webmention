@@ -26,7 +26,6 @@ class Webmention_Receiver {
 		add_filter( 'webfinger_post_data', array( 'Webmention_Receiver', 'jrd_links' ) );
 
 		// Webmention helper
-		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'webmention_store_vouch' ), 10, 1 );
 		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'webmention_verify' ), 11, 1 );
 		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'check_dupes' ), 12, 1 );
 
@@ -788,6 +787,10 @@ class Webmention_Receiver {
 				'resource_removed',
 			)
 		);
+
+		if ( ! is_wp_error( $error ) ) {
+			return;
+		}
 
 		if ( ! in_array( $error->get_error_code(), $error_codes, true ) ) {
 			return;
