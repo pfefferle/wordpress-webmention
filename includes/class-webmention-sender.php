@@ -109,8 +109,8 @@ class Webmention_Sender {
 			'user-agent'          => "$user_agent; sending Webmention",
 		);
 		$body       = array(
-			'source' => urlencode( $source ),
-			'target' => urlencode( $target ),
+			'source' => rawurlencode( $source ),
+			'target' => rawurlencode( $target ),
 		);
 		// Allows for additional URL parameters to be added such as Vouch.
 		$body         = apply_filters( 'webmention_send_vars', $body, $post_id );

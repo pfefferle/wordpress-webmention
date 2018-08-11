@@ -22,7 +22,7 @@ function get_webmention_form_text( $post_id ) {
 	if ( empty( $text ) ) {
 		$text = get_default_webmention_form_text();
 	}
-	return wp_kses_post( wpautop( apply_filters( 'webmention_form_text', $text ), $post_id ) );
+	return wp_kses_post( apply_filters( 'webmention_form_text', $text ), $post_id );
 }
 
 /**
