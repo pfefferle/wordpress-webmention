@@ -31,6 +31,8 @@ class Webmention_Receiver {
 
 		// Webmention whitelist
 		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'auto_approve' ), 13, 1 );
+		add_filter( 'comment_row_actions', array( 'Webmention_Receiver', 'comment_row_actions' ), 13, 2 );
+		add_filter( 'comment_unapproved_to_approved', array( 'Webmention_Receiver', 'transition_to_whitelist' ), 10 );
 
 		// Webmention data handler
 		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'default_title_filter' ), 21, 1 );
@@ -48,6 +50,52 @@ class Webmention_Receiver {
 		add_action( 'webmention_data_error', array( 'Webmention_Receiver', 'delete' ) );
 
 		self::register_meta();
+	}
+
+	public static function comment_row_actions( $actions, $comment ) {
+		$approve_nonce = esc_html( '_wpnonce=' . wp_create_nonce( "approve-comment_$comment->comment_ID" ) );
+		$approve_url   = esc_url( "comment.php?action=approvecomment&$approve_nonce" );
+		$unapprove_url = esc_url( "comment.php?action=unapprovecomment&$approve_nonce" );
+		$status        = wp_get_comment_status( $comment );
+		if ( 'unapproved' === $status ) {
+			$actions['domainwhitelist'] = "<a href='{$approve_url}&domain=true&c={$comment->comment_ID}' aria-label='" . esc_attr__( 'Approve & Whitelist', 'webmention' ) . "'>" . __( 'Approve & Whitelist', 'webmention' ) . '</a>';
+		}
+		return $actions;
+	}
+
+	public static function get_webmention_approve_domains() {
+		$whitelist = get_option( 'webmention_approve_domains' );
+		$whitelist = trim( $whitelist );
+		$whitelist = explode( "\n", $whitelist );
+		return $whitelist;
+	}
+
+	public static function extract_domain( $url ) {
+		$host = wp_parse_url( $url, PHP_URL_HOST );
+		// strip leading www, if any
+		return preg_replace( '/^www\./', '', $host );
+	}
+
+	public static function add_webmention_approve_domain( $host ) {
+		$whitelist   = self::get_webmention_approve_domains();
+		$whitelist[] = $host;
+		$whitelist   = array_unique( $whitelist );
+		$whitelist   = implode( "\n", $whitelist );
+		update_option( 'webmention_approve_domains', $whitelist );
+	}
+
+	public static function transition_to_whitelist( $comment ) {
+		if ( ! current_user_can( 'moderate_comments' ) ) {
+			return;
+		}
+		if ( isset( $_REQUEST['domain'] ) ) {
+			$url = get_comment_meta( $comment->comment_ID, 'webmention_source_url', true );
+			if ( ! $url ) {
+				return;
+			}
+			$host = self::extract_domain( $url );
+			self::add_webmention_approve_domain( $host );
+		}
 	}
 
 	/**
@@ -96,6 +144,15 @@ class Webmention_Receiver {
 			'show_in_rest' => true,
 		);
 		register_meta( 'comment', 'webmention_response_code', $args );
+
+		// Purpose of this is to store a vouch URL
+		$args = array(
+			'type'         => 'string',
+			'description'  => __( 'Webmention Vouch URL', 'webmention' ),
+			'single'       => true,
+			'show_in_rest' => true,
+		);
+		register_meta( 'comment', 'webmention_vouch_url', $args );
 	}
 
 	/**
@@ -261,13 +318,20 @@ class Webmention_Receiver {
 		$comment_date_gmt                      = current_time( 'mysql', 1 );
 		$comment_meta['webmention_created_at'] = $comment_date_gmt;
 
+		if ( isset( $params['vouch'] ) ) {
+			// If there is a vouch pass it along
+			$vouch = urldecode( $params['vouch'] );
+			// Safely store a version of the data
+			$comment_meta['webmention_vouch_url'] = esc_url_raw( $vouch );
+		}
+
 		// change this if your theme can't handle the Webmentions comment type
 		$comment_type = WEBMENTION_COMMENT_TYPE;
 
 		// change this if you want to auto approve your Webmentions
 		$comment_approved = WEBMENTION_COMMENT_APPROVE;
 
-		$commentdata = compact( 'comment_type', 'comment_approved', 'comment_agent', 'comment_date', 'comment_date_gmt', 'comment_meta', 'source', 'target' );
+		$commentdata = compact( 'comment_type', 'comment_approved', 'comment_agent', 'comment_date', 'comment_date_gmt', 'comment_meta', 'source', 'target', 'vouch' );
 
 		$commentdata['comment_post_ID']   = $comment_post_id;
 		$commentdata['comment_author_IP'] = $comment_author_ip;
@@ -689,10 +753,7 @@ class Webmention_Receiver {
 			$post_format = $post_formatstrings[ $post_format ];
 		}
 
-		$host = wp_parse_url( $commentdata['comment_author_url'], PHP_URL_HOST );
-
-		// strip leading www, if any
-		$host = preg_replace( '/^www\./', '', $host );
+		$host = self::extract_domain( $commentdata['comment_author_url'] );
 
 		// generate default text
 		// translators: This post format was mentioned on this URL with this domain name
@@ -727,7 +788,11 @@ class Webmention_Receiver {
 			)
 		);
 
-		if ( ! in_array( $error->get_error_code(), $error_codes ) ) {
+		if ( ! is_wp_error( $error ) ) {
+			return;
+		}
+
+		if ( ! in_array( $error->get_error_code(), $error_codes, true ) ) {
 			return;
 		}
 
@@ -764,15 +829,12 @@ class Webmention_Receiver {
 	 * @return boolean
 	 */
 	public static function is_source_whitelisted( $url ) {
-		$whitelist = get_option( 'webmention_approve_domains' );
-		$whitelist = trim( $whitelist );
-		$host      = wp_parse_url( $url, PHP_URL_HOST );
-		// strip leading www, if any
-		$host = preg_replace( '/^www\./', '', $host );
-		if ( '' === $whitelist ) {
+		$whitelist = self::get_webmention_approve_domains();
+		$host      = self::extract_domain( $url );
+		if ( empty( $whitelist ) ) {
 			return false;
 		}
-		$domains = explode( '\n', $whitelist );
+
 		foreach ( (array) $domains as $domain ) {
 			$domain = trim( $domain );
 			if ( empty( $domain ) ) {
