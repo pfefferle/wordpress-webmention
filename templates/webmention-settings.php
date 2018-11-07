@@ -127,7 +127,7 @@
 					<fieldset>
 						<label for="webmention_avatars">
 							<input type="checkbox" name="webmention_avatars" id="webmention_avatars" value="1" <?php
-								echo checked( true, get_option( 'webmention_avatars' ) );  ?> />
+								echo checked( true, get_option( 'webmention_avatars', 1 ) );  ?> />
 							<?php _e( 'Show avatars on webmentions if available.', 'webmention' ) ?>
 						</label>
 					</fieldset>
