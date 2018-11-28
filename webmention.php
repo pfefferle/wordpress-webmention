@@ -5,7 +5,7 @@
  * Description: Webmention support for WordPress posts
  * Author: Matthias Pfefferle
  * Author URI: https://notiz.blog/
- * Version: 3.8.7
+ * Version: 3.8.8
  * License: MIT
  * License URI: http://opensource.org/licenses/MIT
  * Text Domain: webmention
@@ -77,6 +77,9 @@ class Webmention_Plugin {
 
 		add_action( 'comment_form_after', array( 'Webmention_Plugin', 'comment_form' ), 11 );
 
+		add_filter( 'nodeinfo_data', array( 'Webmention_Plugin', 'nodeinfo' ), 10, 2 );
+		add_filter( 'nodeinfo2_data', array( 'Webmention_Plugin', 'nodeinfo2' ), 10 );
+
 		// remove old Webmention code
 		remove_action( 'init', array( 'WebMentionFormPlugin', 'init' ) );
 		remove_action( 'init', array( 'WebMentionForCommentsPlugin', 'init' ) );
@@ -126,5 +129,34 @@ class Webmention_Plugin {
 	 */
 	public static function plugin_textdomain() {
 		load_plugin_textdomain( 'webmention', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+	}
+
+	/**
+	 * Extend NodeInfo data
+	 *
+	 * @param array $nodeinfo NodeInfo data
+	 * @param array $version  updated data
+	 */
+	public static function nodeinfo( $nodeinfo, $version ) {
+		if ( '2.0' == $version) {
+			$nodeinfo['protocols'][] = 'webmention';
+		} else {
+			$nodeinfo['protocols']['inbound'][] = 'webmention';
+			$nodeinfo['protocols']['outbound'][] = 'webmention';
+		}
+
+		return $nodeinfo;
+	}
+
+	/**
+	 * Extend NodeInfo2 data
+	 *
+	 * @param array $nodeinfo NodeInfo2 data
+	 * @param array $version  updated data
+	 */
+	public static function nodeinfo2( $nodeinfo ) {
+		$nodeinfo['protocols'][] = 'webmention';
+
+		return $nodeinfo;
 	}
 }
