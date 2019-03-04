@@ -37,6 +37,7 @@ class Webmention_410 {
 		} else {
 			return;
 		}
+
 		// return 410
 		if ( $query->get_posts() ) {
 			status_header( 410 );

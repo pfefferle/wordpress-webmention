@@ -57,10 +57,12 @@ class Webmention_Vouch {
 		if ( ! is_array( $data ) || empty( $data ) ) {
 			return new WP_Error( 'invalid_data', __( 'Invalid data passed', 'webmention' ), array( 'status' => 500 ) );
 		}
+
 		// The remaining instructions only apply if there is a vouch parameter
 		if ( ! isset( $data['vouch'] ) ) {
 			return $data;
 		}
+
 		$data['comment_meta']['webmention_vouch_url'] = esc_url_raw( $data['vouch'] );
 
 		// Is the person vouching for the relationship using a page on your own site?
@@ -103,6 +105,7 @@ class Webmention_Vouch {
 				)
 			);
 		}
+
 		if ( 200 !== $response_code ) {
 				return new WP_Error(
 					'vouch_error', array(
@@ -111,6 +114,7 @@ class Webmention_Vouch {
 					)
 				);
 		}
+
 		// If this is not
 		if ( ! Webmention_Receiver::is_source_whitelisted( $data['vouch'] ) ) {
 			$data['comment_meta']['webmention_vouched'] = '0';
@@ -119,12 +123,14 @@ class Webmention_Vouch {
 
 		$response = wp_safe_remote_get( $data['vouch'], $args );
 		$urls     = wp_extract_urls( wp_remote_retrieve_body( $response ) );
+
 		foreach ( $urls as $url ) {
 			if ( wp_parse_url( $url, PHP_URL_HOST ) === wp_parse_url( $data['source'] ) ) {
 				$data['comment_meta']['webmention_vouched'] = '1';
 				return $data;
 			}
 		}
+
 		return new WP_Error(
 			'vouch_error', __( 'Vouch Not Found', 'webmention' ), array(
 				'status' => 400,

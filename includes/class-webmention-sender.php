@@ -15,6 +15,7 @@ class Webmention_Sender {
 
 		// run webmentions before the other pinging stuff
 		add_action( 'do_pings', array( 'Webmention_Sender', 'do_webmentions' ), 5, 1 );
+
 		// Send Webmentions from Every Type that Declared Webmention Support
 		$post_types = get_post_types_by_support( 'webmentions' );
 		foreach ( $post_types as $post_type ) {
@@ -108,18 +109,22 @@ class Webmention_Sender {
 			'redirection'         => 20,
 			'user-agent'          => "$user_agent; sending Webmention",
 		);
+
 		$body       = array(
 			'source' => rawurlencode( $source ),
 			'target' => rawurlencode( $target ),
 		);
+
 		// Allows for additional URL parameters to be added such as Vouch.
 		$body         = apply_filters( 'webmention_send_vars', $body, $post_id );
 		$args['body'] = build_query( $body );
+
 		if ( $webmention_server_url ) {
 			$response = wp_safe_remote_post( $webmention_server_url, $args );
 		} else {
 			$response = false;
 		}
+
 		// use the response to do something useful such as logging success or failure.
 		do_action( 'webmention_post_send', $response, $source, $target, $post_id );
 
@@ -175,6 +180,7 @@ class Webmention_Sender {
 				self::reschedule( $post_id );
 			}
 		}
+
 		if ( ! empty( $ping ) ) {
 			add_ping( $post, $ping );
 		}
