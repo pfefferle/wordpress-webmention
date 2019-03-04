@@ -67,6 +67,7 @@ function get_webmentions_number( $post_id = 0 ) {
 	);
 
 	$comments_query = new WP_Comment_Query();
+
 	return $comments_query->query( $args );
 }
 
@@ -106,7 +107,22 @@ function webmention_url_to_postid( $url ) {
 	if ( '/' === wp_make_link_relative( trailingslashit( $url ) ) ) {
 		return apply_filters( 'webmention_post_id', get_option( 'webmention_home_mentions' ), $url );
 	}
+
 	return apply_filters( 'webmention_post_id', url_to_postid( $url ), $url );
+}
+
+function webmention_extract_domain( $url ) {
+	$host = wp_parse_url( $url, PHP_URL_HOST );
+	// strip leading www, if any
+	return preg_replace( '/^www\./', '', $host );
+}
+
+function get_webmention_approve_domains() {
+	$whitelist = get_option( 'webmention_approve_domains' );
+	$whitelist = trim( $whitelist );
+	$whitelist = explode( "\n", $whitelist );
+
+	return $whitelist;
 }
 
 /**
@@ -232,6 +248,7 @@ if ( ! function_exists( 'wp_get_meta_tags' ) ) :
 				}
 			}
 		}
+
 		return $meta_tags;
 	}
 endif;
