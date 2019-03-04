@@ -1,7 +1,4 @@
 <?php
-add_action( 'admin_init', array( 'Webmention_Admin', 'init' ) );
-add_action( 'admin_menu', array( 'Webmention_Admin', 'admin_menu' ) );
-
 /**
  * Webmention Admin Class
  *
@@ -26,6 +23,11 @@ class Webmention_Admin {
 		add_filter( 'manage_edit-comments_columns', array( 'Webmention_Admin', 'comment_columns' ) );
 		add_filter( 'manage_comments_custom_column', array( 'Webmention_Admin', 'manage_comments_custom_column' ), 10, 2 );
 
+		// Webmention whitelist
+		add_filter( 'webmention_comment_data', array( 'Webmention_Admin', 'auto_approve' ), 13, 1 );
+		add_filter( 'comment_row_actions', array( 'Webmention_Admin', 'comment_row_actions' ), 13, 2 );
+		add_filter( 'comment_unapproved_to_approved', array( 'Webmention_Admin', 'transition_to_whitelist' ), 10 );
+
 		self::add_privacy_policy_content();
 	}
 
@@ -48,7 +50,7 @@ class Webmention_Admin {
 		if ( ! $object instanceof WP_Comment ) {
 			return;
 		}
-?>
+		?>
 <label><?php _e( 'Webmention Target', 'webmention' ); ?></label>
 <input type="url" class="widefat" disabled value="<?php echo get_comment_meta( $object->comment_ID, 'webmention_target_url', true ); ?>" />
 <br />
@@ -64,7 +66,7 @@ class Webmention_Admin {
 <label><?php _e( 'Webmention Creation Time', 'webmention' ); ?></label>
 <input type="url" class="widefat" disabled value="<?php echo get_comment_meta( $object->comment_ID, 'webmention_created_at', true ); ?>" />
 <br />
-<?php
+		<?php
 	}
 
 	/**
@@ -177,6 +179,46 @@ class Webmention_Admin {
 		$columns['comment_type'] = __( 'Comment-Type', 'webmention' );
 
 		return $columns;
+	}
+
+	public static function comment_row_actions( $actions, $comment ) {
+		$query = array(
+			'_wpnonce' => wp_create_nonce( "approve-comment_$comment->comment_ID" ),
+			'action'   => 'approvecomment',
+			'domain'   => 'true',
+			'c'        => $comment->comment_ID,
+		);
+
+		$approve_url = admin_url( 'comment.php' );
+		$approve_url = add_query_arg( $query, $approve_url );
+
+		$status = wp_get_comment_status( $comment );
+		if ( 'unapproved' === $status ) {
+			$actions['domainwhitelist'] = sprintf( '<a href="%1$s" aria-label="%2$s">%2$s</a>', esc_url( $approve_url ), esc_attr__( 'Approve & Whitelist', 'webmention' ) );
+		}
+		return $actions;
+	}
+
+	public static function add_webmention_approve_domain( $host ) {
+		$whitelist   = get_webmention_approve_domains();
+		$whitelist[] = $host;
+		$whitelist   = array_unique( $whitelist );
+		$whitelist   = implode( "\n", $whitelist );
+		update_option( 'webmention_approve_domains', $whitelist );
+	}
+
+	public static function transition_to_whitelist( $comment ) {
+		if ( ! current_user_can( 'moderate_comments' ) ) {
+			return;
+		}
+		if ( isset( $_REQUEST['domain'] ) ) {
+			$url = get_comment_meta( $comment->comment_ID, 'webmention_source_url', true );
+			if ( ! $url ) {
+				return;
+			}
+			$host = webmention_extract_domain( $url );
+			self::add_webmention_approve_domain( $host );
+		}
 	}
 
 	/**
