@@ -23,14 +23,14 @@ class Webmention_410 {
 		if ( ! empty( $wp_query->query['pagename'] ) ) {
 			$query = new WP_Query(
 				array(
-					'pagename' => $wp_query->query['pagename'] . '__trashed',
+					'pagename'    => $wp_query->query['pagename'] . '__trashed',
 					'post_status' => 'trash',
 				)
 			);
 		} elseif ( ! empty( $wp_query->query['name'] ) ) {
 			$query = new WP_Query(
 				array(
-					'name' => $wp_query->query['name'] . '__trashed',
+					'name'        => $wp_query->query['name'] . '__trashed',
 					'post_status' => 'trash',
 				)
 			);

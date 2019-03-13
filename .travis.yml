@@ -20,6 +20,7 @@ env:
   - secure: "WaeBLo0MDuK4X7NQvk5Ie5BVnexHtyDfHAV8v7dB8B67d8GCWy9K5I54jTECNRUC+CecMakLq5DOfn+ThtWdkJmoJKnGNFp8ZrWkMsfVJRi3CDED2HkccOrxkmXBj8Z6A8jZjcfVNrEmq/6697xVNRGeaS08l9rokh7pyb8INWY="
 matrix:
   include:
+  - php: 7.3
   - php: 7.2
   - php: 7.1
   - php: 7.0
