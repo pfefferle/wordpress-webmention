@@ -110,7 +110,7 @@ class Webmention_Sender {
 			'user-agent'          => "$user_agent; sending Webmention",
 		);
 
-		$body       = array(
+		$body = array(
 			'source' => rawurlencode( $source ),
 			'target' => rawurlencode( $target ),
 		);

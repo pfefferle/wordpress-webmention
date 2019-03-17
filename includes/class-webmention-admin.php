@@ -41,6 +41,7 @@ class Webmention_Admin {
 			$path = 'options-general.php?page=webmention';
 		}
 
+		/* translators: 1. settings page URL */
 		printf( __( 'Based on your feedback and to improve the user experience, we decided to move the settings to a separate <a href="%1$s">settings-page</a>.', 'webmention' ), $path );
 	}
 
@@ -310,7 +311,9 @@ class Webmention_Admin {
 
 	public static function register_settings() {
 		register_setting(
-			'webmention', 'webmention_disable_selfpings_same_url', array(
+			'webmention',
+			'webmention_disable_selfpings_same_url',
+			array(
 				'type'         => 'boolean',
 				'description'  => __( 'Disable self Webmentions on the same URL', 'webmention' ),
 				'show_in_rest' => true,
@@ -318,7 +321,9 @@ class Webmention_Admin {
 			)
 		);
 		register_setting(
-			'webmention', 'webmention_disable_selfpings_same_domain', array(
+			'webmention',
+			'webmention_disable_selfpings_same_domain',
+			array(
 				'type'         => 'boolean',
 				'description'  => __( 'Disable self Webmentions on the same domain', 'webmention' ),
 				'show_in_rest' => true,
@@ -326,7 +331,9 @@ class Webmention_Admin {
 			)
 		);
 		register_setting(
-			'webmention', 'webmention_support_pages', array(
+			'webmention',
+			'webmention_support_pages',
+			array(
 				'type'         => 'boolean',
 				'description'  => __( 'Enable Webmention support for pages', 'webmention' ),
 				'show_in_rest' => true,
@@ -334,7 +341,9 @@ class Webmention_Admin {
 			)
 		);
 		register_setting(
-			'webmention', 'webmention_show_comment_form', array(
+			'webmention',
+			'webmention_show_comment_form',
+			array(
 				'type'         => 'boolean',
 				'description'  => __( 'Show Webmention comment-form', 'webmention' ),
 				'show_in_rest' => true,
@@ -342,7 +351,9 @@ class Webmention_Admin {
 			)
 		);
 		register_setting(
-			'webmention', 'webmention_comment_form_text', array(
+			'webmention',
+			'webmention_comment_form_text',
+			array(
 				'type'         => 'string',
 				'description'  => __( 'Change the text of the Webmention comment-form', 'webmention' ),
 				'show_in_rest' => true,
@@ -350,7 +361,9 @@ class Webmention_Admin {
 			)
 		);
 		register_setting(
-			'webmention', 'webmention_home_mentions', array(
+			'webmention',
+			'webmention_home_mentions',
+			array(
 				'type'         => 'int',
 				'description'  => __( 'Where to direct Mentions of the home page', 'webmention' ),
 				'show_in_rest' => true,
@@ -358,7 +371,9 @@ class Webmention_Admin {
 			)
 		);
 		register_setting(
-			'webmention', 'webmention_approve_domains', array(
+			'webmention',
+			'webmention_approve_domains',
+			array(
 				'type'         => 'string',
 				'description'  => __( 'Automatically approve Webmentions from these domains', 'webmention' ),
 				'show_in_rest' => false,
@@ -366,7 +381,9 @@ class Webmention_Admin {
 			)
 		);
 		register_setting(
-			'webmention', 'webmention_avatars', array(
+			'webmention',
+			'webmention_avatars',
+			array(
 				'type'         => 'int',
 				'description'  => __( 'Show Avatars on Webmentions', 'webmention' ),
 				'show_in_rest' => true,

@@ -87,7 +87,9 @@ class Webmention_Vouch {
 		// check if vouch is accessible if not reject
 		if ( is_wp_error( $response ) ) {
 			return new WP_Error(
-				'vouch_not_found', __( 'Vouch Not Found', 'webmention' ), array(
+				'vouch_not_found',
+				__( 'Vouch Not Found', 'webmention' ),
+				array(
 					'status' => 400,
 					'data'   => $data,
 				)
@@ -99,7 +101,9 @@ class Webmention_Vouch {
 		// not an (x)html, sgml, or xml page, so asking the sender to try again
 		if ( preg_match( '#(image|audio|video|model)/#is', wp_remote_retrieve_header( $response, 'content-type' ) ) ) {
 			return new WP_Error(
-				'vouch_not_found', __( 'Vouch Not Found', 'webmention' ), array(
+				'vouch_not_found',
+				__( 'Vouch Not Found', 'webmention' ),
+				array(
 					'status' => 449,
 					'data'   => $data,
 				)
@@ -108,7 +112,8 @@ class Webmention_Vouch {
 
 		if ( 200 !== $response_code ) {
 				return new WP_Error(
-					'vouch_error', array(
+					'vouch_error',
+					array(
 						'status' => 400,
 						'data'   => array( $data, $response_code ),
 					)
@@ -132,7 +137,9 @@ class Webmention_Vouch {
 		}
 
 		return new WP_Error(
-			'vouch_error', __( 'Vouch Not Found', 'webmention' ), array(
+			'vouch_error',
+			__( 'Vouch Not Found', 'webmention' ),
+			array(
 				'status' => 400,
 				'data'   => $data,
 			)

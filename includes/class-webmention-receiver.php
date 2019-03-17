@@ -133,7 +133,9 @@ class Webmention_Receiver {
 	 */
 	public static function register_routes() {
 		register_rest_route(
-			'webmention/1.0', '/endpoint', array(
+			'webmention/1.0',
+			'/endpoint',
+			array(
 				array(
 					'methods'  => WP_REST_Server::CREATABLE,
 					'callback' => array( 'Webmention_Receiver', 'post' ),
@@ -443,7 +445,9 @@ class Webmention_Receiver {
 		// check if source is accessible
 		if ( is_wp_error( $response ) ) {
 			return new WP_Error(
-				'source_not_found', __( 'Source URL not found', 'webmention' ), array(
+				'source_not_found',
+				__( 'Source URL not found', 'webmention' ),
+				array(
 					'status' => 400,
 					'data'   => $data,
 				)
@@ -455,7 +459,9 @@ class Webmention_Receiver {
 		// not an (x)html, sgml, or xml page, no use going further
 		if ( preg_match( '#(image|audio|video|model)/#is', wp_remote_retrieve_header( $response, 'content-type' ) ) ) {
 			return new WP_Error(
-				'unsupported_content_type', __( 'Content Type is not supported', 'webmention' ), array(
+				'unsupported_content_type',
+				__( 'Content Type is not supported', 'webmention' ),
+				array(
 					'status' => 400,
 					'data'   => $data,
 				)
@@ -468,28 +474,36 @@ class Webmention_Receiver {
 				break;
 			case 404:
 				return new WP_Error(
-					'resource_not_found', __( 'Resource not found', 'webmention' ), array(
+					'resource_not_found',
+					__( 'Resource not found', 'webmention' ),
+					array(
 						'status' => 400,
 						'data'   => $data,
 					)
 				);
 			case 410:
 				return new WP_Error(
-					'resource_deleted', __( 'Resource has been deleted', 'webmention' ), array(
+					'resource_deleted',
+					__( 'Resource has been deleted', 'webmention' ),
+					array(
 						'status' => 400,
 						'data'   => $data,
 					)
 				);
 			case 452:
 				return new WP_Error(
-					'resource_removed', __( 'Resource removed for legal reasons', 'webmention' ), array(
+					'resource_removed',
+					__( 'Resource removed for legal reasons', 'webmention' ),
+					array(
 						'status' => 400,
 						'data'   => $data,
 					)
 				);
 			default:
 				return new WP_Error(
-					'source_error', wp_remote_retrieve_response_message( $response ), array(
+					'source_error',
+					wp_remote_retrieve_response_message( $response ),
+					array(
 						'status' => 400,
 						'data'   => $data,
 					)
@@ -499,17 +513,22 @@ class Webmention_Receiver {
 
 		// check if source really links to target
 		if ( ! strpos(
-			htmlspecialchars_decode( $remote_source_original ), str_replace(
+			htmlspecialchars_decode( $remote_source_original ),
+			str_replace(
 				array(
 					'http://www.',
 					'http://',
 					'https://www.',
 					'https://',
-				), '', untrailingslashit( preg_replace( '/#.*/', '', $data['target'] ) )
+				),
+				'',
+				untrailingslashit( preg_replace( '/#.*/', '', $data['target'] ) )
 			)
 		) ) {
 			return new WP_Error(
-				'target_not_found', __( 'Cannot find target link', 'webmention' ), array(
+				'target_not_found',
+				__( 'Cannot find target link', 'webmention' ),
+				array(
 					'status' => 400,
 					'data'   => $data,
 				)
@@ -730,7 +749,8 @@ class Webmention_Receiver {
 	 */
 	public static function delete( $error ) {
 		$error_codes = apply_filters(
-			'webmention_supported_delete_codes', array(
+			'webmention_supported_delete_codes',
+			array(
 				'resource_not_found',
 				'resource_deleted',
 				'resource_removed',
