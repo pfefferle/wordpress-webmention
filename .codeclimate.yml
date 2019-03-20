@@ -5,7 +5,7 @@ plugins:
     config:
       ignore_warnings: true
       file_extensions: "php"
-      standard: "WordPress"
+      standard: "WordPress-Core, WordPress-Extra"
     checks:
       WordPress Security EscapeOutput OutputNotEscaped:
         enabled: false
