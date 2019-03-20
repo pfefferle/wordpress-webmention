@@ -25,3 +25,5 @@ checks:
     enabled: false
   WordPress Security EscapeOutput OutputNotEscaped:
     enabled: false
+  Squiz Commenting FunctionComment Missing:
+    enabled: false
