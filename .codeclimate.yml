@@ -5,7 +5,7 @@ plugins:
     config:
       ignore_warnings: true
       file_extensions: "php"
-      standard: "WordPress-Core,WordPress-Extra"
+      standard: "WordPress"
 checks:
   argument-count:
     enabled: false
@@ -22,4 +22,6 @@ checks:
   nested-control-flow:
     enabled: false
   return-statements:
+    enabled: false
+  WordPress Security EscapeOutput OutputNotEscaped:
     enabled: false
