@@ -5,7 +5,7 @@ plugins:
     config:
       ignore_warnings: true
       file_extensions: "php"
-      standard: "WordPress-Core"
+      standard: "WordPress-Core,WordPress-Extra"
 checks:
   argument-count:
     enabled: false
