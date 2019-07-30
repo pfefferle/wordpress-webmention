@@ -35,10 +35,7 @@ class Webmention_Sender {
 	 * @param int $post_id
 	 */
 	public static function publish_hook( $post_id ) {
-		// check if pingbacks are enabled
-		if ( get_option( 'default_pingback_flag' ) ) {
-			add_post_meta( $post_id, '_mentionme', '1', true );
-		}
+		add_post_meta( $post_id, '_mentionme', '1', true );
 	}
 
 	/**
