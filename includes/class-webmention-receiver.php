@@ -731,18 +731,6 @@ class Webmention_Receiver {
 	}
 
 	/**
-	 * Marks the post as "no webmentions sent yet"
-	 *
-	 * @param int $post_id
-	 */
-	public static function publish_post_hook( $post_id ) {
-		// check if pingbacks are enabled
-		if ( get_option( 'default_pingback_flag' ) ) {
-			add_post_meta( $post_id, '_mentionme', '1', true );
-		}
-	}
-
-	/**
 	 * Delete comment if source returns error 410 or 452
 	 *
 	 * @param WP_Error $error
