@@ -23,8 +23,6 @@ class Webmention_Admin {
 		add_filter( 'manage_edit-comments_columns', array( 'Webmention_Admin', 'comment_columns' ) );
 		add_filter( 'manage_comments_custom_column', array( 'Webmention_Admin', 'manage_comments_custom_column' ), 10, 2 );
 
-		// Webmention whitelist
-		add_filter( 'webmention_comment_data', array( 'Webmention_Admin', 'auto_approve' ), 13, 1 );
 		add_filter( 'comment_row_actions', array( 'Webmention_Admin', 'comment_row_actions' ), 13, 2 );
 		add_filter( 'comment_unapproved_to_approved', array( 'Webmention_Admin', 'transition_to_whitelist' ), 10 );
 
