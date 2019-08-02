@@ -252,3 +252,20 @@ if ( ! function_exists( 'wp_get_meta_tags' ) ) :
 		return $meta_tags;
 	}
 endif;
+
+
+/* Backward compatibility for function available in version 5.1 and above */
+if ( ! function_exists( 'is_avatar_comment_type' ) ) :
+	function is_avatar_comment_type( $comment_type ) {
+		/**
+		 * Filters the list of allowed comment types for retrieving avatars.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @param array $types An array of content types. Default only contains 'comment'.
+		 */
+		$allowed_comment_types = apply_filters( 'get_avatar_comment_types', array( 'comment' ) );
+
+			return in_array( $comment_type, (array) $allowed_comment_types, true );
+	}
+endif;

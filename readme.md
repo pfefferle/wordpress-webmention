@@ -6,7 +6,7 @@
 **Tags:** webmention, pingback, trackback, linkback, indieweb, comment, response  
 **Requires at least:** 4.7  
 **Tested up to:** 5.2.2  
-**Stable tag:** 3.8.9  
+**Stable tag:** 3.8.10  
 **Requires PHP:** 5.2  
 **License:** MIT  
 **License URI:** http://opensource.org/licenses/MIT  
@@ -79,6 +79,11 @@ As Webmention uses the REST API endpoint system, most up to date caching plugins
 ## Changelog ##
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
+
+### 3.8.10 ###
+
+* Always enable webmentions on basis that using plugin means you want webmentions instead of using default pingback setting
+* Fix auto approve based on domain
 
 ### 3.8.9 ###
 

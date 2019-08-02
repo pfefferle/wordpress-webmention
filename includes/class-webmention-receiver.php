@@ -33,6 +33,8 @@ class Webmention_Receiver {
 		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'default_title_filter' ), 21, 1 );
 		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'default_content_filter' ), 22, 1 );
 
+		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'auto_approve', 13, 1 ) );
+
 		// Allow for avatars on webmention comment types
 		if ( 0 !== (int) get_option( 'webmention_avatars', 1 ) ) {
 			add_filter( 'get_avatar_comment_types', array( 'Webmention_Receiver', 'get_avatar_comment_types' ), 99 );
@@ -728,18 +730,6 @@ class Webmention_Receiver {
 		$commentdata['comment_content'] = sprintf( __( 'This %1$s was mentioned on <a href="%2$s">%3$s</a>', 'webmention' ), $post_format, esc_url( $commentdata['comment_author_url'] ), $host );
 
 		return $commentdata;
-	}
-
-	/**
-	 * Marks the post as "no webmentions sent yet"
-	 *
-	 * @param int $post_id
-	 */
-	public static function publish_post_hook( $post_id ) {
-		// check if pingbacks are enabled
-		if ( get_option( 'default_pingback_flag' ) ) {
-			add_post_meta( $post_id, '_mentionme', '1', true );
-		}
 	}
 
 	/**

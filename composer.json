@@ -20,9 +20,9 @@
     "phpunit/phpunit": "5.5.*",
     "dealerdirect/phpcodesniffer-composer-installer": "^0.5.0",
     "squizlabs/php_codesniffer": "^3.4",
-    "phpcompatibility/php-compatibility": "^9.1",
+    "phpcompatibility/php-compatibility": "^9.2",
     "wp-coding-standards/wpcs": "^2.0",
-    "phpcompatibility/phpcompatibility-wp": "^2.0"
+    "phpcompatibility/phpcompatibility-wp": "^2.0.0"
   },
   "scripts": {
     "test": [
@@ -32,7 +32,7 @@
     ],
     "lint": "phpcs",
     "install-codestandards": [
-	"Dealerdirect\\Composer\\Plugin\\Installers\\PHPCodeSniffer\\Plugin::run"
+      "Dealerdirect\\Composer\\Plugin\\Installers\\PHPCodeSniffer\\Plugin::run"
     ]
   }
 }

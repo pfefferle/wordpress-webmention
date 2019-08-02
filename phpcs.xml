@@ -5,6 +5,7 @@
 	<file>./webmention.php</file>
 	<file>./includes/</file>
 	<exclude-pattern>*/includes/*\.(inc|css|js|svg)</exclude-pattern>
+	<exclude-pattern>*/vendor/</exclude-pattern>
 	<rule ref="PHPCompatibility"/>
 	<config name="testVersion" value="5.2-"/>
 	<rule ref="WordPress-Core" />
@@ -12,16 +13,16 @@
 	<config name="minimum_supported_wp_version" value="4.7"/>
 	<rule ref="WordPress.WP.DeprecatedFunctions" />
 	<rule ref="WordPress.Files.FileName">
-	        <properties>
+		<properties>
 			<property name="strict_class_file_names" value="false" />
 		</properties>
 	</rule>
 	<rule ref="WordPress-Extra" />
-        <rule ref="WordPress.WP.I18n"/>
+	<rule ref="WordPress.WP.I18n"/>
 	<config name="text_domain" value="webmention,default"/>
 	<rule ref="WordPress.Security">
 		<exclude name="WordPress.Security.ValidatedSanitizedInput" />
 		<exclude name="WordPress.Security.NonceVerification" />
 		<exclude name="WordPress.Security.EscapeOutput" />
-	</rule>	
+	</rule>
 </ruleset>
