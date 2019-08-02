@@ -79,10 +79,12 @@ As Webmention uses the REST API endpoint system, most up to date caching plugins
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
 
 = 3.8.10 =
+
 * Always enable webmentions on basis that using plugin means you want webmentions instead of using default pingback setting
 * Fix auto approve based on domain
 
 = 3.8.9 =
+
 * Small HTML template changes
 
 = 3.8.8 =

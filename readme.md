@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/pfefferle/wordpress-webmention.svg?branch=master)](https://travis-ci.org/pfefferle/wordpress-webmention) [![Issue Count](https://codeclimate.com/github/pfefferle/wordpress-webmention/badges/issue_count.svg)](https://codeclimate.com/github/pfefferle/wordpress-webmention) 
 
 # Webmention #
-**Contributors:** pfefferle, dshanske  
+**Contributors:** [pfefferle](https://profiles.wordpress.org/pfefferle), [dshanske](https://profiles.wordpress.org/dshanske)  
 **Donate link:** https://notiz.blog/donate/  
 **Tags:** webmention, pingback, trackback, linkback, indieweb, comment, response  
 **Requires at least:** 4.7  
@@ -81,10 +81,12 @@ As Webmention uses the REST API endpoint system, most up to date caching plugins
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
 
 ### 3.8.10 ###
+
 * Always enable webmentions on basis that using plugin means you want webmentions instead of using default pingback setting
 * Fix auto approve based on domain
 
 ### 3.8.9 ###
+
 * Small HTML template changes
 
 ### 3.8.8 ###
