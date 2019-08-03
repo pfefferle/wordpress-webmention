@@ -79,6 +79,7 @@ As Webmention uses the REST API endpoint system, most up to date caching plugins
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
 
 = 3.8.11 =
+
 * Minor bug fix
 
 = 3.8.10 =
