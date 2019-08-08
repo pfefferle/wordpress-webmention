@@ -837,9 +837,44 @@ class Webmention_Receiver {
 	 * The Webmention autodicovery http-header
 	 */
 	public static function http_header() {
-		header( sprintf( 'Link: <%s>; rel="webmention"', get_webmention_endpoint() ), false );
-		// backwards compatibility with v0.1
-		header( sprintf( 'Link: <%s>; rel="http://webmention.org/"', get_webmention_endpoint() ), false );
+		if ( headers_sent() ) {
+			// Really an E_NOTICE should come here or something loggable
+			return;
+		}
+
+		$existing_link_header = current(
+			array_filter(
+				headers_list(),
+				array( __CLASS__, 'filter_link_headers' )
+			)
+		);
+
+		header(
+			'Link: ' .
+			// cheap way to obey spec on headers
+			implode(
+				',',
+				// strip empty elements
+				array_filter(
+					array(
+						// maintain position of existing headers
+						end( explode( 'Link: ', $existing_link_header ) ),
+						sprintf( '<%s>; rel="webmention"', get_webmention_endpoint() ),
+						// backwards compatibility with v0.1
+						sprintf( '<%s>; rel="http://webmention.org/"', get_webmention_endpoint() ),
+					)
+				)
+			),
+			true
+		);
+	}
+
+	/**
+	 * The callback to filter headers
+	 * expects format specified in https://www.php.net/manual/en/function.headers-list.php
+	 */
+	public static function filter_link_headers( $var ) {
+		return preg_match( '/^Link\:.+/', $var ) == 1;
 	}
 
 	/**
