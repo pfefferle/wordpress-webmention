@@ -43,7 +43,6 @@ function webmention_init() {
 	// list of various public helper functions
 	require_once dirname( __FILE__ ) . '/includes/functions.php';
 
-
 	// load local avatar support
 	require_once dirname( __FILE__ ) . '/includes/class-avatar-handler.php';
 	add_action( 'init', array( 'Avatar_Handler', 'init' ) );
