@@ -4,7 +4,7 @@
  * Avatar Handler Class
  *
  */
-class Avatar_Handler {
+class Webmention_Avatar_Handler {
 	/**
 	 * Initialize the plugin, registering WordPress hooks.
 	 */

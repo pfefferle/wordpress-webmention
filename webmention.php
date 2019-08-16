@@ -47,8 +47,8 @@ function webmention_init() {
 	require_once dirname( __FILE__ ) . '/includes/functions.php';
 
 	// load local avatar support
-	require_once dirname( __FILE__ ) . '/includes/class-avatar-handler.php';
-	add_action( 'init', array( 'Avatar_Handler', 'init' ) );
+	require_once dirname( __FILE__ ) . '/includes/class-webmention-avatar-handler.php';
+	add_action( 'init', array( 'Webmention_Avatar_Handler', 'init' ) );
 
 	// load HTTP 410 support
 	require_once dirname( __FILE__ ) . '/includes/class-webmention-410.php';
