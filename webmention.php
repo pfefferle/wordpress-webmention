@@ -7,7 +7,7 @@
  * Author URI: https://notiz.blog/
  * Version: 3.8.11
  * License: MIT
- * License URI: http://opensource.org/licenses/MIT
+ * License URI: https://opensource.org/licenses/MIT
  * Text Domain: webmention
  * Domain Path: /languages
  */
