@@ -1,6 +1,6 @@
 {
   "name": "pfefferle/wordpress-webmention",
-  "description": "A Webmention plugin for WordPress http://wordpress.org/plugins/webmention/",
+  "description": "A Webmention plugin for WordPress https://wordpress.org/plugins/webmention/",
   "require": {
     "php": ">=5.6.0",
     "composer/installers": "~1.0"
@@ -10,7 +10,7 @@
   "authors": [
     {
       "name": "Matthias Pfefferle",
-      "homepage": "http://notizblog.org"
+      "homepage": "https://notizblog.org"
     }
   ],
   "extra": {

@@ -7,7 +7,7 @@ Tested up to: 5.2.2
 Stable tag: 3.8.11
 Requires PHP: 5.2
 License: MIT
-License URI: http://opensource.org/licenses/MIT
+License URI: https://opensource.org/licenses/MIT
 
 Enable conversation across the web. When you link to a website you can send it a webmention to notify it and then that website
 may display your post as a comment, like, or other response, and presto, you’re having a conversation from one site to another!
@@ -15,7 +15,7 @@ may display your post as a comment, like, or other response, and presto, you’r
 
 == Description ==
 
-A [Webmention](http://www.w3.org/TR/webmention/) is a notification that one URL links to another. Sending a Webmention is not limited to blog posts, and can be used for additional kinds of content and responses as well.
+A [Webmention](https://www.w3.org/TR/webmention/) is a notification that one URL links to another. Sending a Webmention is not limited to blog posts, and can be used for additional kinds of content and responses as well.
 
 For example, a response can be an RSVP to an event, an indication that someone "likes" another post, a "bookmark" of another post, and many others. Webmention enables these interactions to happen across different websites, enabling a distributed social web.
 
@@ -25,7 +25,7 @@ The Webmention plugin supports the webmention protocol, giving you support for s
 
 = What are Webmentions? =
 
-[Webmention](http://www.w3.org/TR/webmention/) is a simple way to automatically notify any URL when you link to it on your site. From the receivers perpective, it's a way to request notification when other sites link to it.
+[Webmention](https://www.w3.org/TR/webmention/) is a simple way to automatically notify any URL when you link to it on your site. From the receivers perpective, it's a way to request notification when other sites link to it.
 
 = That Sounds Like a Pingback or a Trackback =
 

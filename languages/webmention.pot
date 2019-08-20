@@ -376,7 +376,7 @@ msgid ""
 "contain a link to this post's permalink URL. Your response will then appear "
 "(possibly after moderation) on this page. Want to update or remove your "
 "response? Update or delete your post and re-enter your post's URL again. "
-"(<a href=\"http://indieweb.org/webmention\">Learn More</a>)"
+"(<a href=\"https://indieweb.org/webmention\">Learn More</a>)"
 msgstr ""
 
 #: templates/webmention-api-message.php:11
@@ -424,9 +424,9 @@ msgstr ""
 #: templates/webmention-endpoint-form.php:144
 msgid ""
 "Learn more about Webmentions at <a "
-"href=\"http://webmention.net\">webmention.net</a>"
+"href=\"https://webmention.net\">webmention.net</a>"
 msgstr ""
-
+s
 #: templates/webmention-settings.php:7
 msgid "Sender"
 msgstr ""
