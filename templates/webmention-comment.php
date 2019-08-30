@@ -17,9 +17,10 @@ if ( $comment->comment_parent ) {
 		$target = $parent->comment_author_url;
 	}
 }
-?><!DOCTYPE htmL>
-<html>
+?><!DOCTYPE html>
+<html <?php language_attributes(); ?>>
 	<head>
+		<meta charset="<?php bloginfo( 'charset' ); ?>" />
 		<?php wp_head();?>
 
 		<script type="text/javascript">
