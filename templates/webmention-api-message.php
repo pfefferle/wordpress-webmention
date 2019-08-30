@@ -121,7 +121,7 @@
 		<p id="backtoblog"><a href="<?php echo esc_url( home_url( '/' ) ); ?>">
 			<?php
 			/* translators: %s: site title */
-			printf( _x( '&larr; Back to %s', 'site', 'webmention' ), get_bloginfo( 'title', 'display' ) );
+			printf( esc_html_x( '&larr; Back to %s', 'site', 'webmention' ), get_bloginfo( 'title', 'display' ) );
 			?>
 		</a></p>
 	</body>

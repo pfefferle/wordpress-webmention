@@ -8,7 +8,7 @@
 		wp_no_robots();
 	}
 	?>
-	<title><?php _e( 'Webmention Endpoint', 'webmention' ); ?></title>
+	<title><?php esc_html_e( 'Webmention Endpoint', 'webmention' ); ?></title>
 	<style type="text/css">
 		html {
 			background: #f1f1f1;
@@ -116,7 +116,7 @@
 	</style>
 	</head>
 	<body id="webmention-endpint-page">
-		<h1><?php _e( 'Send a Webmention', 'webmention' ); ?></h1>
+		<h1><?php esc_html_e( 'Send a Webmention', 'webmention' ); ?></h1>
 		<p>
 			<?php echo get_webmention_form_text( get_the_ID() ); ?>
 		</p>
@@ -126,21 +126,27 @@
 		<form id="webmention-form" action="<?php echo get_webmention_endpoint(); ?>" method="post">
 			<?php do_action( 'webmention_endpoint_form_before_input_fields' ); ?>
 			<p>
-				<label for="webmention-source"><?php _e( 'Source URL', 'webmention' ); ?>:</label><br />
-				<input id="webmention-source" type="url" name="source" placeholder="<?php _e( 'URL/Permalink of your article', 'webmention' ); ?>" size="70" />
+				<label for="webmention-source"><?php esc_html_e( 'Source URL', 'webmention' ); ?>:</label><br />
+				<input id="webmention-source" type="url" name="source" placeholder="<?php esc_attr_e( 'URL/Permalink of your article', 'webmention' ); ?>" size="70" />
 			</p>
 			<p>
-				<label for="webmention-target"><?php _e( 'Target URL', 'webmention' ); ?>:</label><br />
-				<input id="webmention-target" type="url" name="target" placeholder="<?php _e( 'URL/Permalink of my article', 'webmention' ); ?>" size="70" />
+				<label for="webmention-target"><?php esc_html_e( 'Target URL', 'webmention' ); ?>:</label><br />
+				<input id="webmention-target" type="url" name="target" placeholder="<?php esc_attr_e( 'URL/Permalink of my article', 'webmention' ); ?>" size="70" />
 			</p>
 			<p>
-				<input id="webmention-submit" type="submit" name="submit" value="<?php _e( 'Ping me!', 'webmention' ); ?>" />
+				<input id="webmention-submit" type="submit" name="submit" value="<?php esc_attr_e( 'Ping me!', 'webmention' ); ?>" />
 			</p>
 			<input id="webmention-format" type="hidden" name="format" value="html" />
 			<?php do_action( 'webmention_endpoint_form_after_input_fields' ); ?>
 		</form>
 
-		<p><?php _e( 'Webmention is a way for you to tell me "Hey, I have written a response to your post."', 'webmention' ); ?> </p>
-		<p><?php _e( 'Learn more about Webmentions at <a href="https://webmention.net">webmention.net</a>', 'webmention' ); ?> </p>
+		<p><?php esc_html_e( 'Webmention is a way for you to tell me "Hey, I have written a response to your post."', 'webmention' ); ?> </p>
+		<p>
+			<?php
+			/* Translators: placeholder will be an html link to webmention.net */
+			printf( esc_html__( 'Learn more about Webmentions at %s', 'webmention' ), '<a href="https://webmention.net">webmention.net</a>' );
+			?>
+		</p>
+
 	</body>
 </html>

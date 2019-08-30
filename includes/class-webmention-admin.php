@@ -11,7 +11,7 @@ class Webmention_Admin {
 	public static function init() {
 		self::register_settings();
 
-		add_settings_field( 'discussion_settings', __( 'Webmention Settings', 'webmention' ), array( 'Webmention_Admin', 'discussion_settings' ), 'discussion', 'default' );
+		add_settings_field( 'discussion_settings', esc_html__( 'Webmention Settings', 'webmention' ), array( 'Webmention_Admin', 'discussion_settings' ), 'discussion', 'default' );
 
 		/* Add meta boxes on the 'add_meta_boxes' hook. */
 		add_action( 'add_meta_boxes', array( 'Webmention_Admin', 'add_meta_boxes' ) );
@@ -50,19 +50,19 @@ class Webmention_Admin {
 			return;
 		}
 		?>
-<label><?php _e( 'Webmention Target', 'webmention' ); ?></label>
+<label><?php esc_html_e( 'Webmention Target', 'webmention' ); ?></label>
 <input type="url" class="widefat" disabled value="<?php echo get_comment_meta( $object->comment_ID, 'webmention_target_url', true ); ?>" />
 <br />
 
-<label><?php _e( 'Webmention Target Fragment', 'webmention' ); ?></label>
+<label><?php esc_html_e( 'Webmention Target Fragment', 'webmention' ); ?></label>
 <input type="text" class="widefat" disabled value="<?php echo get_comment_meta( $object->comment_ID, 'webmention_target_fragment', true ); ?>" />
 <br />
 
-<label><?php _e( 'Webmention Source', 'webmention' ); ?></label>
+<label><?php esc_html_e( 'Webmention Source', 'webmention' ); ?></label>
 <input type="url" class="widefat" disabled value="<?php echo get_comment_meta( $object->comment_ID, 'webmention_source_url', true ); ?>" />
 <br />
 
-<label><?php _e( 'Webmention Creation Time', 'webmention' ); ?></label>
+<label><?php esc_html_e( 'Webmention Creation Time', 'webmention' ); ?></label>
 <input type="url" class="widefat" disabled value="<?php echo get_comment_meta( $object->comment_ID, 'webmention_created_at', true ); ?>" />
 <br />
 		<?php
@@ -81,16 +81,16 @@ class Webmention_Admin {
 		$type = get_comment_type( $comment_id );
 		switch ( $type ) {
 			case 'trackback':
-				_e( 'Trackback', 'webmention' );
+				esc_html_e( 'Trackback', 'webmention' );
 				break;
 			case 'pingback':
-				_e( 'Pingback', 'webmention' );
+				esc_html_e( 'Pingback', 'webmention' );
 				break;
 			case 'comment':
-				_ex( 'Comment', 'noun', 'webmention' );
+				echo esc_html_x( 'Comment', 'noun', 'webmention' );
 				break;
 			case 'webmention':
-				_e( 'Webmention', 'webmention' );
+				esc_html_e( 'Webmention', 'webmention' );
 				break;
 			default:
 				echo $type;
@@ -114,7 +114,7 @@ class Webmention_Admin {
 		} else {
 			$path = 'options-general.php?page=webmention';
 		}
-		$links[] = sprintf( '<a href="%s">%s</a>', admin_url( $path ), __( 'Settings', 'webmention' ) );
+		$links[] = sprintf( '<a href="%s">%s</a>', admin_url( $path ), esc_html__( 'Settings', 'webmention' ) );
 
 		return $links;
 	}
@@ -135,7 +135,7 @@ class Webmention_Admin {
 		$home_mentions = get_option( 'webmention_home_mentions' );
 
 		if ( $home_mentions ) {
-			$links[] = sprintf( '<a href="%s">%s</a>', get_the_permalink( $home_mentions ), __( 'Homepage Webmentions', 'webmention' ) );
+			$links[] = sprintf( '<a href="%s">%s</a>', get_the_permalink( $home_mentions ), esc_html__( 'Homepage Webmentions', 'webmention' ) );
 		}
 
 		return $links;
@@ -164,7 +164,7 @@ class Webmention_Admin {
 	 * @return array the filtert comment types
 	 */
 	public static function comment_types_dropdown( $types ) {
-		$types['webmention'] = __( 'Webmentions', 'webmention' );
+		$types['webmention'] = esc_html__( 'Webmentions', 'webmention' );
 
 		return $types;
 	}
@@ -175,7 +175,7 @@ class Webmention_Admin {
 	 * @param array $columns the list of column names
 	 */
 	public static function comment_columns( $columns ) {
-		$columns['comment_type'] = __( 'Comment-Type', 'webmention' );
+		$columns['comment_type'] = esc_html__( 'Comment-Type', 'webmention' );
 
 		return $columns;
 	}
@@ -224,7 +224,7 @@ class Webmention_Admin {
 	 * Add admin menu entry
 	 */
 	public static function admin_menu() {
-		$title = __( 'Webmention', 'webmention' );
+		$title = esc_html__( 'Webmention', 'webmention' );
 		// If the IndieWeb Plugin is installed use its menu.
 		if ( class_exists( 'IndieWeb_Plugin' ) ) {
 			$options_page = add_submenu_page(
@@ -261,18 +261,18 @@ class Webmention_Admin {
 		get_current_screen()->add_help_tab(
 			array(
 				'id'      => 'overview',
-				'title'   => __( 'Overview', 'webmention' ),
+				'title'   => esc_html__( 'Overview', 'webmention' ),
 				'content' =>
-					'<p>' . __( 'Webmention is a simple way to notify any URL when you mention it on your site. From the receiver\'s perspective, it\'s a way to request notifications when other sites mention it.', 'webmention' ) . '</p>' .
-					'<p>' . __( 'A Webmention is a notification that one URL links to another. For example, Alice writes an interesting post on her blog. Bob then writes a response to her post on his own site, linking back to Alice\'s original post. Bob\'s publishing software sends a Webmention to Alice notifying that her article was replied to, and Alice\'s software can show that reply as a comment on the original post.', 'webmention' ) . '</p>' .
-					'<p>' . __( 'Sending a Webmention is not limited to blog posts, and can be used for additional kinds of content and responses as well. For example, a response can be an RSVP to an event, an indication that someone "likes" another post, a "bookmark" of another post, and many others. Webmention enables these interactions to happen across different websites, enabling a distributed social web.', 'webmention' ) . '</p>',
+					'<p>' . esc_html__( 'Webmention is a simple way to notify any URL when you mention it on your site. From the receiver\'s perspective, it\'s a way to request notifications when other sites mention it.', 'webmention' ) . '</p>' .
+					'<p>' . esc_html__( 'A Webmention is a notification that one URL links to another. For example, Alice writes an interesting post on her blog. Bob then writes a response to her post on his own site, linking back to Alice\'s original post. Bob\'s publishing software sends a Webmention to Alice notifying that her article was replied to, and Alice\'s software can show that reply as a comment on the original post.', 'webmention' ) . '</p>' .
+					'<p>' . esc_html__( 'Sending a Webmention is not limited to blog posts, and can be used for additional kinds of content and responses as well. For example, a response can be an RSVP to an event, an indication that someone "likes" another post, a "bookmark" of another post, and many others. Webmention enables these interactions to happen across different websites, enabling a distributed social web.', 'webmention' ) . '</p>',
 			)
 		);
 
 		get_current_screen()->add_help_tab(
 			array(
 				'id'      => 'screencast',
-				'title'   => __( 'Screencast', 'webmention' ),
+				'title'   => esc_html__( 'Screencast', 'webmention' ),
 				'content' =>
 					'<p><iframe src="https://player.vimeo.com/video/85217592?app_id=122963" width="640" height="480" frameborder="0" title="Add the Webmention plugin to your WordPress weblog" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></p>',
 			)
@@ -281,26 +281,26 @@ class Webmention_Admin {
 		get_current_screen()->add_help_tab(
 			array(
 				'id'      => 'indieweb',
-				'title'   => __( 'The IndieWeb', 'webmention' ),
+				'title'   => esc_html__( 'The IndieWeb', 'webmention' ),
 				'content' =>
-					'<p>' . __( 'The IndieWeb is a people-focused alternative to the "corporate web".', 'webmention' ) . '</p>' .
+					'<p>' . esc_html__( 'The IndieWeb is a people-focused alternative to the "corporate web".', 'webmention' ) . '</p>' .
 					'<p>
-						<strong>' . __( 'Your content is yours', 'webmention' ) . '</strong><br />' .
-						__( 'When you post something on the web, it should belong to you, not a corporation. Too many companies have gone out of business and lost all of their users’ data. By joining the IndieWeb, your content stays yours and in your control.', 'webmention' ) .
+						<strong>' . esc_html__( 'Your content is yours', 'webmention' ) . '</strong><br />' .
+						esc_html__( 'When you post something on the web, it should belong to you, not a corporation. Too many companies have gone out of business and lost all of their users’ data. By joining the IndieWeb, your content stays yours and in your control.', 'webmention' ) .
 					'</p>' .
 					'<p>
-						<strong>' . __( 'You are better connected', 'webmention' ) . '</strong><br />' .
-						__( 'Your articles and status messages can go to all services, not just one, allowing you to engage with everyone. Even replies and likes on other services can come back to your site so they’re all in one place.', 'webmention' ) .
+						<strong>' . esc_html__( 'You are better connected', 'webmention' ) . '</strong><br />' .
+						esc_html__( 'Your articles and status messages can go to all services, not just one, allowing you to engage with everyone. Even replies and likes on other services can come back to your site so they’re all in one place.', 'webmention' ) .
 					'</p>' .
 					'<p>
-						<strong>' . __( 'You are in control', 'webmention' ) . '</strong><br />' .
+						<strong>' . esc_html__( 'You are in control', 'webmention' ) . '</strong><br />' .
 						__( 'You can post anything you want, in any format you want, with no one monitoring you. In addition, you share simple readable links such as example.com/ideas. These links are permanent and will always work.', 'webmention' ) .
 					'</p>',
 			)
 		);
 
 		get_current_screen()->set_help_sidebar(
-			'<p><strong>' . __( 'For more information:', 'webmention' ) . '</strong></p>' .
+			'<p><strong>' . esc_html__( 'For more information:', 'webmention' ) . '</strong></p>' .
 			'<p>' . __( '<a href="https://indieweb.org/Webmention">IndieWeb Wiki page</a>', 'webmention' ) . '</p>' .
 			'<p>' . __( '<a href="https://webmention.rocks/">Test suite</a>', 'webmention' ) . '</p>' .
 			'<p>' . __( '<a href="https://www.w3.org/TR/webmention/">W3C Spec</a>', 'webmention' ) . '</p>'
@@ -313,7 +313,7 @@ class Webmention_Admin {
 			'webmention_disable_selfpings_same_url',
 			array(
 				'type'         => 'boolean',
-				'description'  => __( 'Disable self Webmentions on the same URL', 'webmention' ),
+				'description'  => esc_html__( 'Disable self Webmentions on the same URL', 'webmention' ),
 				'show_in_rest' => true,
 				'default'      => 1,
 			)
@@ -323,7 +323,7 @@ class Webmention_Admin {
 			'webmention_disable_selfpings_same_domain',
 			array(
 				'type'         => 'boolean',
-				'description'  => __( 'Disable self Webmentions on the same domain', 'webmention' ),
+				'description'  => esc_html__( 'Disable self Webmentions on the same domain', 'webmention' ),
 				'show_in_rest' => true,
 				'default'      => 0,
 			)
@@ -333,7 +333,7 @@ class Webmention_Admin {
 			'webmention_support_pages',
 			array(
 				'type'         => 'boolean',
-				'description'  => __( 'Enable Webmention support for pages', 'webmention' ),
+				'description'  => esc_html__( 'Enable Webmention support for pages', 'webmention' ),
 				'show_in_rest' => true,
 				'default'      => 1,
 			)
@@ -343,7 +343,7 @@ class Webmention_Admin {
 			'webmention_show_comment_form',
 			array(
 				'type'         => 'boolean',
-				'description'  => __( 'Show Webmention comment-form', 'webmention' ),
+				'description'  => esc_html__( 'Show Webmention comment-form', 'webmention' ),
 				'show_in_rest' => true,
 				'default'      => 1,
 			)
@@ -353,7 +353,7 @@ class Webmention_Admin {
 			'webmention_comment_form_text',
 			array(
 				'type'         => 'string',
-				'description'  => __( 'Change the text of the Webmention comment-form', 'webmention' ),
+				'description'  => esc_html__( 'Change the text of the Webmention comment-form', 'webmention' ),
 				'show_in_rest' => true,
 				'default'      => '',
 			)
@@ -363,7 +363,7 @@ class Webmention_Admin {
 			'webmention_home_mentions',
 			array(
 				'type'         => 'int',
-				'description'  => __( 'Where to direct Mentions of the home page', 'webmention' ),
+				'description'  => esc_html__( 'Where to direct Mentions of the home page', 'webmention' ),
 				'show_in_rest' => true,
 				'default'      => 0,
 			)
@@ -373,7 +373,7 @@ class Webmention_Admin {
 			'webmention_approve_domains',
 			array(
 				'type'         => 'string',
-				'description'  => __( 'Automatically approve Webmentions from these domains', 'webmention' ),
+				'description'  => esc_html__( 'Automatically approve Webmentions from these domains', 'webmention' ),
 				'show_in_rest' => false,
 				'default'      => 'indieweb.org',
 			)
@@ -383,7 +383,7 @@ class Webmention_Admin {
 			'webmention_avatars',
 			array(
 				'type'         => 'int',
-				'description'  => __( 'Show Avatars on Webmentions', 'webmention' ),
+				'description'  => esc_html__( 'Show Avatars on Webmentions', 'webmention' ),
 				'show_in_rest' => true,
 				'default'      => 1,
 			)
@@ -395,23 +395,23 @@ class Webmention_Admin {
 	 */
 	public static function add_privacy_policy_content() {
 		$content =
-			'<p>' . __( 'Webmentions are an explicit feature of your content management system: by sending a webmention to the webmention endpoint of this website, you request the server to take notice of that referral and process it. As long as public content is concerned (i.e. you are not sending a private webmention), such use of this website’s webmention endpoint implies that you are aware of it being published.', 'webmention' ) . '</p>' .
-			'<p>' . __( 'You can at any time request the removal of one or all webmentions originating from your website.', 'webmention' ) . '</p>' .
+			'<p>' . esc_html__( 'Webmentions are an explicit feature of your content management system: by sending a webmention to the webmention endpoint of this website, you request the server to take notice of that referral and process it. As long as public content is concerned (i.e. you are not sending a private webmention), such use of this website’s webmention endpoint implies that you are aware of it being published.', 'webmention' ) . '</p>' .
+			'<p>' . esc_html__( 'You can at any time request the removal of one or all webmentions originating from your website.', 'webmention' ) . '</p>' .
 
-			'<h3>' . __( 'Processing', 'webmention' ) . '</h3>' .
-			'<p>' . __( 'Incoming Webmentions are handled as a request to process personal data that you make available by explicitly providing metadata in your website\'s markup.', 'webmention' ) . '</p>' .
+			'<h3>' . esc_html__( 'Processing', 'webmention' ) . '</h3>' .
+			'<p>' . esc_html__( 'Incoming Webmentions are handled as a request to process personal data that you make available by explicitly providing metadata in your website\'s markup.', 'webmention' ) . '</p>' .
 
-			'<h3>' . __( 'Publishing', 'webmention' ) . '</h3>' .
-			'<p>' . __( 'An incoming Webmention request is by design a request for publishing a comment from elsewhere on the web; this is what the protocol was designed for and why it is active on your website.', 'webmention' ) . '</p>' .
+			'<h3>' . esc_html__( 'Publishing', 'webmention' ) . '</h3>' .
+			'<p>' . esc_html__( 'An incoming Webmention request is by design a request for publishing a comment from elsewhere on the web; this is what the protocol was designed for and why it is active on your website.', 'webmention' ) . '</p>' .
 
-			'<h3>' . __( 'Personal data', 'webmention' ) . '</h3>' .
-			'<p>' . __( 'The Webmention plugin processes the following data (if available):', 'webmention' ) . '</p>' .
+			'<h3>' . esc_html__( 'Personal data', 'webmention' ) . '</h3>' .
+			'<p>' . esc_html__( 'The Webmention plugin processes the following data (if available):', 'webmention' ) . '</p>' .
 
 			'<ul>' .
-				'<li>' . __( 'Your name', 'webmention' ) . '</li>' .
-				'<li>' . __( 'The profile picture from your website', 'webmention' ) . '</li>' .
-				'<li>' . __( 'The URL of your website', 'webmention' ) . '</li>' .
-				'<li>' . __( 'Personal information you include in your post', 'webmention' ) . '</li>' .
+				'<li>' . esc_html__( 'Your name', 'webmention' ) . '</li>' .
+				'<li>' . esc_html__( 'The profile picture from your website', 'webmention' ) . '</li>' .
+				'<li>' . esc_html__( 'The URL of your website', 'webmention' ) . '</li>' .
+				'<li>' . esc_html__( 'Personal information you include in your post', 'webmention' ) . '</li>' .
 			'<ul>';
 
 		if ( function_exists( 'wp_add_privacy_policy_content' ) ) {
