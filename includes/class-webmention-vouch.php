@@ -22,7 +22,7 @@ class Webmention_Vouch {
 		// Purpose of this is to store whether something has been vouched for
 		$args = array(
 			'type'         => 'int',
-			'description'  => __( 'Has this Webmention Been Vouched for', 'webmention' ),
+			'description'  => esc_html__( 'Has this Webmention Been Vouched for', 'webmention' ),
 			'single'       => true,
 			'show_in_rest' => true,
 		);
@@ -55,7 +55,7 @@ class Webmention_Vouch {
 		}
 
 		if ( ! is_array( $data ) || empty( $data ) ) {
-			return new WP_Error( 'invalid_data', __( 'Invalid data passed', 'webmention' ), array( 'status' => 500 ) );
+			return new WP_Error( 'invalid_data', esc_html__( 'Invalid data passed', 'webmention' ), array( 'status' => 500 ) );
 		}
 
 		// The remaining instructions only apply if there is a vouch parameter
@@ -88,7 +88,7 @@ class Webmention_Vouch {
 		if ( is_wp_error( $response ) ) {
 			return new WP_Error(
 				'vouch_not_found',
-				__( 'Vouch Not Found', 'webmention' ),
+				esc_html__( 'Vouch Not Found', 'webmention' ),
 				array(
 					'status' => 400,
 					'data'   => $data,
@@ -102,7 +102,7 @@ class Webmention_Vouch {
 		if ( preg_match( '#(image|audio|video|model)/#is', wp_remote_retrieve_header( $response, 'content-type' ) ) ) {
 			return new WP_Error(
 				'vouch_not_found',
-				__( 'Vouch Not Found', 'webmention' ),
+				esc_html__( 'Vouch Not Found', 'webmention' ),
 				array(
 					'status' => 449,
 					'data'   => $data,
@@ -138,7 +138,7 @@ class Webmention_Vouch {
 
 		return new WP_Error(
 			'vouch_error',
-			__( 'Vouch Not Found', 'webmention' ),
+			esc_html__( 'Vouch Not Found', 'webmention' ),
 			array(
 				'status' => 400,
 				'data'   => $data,

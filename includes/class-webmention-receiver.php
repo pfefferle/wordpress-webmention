@@ -55,7 +55,7 @@ class Webmention_Receiver {
 	public static function register_meta() {
 		$args = array(
 			'type'         => 'string',
-			'description'  => __( 'Target URL for the Webmention', 'webmention' ),
+			'description'  => esc_html__( 'Target URL for the Webmention', 'webmention' ),
 			'single'       => true,
 			'show_in_rest' => true,
 		);
@@ -64,7 +64,7 @@ class Webmention_Receiver {
 		// For pingbacks the source URL is stored in the author URL. This means you cannot have an author URL that is different than the source.
 		$args = array(
 			'type'         => 'string',
-			'description'  => __( 'Source URL for the Webmention', 'webmention' ),
+			'description'  => esc_html__( 'Source URL for the Webmention', 'webmention' ),
 			'single'       => true,
 			'show_in_rest' => true,
 		);
@@ -72,7 +72,7 @@ class Webmention_Receiver {
 
 		$args = array(
 			'type'         => 'string',
-			'description'  => __( 'Target URL Fragment for the Webmention', 'webmention' ),
+			'description'  => esc_html__( 'Target URL Fragment for the Webmention', 'webmention' ),
 			'single'       => true,
 			'show_in_rest' => true,
 		);
@@ -81,7 +81,7 @@ class Webmention_Receiver {
 		// Purpose of this is to store the original time as there is no modified time in the comment table.
 		$args = array(
 			'type'         => 'string',
-			'description'  => __( 'Original Creation Time for the Webmention (GMT)', 'webmention' ),
+			'description'  => esc_html__( 'Original Creation Time for the Webmention (GMT)', 'webmention' ),
 			'single'       => true,
 			'show_in_rest' => true,
 		);
@@ -90,7 +90,7 @@ class Webmention_Receiver {
 		// Purpose of this is to store the response code returned during verification
 		$args = array(
 			'type'         => 'string',
-			'description'  => __( 'Response Code Returned During Webmention Verification', 'webmention' ),
+			'description'  => esc_html__( 'Response Code Returned During Webmention Verification', 'webmention' ),
 			'single'       => true,
 			'show_in_rest' => true,
 		);
@@ -99,7 +99,7 @@ class Webmention_Receiver {
 		// Purpose of this is to store a vouch URL
 		$args = array(
 			'type'         => 'string',
-			'description'  => __( 'Webmention Vouch URL', 'webmention' ),
+			'description'  => esc_html__( 'Webmention Vouch URL', 'webmention' ),
 			'single'       => true,
 			'show_in_rest' => true,
 		);
@@ -227,40 +227,40 @@ class Webmention_Receiver {
 		$params = array_filter( $request->get_params() );
 
 		if ( ! isset( $params['source'] ) ) {
-			return new WP_Error( 'source_missing', __( 'Source is missing', 'webmention' ), array( 'status' => 400 ) );
+			return new WP_Error( 'source_missing', esc_html__( 'Source is missing', 'webmention' ), array( 'status' => 400 ) );
 		}
 
 		$source = urldecode( $params['source'] );
 
 		if ( ! isset( $params['target'] ) ) {
-			return new WP_Error( 'target_missing', __( 'Target is missing', 'webmention' ), array( 'status' => 400 ) );
+			return new WP_Error( 'target_missing', esc_html__( 'Target is missing', 'webmention' ), array( 'status' => 400 ) );
 		}
 
 		$target = urldecode( $params['target'] );
 
 		if ( ! stristr( $target, preg_replace( '/^https?:\/\//i', '', home_url() ) ) ) {
-			return new WP_Error( 'target_mismatching_domain', __( 'Target is not on this domain', 'webmention' ), array( 'status' => 400 ) );
+			return new WP_Error( 'target_mismatching_domain', esc_html__( 'Target is not on this domain', 'webmention' ), array( 'status' => 400 ) );
 		}
 
 		$comment_post_id = webmention_url_to_postid( $target );
 
 		// check if post id exists
 		if ( ! $comment_post_id ) {
-			return new WP_Error( 'target_not_valid', __( 'Target is not a valid post', 'webmention' ), array( 'status' => 400 ) );
+			return new WP_Error( 'target_not_valid', esc_html__( 'Target is not a valid post', 'webmention' ), array( 'status' => 400 ) );
 		}
 
 		if ( url_to_postid( $source ) === $comment_post_id ) {
-			return new WP_Error( 'source_equals_target', __( 'Target and source cannot direct to the same resource', 'webmention' ), array( 'status' => 400 ) );
+			return new WP_Error( 'source_equals_target', esc_html__( 'Target and source cannot direct to the same resource', 'webmention' ), array( 'status' => 400 ) );
 		}
 
 		// check if pings are allowed
 		if ( ! pings_open( $comment_post_id ) ) {
-			return new WP_Error( 'pings_closed', __( 'Pings are disabled for this post', 'webmention' ), array( 'status' => 400 ) );
+			return new WP_Error( 'pings_closed', esc_html__( 'Pings are disabled for this post', 'webmention' ), array( 'status' => 400 ) );
 		}
 
 		$post = get_post( $comment_post_id );
 		if ( ! $post ) {
-			return new WP_Error( 'target_not_valid', __( 'Target is not a valid post', 'webmention' ), array( 'status' => 400 ) );
+			return new WP_Error( 'target_not_valid', esc_html__( 'Target is not a valid post', 'webmention' ), array( 'status' => 400 ) );
 		}
 		// In the event of async processing this needs to be stored here as it might not be available
 		// later.
@@ -324,7 +324,7 @@ class Webmention_Receiver {
 				'source'  => $commentdata['source'],
 				'target'  => $commentdata['target'],
 				'code'    => 'scheduled',
-				'message' => apply_filters( 'webmention_schedule_message', __( 'Webmention is scheduled', 'webmention' ) ),
+				'message' => apply_filters( 'webmention_schedule_message', esc_html__( 'Webmention is scheduled', 'webmention' ) ),
 			);
 
 			return new WP_REST_Response( $return, 202 );
@@ -398,7 +398,7 @@ class Webmention_Receiver {
 			'source'  => $commentdata['source'],
 			'target'  => $commentdata['target'],
 			'code'    => 'success',
-			'message' => apply_filters( 'webmention_success_message', __( 'Webmention was successful', 'webmention' ) ),
+			'message' => apply_filters( 'webmention_success_message', esc_html__( 'Webmention was successful', 'webmention' ) ),
 		);
 
 		return new WP_REST_Response( $return, 200 );
@@ -429,7 +429,7 @@ class Webmention_Receiver {
 		}
 
 		if ( ! is_array( $data ) || empty( $data ) ) {
-			return new WP_Error( 'invalid_data', __( 'Invalid data passed', 'webmention' ), array( 'status' => 500 ) );
+			return new WP_Error( 'invalid_data', esc_html__( 'Invalid data passed', 'webmention' ), array( 'status' => 500 ) );
 		}
 
 		$wp_version = get_bloginfo( 'version' );
@@ -448,7 +448,7 @@ class Webmention_Receiver {
 		if ( is_wp_error( $response ) ) {
 			return new WP_Error(
 				'source_not_found',
-				__( 'Source URL not found', 'webmention' ),
+				esc_html__( 'Source URL not found', 'webmention' ),
 				array(
 					'status' => 400,
 					'data'   => $data,
@@ -462,7 +462,7 @@ class Webmention_Receiver {
 		if ( preg_match( '#(image|audio|video|model)/#is', wp_remote_retrieve_header( $response, 'content-type' ) ) ) {
 			return new WP_Error(
 				'unsupported_content_type',
-				__( 'Content Type is not supported', 'webmention' ),
+				esc_html__( 'Content Type is not supported', 'webmention' ),
 				array(
 					'status' => 400,
 					'data'   => $data,
@@ -477,7 +477,7 @@ class Webmention_Receiver {
 			case 404:
 				return new WP_Error(
 					'resource_not_found',
-					__( 'Resource not found', 'webmention' ),
+					esc_html__( 'Resource not found', 'webmention' ),
 					array(
 						'status' => 400,
 						'data'   => $data,
@@ -486,7 +486,7 @@ class Webmention_Receiver {
 			case 410:
 				return new WP_Error(
 					'resource_deleted',
-					__( 'Resource has been deleted', 'webmention' ),
+					esc_html__( 'Resource has been deleted', 'webmention' ),
 					array(
 						'status' => 400,
 						'data'   => $data,
@@ -495,7 +495,7 @@ class Webmention_Receiver {
 			case 452:
 				return new WP_Error(
 					'resource_removed',
-					__( 'Resource removed for legal reasons', 'webmention' ),
+					esc_html__( 'Resource removed for legal reasons', 'webmention' ),
 					array(
 						'status' => 400,
 						'data'   => $data,
@@ -529,7 +529,7 @@ class Webmention_Receiver {
 		) ) {
 			return new WP_Error(
 				'target_not_found',
-				__( 'Cannot find target link', 'webmention' ),
+				esc_html__( 'Cannot find target link', 'webmention' ),
 				array(
 					'status' => 400,
 					'data'   => $data,

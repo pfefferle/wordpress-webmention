@@ -45,7 +45,7 @@ if ( $comment->comment_parent ) {
 					<a href="<?php echo esc_url( get_comment_link( $comment->comment_ID ) ); ?>"><time datetime="<?php comment_time( 'c' ); ?>" class="dt-published dt-updated published updated">
 						<?php
 						/* translators: 1: date, 2: time */
-						printf( __( '%1$s at %2$s', 'webmention' ), get_comment_date(), get_comment_time() ); ?>
+						printf( esc_html__( '%1$s at %2$s', 'webmention' ), get_comment_date(), get_comment_time() ); ?>
 					</time></a>
 					<ul>
 					<?php if ( $target ) { ?>
