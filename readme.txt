@@ -2,10 +2,10 @@
 Contributors: pfefferle, dshanske
 Donate link: https://notiz.blog/donate/
 Tags: webmention, pingback, trackback, linkback, indieweb, comment, response
-Requires at least: 4.7
+Requires at least: 4.9
 Tested up to: 5.2.2
-Stable tag: 3.8.11
-Requires PHP: 5.2
+Stable tag: 3.8.12
+Requires PHP: 5.4
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
@@ -35,8 +35,7 @@ Webmention is an update/replacement for Pingback or Trackback. Unlike the older 
 
 On the Settings --> Discussion Page in WordPress:
 
-* Activate sending Webmentions by checking the "Attempt to notify any blogs linked to from the article" option
-* Activate receiving Webmentions by checking the "Allow link notifications from other blogs (pingbacks and trackbacks) on new articles" option.
+* On the Webmention Settings page, decide which post types you want to enable webmentions to. By default, posts and pages.
 * Set a page to redirect homepage mentions to. This will automatically enable webmentions for that page.
 * WordPress disables notification to pages by default. Check the Enable Webmentions for Pages option to enable this.
 * If you want to enable a webmention form in the comment section, check the box.
@@ -48,7 +47,12 @@ You can use the `send_webmention($source, $target)` function and pass a source a
 
 = How do I support Webmentions for my custom post type? =
 
-When declaring your custom post type, add post type support for webmentions by either including it in your register_post_type entry or adding it later using add_post_type_support. This will also add support for receiving pingbacks and trackbacks as WordPress cannot currently distinguish between different linkback types.
+When declaring your custom post type, add post type support for webmentions by either including it in your register_post_type entry. This will also add support for receiving pingbacks and trackbacks as WordPress cannot currently distinguish between different linkback types. This can also be added in the webmention settings.
+
+= How do I send/receive webmentions for attachments? = 
+
+You can enable receiving webmentions for attachments in webmention settings. You can enable sending webmentions for media links in the settings. 
+Please note that most receivers of webmentions do not support image, audio, and video files. In order to support receiving them on WordPress, webmention endpoint headers would have to be added at the webserver level.
 
 = How can I handle Webmentions to my Homepage or Archive Pages? =
 
@@ -77,6 +81,11 @@ As Webmention uses the REST API endpoint system, most up to date caching plugins
 == Changelog ==
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
+
+= 3.8.12 =
+* Add settings for enabling webmention support by public post type
+* Add setting for disabling sending media links...URLs attached to image, video, or audio tags
+* Switch from sending webmentions to all URLs in post content to only ones with proper HTML markup
 
 = 3.8.11 =
 

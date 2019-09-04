@@ -149,7 +149,7 @@ class Webmention_Sender {
 		// get post
 		$post = get_post( $post_id );
 
-		$media = get_option( 'webmention_send_media_mentions' );
+		$media = (0 === get_option( 'webmention_send_media_mentions' ) );
 
 		// initialize links array
 		$links = html_extract_urls( $post->post_content, $media );

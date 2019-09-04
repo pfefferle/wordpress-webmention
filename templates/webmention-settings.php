@@ -37,6 +37,14 @@
 							<?php esc_html_e( 'Disable self-pings on the same Domain', 'webmention' ) ?>
 							<p class="description"><?php esc_html_e( '(for example "example.com")', 'webmention' ); ?></p>
 						</label>
+
+						<br />
+
+						<label for="webmention_disable_media_mentions">
+							<input type="checkbox" name="webmention_disable_media_mentions" id="webmention_disable_media_mentions" value="1" <?php
+								echo checked( true, get_option( 'webmention_disable_media_mentions' ) );  ?> />
+							<?php esc_html_e( 'Disable sending webmentions for media links(image, video, audio)', 'webmention' ) ?>
+						</label>
 					</fieldset>
 				</td>
 			</tr>
