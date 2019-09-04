@@ -330,6 +330,16 @@ class Webmention_Admin {
 		);
 		register_setting(
 			'webmention',
+			'webmention_send_media_mentions',
+			array(
+				'type'         => 'boolean',
+				'description'  => esc_html__( 'Disable sending webmentions for media links(image, video, and audio tags', 'webmention' ),
+				'show_in_rest' => true,
+				'default'      => 1,
+			)
+		);
+		register_setting(
+			'webmention',
 			'webmention_support_post_types',
 			array(
 				'type'         => 'string',
