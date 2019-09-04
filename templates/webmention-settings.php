@@ -50,13 +50,16 @@
 
 		<table class="form-table">
 			<tr>
-				<th scope="row"><?php esc_html_e( 'Webmention support for pages', 'webmention' ); ?></th>
+				<th scope="row"><?php esc_html_e( 'Webmention support for post types', 'webmention' ); ?></th>
 				<td>
 					<fieldset>
-						<label for="webmention_support_pages">
-							<input type="checkbox" name="webmention_support_pages" id="webmention_support_pages" value="1" <?php
-								echo checked( true, get_option( 'webmention_support_pages' ) );  ?> />
-							<?php esc_html_e( 'Enable Webmention support for pages', 'webmention' ); ?>
+						<label for="webmention_support_post_types">
+							<?php
+								webmention_public_post_types( get_option( 'webmention_support_post_types' ) );
+							?>
+							<br />
+
+							<?php esc_html_e( 'Enable Webmention support for post types', 'webmention' ); ?>
 						</label>
 
 						<br />

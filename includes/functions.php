@@ -108,7 +108,7 @@ function webmention_url_to_postid( $url ) {
 		return apply_filters( 'webmention_post_id', get_option( 'webmention_home_mentions' ), $url );
 	}
 	$id = url_to_postid( $url );
-	if ( ! $id ) {
+	if ( ! $id && post_type_supports( 'attachment', 'webmentions' ) ) {
 		$ext = pathinfo( wp_parse_url( $url, PHP_URL_PATH ), PATHINFO_EXTENSION );
 		if ( ! empty( $ext ) ) {
 			$id = attachment_url_to_postid( $url );

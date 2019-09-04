@@ -330,12 +330,12 @@ class Webmention_Admin {
 		);
 		register_setting(
 			'webmention',
-			'webmention_support_pages',
+			'webmention_support_post_types',
 			array(
-				'type'         => 'boolean',
-				'description'  => esc_html__( 'Enable Webmention support for pages', 'webmention' ),
+				'type'         => 'string',
+				'description'  => esc_html__( 'Enable Webmention support for post types', 'webmention' ),
 				'show_in_rest' => true,
-				'default'      => 1,
+				'default'      => array( 'post', 'pages' ),
 			)
 		);
 		register_setting(

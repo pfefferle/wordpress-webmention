@@ -31,10 +31,9 @@ add_action( 'admin_menu', array( 'Webmention_Admin', 'admin_menu' ) );
  * Initialize Webmention Plugin
  */
 function webmention_init() {
-	// Add a new feature type to posts for webmentions
-	add_post_type_support( 'post', 'webmentions' );
-	if ( 1 === (int) get_option( 'webmention_support_pages' ) ) {
-		add_post_type_support( 'page', 'webmentions' );
+	// Add support for webmentions to custom post types
+	foreach ( get_option( 'webmention_support_post_types', array( 'post', 'page' ) ) as $post_type ) {
+		add_post_type_support( $post_type, 'webmentions' );
 	}
 	if ( WP_DEBUG ) {
 		require_once dirname( __FILE__ ) . '/includes/debug.php';
@@ -89,6 +88,25 @@ function webmention_get_default_comment_status( $status, $post_type, $comment_ty
 	}
 
 	return $status;
+}
+
+function webmention_public_post_types( $checked ) {
+	if ( ! is_array( $checked ) ) {
+		$checked = array();
+	}
+	$post_types = get_post_types(
+		array(
+			'public' => true,
+		)
+	);
+
+	foreach ( $post_types as $type ) {
+		$post_type = get_post_type_object( $type );
+		echo '<ul>';
+		printf( '<li><input type="checkbox" id="webmention_support_post_types" name="webmention_support_post_types[]" value="%1$s" %2$s>', $type, in_array( $type, $checked, true ) ? 'checked' : '' );
+		printf( '<label for="%1$s">%2$s</label></li>', $type, $post_type->label );
+		echo '</ul>';
+	}
 }
 
 /**
