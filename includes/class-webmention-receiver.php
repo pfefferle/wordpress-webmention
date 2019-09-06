@@ -825,9 +825,33 @@ class Webmention_Receiver {
 	}
 
 	/**
+	 * Webmention headers to be added
+	 *
+	 * @return boolean
+	 */
+	public static function receive_mentions() {
+		// Cannot use is_singular as query is set up after send_headers and webmention_url_to_postid can be filtered to map other URLs to arbitrary posts
+		$post_id = webmention_url_to_postid( get_self_link() );
+		if ( ! $post_id ) {
+			return false;
+		}
+		// If the post type does not support webmentions do not even check if pings_open is set
+		if ( ! post_type_supports( get_post_type( $post_id ), 'webmentions' ) ) {
+				return false;
+		}
+		if ( pings_open( $post_id ) ) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
 	 * The Webmention autodicovery meta-tags
 	 */
 	public static function html_header() {
+		if ( ! self::receive_mentions() ) {
+			return;
+		}
 		printf( '<link rel="webmention" href="%s" />' . PHP_EOL, get_webmention_endpoint() );
 		// backwards compatibility with v0.1
 		printf( '<link rel="http://webmention.org/" href="%s" />' . PHP_EOL, get_webmention_endpoint() );
@@ -837,6 +861,10 @@ class Webmention_Receiver {
 	 * The Webmention autodicovery http-header
 	 */
 	public static function http_header() {
+		if ( ! self::receive_mentions() ) {
+			return;
+		}
+
 		header( sprintf( 'Link: <%s>; rel="webmention"', get_webmention_endpoint() ), false );
 		// backwards compatibility with v0.1
 		header( sprintf( 'Link: <%s>; rel="http://webmention.org/"', get_webmention_endpoint() ), false );

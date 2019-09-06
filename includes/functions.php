@@ -269,3 +269,20 @@ if ( ! function_exists( 'is_avatar_comment_type' ) ) :
 			return in_array( $comment_type, (array) $allowed_comment_types, true );
 	}
 endif;
+
+
+
+/* Backward compatibility for function available in version 5.3 and above */
+if ( ! function_exists( 'get_self_link' ) ) :
+	/**
+	 * Returns the link for the currently displayed feed.
+	 *
+	 * @since 5.3.0
+	 *
+	 * @return string Correct link for the atom:self element.
+	 */
+	function get_self_link() {
+		$host = @parse_url( home_url() );
+		return set_url_scheme( 'http://' . $host['host'] . wp_unslash( $_SERVER['REQUEST_URI'] ) );
+	}
+endif;
