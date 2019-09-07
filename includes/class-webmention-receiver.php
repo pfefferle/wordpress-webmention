@@ -93,20 +93,20 @@ class Webmention_Receiver {
 		// Purpose of this is to store the original time as there is no modified time in the comment table.
 		$args = array(
 			'type'         => 'string',
-			'description'  => esc_html__( 'Original Creation Time for the Webmention (GMT)', 'webmention' ),
+			'description'  => esc_html__( 'Original Creation Time (GMT)', 'webmention' ),
 			'single'       => true,
 			'show_in_rest' => true,
 		);
-		register_meta( 'comment', 'webmention_created_at', $args );
+		register_meta( 'comment', 'created', $args );
 
 		// Purpose of this is to store the response code returned during verification
 		$args = array(
 			'type'         => 'string',
-			'description'  => esc_html__( 'Response Code Returned During Webmention Verification', 'webmention' ),
+			'description'  => esc_html__( 'Response Code Returned During Verification', 'webmention' ),
 			'single'       => true,
 			'show_in_rest' => true,
 		);
-		register_meta( 'comment', 'webmention_response_code', $args );
+		register_meta( 'comment', 'response_code', $args );
 
 		// Purpose of this is to store a vouch URL
 		$args = array(
@@ -236,12 +236,13 @@ class Webmention_Receiver {
 		$comment_meta = array();
 
 		$map = array(
-			'vouch'    => 'webmention_vouch_url',
-			'source'   => 'webmention_source_url',
-			'target'   => 'webmention_target_url',
-			'fragment' => 'webmention_target_fragment',
-			'created'  => 'webmention_created_at',
-			'protocol' => 'protocol',
+			'vouch'         => 'webmention_vouch_url',
+			'source'        => 'webmention_source_url',
+			'target'        => 'webmention_target_url',
+			'fragment'      => 'webmention_target_fragment',
+			'created'       => 'created',
+			'response_code' => 'response_code',
+			'protocol'      => 'protocol',
 		);
 
 		foreach ( $map as $key => $value ) {
@@ -498,7 +499,7 @@ class Webmention_Receiver {
 		}
 
 		// A valid response code from the other server would not be considered an error.
-		$response_code = wp_remote_retrieve_response_code( $response );
+		$data['response_code'] = $response_code = wp_remote_retrieve_response_code( $response );
 		// not an (x)html, sgml, or xml page, no use going further
 		if ( preg_match( '#(image|audio|video|model)/#is', wp_remote_retrieve_header( $response, 'content-type' ) ) ) {
 			return new WP_Error(
