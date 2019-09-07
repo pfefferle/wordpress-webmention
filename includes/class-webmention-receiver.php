@@ -831,7 +831,11 @@ class Webmention_Receiver {
 	 */
 	public static function receive_mentions() {
 		// Cannot use is_singular as query is set up after send_headers and webmention_url_to_postid can be filtered to map other URLs to arbitrary posts
-		$post_id = webmention_url_to_postid( get_self_link() );
+		$post_id = wp_cache_get( base64_encode( get_self_link() ), 'wmurl' );
+		if ( false === $post_id ) {
+			$post_id = webmention_url_to_postid( get_self_link() );
+			wp_cache_set( base64_encode( get_self_link() ), $post_id, 'wmurl', 300 );
+		}
 		if ( ! $post_id ) {
 			return false;
 		}
