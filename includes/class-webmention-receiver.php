@@ -20,7 +20,7 @@ class Webmention_Receiver {
 
 		// endpoint discovery
 		add_action( 'wp_head', array( 'Webmention_Receiver', 'html_header' ), 99 );
-		add_action( 'send_headers', array( 'Webmention_Receiver', 'http_header' ) );
+		add_action( 'template_redirect', array( 'Webmention_Receiver', 'http_header' ) );
 		add_filter( 'host_meta', array( 'Webmention_Receiver', 'jrd_links' ) );
 		add_filter( 'webfinger_user_data', array( 'Webmention_Receiver', 'jrd_links' ) );
 		add_filter( 'webfinger_post_data', array( 'Webmention_Receiver', 'jrd_links' ) );
@@ -830,14 +830,19 @@ class Webmention_Receiver {
 	 * @return boolean
 	 */
 	public static function receive_mentions() {
-		// Cannot use is_singular as query is set up after send_headers and webmention_url_to_postid can be filtered to map other URLs to arbitrary posts
-		$post_id = wp_cache_get( base64_encode( get_self_link() ), 'wmurl' );
-		if ( false === $post_id ) {
-			$post_id = webmention_url_to_postid( get_self_link() );
-			wp_cache_set( base64_encode( get_self_link() ), $post_id, 'wmurl', 300 );
+		if ( 0 !== WEBMENTION_ALWAYS_SHOW_HEADERS ) {
+			return true;
 		}
-		if ( ! $post_id ) {
-			return false;
+		if ( ! is_singular() ) {
+			// Cache this as will be called twice in a page load
+			$post_id = wp_cache_get( base64_encode( get_self_link() ), 'wmurl' );
+			if ( false === $post_id ) {
+				$post_id = webmention_url_to_postid( get_self_link() );
+				wp_cache_set( base64_encode( get_self_link() ), $post_id, 'wmurl', 300 );
+			}
+			if ( ! $post_id ) {
+				return false;
+			}
 		}
 		// If the post type does not support webmentions do not even check if pings_open is set
 		if ( ! post_type_supports( get_post_type( $post_id ), 'webmentions' ) ) {
