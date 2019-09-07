@@ -56,6 +56,15 @@ class Webmention_Receiver {
 	 * This is more to lay out the data structure than anything else.
 	 */
 	public static function register_meta() {
+
+		$args = array(
+			'type'         => 'string',
+			'description'  => esc_html__( 'Protocol for the Comment', 'webmention' ),
+			'single'       => true,
+			'show_in_rest' => true,
+		);
+		register_meta( 'comment', 'protocol', $args );
+
 		$args = array(
 			'type'         => 'string',
 			'description'  => esc_html__( 'Target URL for the Webmention', 'webmention' ),
