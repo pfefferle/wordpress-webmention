@@ -35,6 +35,9 @@ class Webmention_Receiver {
 
 		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'auto_approve' ), 13, 1 );
 
+		// Store extra parameters in metadata
+		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'store_meta' ), 99, 1 );
+
 		// Allow for avatars on webmention comment types
 		if ( 0 !== (int) get_option( 'webmention_avatars', 1 ) ) {
 			add_filter( 'get_avatar_comment_types', array( 'Webmention_Receiver', 'get_avatar_comment_types' ), 99 );
@@ -211,6 +214,40 @@ class Webmention_Receiver {
 	}
 
 	/**
+	 * Store extra parameters in comment meta
+	 *
+	 * @param array $commentdata
+	 *
+	 * @return array|null|WP_Error $commentdata The Comment Array with added comment meta field or a WP_Error object.
+	 */
+	public static function store_meta( $commentdata ) {
+		if ( ! is_array( $commentdata ) ) {
+			return $commentdata;
+		}
+		$comment_meta = array();
+
+		$map = array(
+			'vouch'    => 'webmention_vouch_url',
+			'source'   => 'webmention_source_url',
+			'target'   => 'webmention_target_url',
+			'fragment' => 'webmention_target_fragment',
+			'created'  => 'webmention_created_at',
+			'protocol' => 'protocol',
+		);
+
+		foreach ( $map as $key => $value ) {
+			if ( array_key_exists( $key, $commentdata ) ) {
+				$comment_meta[ $value ] = $commentdata[ $key ];
+			}
+		}
+		if ( array_key_exists( 'comment_meta', $commentdata ) ) {
+			$comment_meta = array_merge( $comment_meta, $commentdata['comment_meta'] );
+		}
+		$commentdata['comment_meta'] = $comment_meta;
+		return $commentdata;
+	}
+
+	/**
 	 * POST Callback for the webmention endpoint.
 	 *
 	 * Returns the response.
@@ -230,13 +267,13 @@ class Webmention_Receiver {
 			return new WP_Error( 'source_missing', esc_html__( 'Source is missing', 'webmention' ), array( 'status' => 400 ) );
 		}
 
-		$source = urldecode( $params['source'] );
+		$source = esc_url_raw( urldecode( $params['source'] ) );
 
 		if ( ! isset( $params['target'] ) ) {
 			return new WP_Error( 'target_missing', esc_html__( 'Target is missing', 'webmention' ), array( 'status' => 400 ) );
 		}
 
-		$target = urldecode( $params['target'] );
+		$target = esc_url_raw( urldecode( $params['target'] ) );
 
 		if ( ! stristr( $target, preg_replace( '/^https?:\/\//i', '', home_url() ) ) ) {
 			return new WP_Error( 'target_mismatching_domain', esc_html__( 'Target is not on this domain', 'webmention' ), array( 'status' => 400 ) );
@@ -264,19 +301,12 @@ class Webmention_Receiver {
 		}
 		// In the event of async processing this needs to be stored here as it might not be available
 		// later.
-		$comment_meta                          = array();
-		$comment_author_ip                     = preg_replace( '/[^0-9a-fA-F:., ]/', '', $_SERVER['REMOTE_ADDR'] );
-		$comment_agent                         = isset( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT'] : '';
-		$comment_date                          = current_time( 'mysql' );
-		$comment_date_gmt                      = current_time( 'mysql', 1 );
-		$comment_meta['webmention_created_at'] = $comment_date_gmt;
-
-		if ( isset( $params['vouch'] ) ) {
-			// If there is a vouch pass it along
-			$vouch = urldecode( $params['vouch'] );
-			// Safely store a version of the data
-			$comment_meta['webmention_vouch_url'] = esc_url_raw( $vouch );
-		}
+		$comment_author_ip = preg_replace( '/[^0-9a-fA-F:., ]/', '', $_SERVER['REMOTE_ADDR'] );
+		$comment_agent     = isset( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT'] : '';
+		$comment_date      = current_time( 'mysql' );
+		$comment_date_gmt  = current_time( 'mysql', 1 );
+		$created           = current_time( DATE_W3C, 1 );
+		$protocol          = 'webmention';
 
 		// change this if your theme can't handle the Webmentions comment type
 		$comment_type = WEBMENTION_COMMENT_TYPE;
@@ -284,27 +314,29 @@ class Webmention_Receiver {
 		// change this if you want to auto approve your Webmentions
 		$comment_approved = WEBMENTION_COMMENT_APPROVE;
 
-		$commentdata = compact( 'comment_type', 'comment_approved', 'comment_agent', 'comment_date', 'comment_date_gmt', 'comment_meta', 'source', 'target', 'vouch' );
+		$commentdata = compact( 'protocol', 'comment_type', 'comment_approved', 'comment_agent', 'comment_date', 'comment_date_gmt', 'created', 'source', 'target', 'vouch' );
+
+		if ( isset( $params['vouch'] ) ) {
+			// If there is a vouch pass it along
+			$commentdata['vouch'] = esc_url_raw( urldecode( $params['vouch'] ) );
+		}
 
 		$commentdata['comment_post_ID']   = $comment_post_id;
 		$commentdata['comment_author_IP'] = $comment_author_ip;
 		// Set Comment Author URL to Source
 		$commentdata['comment_author_url'] = esc_url_raw( $commentdata['source'] );
-		// Save Source to Meta to Allow Author URL to be Changed and Parsed
-		$commentdata['comment_meta']['webmention_source_url'] = $commentdata['comment_author_url'];
-
-		$fragment = wp_parse_url( $commentdata['target'], PHP_URL_FRAGMENT );
-		if ( ! empty( $fragment ) ) {
-			$commentdata['comment_meta']['webmention_target_fragment'] = $fragment;
-		}
-		$commentdata['comment_meta']['webmention_target_url'] = $commentdata['target'];
 
 		$commentdata['comment_parent'] = '';
+
+		$parse_target = wp_parse_url( $commentdata['target'] );
+		if ( ! empty( $parse_target['fragment'] ) ) {
+			$commentdata['fragment'] = $parse_target['fragment'];
+		}
+
 		// check if there is a parent comment
-		$query_string = wp_parse_url( $commentdata['target'], PHP_URL_QUERY );
-		if ( $query_string ) {
+		if ( ! empty( $parse_target['query'] ) ) {
 			$query_array = array();
-			parse_str( $query_string, $query_array );
+			parse_str( $parse_target['query'], $query_array );
 			if ( isset( $query_array['replytocom'] ) && get_comment( $query_array['replytocom'] ) ) {
 				$commentdata['comment_parent'] = $query_array['replytocom'];
 			}
