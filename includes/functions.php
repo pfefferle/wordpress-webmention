@@ -294,34 +294,39 @@ endif;
 /**
  * Use DOMDocument to extract URLs from HTML content
  *
+ * @param string  $content            HTML Content to extract URLs from.
+ * @param boolean $support_media_urls Extract media URLs not just traditional links
  *
- * @param string $content HTML Content to extract URLs from.
- * @param boolean $media Extract media URLs not just traditional links
  * @return array URLs found in passed string.
  */
-function html_extract_urls( $content, $media = false ) {
-	$doc        = webmention_load_domdocument( $content );
-	$xpath      = new DOMXPath( $doc );
+function webmention_extract_urls( $content, $support_media_urls = false ) {
+	$doc   = webmention_load_domdocument( $content );
+	$xpath = new DOMXPath( $doc );
+
 	$attributes = array(
 		'cite' => array( 'blockquote', 'del', 'ins', 'q' ),
 		'href' => array( 'a', 'area' ),
 	);
-	$mediatags  = array(
+
+	$media_attributes = array(
 		'data'   => array( 'object' ),
 		'poster' => array( 'video' ),
 		'src'    => array( 'audio', 'embed', 'iframe', 'img', 'input', 'source', 'track', 'video' ),
 	);
-	if ( $media ) {
-		$attributes = array_merge( $attributes, $mediatags );
+
+	if ( $support_media_urls ) {
+		$attributes = array_merge( $attributes, $media_attributes );
 	}
-	$links = array();
+
+	$urls = array();
+
 	foreach ( $attributes as $attribute => $elements ) {
 		foreach ( $elements as $element ) {
 			foreach ( $xpath->query( sprintf( '//%1$s[@%2$s]', $element, $attribute ) ) as $url ) {
-				$links[] = $url->getAttribute( $attribute );
+				$urls[] = $url->getAttribute( $attribute );
 			}
 		}
 	}
 
-	return array_filter( $links );
+	return array_filter( $urls );
 }

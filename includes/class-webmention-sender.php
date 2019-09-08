@@ -149,13 +149,13 @@ class Webmention_Sender {
 		// get post
 		$post = get_post( $post_id );
 
-		$media = (0 === get_option( 'webmention_send_media_mentions' ) );
+		$support_media_urls = ( 0 === get_option( 'webmention_send_media_mentions' ) );
 
 		// initialize links array
-		$links = html_extract_urls( $post->post_content, $media );
+		$urls = webmention_extract_urls( $post->post_content, $support_media_urls );
 
 		// filter links
-		$targets = apply_filters( 'webmention_links', $links, $post_id );
+		$targets = apply_filters( 'webmention_links', $urls, $post_id );
 		$targets = array_unique( $targets );
 		$pung    = get_pung( $post );
 		$ping    = array();
