@@ -844,7 +844,7 @@ class Webmention_Receiver {
 	 */
 	public static function should_receive_mentions() {
 		if ( is_singular() ) {
-			$post_id = get_queried_object_id();
+			return pings_open();
 		} else {
 			$post_id = webmention_url_to_postid( get_self_link() );
 		}
