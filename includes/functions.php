@@ -278,18 +278,14 @@ endif;
 
 if ( ! function_exists( 'webmention_load_domdocument' ) ) :
 	function webmention_load_domdocument( $content ) {
-		if ( class_exists( 'Masterminds\\HTML5' ) ) {
-			$doc = new \Masterminds\HTML5( array( 'disable_html_ns' => true ) );
-			$doc = $doc->loadHTML( $content );
-		} else {
-			$doc = new DOMDocument();
-			libxml_use_internal_errors( true );
-			if ( function_exists( 'mb_convert_encoding' ) ) {
-				$content = mb_convert_encoding( $content, 'HTML-ENTITIES', mb_detect_encoding( $content ) );
-			}
-			$doc->loadHTML( $content );
-			libxml_use_internal_errors( false );
+		$doc = new DOMDocument();
+		libxml_use_internal_errors( true );
+		if ( function_exists( 'mb_convert_encoding' ) ) {
+			$content = mb_convert_encoding( $content, 'HTML-ENTITIES', mb_detect_encoding( $content ) );
 		}
+		$doc->loadHTML( $content );
+		libxml_use_internal_errors( false );
+
 		return $doc;
 	}
 endif;
