@@ -107,8 +107,14 @@ function webmention_url_to_postid( $url ) {
 	if ( '/' === wp_make_link_relative( trailingslashit( $url ) ) ) {
 		return apply_filters( 'webmention_post_id', get_option( 'webmention_home_mentions' ), $url );
 	}
-
-	return apply_filters( 'webmention_post_id', url_to_postid( $url ), $url );
+	$id = url_to_postid( $url );
+	if ( ! $id && post_type_supports( 'attachment', 'webmentions' ) ) {
+		$ext = pathinfo( wp_parse_url( $url, PHP_URL_PATH ), PATHINFO_EXTENSION );
+		if ( ! empty( $ext ) ) {
+			$id = attachment_url_to_postid( $url );
+		}
+	}
+	return apply_filters( 'webmention_post_id', $id, $url );
 }
 
 function webmention_extract_domain( $url ) {
@@ -270,8 +276,6 @@ if ( ! function_exists( 'is_avatar_comment_type' ) ) :
 	}
 endif;
 
-
-
 /* Backward compatibility for function available in version 5.3 and above */
 if ( ! function_exists( 'get_self_link' ) ) :
 	/**
@@ -286,3 +290,58 @@ if ( ! function_exists( 'get_self_link' ) ) :
 		return set_url_scheme( 'http://' . $host['host'] . wp_unslash( $_SERVER['REQUEST_URI'] ) );
 	}
 endif;
+
+if ( ! function_exists( 'webmention_load_domdocument' ) ) :
+	function webmention_load_domdocument( $content ) {
+		$doc = new DOMDocument();
+		libxml_use_internal_errors( true );
+		if ( function_exists( 'mb_convert_encoding' ) ) {
+			$content = mb_convert_encoding( $content, 'HTML-ENTITIES', mb_detect_encoding( $content ) );
+		}
+		$doc->loadHTML( $content );
+		libxml_use_internal_errors( false );
+
+		return $doc;
+	}
+endif;
+
+
+/**
+ * Use DOMDocument to extract URLs from HTML content
+ *
+ * @param string  $content            HTML Content to extract URLs from.
+ * @param boolean $support_media_urls Extract media URLs not just traditional links
+ *
+ * @return array URLs found in passed string.
+ */
+function webmention_extract_urls( $content, $support_media_urls = false ) {
+	$doc   = webmention_load_domdocument( $content );
+	$xpath = new DOMXPath( $doc );
+
+	$attributes = array(
+		'cite' => array( 'blockquote', 'del', 'ins', 'q' ),
+		'href' => array( 'a', 'area' ),
+	);
+
+	$media_attributes = array(
+		'data'   => array( 'object' ),
+		'poster' => array( 'video' ),
+		'src'    => array( 'audio', 'embed', 'iframe', 'img', 'input', 'source', 'track', 'video' ),
+	);
+
+	if ( $support_media_urls ) {
+		$attributes = array_merge( $attributes, $media_attributes );
+	}
+
+	$urls = array();
+
+	foreach ( $attributes as $attribute => $elements ) {
+		foreach ( $elements as $element ) {
+			foreach ( $xpath->query( sprintf( '//%1$s[@%2$s]', $element, $attribute ) ) as $url ) {
+				$urls[] = $url->getAttribute( $attribute );
+			}
+		}
+	}
+
+	return array_filter( $urls );
+}

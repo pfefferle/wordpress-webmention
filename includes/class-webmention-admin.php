@@ -330,12 +330,22 @@ class Webmention_Admin {
 		);
 		register_setting(
 			'webmention',
-			'webmention_support_pages',
+			'webmention_disable_media_mentions',
 			array(
 				'type'         => 'boolean',
-				'description'  => esc_html__( 'Enable Webmention support for pages', 'webmention' ),
+				'description'  => esc_html__( 'Disable sending webmentions for media links (image, video, and audio tags)', 'webmention' ),
 				'show_in_rest' => true,
 				'default'      => 1,
+			)
+		);
+		register_setting(
+			'webmention',
+			'webmention_support_post_types',
+			array(
+				'type'         => 'string',
+				'description'  => esc_html__( 'Enable Webmention support for post types', 'webmention' ),
+				'show_in_rest' => true,
+				'default'      => array( 'post', 'pages' ),
 			)
 		);
 		register_setting(
