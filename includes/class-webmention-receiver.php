@@ -843,13 +843,16 @@ class Webmention_Receiver {
 	 * @return boolean
 	 */
 	public static function should_receive_mentions() {
-		if ( ! is_singular() ) {
+		if ( is_singular() ) {
+			$post_id = get_queried_object_id();
+		} else {
 			$post_id = webmention_url_to_postid( get_self_link() );
-
-			if ( ! $post_id ) {
-				return false;
-			}
 		}
+
+		if ( ! $post_id ) {
+			return false;
+		}
+
 		// If the post type does not support webmentions do not even check if pings_open is set
 		if ( ! post_type_supports( get_post_type( $post_id ), 'webmentions' ) ) {
 			return false;
