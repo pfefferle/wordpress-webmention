@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: Webmention 3.8.11\n"
 "Report-Msgid-Bugs-To: "
 "https://wordpress.org/support/plugin/wordpress-webmention\n"
-"POT-Creation-Date: 2019-08-03 20:06:12+00:00\n"
+"POT-Creation-Date: 2019-09-08 13:49:27+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -182,31 +182,35 @@ msgstr ""
 msgid "Disable self Webmentions on the same domain"
 msgstr ""
 
-#: includes/class-webmention-admin.php:336 templates/webmention-settings.php:59
-msgid "Enable Webmention support for pages"
+#: includes/class-webmention-admin.php:336
+msgid "Disable sending webmentions for media links (image, video, and audio tags)"
 msgstr ""
 
 #: includes/class-webmention-admin.php:346
-msgid "Show Webmention comment-form"
+msgid "Enable Webmention support for post types"
 msgstr ""
 
 #: includes/class-webmention-admin.php:356
-msgid "Change the text of the Webmention comment-form"
+msgid "Show Webmention comment-form"
 msgstr ""
 
 #: includes/class-webmention-admin.php:366
-msgid "Where to direct Mentions of the home page"
+msgid "Change the text of the Webmention comment-form"
 msgstr ""
 
 #: includes/class-webmention-admin.php:376
-msgid "Automatically approve Webmentions from these domains"
+msgid "Where to direct Mentions of the home page"
 msgstr ""
 
 #: includes/class-webmention-admin.php:386
+msgid "Automatically approve Webmentions from these domains"
+msgstr ""
+
+#: includes/class-webmention-admin.php:396
 msgid "Show Avatars on Webmentions"
 msgstr ""
 
-#: includes/class-webmention-admin.php:398
+#: includes/class-webmention-admin.php:408
 msgid ""
 "Webmentions are an explicit feature of your content management system: by "
 "sending a webmention to the webmention endpoint of this website, you "
@@ -216,55 +220,55 @@ msgid ""
 "you are aware of it being published."
 msgstr ""
 
-#: includes/class-webmention-admin.php:399
+#: includes/class-webmention-admin.php:409
 msgid ""
 "You can at any time request the removal of one or all webmentions "
 "originating from your website."
 msgstr ""
 
-#: includes/class-webmention-admin.php:401
+#: includes/class-webmention-admin.php:411
 msgid "Processing"
 msgstr ""
 
-#: includes/class-webmention-admin.php:402
+#: includes/class-webmention-admin.php:412
 msgid ""
 "Incoming Webmentions are handled as a request to process personal data that "
 "you make available by explicitly providing metadata in your website's "
 "markup."
 msgstr ""
 
-#: includes/class-webmention-admin.php:404
+#: includes/class-webmention-admin.php:414
 msgid "Publishing"
 msgstr ""
 
-#: includes/class-webmention-admin.php:405
+#: includes/class-webmention-admin.php:415
 msgid ""
 "An incoming Webmention request is by design a request for publishing a "
 "comment from elsewhere on the web; this is what the protocol was designed "
 "for and why it is active on your website."
 msgstr ""
 
-#: includes/class-webmention-admin.php:407
+#: includes/class-webmention-admin.php:417
 msgid "Personal data"
 msgstr ""
 
-#: includes/class-webmention-admin.php:408
+#: includes/class-webmention-admin.php:418
 msgid "The Webmention plugin processes the following data (if available):"
 msgstr ""
 
-#: includes/class-webmention-admin.php:411
+#: includes/class-webmention-admin.php:421
 msgid "Your name"
 msgstr ""
 
-#: includes/class-webmention-admin.php:412
+#: includes/class-webmention-admin.php:422
 msgid "The profile picture from your website"
 msgstr ""
 
-#: includes/class-webmention-admin.php:413
+#: includes/class-webmention-admin.php:423
 msgid "The URL of your website"
 msgstr ""
 
-#: includes/class-webmention-admin.php:414
+#: includes/class-webmention-admin.php:424
 msgid "Personal information you include in your post"
 msgstr ""
 
@@ -376,7 +380,7 @@ msgid ""
 "contain a link to this post's permalink URL. Your response will then appear "
 "(possibly after moderation) on this page. Want to update or remove your "
 "response? Update or delete your post and re-enter your post's URL again. "
-"(<a href=\"https://indieweb.org/webmention\">Learn More</a>)"
+"(<a href=\"http://indieweb.org/webmention\">Learn More</a>)"
 msgstr ""
 
 #: templates/webmention-api-message.php:11
@@ -394,7 +398,7 @@ msgstr ""
 msgid "Ping me!"
 msgstr ""
 
-#: templates/webmention-comment.php:47
+#: templates/webmention-comment.php:48
 #. translators: 1: date, 2: time
 msgid "%1$s at %2$s"
 msgstr ""
@@ -421,17 +425,16 @@ msgid ""
 "your post.\""
 msgstr ""
 
-#: templates/webmention-endpoint-form.php:144
-msgid ""
-"Learn more about Webmentions at <a "
-"href=\"https://webmention.net\">webmention.net</a>"
+#: templates/webmention-endpoint-form.php:147
+#. Translators: placeholder will be an html link to webmention.net
+msgid "Learn more about Webmentions at %s"
 msgstr ""
-s
+
 #: templates/webmention-settings.php:7
 msgid "Sender"
 msgstr ""
 
-#: templates/webmention-settings.php:12
+#: templates/webmention-settings.php:11
 msgid ""
 "The Webmention plugin primarily handles sending/receiving notifications of "
 "mentions from other websites, so the format of the comments can look odd on "
@@ -442,78 +445,94 @@ msgid ""
 "for displaying many reply types as facepiles for improved user interface."
 msgstr ""
 
-#: templates/webmention-settings.php:18
+#: templates/webmention-settings.php:15
 msgid "A Webmention Sender is an implementation that sends Webmentions."
 msgstr ""
 
-#: templates/webmention-settings.php:22
+#: templates/webmention-settings.php:19
 msgid "Self-Ping settings"
 msgstr ""
 
-#: templates/webmention-settings.php:28
+#: templates/webmention-settings.php:24
 msgid "Disable self-pings on the same URL"
 msgstr ""
 
-#: templates/webmention-settings.php:37
+#: templates/webmention-settings.php:25
+msgid "(for example \"http://example.com/?p=123\")"
+msgstr ""
+
+#: templates/webmention-settings.php:32
 msgid "Disable self-pings on the same Domain"
 msgstr ""
 
-#: templates/webmention-settings.php:47
-msgid "Receiver"
+#: templates/webmention-settings.php:33
+msgid "(for example \"example.com\")"
+msgstr ""
+
+#: templates/webmention-settings.php:40
+msgid "Disable sending webmentions for media links(image, video, audio)"
 msgstr ""
 
 #: templates/webmention-settings.php:49
+msgid "Receiver"
+msgstr ""
+
+#: templates/webmention-settings.php:51
 msgid ""
 "A Webmention Receiver is an implementation that receives Webmentions to one "
 "or more target URLs on which the Receiver's Webmention endpoint is "
 "advertised."
 msgstr ""
 
-#: templates/webmention-settings.php:53
-msgid "Webmention support for pages"
+#: templates/webmention-settings.php:55
+msgid "Webmention support for post types"
 msgstr ""
 
-#: templates/webmention-settings.php:65
+#: templates/webmention-settings.php:58
+msgid "Enable Webmention support for the following post types:"
+msgstr ""
+
+#: templates/webmention-settings.php:74
 msgid "Set a page for mentions of the homepage to be sent to:"
 msgstr ""
 
-#: templates/webmention-settings.php:69
+#: templates/webmention-settings.php:79
 msgid "No homepage mentions"
 msgstr ""
 
-#: templates/webmention-settings.php:78
+#: templates/webmention-settings.php:89
 msgid "Visit site"
 msgstr ""
 
-#: templates/webmention-settings.php:86
+#: templates/webmention-settings.php:97
 msgid "Automatically approve Webmention from these domains"
 msgstr ""
 
-#: templates/webmention-settings.php:94
+#: templates/webmention-settings.php:105
 msgid ""
 "A Webmention received from a site that matches a domain in this list will "
-"be auto-approved. One domain (e.g. indieweb.org) per line.\n"
+"be auto-approved. One domain (e.g. indieweb.org) per line."
 msgstr ""
 
-#: templates/webmention-settings.php:102
+#: templates/webmention-settings.php:112
 msgid "Comment settings"
 msgstr ""
 
-#: templates/webmention-settings.php:109
+#: templates/webmention-settings.php:118
 msgid ""
 "Show a Webmention form at the comment section, to allow anyone to notify "
 "you of a mention."
 msgstr ""
 
-#: templates/webmention-settings.php:118
+#: templates/webmention-settings.php:127
 msgid "Change the default help text of the Webmention form"
 msgstr ""
 
-#: templates/webmention-settings.php:125
+#: templates/webmention-settings.php:134
 msgid "Avatars"
 msgstr ""
 
-#: templates/webmention-settings.php:131
+#: templates/webmention-settings.php:139
 msgid "Show avatars on webmentions if available."
 msgstr ""
 

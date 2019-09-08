@@ -2,7 +2,7 @@
 global $wp_query, $post;
 $comment_id = $wp_query->query['replytocom'];
 $comment = get_comment( $comment_id );
-$target = '';
+$target  = '';
 
 if ( $comment->comment_author_url ) {
 	$target = $comment->comment_author_url;
@@ -21,7 +21,7 @@ if ( $comment->comment_parent ) {
 <html <?php language_attributes(); ?>>
 	<head>
 		<meta charset="<?php bloginfo( 'charset' ); ?>" />
-		<?php wp_head();?>
+		<?php wp_head(); ?>
 
 		<script type="text/javascript">
 			<!--

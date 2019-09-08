@@ -31,12 +31,6 @@ matrix:
     env: WP_VERSION=4.7 WP_MULTISITE=0
   - php: 5.4
     env: WP_VERSION=4.7 WP_MULTISITE=0
-  - php: 5.3
-    env: WP_VERSION=4.7 WP_MULTISITE=0
-    dist: precise
-  - php: 5.2
-    env: WP_VERSION=4.7 WP_MULTISITE=0
-    dist: precise
 before_script:
 - |
   # Remove Xdebug for a huge performance increase:

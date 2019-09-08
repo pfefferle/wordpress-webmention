@@ -31,10 +31,11 @@ add_action( 'admin_menu', array( 'Webmention_Admin', 'admin_menu' ) );
  * Initialize Webmention Plugin
  */
 function webmention_init() {
-	// Add a new feature type to posts for webmentions
-	add_post_type_support( 'post', 'webmentions' );
-	if ( 1 === (int) get_option( 'webmention_support_pages' ) ) {
-		add_post_type_support( 'page', 'webmentions' );
+	// Add support for webmentions to custom post types
+	$post_types = get_option( 'webmention_support_post_types', array( 'post', 'page' ) ) ? get_option( 'webmention_support_post_types', array( 'post', 'page' ) ) : array();
+
+	foreach ( $post_types as $post_type ) {
+		add_post_type_support( $post_type, 'webmentions' );
 	}
 	if ( WP_DEBUG ) {
 		require_once dirname( __FILE__ ) . '/includes/debug.php';
