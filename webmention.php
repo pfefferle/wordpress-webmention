@@ -32,7 +32,9 @@ add_action( 'admin_menu', array( 'Webmention_Admin', 'admin_menu' ) );
  */
 function webmention_init() {
 	// Add support for webmentions to custom post types
-	foreach ( get_option( 'webmention_support_post_types', array( 'post', 'page' ) ) as $post_type ) {
+	$post_types = get_option( 'webmention_support_post_types', array( 'post', 'page' ) ) ? get_option( 'webmention_support_post_types', array( 'post', 'page' ) ) : array();
+
+	foreach ( $post_types as $post_type ) {
 		add_post_type_support( $post_type, 'webmentions' );
 	}
 	if ( WP_DEBUG ) {
