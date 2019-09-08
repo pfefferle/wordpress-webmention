@@ -92,25 +92,6 @@ function webmention_get_default_comment_status( $status, $post_type, $comment_ty
 	return $status;
 }
 
-function webmention_public_post_types( $checked ) {
-	if ( ! is_array( $checked ) ) {
-		$checked = array();
-	}
-	$post_types = get_post_types(
-		array(
-			'public' => true,
-		)
-	);
-
-	foreach ( $post_types as $type ) {
-		$post_type = get_post_type_object( $type );
-		echo '<ul>';
-		printf( '<li><input type="checkbox" id="webmention_support_post_types" name="webmention_support_post_types[]" value="%1$s" %2$s>', $type, in_array( $type, $checked, true ) ? 'checked' : '' );
-		printf( '<label for="%1$s">%2$s</label></li>', $type, $post_type->label );
-		echo '</ul>';
-	}
-}
-
 /**
  * render the comment form
  */

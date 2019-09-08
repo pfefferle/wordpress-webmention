@@ -23,27 +23,24 @@
 				<td>
 					<fieldset>
 						<label for="webmention_disable_selfpings_same_url">
-							<input type="checkbox" name="webmention_disable_selfpings_same_url" id="webmention_disable_selfpings_same_url" value="1" <?php
-								echo checked( true, get_option( 'webmention_disable_selfpings_same_url' ) );  ?> />
-							<?php esc_html_e( 'Disable self-pings on the same URL', 'webmention' ) ?>
+							<input type="checkbox" name="webmention_disable_selfpings_same_url" id="webmention_disable_selfpings_same_url" value="1" <?php echo checked( true, get_option( 'webmention_disable_selfpings_same_url' ) );  ?> />
+							<?php esc_html_e( 'Disable self-pings on the same URL', 'webmention' ); ?>
 							<p class="description"><?php esc_html_e( '(for example "http://example.com/?p=123")', 'webmention' ); ?></p>
 						</label>
 
 						<br />
 
 						<label for="webmention_disable_selfpings_same_domain">
-							<input type="checkbox" name="webmention_disable_selfpings_same_domain" id="webmention_disable_selfpings_same_domain" value="1" <?php
-								echo checked( true, get_option( 'webmention_disable_selfpings_same_domain' ) );  ?> />
-							<?php esc_html_e( 'Disable self-pings on the same Domain', 'webmention' ) ?>
+							<input type="checkbox" name="webmention_disable_selfpings_same_domain" id="webmention_disable_selfpings_same_domain" value="1" <?php echo checked( true, get_option( 'webmention_disable_selfpings_same_domain' ) );  ?> />
+							<?php esc_html_e( 'Disable self-pings on the same Domain', 'webmention' ); ?>
 							<p class="description"><?php esc_html_e( '(for example "example.com")', 'webmention' ); ?></p>
 						</label>
 
 						<br />
 
 						<label for="webmention_disable_media_mentions">
-							<input type="checkbox" name="webmention_disable_media_mentions" id="webmention_disable_media_mentions" value="1" <?php
-								echo checked( true, get_option( 'webmention_disable_media_mentions' ) );  ?> />
-							<?php esc_html_e( 'Disable sending webmentions for media links(image, video, audio)', 'webmention' ) ?>
+							<input type="checkbox" name="webmention_disable_media_mentions" id="webmention_disable_media_mentions" value="1" <?php echo checked( true, get_option( 'webmention_disable_media_mentions' ) ); ?> />
+							<?php esc_html_e( 'Disable sending webmentions for media links(image, video, audio)', 'webmention' ); ?>
 						</label>
 					</fieldset>
 				</td>
@@ -61,14 +58,18 @@
 				<th scope="row"><?php esc_html_e( 'Webmention support for post types', 'webmention' ); ?></th>
 				<td>
 					<fieldset>
-						<label for="webmention_support_post_types">
-							<?php
-								webmention_public_post_types( get_option( 'webmention_support_post_types' ) );
-							?>
-							<br />
+						<?php esc_html_e( 'Enable Webmention support for the following post types:', 'webmention' ); ?>
 
-							<?php esc_html_e( 'Enable Webmention support for post types', 'webmention' ); ?>
-						</label>
+						<?php $post_types = get_post_types( array( 'public' => true ), 'objects' ); ?>
+						<?php $support_post_types = get_option( 'webmention_support_post_types', array( 'post', 'page' ) ) ? get_option( 'webmention_support_post_types', array( 'post', 'page' ) ) : array(); ?>
+						<ul>
+						<?php foreach ( $post_types as $post_type ) { ?>
+							<li>
+								<input type="checkbox" id="webmention_support_post_types" name="webmention_support_post_types[]" value="<?php echo esc_attr( $post_type->name ); ?>" <?php echo checked( true, in_array( $post_type->name, $support_post_types, true ) ); ?> />
+								<label for="<?php echo esc_attr( $post_type->name ); ?>"><?php echo esc_html( $post_type->label ); ?></label>
+							</li>
+						<?php } ?>
+						</ul>
 
 						<br />
 
@@ -76,12 +77,14 @@
 							<?php esc_html_e( 'Set a page for mentions of the homepage to be sent to:', 'webmention' ); ?>
 
 							<?php
-							wp_dropdown_pages( array(
-								'show_option_none' => esc_html__( 'No homepage mentions', 'webmention' ),
-								'name'             => 'webmention_home_mentions',
-								'id'               => 'webmention_home_mentions',
-								'selected'         => get_option( 'webmention_home_mentions' ),
-							) );
+							wp_dropdown_pages(
+								array(
+									'show_option_none' => esc_html__( 'No homepage mentions', 'webmention' ),
+									'name'             => 'webmention_home_mentions',
+									'id'               => 'webmention_home_mentions',
+									'selected'         => get_option( 'webmention_home_mentions' ),
+								)
+							);
 							?>
 
 							<?php
