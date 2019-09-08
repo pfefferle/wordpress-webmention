@@ -104,16 +104,28 @@ function get_webmention_process_type() {
  * @uses apply_filters calls "webmention_post_id" on the post_ID
  */
 function webmention_url_to_postid( $url ) {
+	$id = wp_cache_get( base64_encode( $url ), 'webmention_url_to_postid' );
+
+	if ( false === $id ) {
+		return apply_filters( 'webmention_post_id', $id, $url );
+	}
+
 	if ( '/' === wp_make_link_relative( trailingslashit( $url ) ) ) {
 		return apply_filters( 'webmention_post_id', get_option( 'webmention_home_mentions' ), $url );
 	}
+
 	$id = url_to_postid( $url );
+
 	if ( ! $id && post_type_supports( 'attachment', 'webmentions' ) ) {
 		$ext = pathinfo( wp_parse_url( $url, PHP_URL_PATH ), PATHINFO_EXTENSION );
+
 		if ( ! empty( $ext ) ) {
 			$id = attachment_url_to_postid( $url );
 		}
 	}
+
+	wp_cache_set( base64_encode( $url ), $id, 'webmention_url_to_postid', 300 );
+
 	return apply_filters( 'webmention_post_id', $id, $url );
 }
 
@@ -273,6 +285,21 @@ if ( ! function_exists( 'is_avatar_comment_type' ) ) :
 		$allowed_comment_types = apply_filters( 'get_avatar_comment_types', array( 'comment' ) );
 
 			return in_array( $comment_type, (array) $allowed_comment_types, true );
+	}
+endif;
+
+/* Backward compatibility for function available in version 5.3 and above */
+if ( ! function_exists( 'get_self_link' ) ) :
+	/**
+	 * Returns the link for the currently displayed feed.
+	 *
+	 * @since 5.3.0
+	 *
+	 * @return string Correct link for the atom:self element.
+	 */
+	function get_self_link() {
+		$host = @parse_url( home_url() );
+		return set_url_scheme( 'http://' . $host['host'] . wp_unslash( $_SERVER['REQUEST_URI'] ) );
 	}
 endif;
 
