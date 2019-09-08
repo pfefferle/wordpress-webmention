@@ -66,7 +66,7 @@ module.exports = function(grunt) {
         options: {
           mainFile: 'webmention.php',
           domainPath: '/languages',
-          exclude: ['bin/.*', '.git/.*', 'vendor/.*'],
+          exclude: ['bin/.*', '.git/.*', 'vendor/.*', 'node_modules/.*'],
           potFilename: 'webmention.pot',
           type: 'wp-plugin',
           updateTimestamp: true

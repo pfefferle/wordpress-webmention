@@ -333,7 +333,7 @@ class Webmention_Admin {
 			'webmention_disable_media_mentions',
 			array(
 				'type'         => 'boolean',
-				'description'  => esc_html__( 'Disable sending webmentions for media links(image, video, and audio tags', 'webmention' ),
+				'description'  => esc_html__( 'Disable sending webmentions for media links (image, video, and audio tags)', 'webmention' ),
 				'show_in_rest' => true,
 				'default'      => 1,
 			)
