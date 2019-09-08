@@ -829,28 +829,36 @@ class Webmention_Receiver {
 	 *
 	 * @return boolean
 	 */
-	public static function receive_mentions() {
-		if ( 0 !== WEBMENTION_ALWAYS_SHOW_HEADERS ) {
+	public static function should_show_headers() {
+		if ( WEBMENTION_ALWAYS_SHOW_HEADERS ) {
 			return true;
 		}
+
+		return self::should_receive_mentions();
+	}
+
+	/**
+	 *
+	 *
+	 * @return boolean
+	 */
+	public static function should_receive_mentions() {
 		if ( ! is_singular() ) {
-			// Cache this as will be called twice in a page load
-			$post_id = wp_cache_get( base64_encode( get_self_link() ), 'wmurl' );
-			if ( false === $post_id ) {
-				$post_id = webmention_url_to_postid( get_self_link() );
-				wp_cache_set( base64_encode( get_self_link() ), $post_id, 'wmurl', 300 );
-			}
+			$post_id = webmention_url_to_postid( get_self_link() );
+
 			if ( ! $post_id ) {
 				return false;
 			}
 		}
 		// If the post type does not support webmentions do not even check if pings_open is set
 		if ( ! post_type_supports( get_post_type( $post_id ), 'webmentions' ) ) {
-				return false;
+			return false;
 		}
+
 		if ( pings_open( $post_id ) ) {
 			return true;
 		}
+
 		return false;
 	}
 
@@ -858,9 +866,10 @@ class Webmention_Receiver {
 	 * The Webmention autodicovery meta-tags
 	 */
 	public static function html_header() {
-		if ( ! self::receive_mentions() ) {
+		if ( ! self::should_show_headers() ) {
 			return;
 		}
+
 		printf( '<link rel="webmention" href="%s" />' . PHP_EOL, get_webmention_endpoint() );
 		// backwards compatibility with v0.1
 		printf( '<link rel="http://webmention.org/" href="%s" />' . PHP_EOL, get_webmention_endpoint() );
@@ -870,7 +879,7 @@ class Webmention_Receiver {
 	 * The Webmention autodicovery http-header
 	 */
 	public static function http_header() {
-		if ( ! self::receive_mentions() ) {
+		if ( ! self::should_show_headers() ) {
 			return;
 		}
 

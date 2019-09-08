@@ -104,16 +104,28 @@ function get_webmention_process_type() {
  * @uses apply_filters calls "webmention_post_id" on the post_ID
  */
 function webmention_url_to_postid( $url ) {
+	$id = wp_cache_get( base64_encode( $url ), 'webmention_url_to_postid' );
+
+	if ( false === $id ) {
+		return apply_filters( 'webmention_post_id', $id, $url );
+	}
+
 	if ( '/' === wp_make_link_relative( trailingslashit( $url ) ) ) {
 		return apply_filters( 'webmention_post_id', get_option( 'webmention_home_mentions' ), $url );
 	}
+
 	$id = url_to_postid( $url );
+
 	if ( ! $id && post_type_supports( 'attachment', 'webmentions' ) ) {
 		$ext = pathinfo( wp_parse_url( $url, PHP_URL_PATH ), PATHINFO_EXTENSION );
+
 		if ( ! empty( $ext ) ) {
 			$id = attachment_url_to_postid( $url );
 		}
 	}
+
+	wp_cache_set( base64_encode( $url ), $id, 'webmention_url_to_postid', 300 );
+
 	return apply_filters( 'webmention_post_id', $id, $url );
 }
 
