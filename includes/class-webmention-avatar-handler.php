@@ -76,13 +76,17 @@ class Webmention_Avatar_Handler {
 	 * @return boolean
 	 */
 	public static function check_gravatar( $comment ) {
-		$hash     = md5( strtolower( trim( $comment->comment_author_email ) ) );
-		$url      = 'https://www.gravatar.com/avatar/' . $hash . '?d=404';
-		$response = wp_remote_head( $url );
-		if ( is_wp_error( $response ) || 404 === wp_remote_retrieve_response_code( $response ) ) {
-			return false;
+		$hash  = md5( strtolower( trim( $comment->comment_author_email ) ) );
+		$found = get_transient( 'webmention_gravatar_' . $hash );
+		if ( false !== $found ) {
+			return $found;
+		} else {
+			$url      = 'https://www.gravatar.com/avatar/' . $hash . '?d=404';
+			$response = wp_remote_head( $url );
+			$found    = ( is_wp_error( $response ) || 404 === wp_remote_retrieve_response_code( $response ) ) ? 0 : 1;
+			set_transient( 'webmention_gravatar_' . $hash, $found, DAY_IN_SECONDS );
 		}
-		return true;
+		return $found;
 	}
 
 	/**
@@ -109,18 +113,10 @@ class Webmention_Avatar_Handler {
 		if ( ! strpos( $args['url'], 'gravatar.com' ) ) {
 			return $args;
 		}
-		$args['url'] = str_replace( 'd=' . $args['default'], 'd=' . self::get_default_avatar( $args['default'] ), $args['url'] );
-		if ( ! empty( $comment->comment_author_email ) ) {
-			if ( self::check_gravatar( $comment ) ) {
-				update_comment_meta( $comment->comment_ID, 'avatar', $args['url'] );
-			} else {
-				update_comment_meta( $comment->comment_ID, 'avatar', self::get_default_avatar() );
-				$args['url'] = self::get_default_avatar();
-			}
+		if ( ! empty( $comment->comment_author_email ) && self::check_gravatar( $comment ) ) {
 			return $args;
-		} else {
-			$args['url'] = self::get_default_avatar();
 		}
+		$args['url'] = self::get_default_avatar();
 		return $args;
 	}
 
