@@ -106,7 +106,7 @@ function get_webmention_process_type() {
 function webmention_url_to_postid( $url ) {
 	$id = wp_cache_get( base64_encode( $url ), 'webmention_url_to_postid' );
 
-	if ( false === $id ) {
+	if ( false !== $id ) {
 		return apply_filters( 'webmention_post_id', $id, $url );
 	}
 
