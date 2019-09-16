@@ -84,7 +84,7 @@ class Webmention_Avatar_Handler {
 			$url      = 'https://www.gravatar.com/avatar/' . $hash . '?d=404';
 			$response = wp_remote_head( $url );
 			$found    = ( is_wp_error( $response ) || 404 === wp_remote_retrieve_response_code( $response ) ) ? 0 : 1;
-			set_transient( 'webmention_gravatar_' . $hash, $found, DAY_IN_SECONDS );
+			set_transient( 'webmention_gravatar_' . $hash, $found, WEBMENTION_GRAVATAR_CACHE_TIME );
 		}
 		return $found;
 	}
