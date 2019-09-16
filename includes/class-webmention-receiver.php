@@ -404,6 +404,40 @@ class Webmention_Receiver {
 		return new WP_REST_Response( $return, 200 );
 	}
 
+	/* Inverse of wp_parse_url
+	 *
+	 * Slightly modified from p3k-utils (https://github.com/aaronpk/p3k-utils)
+	 * Copyright 2017 Aaron Parecki, used with permission under MIT License
+	 *
+	 * @link http://php.net/parse_url
+	 * @param  string $parsed_url the parsed URL (wp_parse_url)
+	 * @return string             the final URL
+	 */
+	public static function build_url( $parsed_url ) {
+		$scheme   = ! empty( $parsed_url['scheme'] ) ? $parsed_url['scheme'] . '://' : '';
+		$host     = ! empty( $parsed_url['host'] ) ? $parsed_url['host'] : '';
+		$port     = ! empty( $parsed_url['port'] ) ? ':' . $parsed_url['port'] : '';
+		$user     = ! empty( $parsed_url['user'] ) ? $parsed_url['user'] : '';
+		$pass     = ! empty( $parsed_url['pass'] ) ? ':' . $parsed_url['pass'] : '';
+		$pass     = ( $user || $pass ) ? "$pass@" : '';
+		$path     = ! empty( $parsed_url['path'] ) ? $parsed_url['path'] : '';
+		$query    = ! empty( $parsed_url['query'] ) ? '?' . $parsed_url['query'] : '';
+		$fragment = ! empty( $parsed_url['fragment'] ) ? '#' . $parsed_url['fragment'] : '';
+		return "$scheme$user$pass$host$port$path$query$fragment";
+	}
+
+	// Adds slash if no path is in the URL, and convert hostname to lowercase
+	public static function normalize_url( $url ) {
+		$parts = wp_parse_url( $url );
+		if ( empty( $parts['path'] ) ) {
+			$parts['path'] = '/';
+		}
+		if ( isset( $parts['host'] ) ) {
+			$parts['host'] = strtolower( $parts['host'] );
+			return self::build_url( $parts );
+		}
+	}
+
 	/**
 	 * Verify a webmention and either return an error if not verified or return the array with retrieved
 	 * data.
@@ -458,8 +492,9 @@ class Webmention_Receiver {
 
 		// A valid response code from the other server would not be considered an error.
 		$response_code = wp_remote_retrieve_response_code( $response );
+		$content_type  = wp_remote_retrieve_header( $response, 'content-type' );
 		// not an (x)html, sgml, or xml page, no use going further
-		if ( preg_match( '#(image|audio|video|model)/#is', wp_remote_retrieve_header( $response, 'content-type' ) ) ) {
+		if ( preg_match( '#(image|audio|video|model)/#is', $content_type ) ) {
 			return new WP_Error(
 				'unsupported_content_type',
 				esc_html__( 'Content Type is not supported', 'webmention' ),
@@ -512,29 +547,64 @@ class Webmention_Receiver {
 				);
 		}
 		$remote_source_original = wp_remote_retrieve_body( $response );
-
-		// check if source really links to target
-		if ( ! strpos(
-			htmlspecialchars_decode( $remote_source_original ),
-			str_replace(
-				array(
-					'http://www.',
-					'http://',
-					'https://www.',
-					'https://',
-				),
-				'',
-				untrailingslashit( preg_replace( '/#.*/', '', $data['target'] ) )
-			)
-		) ) {
-			return new WP_Error(
-				'target_not_found',
-				esc_html__( 'Cannot find target link', 'webmention' ),
-				array(
-					'status' => 400,
-					'data'   => $data,
+		$domdocument            = null;
+		// Verify HTML documents using DOMDocument
+		if ( false === strpos( $content_type, 'text/html' ) ) {
+			$domdocument = webmention_load_domdocument( $remote_source_original );
+			$xpath       = new DOMXPath( $domdocument );
+			$found       = false;
+			foreach ( $xpath->query( '//a[@href]' ) as $href ) {
+				if ( self::normalize_url( $href->getAttribute( 'href' ) ) === $data['target'] ) {
+					$found = true;
+				}
+			}
+			if ( ! $found ) {
+				foreach ( $xpath->query( '//img|video|audio[@src]' ) as $src ) {
+					if ( self::normalize_url( $src->getAttribute( 'src' ) ) === $data['target'] ) {
+						$found = true;
+					}
+				}
+			}
+			if ( ! $found ) {
+				foreach ( $xpath->query( '//blockquote|del|ins|q[@cite]' ) as $cite ) {
+					if ( self::normalize_url( $cite->getAttribute( 'cite' ) ) === $data['target'] ) {
+						$found = true;
+					}
+				}
+			} else {
+				return new WP_Error(
+					'target_not_found',
+					esc_html__( 'Cannot find target link', 'webmention' ),
+					array(
+						'status' => 400,
+						'data'   => $data,
+					)
+				);
+			}
+		} else {
+			// use a straight text search
+			if ( ! strpos(
+				htmlspecialchars_decode( $remote_source_original ),
+				str_replace(
+					array(
+						'http://www.',
+						'http://',
+						'https://www.',
+						'https://',
+					),
+					'',
+					untrailingslashit( preg_replace( '/#.*/', '', $data['target'] ) )
 				)
-			);
+			) ) {
+				return new WP_Error(
+					'target_not_found',
+					esc_html__( 'Cannot find target link', 'webmention' ),
+					array(
+						'status' => 400,
+						'data'   => $data,
+					)
+				);
+			}
 		}
 
 		if ( ! function_exists( 'wp_kses_post' ) ) {
@@ -544,7 +614,10 @@ class Webmention_Receiver {
 		$remote_source = wp_kses_post( $remote_source_original );
 		$content_type  = wp_remote_retrieve_header( $response, 'Content-Type' );
 		$commentdata   = compact( 'remote_source', 'remote_source_original', 'content_type' );
-
+		// Pass domdocument back for use with php-mf2
+		if ( ! is_null( $domdocument ) ) {
+			$commentdata['domdocument'] = $domdocument;
+		}
 		return array_merge( $commentdata, $data );
 	}
 
