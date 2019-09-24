@@ -278,7 +278,7 @@ class Webmention_Receiver {
 		$comment_date                          = current_time( 'mysql' );
 		$comment_date_gmt                      = current_time( 'mysql', 1 );
 		$comment_meta['webmention_created_at'] = $comment_date_gmt;
-		$protocol                              = 'webmention';
+		$comment_meta['protocol']              = 'webmention';
 
 		if ( isset( $params['vouch'] ) ) {
 			// If there is a vouch pass it along
@@ -293,7 +293,7 @@ class Webmention_Receiver {
 		// change this if you want to auto approve your Webmentions
 		$comment_approved = WEBMENTION_COMMENT_APPROVE;
 
-		$commentdata = compact( 'protocol', 'comment_type', 'comment_approved', 'comment_agent', 'comment_date', 'comment_date_gmt', 'comment_meta', 'source', 'target', 'vouch' );
+		$commentdata = compact( 'comment_type', 'comment_approved', 'comment_agent', 'comment_date', 'comment_date_gmt', 'comment_meta', 'source', 'target', 'vouch' );
 
 		$commentdata['comment_post_ID']   = $comment_post_id;
 		$commentdata['comment_author_IP'] = $comment_author_ip;
