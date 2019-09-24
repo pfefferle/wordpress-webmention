@@ -55,6 +55,14 @@ class Webmention_Receiver {
 	public static function register_meta() {
 		$args = array(
 			'type'         => 'string',
+			'description'  => esc_html__( 'Protocol Used to Receive', 'webmention' ),
+			'single'       => true,
+			'show_in_rest' => true,
+		);
+		register_meta( 'comment', 'protocol', $args );
+
+		$args = array(
+			'type'         => 'string',
 			'description'  => esc_html__( 'Target URL for the Webmention', 'webmention' ),
 			'single'       => true,
 			'show_in_rest' => true,
@@ -270,6 +278,7 @@ class Webmention_Receiver {
 		$comment_date                          = current_time( 'mysql' );
 		$comment_date_gmt                      = current_time( 'mysql', 1 );
 		$comment_meta['webmention_created_at'] = $comment_date_gmt;
+		$comment_meta['protocol']              = 'webmention';
 
 		if ( isset( $params['vouch'] ) ) {
 			// If there is a vouch pass it along
