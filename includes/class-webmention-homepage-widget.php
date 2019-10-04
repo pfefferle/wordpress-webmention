@@ -10,7 +10,7 @@ class Homepage_Webmentions extends WP_Widget {
 			'Webmention_Homepage_Webmentions_Widget',
 			esc_html__( 'Homepage Webmentions Widget', 'webmention' ),
 			[
-				'classname'   => 'kind_post_widget',
+				'classname'   => 'webmention_homepage_webmentions_widget',
 				'description' => esc_html__( 'A widget that allows you to display your homepage webmentions.', 'webmention' ),
 			]
 		);
