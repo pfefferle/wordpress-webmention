@@ -90,7 +90,7 @@ function webmention_init() {
 	add_shortcode( 'homepage_webmentions', 'webmention_home_webmentions_shortcode' );
 
 	// Register widgets.
-	require_once dirname( __FILE__ ) . '/includes/class-webmention-homepage-widget.php';
+	require_once dirname( __FILE__ ) . '/includes/class-webmention-homepage-webmentions-widget.php';
 	add_action( 'widgets_init', 'webmention_home_webmentions_widget' );
 }
 add_action( 'plugins_loaded', 'webmention_init' );
