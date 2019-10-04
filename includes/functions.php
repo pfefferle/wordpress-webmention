@@ -401,5 +401,5 @@ function webmention_home_webmentions_shortcode( $atts, $content = null ) {
  * @since NEXT
  */
 function webmention_home_webmentions_widget() {
-	register_widget( 'Homepage_Webmentions' );
+	register_widget( 'Homepage_Webmentions_Widget' );
 }

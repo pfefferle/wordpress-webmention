@@ -1,6 +1,6 @@
 <?php
 
-class Homepage_Webmentions extends WP_Widget {
+class Homepage_Webmentions_Widget extends WP_Widget {
 
 	/**
 	 * Register widget with WordPress.
