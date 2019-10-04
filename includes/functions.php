@@ -357,3 +357,19 @@ function webmention_extract_urls( $content, $support_media_urls = false ) {
 
 	return array_filter( $urls );
 }
+
+function webmention_get_home_webmentions() {
+	$homepage = get_option( 'webmention_home_mentions', 0 );
+
+	$args = array(
+		'post_id' => $homepage,
+		'status'  => 'approve',
+		'type'    => 'webmention',
+	);
+	$home_mentions = get_comments( $args );
+
+	if ( ! empty( $home_mentions ) ) {
+		$default_template = plugin_dir_path( __FILE__ ) . '../templates/webmention-home-mentions.php';
+		require_once apply_filters( 'webmention_get_home_webmentions', $default_template );
+	}
+}
