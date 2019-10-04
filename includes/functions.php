@@ -366,11 +366,15 @@ function webmention_extract_urls( $content, $support_media_urls = false ) {
 function webmention_get_home_webmentions() {
 	$homepage = get_option( 'webmention_home_mentions', 0 );
 
-	$args = array(
+	if ( empty( $homepage ) ) {
+		return '';
+	}
+
+	$args = [
 		'post_id' => $homepage,
 		'status'  => 'approve',
 		'type'    => 'webmention',
-	);
+	];
 	$home_mentions = get_comments( $args );
 
 	if ( ! empty( $home_mentions ) ) {
