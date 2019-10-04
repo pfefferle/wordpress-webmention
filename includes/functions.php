@@ -358,6 +358,11 @@ function webmention_extract_urls( $content, $support_media_urls = false ) {
 	return array_filter( $urls );
 }
 
+/**
+ * Retrieve and display webmentions sent to the desingated homepage.
+ *
+ * @since NEXT
+ */
 function webmention_get_home_webmentions() {
 	$homepage = get_option( 'webmention_home_mentions', 0 );
 
@@ -372,4 +377,25 @@ function webmention_get_home_webmentions() {
 		$default_template = plugin_dir_path( __FILE__ ) . '../templates/webmention-home-mentions.php';
 		require_once apply_filters( 'webmention_get_home_webmentions', $default_template );
 	}
+}
+
+/**
+ * Shortcode callback to retrieve and display webmentions sent to the desingated homepage.
+ *
+ * @since NEXT
+ *
+ * @param array $atts    Array of passed shortcode attributes. Not used.
+ * @param mixed $content Content passed through open/closed shortcode tags. Not used.
+ */
+function webmention_home_webmentions_shortcode( $atts, $content = null ) {
+	return webmention_get_home_webmentions();
+}
+
+/**
+ * Register widget to retrieve and display webmentions sent to the desingated homepage.
+ *
+ * @since NEXT
+ */
+function webmention_home_webmentions_widget() {
+	register_widget( 'Homepage_Webmentions' );
 }
