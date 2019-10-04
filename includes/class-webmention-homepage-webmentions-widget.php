@@ -31,7 +31,7 @@ class Homepage_Webmentions_Widget extends WP_Widget {
 			echo $args['before_title'] . apply_filters( 'widget_title', $instance['title'] ) . $args['after_title']; // phpcs:ignore
 		}
 
-		webmention_get_home_webmentions();
+		echo webmention_get_home_webmentions();
 
 		// phpcs:ignore
 		if ( isset( $args['after_widget'] ) ) {
