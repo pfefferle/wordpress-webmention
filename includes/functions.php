@@ -367,7 +367,7 @@ function webmention_get_home_webmentions() {
 	$homepage = get_option( 'webmention_home_mentions', 0 );
 
 	if ( empty( $homepage ) ) {
-		return '';
+		return esc_html__( 'No webmentions to display.', 'webmention' );
 	}
 
 	$args = [
@@ -379,7 +379,9 @@ function webmention_get_home_webmentions() {
 
 	if ( ! empty( $home_mentions ) ) {
 		$default_template = plugin_dir_path( __FILE__ ) . '../templates/webmention-home-mentions.php';
-		require_once apply_filters( 'webmention_get_home_webmentions', $default_template );
+		ob_start();
+		require apply_filters( 'webmention_get_home_webmentions', $default_template );
+		return ob_get_clean();
 	}
 }
 
