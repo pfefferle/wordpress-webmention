@@ -32,17 +32,16 @@ class Webmention_Sender {
 	/**
 	 * Marks the post as "no webmentions sent yet"
 	 *
-	 * @param int $post_id
+	 * @param int $post_id Post ID.
 	 */
 	public static function publish_hook( $post_id ) {
 		add_post_meta( $post_id, '_mentionme', '1', true );
 	}
 
 	/**
-	 * send webmentions on new comments
+	 * Send webmentions on new comments.
 	 *
-	 * @param int $id the post id
-	 * @param obj $comment the comment object
+	 * @param int $id the post id.
 	 */
 	public static function comment_post( $id ) {
 		$comment = get_comment( $id );
@@ -63,22 +62,22 @@ class Webmention_Sender {
 	}
 
 	/**
-	 * Send Webmention delete
+	 * Send Webmention delete.
 	 *
-	 * @param int $post_id
+	 * @param int $post_id Trashed post ID.
 	 */
 	public static function trash_hook( $post_id ) {
 		wp_schedule_single_event( time() + wp_rand( 0, 120 ), 'webmention_delete', array( $post_id ) );
 	}
 
 	/**
-	 * Send Webmentions
+	 * Send Webmentions.
 	 *
-	 * @param string $source source url
-	 * @param string $target target url
-	 * @param int $post_id the post_ID (optional)
+	 * @param string $source source url.
+	 * @param string $target target url.
+	 * @param int    $post_id the post_ID (optional).
 	 *
-	 * @return array of results including HTTP headers
+	 * @return array of results including HTTP headers.
 	 */
 	public static function send_webmention( $source, $target, $post_id = null ) {
 		// stop selfpings on the same URL
@@ -140,7 +139,7 @@ class Webmention_Sender {
 	 *   add_action('publish_post', array('Webmention_Sender', 'send_webmentions'));
 	 * </code>
 	 *
-	 * @param int $post_id the post_ID
+	 * @param int $post_id the post_ID.
 	 */
 	public static function send_webmentions( $post_id ) {
 		// get source url
@@ -191,7 +190,7 @@ class Webmention_Sender {
 	/**
 	 * Reschedule Webmentions on HTTP code 500
 	 *
-	 * @param int $post_id the post id
+	 * @param int $post_id the post id.
 	 */
 	public static function reschedule( $post_id ) {
 		$tries = get_post_meta( $post_id, '_mentionme_tries', true );
