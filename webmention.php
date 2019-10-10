@@ -16,6 +16,7 @@
 defined( 'WEBMENTION_ALWAYS_SHOW_HEADERS' ) || define( 'WEBMENTION_ALWAYS_SHOW_HEADERS', 0 );
 defined( 'WEBMENTION_COMMENT_APPROVE' ) || define( 'WEBMENTION_COMMENT_APPROVE', 0 );
 defined( 'WEBMENTION_COMMENT_TYPE' ) || define( 'WEBMENTION_COMMENT_TYPE', 'webmention' );
+defined( 'WEBMENTION_GRAVATAR_CACHE_TIME' ) || define( 'WEBMENTION_GRAVATAR_CACHE_TIME', WEEK_IN_SECONDS );
 
 define( 'WEBMENTION_PROCESS_TYPE_ASYNC', 'async' );
 define( 'WEBMENTION_PROCESS_TYPE_SYNC', 'sync' );
@@ -45,6 +46,10 @@ function webmention_init() {
 
 	// list of various public helper functions
 	require_once dirname( __FILE__ ) . '/includes/functions.php';
+
+	// load local avatar support
+	require_once dirname( __FILE__ ) . '/includes/class-webmention-avatar-handler.php';
+	add_action( 'init', array( 'Webmention_Avatar_Handler', 'init' ) );
 
 	// load HTTP 410 support
 	require_once dirname( __FILE__ ) . '/includes/class-webmention-410.php';
