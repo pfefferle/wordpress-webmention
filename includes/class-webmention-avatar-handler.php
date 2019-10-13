@@ -194,4 +194,33 @@ class Webmention_Avatar_Handler {
 
 		return $args;
 	}
+
+	/**
+	 * Store Avatars locally
+	 *
+	 * @param string $avatar_url the URL to the external avatar
+	 * @param string $user_name  the username
+	 *
+	 * @return string|WP_error
+	 */
+	public static function cache_avatar( $avatar_url, $user_name ) {
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		require_once ABSPATH . WPINC . '/media.php';
+
+		// Download Profile Picture and add as attachment
+		$filename = sanitize_user( $user_name );
+		$host     = wp_parse_url( $avatar_url, PHP_URL_HOST );
+		$filepath = WP_CONTENT_DIR . '/uploads/webmention/avatars/' . $host . '/' . $filename . '.jpg';
+
+		$tmpfile = wp_get_image_editor( download_url( $avatar_url, $timeout = 300 ) );
+
+		if ( is_wp_error( $tmpfile ) ) {
+			return $tmpfile;
+		}
+
+		$tmpfile->resize( 150, 150, true );
+		$tmpfile->save( $filepath, 'image/jpg' );
+
+		return $filepath;
+	}
 }
