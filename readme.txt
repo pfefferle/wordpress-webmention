@@ -12,7 +12,6 @@ License URI: https://opensource.org/licenses/MIT
 Enable conversation across the web. When you link to a website you can send it a webmention to notify it and then that website
 may display your post as a comment, like, or other response, and presto, you’re having a conversation from one site to another!
 
-
 == Description ==
 
 A [Webmention](https://www.w3.org/TR/webmention/) is a notification that one URL links to another. Sending a Webmention is not limited to blog posts, and can be used for additional kinds of content and responses as well.
@@ -35,31 +34,27 @@ Webmention is an update/replacement for Pingback or Trackback. Unlike the older 
 
 On the Settings --> Discussion Page in WordPress:
 
-* On the Webmention Settings page, decide which post types you want to enable webmentions to. By default, posts and pages.
+* On the Webmention Settings page, decide which post types you want to enable webmentions for. By default, posts and pages.
 * Set a page to redirect homepage mentions to. This will automatically enable webmentions for that page.
-* WordPress disables notification to pages by default. Check the Enable Webmentions for Pages option to enable this.
 * If you want to enable a webmention form in the comment section, check the box.
 
 You can use the `send_webmention($source, $target)` function and pass a source and a target or you can fire an action like `do_action('send_webmention', $source, $target)`.
 
-[vimeo https://vimeo.com/85217592]
--- Video by [Andy Sylvester](http://andysylvester.com/2014/01/27/working-with-webmention-video/)
-
 = How do I support Webmentions for my custom post type? =
 
-When declaring your custom post type, add post type support for webmentions by either including it in your register_post_type entry. This will also add support for receiving pingbacks and trackbacks as WordPress cannot currently distinguish between different linkback types. This can also be added in the webmention settings.
+When declaring your custom post type, add post type support for webmentions by either including it in your `register_post_type` entry. This can also be added in the webmention settings.
 
 = How do I send/receive webmentions for attachments? =
 
-You can enable receiving webmentions for attachments in webmention settings. You can enable sending webmentions for media links in the settings.
-Please note that most receivers of webmentions do not support image, audio, and video files. In order to support receiving them on WordPress, webmention endpoint headers would have to be added at the webserver level.
+You can enable receiving webmentions for attachments in webmention settings. You can enable sending webmentions for media links in the settings. Please note that most receivers of webmentions do not support receiving them to image, audio, and video files. In order to support receiving them on WordPress, webmention endpoint headers would have to be added at the webserver level.
 
 = How can I handle Webmentions to my Homepage or Archive Pages? =
 
-Webmentions should be allowed on all URLs of a blog, however WordPress does not support this. The plugin currently supports only
-Webmentions on posts by default, but has a setting to enable for pages and allows you to set a page to receive homepage mentions.
+Webmentions should be allowed on all URLs of a blog, however WordPress does not support this as only posts can have comments attached to them. The plugin currently handles only Webmentions on posts and allows you to set a page to receive homepage mentions.
 
-It is very simple to add support for archives and other parts of your site that do not support them. You can provide a post/page to show collect mentions. The plugin provides a simple filter for that:
+Even though it is not done automatically, it is very simple to add support for archives and URLs on your site by providing a post/page to show collect mentions. The plugin provides a simple filter for that.
+
+In the below example, if there is no page returned it will send mentions to a catch-all post. You can also have unique posts per URL.
 
     function handle_other_webmentions($id, $target) {
       // do nothing if id is set
@@ -78,6 +73,20 @@ The URL for the webmention endpoint, which you can view in the source of your pa
 
 As Webmention uses the REST API endpoint system, most up to date caching plugins should exclude it by default.
 
+= Why does this plugin have settings about avatars? =
+
+Webmentions have the ability to act as rich comments. This includes showing avatars. If there is an avatar discovered, the URL for it will be stored in comment meta. This can either be reflect something from the media library or a URL of a file.
+
+Since webmentions do not usually have email addresses, Gravatar, built into WordPress, is not necessary. WordPress returns even the anonymous avatars from Gravatar. Therefore, if there is no email the plugin will simply return a local copy of the Mystery Man default avatar. If there is an email address, the plugin will cache whether a Gravatar exists and serve the local file if it does not. It defaults to a week, but you can change it to a day, or any number by adding below to your wp-config.php file.
+
+    define( 'WEBMENTION_GRAVATAR_CACHE_TIME', DAY_IN_SECONDS );
+
+= There are no webmention headers on some pages of my site =
+
+Webmention headers are only shown if webmentions are available for that particular URL. If you want to show it regardless, you can add below to your wp-config.php file.
+
+    define( 'WEBMENTION_ALWAYS_SHOW_HEADERS', 1 );
+
 == Changelog ==
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
@@ -87,6 +96,14 @@ Project and support maintained on github at [pfefferle/wordpress-webmention](htt
 * Add settings for enabling webmention support by public post type
 * Add setting for disabling sending media links...URLs attached to image, video, or audio tags
 * Switch from sending webmentions to all URLs in post content to only ones with proper HTML markup
+* Support handling avatars if stored in meta
+* Support serving a local anonymous avatar if no email and cache whether there is a gravatar for a definable period of time
+* Store a webmention protocol property in comment meta
+* Do not show webmention headers if URL does not support webmentions
+* Update webmention meta template to use separate file which is shown on the edit comment screen
+* Minimum PHP version bumped to 5.4. WordPress currently has a minimum of 5.6 but we support back to version 4.9
+* For compatibility reasons, load a version of `is_avatar_comment_type` (introduced 5.1) and `get_self_link` (introduced 5.3) for use in this plugin
+* Improve all settings and template forms ( props @tw2113 )
 
 = 3.8.11 =
 
