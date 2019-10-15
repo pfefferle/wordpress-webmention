@@ -16,6 +16,9 @@ class Webmention_Avatar_Handler {
 
 		// All the default gravatars come from Gravatar instead of being generated locally so add a local default
 		add_filter( 'avatar_defaults', array( $cls, 'anonymous_avatar' ) );
+
+		add_action( 'comment_post', array( $cls, 'cache_avatar' ) );
+		add_action( 'edit_comment', array( $cls, 'cache_avatar' ) );
 	}
 
 	public static function anonymous_avatar( $avatar_defaults ) {
@@ -198,29 +201,52 @@ class Webmention_Avatar_Handler {
 	/**
 	 * Store Avatars locally
 	 *
-	 * @param string $avatar_url the URL to the external avatar
-	 * @param string $user_name  the username
+	 * @param int $comment_ID
 	 *
 	 * @return string|WP_error
 	 */
-	public static function cache_avatar( $avatar_url, $user_name ) {
+	public static function cache_avatar( $comment_id ) {
+		$comment = get_comment( $comment_id );
+
+		if ( ! $comment ) {
+			return false;
+		}
+
+		$avatar = get_comment_meta( $comment->comment_ID, 'avatar', true );
+
+		// Backward Compatibility for Semantic Linkbacks
+		if ( ! $avatar ) {
+			$avatar = get_comment_meta( $comment->comment_ID, 'semantic_linkbacks_avatar', true );
+		}
+
+		if ( ! $avatar ) {
+			return false;
+		}
+
+		if ( wp_parse_url( $avatar, PHP_URL_HOST ) === wp_parse_url( home_url(), PHP_URL_HOST ) ) {
+			return false;
+		}
+
 		require_once ABSPATH . 'wp-admin/includes/file.php';
 		require_once ABSPATH . WPINC . '/media.php';
 
-		// Download Profile Picture and add as attachment
-		$filename = sanitize_user( $user_name );
-		$host     = wp_parse_url( $avatar_url, PHP_URL_HOST );
-		$filepath = WP_CONTENT_DIR . '/uploads/webmention/avatars/' . $host . '/' . $filename . '.jpg';
+		$user_name = sanitize_title( $comment->comment_author );
+		$url       = $comment->comment_author_url ? $comment->comment_author_url : $avatar;
+		$host      = wp_parse_url( $url, PHP_URL_HOST );
+		$filepath  = WP_CONTENT_DIR . '/uploads/webmention/avatars/' . $host . '/' . $user_name . '.jpg';
 
-		$tmpfile = wp_get_image_editor( download_url( $avatar_url, $timeout = 300 ) );
+		// Download Profile Picture and add as attachment
+		$tmpfile = wp_get_image_editor( download_url( $avatar, $timeout = 300 ) );
 
 		if ( is_wp_error( $tmpfile ) ) {
 			return $tmpfile;
 		}
 
-		$tmpfile->resize( 150, 150, true );
+		$tmpfile->resize( null, WEBMENTION_AVATAR_SIZE, true );
+		$tmpfile->set_quality( WEBMENTION_AVATAR_QUALITY );
 		$tmpfile->save( $filepath, 'image/jpg' );
 
-		return $filepath;
+		delete_comment_meta( $comment->comment_ID, 'semantic_linkbacks_avatar' );
+		update_comment_meta( $comment->comment_ID, 'avatar', content_url( '/uploads/webmention/avatars/' . $host . '/' . $user_name . '.jpg' ) );
 	}
 }

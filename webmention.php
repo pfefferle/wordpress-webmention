@@ -28,7 +28,11 @@ defined( 'WEBMENTION_VOUCH' ) || define( 'WEBMENTION_VOUCH', false );
 // Mentions with content less than this length will be rendered in full.
 defined( 'MAX_INLINE_MENTION_LENGTH' ) || define( 'MAX_INLINE_MENTION_LENGTH', 300 );
 
-// initialize admin settings.
+// Webmention Constants.
+defined( 'WEBMENTION_AVATAR_SIZE' ) || define( 'WEBMENTION_AVATAR_SIZE', 200 );
+defined( 'WEBMENTION_AVATAR_QUALITY' ) || define( 'WEBMENTION_AVATAR_QUALITY', 100 );
+
+// initialize admin settings
 require_once dirname( __FILE__ ) . '/includes/class-webmention-admin.php';
 add_action( 'admin_init', array( 'Webmention_Admin', 'admin_init' ) );
 add_action( 'admin_menu', array( 'Webmention_Admin', 'admin_menu' ) );
