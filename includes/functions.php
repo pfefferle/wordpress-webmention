@@ -357,3 +357,40 @@ function webmention_extract_urls( $content, $support_media_urls = false ) {
 
 	return array_filter( $urls );
 }
+
+
+/*
+ * Returns a string indicating the comment type
+ * @param int|WP_Comment $comment
+ * @return string
+*/
+function get_webmention_comment_string( $comment ) {
+	$comment = get_comment( $comment );
+	if ( ! $comment ) {
+		return false;
+	}
+	$type = get_comment_type( $comment );
+	switch ( $type ) {
+		case 'comment':
+			$name = _x( 'Comment', 'noun', 'default' );
+			break;
+		case 'pingback':
+			$name = __( 'Pingback', 'default' );
+			break;
+		case 'trackback':
+			$name = __( 'Trackback', 'default' );
+			break;
+		case 'webmention':
+			$name = __( 'Webmention', 'webmention' );
+			break;
+		default:
+			$name = __( 'Response', 'webmention' );
+	}
+	/**
+	 * Filters the returned comment type string.
+	 *
+	 * @param string     $name The name of the comment type
+	 * @param string     $type      The comment type.
+	 */
+	return apply_filters( 'webmention_comment_string', $name, $type );
+}
