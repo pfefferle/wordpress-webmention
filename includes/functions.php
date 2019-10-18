@@ -360,6 +360,21 @@ function webmention_extract_urls( $content, $support_media_urls = false ) {
 
 
 /*
+ * Returns whether this is a webmention comment type
+ * @param int|WP_Comment $comment
+ * @return array
+*/
+function is_webmention_comment_type( $comment ) {
+	$comment = get_comment( $comment );
+	if ( ! $comment ) {
+		return false;
+	}
+	$types = array( apply_filters( 'webmention_comment_type', WEBMENTION_COMMENT_TYPE ) );
+	return in_array( $comment->comment_type, $types );
+
+}
+
+/*
  * Returns a string indicating the comment type
  * @param int|WP_Comment $comment
  * @return string
