@@ -3,7 +3,7 @@ Contributors: pfefferle, dshanske
 Donate link: https://notiz.blog/donate/
 Tags: webmention, pingback, trackback, linkback, indieweb, comment, response
 Requires at least: 4.9
-Tested up to: 5.2.2
+Tested up to: 5.3
 Stable tag: 4.0.0
 Requires PHP: 5.4
 License: MIT
