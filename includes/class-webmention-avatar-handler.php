@@ -44,14 +44,7 @@ class Webmention_Avatar_Handler {
 			return false;
 		}
 
-		$avatar = get_comment_meta( $comment->comment_ID, 'avatar', true );
-
-		// Backward Compatibility for Semantic Linkbacks
-		if ( ! $avatar ) {
-			$avatar = get_comment_meta( $comment->comment_ID, 'semantic_linkbacks_avatar', true );
-		}
-
-		return $avatar;
+		return webmention_get_avatar_url( $comment );
 	}
 
 
@@ -212,12 +205,7 @@ class Webmention_Avatar_Handler {
 			return false;
 		}
 
-		$avatar = get_comment_meta( $comment->comment_ID, 'avatar', true );
-
-		// Backward Compatibility for Semantic Linkbacks
-		if ( ! $avatar ) {
-			$avatar = get_comment_meta( $comment->comment_ID, 'semantic_linkbacks_avatar', true );
-		}
+		$avatar = webmention_get_avatar_url( $comment );
 
 		if ( ! $avatar ) {
 			return false;
@@ -230,23 +218,24 @@ class Webmention_Avatar_Handler {
 		require_once ABSPATH . 'wp-admin/includes/file.php';
 		require_once ABSPATH . WPINC . '/media.php';
 
-		$user_name = sanitize_title( $comment->comment_author );
-		$url       = $comment->comment_author_url ? $comment->comment_author_url : $avatar;
-		$host      = wp_parse_url( $url, PHP_URL_HOST );
-		$filepath  = WP_CONTENT_DIR . '/uploads/webmention/avatars/' . $host . '/' . $user_name . '.jpg';
+		$user_name  = sanitize_title( $comment->comment_author );
+		$url        = webmention_get_user_domain( $comment );
+		$host       = wp_parse_url( $url, PHP_URL_HOST );
+		$filehandle = '/uploads/webmention/avatars/' . $host . '/' . $user_name . '.jpg';
+		$filepath   = WP_CONTENT_DIR . $filehandle;
 
 		// Download Profile Picture and add as attachment
-		$tmpfile = wp_get_image_editor( download_url( $avatar, $timeout = 300 ) );
+		$file = wp_get_image_editor( download_url( $avatar, 300 ) );
 
-		if ( is_wp_error( $tmpfile ) ) {
-			return $tmpfile;
+		if ( is_wp_error( $file ) ) {
+			$file = wp_get_image_editor( download_url( plugin_dir_url( dirname( __FILE__ ) ) . 'img/mm.jpg', 300 ) );
 		}
 
-		$tmpfile->resize( null, WEBMENTION_AVATAR_SIZE, true );
-		$tmpfile->set_quality( WEBMENTION_AVATAR_QUALITY );
-		$tmpfile->save( $filepath, 'image/jpg' );
+		$file->resize( null, WEBMENTION_AVATAR_SIZE, true );
+		$file->set_quality( WEBMENTION_AVATAR_QUALITY );
+		$file->save( $filepath, 'image/jpg' );
 
 		delete_comment_meta( $comment->comment_ID, 'semantic_linkbacks_avatar' );
-		update_comment_meta( $comment->comment_ID, 'avatar', content_url( '/uploads/webmention/avatars/' . $host . '/' . $user_name . '.jpg' ) );
+		update_comment_meta( $comment->comment_ID, 'avatar', content_url( $filehandle ) );
 	}
 }

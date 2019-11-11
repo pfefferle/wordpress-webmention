@@ -176,8 +176,71 @@ function webmention_url_to_postid( $url ) {
  */
 function webmention_extract_domain( $url ) {
 	$host = wp_parse_url( $url, PHP_URL_HOST );
-	// strip leading www, if any.
+
+	// strip leading www, if any
 	return preg_replace( '/^www\./', '', $host );
+}
+
+/**
+ * Returns the Host/Domain of the source-plattform
+ *
+ * @param mixed $comment
+ *
+ * @return string
+ */
+function webmention_get_user_domain( $comment ) {
+	if ( is_numeric( $comment ) ) {
+		$comment = get_comment( $comment );
+	}
+
+	// get canonical url...
+	$url = get_comment_meta( $comment->comment_ID, 'semantic_linkbacks_canonical', true );
+
+	if ( ! $url ) {
+		$url = webmention_get_avatar_url( $comment );
+	}
+
+	// ...or fall back to source
+	if ( ! $url ) {
+		$url = get_comment_meta( $comment->comment_ID, 'semantic_linkbacks_source', true );
+	}
+
+	// ...or author url
+	if ( ! $url ) {
+		$url = $comment->comment_author_url;
+	}
+
+	if ( ! $url ) {
+		return null;
+	}
+
+	return webmention_extract_domain( $url );
+}
+
+/**
+ * Returns the Avatar URL
+ *
+ * @param mixed $comment
+ *
+ * @return string
+ */
+function webmention_get_avatar_url( $comment ) {
+	if ( is_numeric( $comment ) ) {
+		$comment = get_comment( $comment );
+	}
+
+	$avatar = get_comment_meta( $comment->comment_ID, 'avatar', true );
+
+	// Backward Compatibility for Semantic Linkbacks
+	if ( ! $avatar ) {
+		$avatar = get_comment_meta( $comment->comment_ID, 'semantic_linkbacks_avatar', true );
+	}
+
+	if ( ! $avatar ) {
+		return false;
+	}
+
+	return $avatar;
 }
 
 /**
