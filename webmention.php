@@ -77,6 +77,7 @@ function webmention_init() {
 	webmention_plugin_textdomain();
 
 	add_action( 'comment_form_after', 'webmention_comment_form', 11 );
+	add_action( 'comment_form_comments_closed', 'webmention_comment_form' );
 
 	add_filter( 'nodeinfo_data', 'webmention_nodeinfo', 10, 2 );
 	add_filter( 'nodeinfo2_data', 'webmention_nodeinfo2', 10 );
