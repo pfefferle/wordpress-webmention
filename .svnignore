@@ -5,6 +5,9 @@
 .travis.yml
 .codeclimate.yml
 .data
+.github
+.wordpress-org
+.svnignore
 Gruntfile.js
 LINGUAS
 Makefile
