@@ -91,6 +91,11 @@ Webmention headers are only shown if webmentions are available for that particul
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
 
+= 4.0.1 =
+
+* show webmention form only if `pings_open`
+* show webmention form also if comments are disabled
+
 = 4.0.0 =
 
 * Add settings for enabling webmention support by public post type
