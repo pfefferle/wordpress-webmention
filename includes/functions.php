@@ -370,7 +370,7 @@ function webmention_get_home_webmentions() {
 		return esc_html__( 'No webmentions to display.', 'webmention' );
 	}
 
-	$args = [
+	$args          = [
 		'post_id' => $homepage,
 		'status'  => 'approve',
 		'type'    => 'webmention',
@@ -392,6 +392,7 @@ function webmention_get_home_webmentions() {
  *
  * @param array $atts    Array of passed shortcode attributes. Not used.
  * @param mixed $content Content passed through open/closed shortcode tags. Not used.
+ * @return mixed
  */
 function webmention_home_webmentions_shortcode( $atts, $content = null ) {
 	return webmention_get_home_webmentions();
