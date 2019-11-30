@@ -222,8 +222,7 @@ function webmention_discover_endpoint( $url ) {
 
 	libxml_use_internal_errors( true );
 
-	$doc = new DOMDocument();
-	$doc->loadHTML( $contents );
+	$doc = webmention_load_domdocument( $contents );
 
 	$xpath = new DOMXPath( $doc );
 
