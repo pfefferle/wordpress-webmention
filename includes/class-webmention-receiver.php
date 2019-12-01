@@ -279,6 +279,7 @@ class Webmention_Receiver {
 		$comment_date_gmt                      = current_time( 'mysql', 1 );
 		$comment_meta['webmention_created_at'] = $comment_date_gmt;
 		$comment_meta['protocol']              = 'webmention';
+		$vouch                                 = '';
 
 		if ( isset( $params['vouch'] ) ) {
 			// If there is a vouch pass it along
@@ -615,7 +616,7 @@ class Webmention_Receiver {
 			return $check;
 		}
 
-		$check = self::check_content_type( wp_remote_retieve_header( $response, 'content-type' ) );
+		$check = self::check_content_type( wp_remote_retrieve_header( $response, 'content-type' ) );
 		if ( is_wp_error( $check ) ) {
 			return $check;
 		}
@@ -680,13 +681,13 @@ class Webmention_Receiver {
 	}
 
 	/**
-	 * Check if response is a support content type
+	 * Check if response is a supportted content type
 	 *
 	 * @param  string $content_type The content type
 	 *
 	 * @return WP_Error|true return an error or that something is supported
 	 */
-	public static function supported_content_type( $content_type ) {
+	public static function check_content_type( $content_type ) {
 		// not an (x)html, sgml, or xml page, no use going further
 		if ( preg_match( '#(image|audio|video|model)/#is', $content_type ) ) {
 			return new WP_Error(
@@ -709,7 +710,7 @@ class Webmention_Receiver {
 	 *
 	 * @return WP_Error|array Either an error or the complete return object
 	 */
-	public function fetch( $safe = true ) {
+	public static function fetch( $safe = true ) {
 		$args = array(
 			'timeout'             => 100,
 			'limit_response_size' => 153600,
