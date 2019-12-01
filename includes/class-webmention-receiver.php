@@ -710,7 +710,7 @@ class Webmention_Receiver {
 	 *
 	 * @return WP_Error|array Either an error or the complete return object
 	 */
-	public static function fetch( $url,  $safe = true ) {
+	public static function fetch( $url, $safe = true ) {
 		$args = array(
 			'timeout'             => 100,
 			'limit_response_size' => 153600,
