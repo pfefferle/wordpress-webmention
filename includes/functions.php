@@ -304,6 +304,10 @@ endif;
 
 if ( ! function_exists( 'webmention_load_domdocument' ) ) :
 	function webmention_load_domdocument( $content ) {
+		$doc = apply_filters( 'webmention_load_domdocument', null, $content );
+		if ( $doc ) {
+			return $doc;
+		}
 		$doc = new DOMDocument();
 		libxml_use_internal_errors( true );
 		if ( function_exists( 'mb_convert_encoding' ) ) {
