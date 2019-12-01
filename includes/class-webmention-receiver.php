@@ -554,7 +554,64 @@ class Webmention_Receiver {
 		$content_type  = wp_remote_retrieve_header( $response, 'Content-Type' );
 		$commentdata   = compact( 'remote_source', 'remote_source_original', 'content_type' );
 
+		// If this is an mf2 object store
+		if ( 'application/mf2+json' === $content_type ) {
+			$commentdata['remote_source_mf2'] = json_decode( $remote_source_original );
+		}
+		// If this is a JF2 object convert to MF2 and store
+		if ( in_array( $content_type, array( 'application/jf2feed+json', 'application/jf2+json' ), true ) ) {
+			$commentdata['remote_source_mf2'] = self::jf2_to_mf2( json_decode( $remote_source_original ) );
+		}
+		if ( 'text/html' === $content_type ) {
+			// Pass the DOMDocument as it can be used to add additional properties should MF2 parsing not yield them
+			$commentdata['remote_source_domdocument'] = webmention_load_domdocument( $remote_source_original );
+			// Only try to load the MF2 Parser within this function
+			if ( ! class_exists( 'Mf2\Parser' ) ) {
+				require_once plugin_dir_path( __DIR__ ) . 'lib/mf2/Parser.php';
+			}
+			$parser                           = new Mf2\Parser( $commentdata['remote_source_domdocument'], $data['source'] );
+			$commentdata['remote_source_mf2'] = $parser->parse();
+		}
+
 		return array_merge( $commentdata, $data );
+	}
+
+
+	/**
+	 * Convert JF2 to MF2
+	 *
+	 * @param array $entry the JF2 array
+	 *
+	 * @return boolean|array Return either false indicating was not a JF2 array or the converted MF2 array
+	 */
+	public static function jf2_to_mf2( $entry ) {
+		if ( ! $entry || ! is_array( $entry ) | isset( $entry['properties'] ) ) {
+			return false;
+		}
+		$return               = array();
+		$return['type']       = array( 'h-' . $entry['type'] );
+		$return['properties'] = array();
+		unset( $entry['type'] );
+		foreach ( $entry as $key => $value ) {
+			// Exclude  values
+			if ( empty( $value ) ) {
+				continue;
+			}
+			if ( ! wp_is_numeric_array( $value ) && is_array( $value ) && array_key_exists( 'type', $value ) ) {
+				$value = self::jf2_to_mf2( $value );
+			} elseif ( wp_is_numeric_array( $value ) ) {
+				if ( is_array( $value[0] ) && array_key_exists( 'type', $value[0] ) ) {
+					foreach ( $value as $item ) {
+						$items[] = jf2_to_mf2( $item );
+					}
+					$value = $items;
+				}
+			} elseif ( ! wp_is_numeric_array( $value ) ) {
+						$value = array( $value );
+			}
+			$return['properties'][ $key ] = $value;
+		}
+		return $return;
 	}
 
 	/**
