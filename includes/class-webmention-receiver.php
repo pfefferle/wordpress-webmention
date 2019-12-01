@@ -710,7 +710,7 @@ class Webmention_Receiver {
 	 *
 	 * @return WP_Error|array Either an error or the complete return object
 	 */
-	public static function fetch( $safe = true ) {
+	public static function fetch( $url,  $safe = true ) {
 		$args = array(
 			'timeout'             => 100,
 			'limit_response_size' => 153600,
@@ -732,7 +732,7 @@ class Webmention_Receiver {
 			return $check;
 		}
 
-		$check = self::check_content_type( wp_remote_retieve_header( $response, 'content-type' ) );
+		$check = self::check_content_type( wp_remote_retrieve_header( $response, 'content-type' ) );
 		if ( is_wp_error( $check ) ) {
 			return $check;
 		}
