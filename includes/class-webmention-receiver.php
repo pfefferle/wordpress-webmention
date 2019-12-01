@@ -451,75 +451,16 @@ class Webmention_Receiver {
 			'user-agent'          => "$user_agent; verifying Webmention from " . $data['comment_author_IP'],
 		);
 
-		$response = wp_safe_remote_get( $data['source'], $args );
-
-		// check if source is accessible
+		$response = self::head( $data['source'] );
 		if ( is_wp_error( $response ) ) {
-			return new WP_Error(
-				'source_not_found',
-				esc_html__( 'Source URL not found', 'webmention' ),
-				array(
-					'status' => 400,
-					'data'   => $data,
-				)
-			);
+			return $response;
 		}
 
-		// A valid response code from the other server would not be considered an error.
-		$response_code = wp_remote_retrieve_response_code( $response );
-		// not an (x)html, sgml, or xml page, no use going further
-		if ( preg_match( '#(image|audio|video|model)/#is', wp_remote_retrieve_header( $response, 'content-type' ) ) ) {
-			return new WP_Error(
-				'unsupported_content_type',
-				esc_html__( 'Content Type is not supported', 'webmention' ),
-				array(
-					'status' => 400,
-					'data'   => $data,
-				)
-			);
+		$response = self::fetch( $data['source'] );
+		if ( is_wp_error( $response ) ) {
+			return $response;
 		}
 
-		switch ( $response_code ) {
-			case 200:
-				$response = wp_safe_remote_get( $data['source'], $args );
-				break;
-			case 404:
-				return new WP_Error(
-					'resource_not_found',
-					esc_html__( 'Resource not found', 'webmention' ),
-					array(
-						'status' => 400,
-						'data'   => $data,
-					)
-				);
-			case 410:
-				return new WP_Error(
-					'resource_deleted',
-					esc_html__( 'Resource has been deleted', 'webmention' ),
-					array(
-						'status' => 400,
-						'data'   => $data,
-					)
-				);
-			case 452:
-				return new WP_Error(
-					'resource_removed',
-					esc_html__( 'Resource removed for legal reasons', 'webmention' ),
-					array(
-						'status' => 400,
-						'data'   => $data,
-					)
-				);
-			default:
-				return new WP_Error(
-					'source_error',
-					wp_remote_retrieve_response_message( $response ),
-					array(
-						'status' => 400,
-						'data'   => $data,
-					)
-				);
-		}
 		$remote_source_original = wp_remote_retrieve_body( $response );
 
 		// check if source really links to target
@@ -554,7 +495,64 @@ class Webmention_Receiver {
 		$content_type  = wp_remote_retrieve_header( $response, 'Content-Type' );
 		$commentdata   = compact( 'remote_source', 'remote_source_original', 'content_type' );
 
+		// If this is an mf2 object store
+		if ( 'application/mf2+json' === $content_type ) {
+			$commentdata['remote_source_mf2'] = json_decode( $remote_source_original );
+		}
+		// If this is a JF2 object convert to MF2 and store
+		if ( in_array( $content_type, array( 'application/jf2feed+json', 'application/jf2+json' ), true ) ) {
+			$commentdata['remote_source_mf2'] = self::jf2_to_mf2( json_decode( $remote_source_original ) );
+		}
+		if ( 'text/html' === $content_type ) {
+			// Pass the DOMDocument as it can be used to add additional properties should MF2 parsing not yield them
+			$commentdata['remote_source_domdocument'] = webmention_load_domdocument( $remote_source_original );
+			// Only try to load the MF2 Parser within this function
+			if ( ! class_exists( 'Mf2\Parser' ) ) {
+				require_once plugin_dir_path( __DIR__ ) . 'lib/mf2/Parser.php';
+			}
+			$parser                           = new Mf2\Parser( $commentdata['remote_source_domdocument'], $data['source'] );
+			$commentdata['remote_source_mf2'] = $parser->parse();
+		}
+
 		return array_merge( $commentdata, $data );
+	}
+
+
+	/**
+	 * Convert JF2 to MF2
+	 *
+	 * @param array $entry the JF2 array
+	 *
+	 * @return boolean|array Return either false indicating was not a JF2 array or the converted MF2 array
+	 */
+	public static function jf2_to_mf2( $entry ) {
+		if ( ! $entry || ! is_array( $entry ) | isset( $entry['properties'] ) ) {
+			return false;
+		}
+		$return               = array();
+		$return['type']       = array( 'h-' . $entry['type'] );
+		$return['properties'] = array();
+		unset( $entry['type'] );
+		foreach ( $entry as $key => $value ) {
+			// Exclude  values
+			if ( empty( $value ) ) {
+				continue;
+			}
+			if ( ! wp_is_numeric_array( $value ) && is_array( $value ) && array_key_exists( 'type', $value ) ) {
+				$value = self::jf2_to_mf2( $value );
+			} elseif ( wp_is_numeric_array( $value ) ) {
+				if ( is_array( $value[0] ) && array_key_exists( 'type', $value[0] ) ) {
+					foreach ( $value as $item ) {
+						$items[] = jf2_to_mf2( $item );
+					}
+					$value = $items;
+				}
+			} elseif ( ! wp_is_numeric_array( $value ) ) {
+				$value = array( $value );
+			}
+			$return['properties'][ $key ] = $value;
+		}
+		return $return;
 	}
 
 	/**
@@ -584,6 +582,161 @@ class Webmention_Receiver {
 		}
 
 		return $dupe_id;
+	}
+
+
+	/**
+	 * Do a head request to check the suitability of a URL
+	 *
+	 * @param string $url The URL to check.
+	 * @param boolean $safe Whether to use the safe or unfiltered version of HTTP API.
+	 *
+	 * @return WP_Error:array Return error or HTTP API response array.
+	 */
+	public static function head( $url, $safe = true ) {
+		$args = array(
+			'timeout'             => 100,
+			'limit_response_size' => 153600,
+			'redirection'         => 20,
+		);
+
+		if ( $safe ) {
+			$response = wp_safe_remote_head( $url, $args );
+		} else {
+			$response = wp_remote_head( $url, $args );
+		}
+
+		if ( is_wp_error( $response ) ) {
+			return $response;
+		}
+
+		$check = self::check_response_code( wp_remote_retrieve_response_code( $response ) );
+		if ( is_wp_error( $check ) ) {
+			return $check;
+		}
+
+		$check = self::check_content_type( wp_remote_retieve_header( $response, 'content-type' ) );
+		if ( is_wp_error( $check ) ) {
+			return $check;
+		}
+		return $response;
+	}
+
+
+	/**
+	 * Check if response is a support content type
+	 *
+	 * @param int $code Status Code.
+	 *
+	 * @return WP_Error|true return an error or that something is supported
+	 */
+	public static function check_response_code( $code ) {
+		switch ( $code ) {
+			case 200:
+				return true;
+			case 404:
+				return new WP_Error(
+					'resource_not_found',
+					__( 'Resource not found', 'webmention' ),
+					array(
+						'status' => 400,
+					)
+				);
+			case 405:
+				return new WP_Error(
+					'method_not_allowed',
+					__( 'Method not allowed', 'webmention' ),
+					array(
+						'status' => 400,
+						'allow'  => wp_remote_retrieve_header( $response, 'allow' ),
+					)
+				);
+			case 410:
+				return new WP_Error(
+					'resource_deleted',
+					__( 'Resource has been deleted', 'webmention' ),
+					array(
+						'status' => 400,
+					)
+				);
+			case 452:
+				return new WP_Error(
+					'resource_removed',
+					__( 'Resource removed for legal reasons', 'webmention' ),
+					array(
+						'status' => 400,
+					)
+				);
+			default:
+				return new WP_Error(
+					'source_error',
+					wp_remote_retrieve_response_message( $response ),
+					array(
+						'status' => 400,
+					)
+				);
+		}
+
+	}
+
+	/**
+	 * Check if response is a support content type
+	 *
+	 * @param  string $content_type The content type
+	 *
+	 * @return WP_Error|true return an error or that something is supported
+	 */
+	public static function supported_content_type( $content_type ) {
+		// not an (x)html, sgml, or xml page, no use going further
+		if ( preg_match( '#(image|audio|video|model)/#is', $content_type ) ) {
+			return new WP_Error(
+				'unsupported_content_type',
+				__( 'Content Type is not supported', 'webmention' ),
+				array(
+					'status' => 400,
+				)
+			);
+		}
+		return true;
+	}
+
+
+	/**
+	 *  Retrieve a URL.
+	 *
+	 * @param string $url The URL to retrieve.
+	 * @param boolean $safe Whether to use the safe or unfiltered version of HTTP API.
+	 *
+	 * @return WP_Error|array Either an error or the complete return object
+	 */
+	public function fetch( $safe = true ) {
+		$args = array(
+			'timeout'             => 100,
+			'limit_response_size' => 153600,
+			'redirection'         => 20,
+		);
+
+		if ( $safe ) {
+			$response = wp_safe_remote_get( $url, $args );
+		} else {
+			$response = wp_remote_get( $url, $args );
+		}
+
+		if ( is_wp_error( $response ) ) {
+			return $response;
+		}
+
+		$check = self::check_response_code( wp_remote_retrieve_response_code( $response ) );
+		if ( is_wp_error( $check ) ) {
+			return $check;
+		}
+
+		$check = self::check_content_type( wp_remote_retieve_header( $response, 'content-type' ) );
+		if ( is_wp_error( $check ) ) {
+			return $check;
+		}
+
+		return $response;
 	}
 
 	/**
