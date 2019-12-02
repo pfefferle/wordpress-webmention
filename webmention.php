@@ -25,9 +25,8 @@ defined( 'WEBMENTION_PROCESS_TYPE' ) || define( 'WEBMENTION_PROCESS_TYPE', WEBME
 
 defined( 'WEBMENTION_VOUCH' ) || define( 'WEBMENTION_VOUCH', false );
 
-require dirname( __FILE__ ) . '/vendor/autoload.php';
-require dirname( __FILE__ ) . '/includes/functions.php';
-
+// initialize admin settings
+require_once dirname( __FILE__ ) . '/includes/class-webmention-admin.php';
 add_action( 'admin_init', array( 'Webmention_Admin', 'init' ) );
 add_action( 'admin_menu', array( 'Webmention_Admin', 'admin_menu' ) );
 
@@ -45,20 +44,28 @@ function webmention_init() {
 		require_once dirname( __FILE__ ) . '/includes/debug.php';
 	}
 
+	// list of various public helper functions
+	require_once dirname( __FILE__ ) . '/includes/functions.php';
+
 	// load local avatar support
+	require_once dirname( __FILE__ ) . '/includes/class-webmention-avatar-handler.php';
 	add_action( 'init', array( 'Webmention_Avatar_Handler', 'init' ) );
 
 	// load HTTP 410 support
+	require_once dirname( __FILE__ ) . '/includes/class-webmention-410.php';
 	add_action( 'init', array( 'Webmention_410', 'init' ) );
 
 	// initialize Webmention Sender
+	require_once dirname( __FILE__ ) . '/includes/class-webmention-sender.php';
 	add_action( 'init', array( 'Webmention_Sender', 'init' ) );
 
 	// initialize Webmention Receiver
+	require_once dirname( __FILE__ ) . '/includes/class-webmention-receiver.php';
 	add_action( 'init', array( 'Webmention_Receiver', 'init' ) );
 
 	// initialize Webmention Vouch
 	if ( WEBMENTION_VOUCH ) {
+		require_once dirname( __FILE__ ) . '/includes/class-webmention-vouch.php';
 		add_action( 'init', array( 'Webmention_Vouch', 'init' ) );
 	}
 
