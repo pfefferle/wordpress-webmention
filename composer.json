@@ -3,8 +3,7 @@
   "description": "A Webmention plugin for WordPress https://wordpress.org/plugins/webmention/",
   "require": {
     "php": ">=5.6.0",
-    "composer/installers": "~1.0",
-    "mf2/mf2": "^0.4.6"
+    "composer/installers": "~1.0"
   },
   "type": "wordpress-plugin",
   "license": "MIT",
@@ -24,7 +23,8 @@
     "phpcompatibility/php-compatibility": "^9.2",
     "wp-coding-standards/wpcs": "^2.0",
     "phpcompatibility/phpcompatibility-wp": "^2.0.0",
-    "humbug/php-scoper": "^0.12.0"
+    "humbug/php-scoper": "^0.12.0",
+    "mf2/mf2": "^0.4.6"
   },
   "scripts": {
     "test": [
@@ -37,17 +37,10 @@
       "Dealerdirect\\Composer\\Plugin\\Installers\\PHPCodeSniffer\\Plugin::run"
     ],
     "prefix-mf2": [
-			"@php ./vendor/humbug/php-scoper/bin/php-scoper add-prefix --prefix=Webmention --output-dir=./vendor_prefixed/mf2 --config=config/php-scoper/mf2.inc.php --force --quiet"
+			"@php ./vendor/humbug/php-scoper/bin/php-scoper add-prefix --prefix=Webmention --output-dir=./lib/mf2 --config=config/php-scoper/mf2.inc.php --force --quiet"
     ],
-    "post-install-cmd": [
-      "@prefix-mf2",
-      "composer du"
-    ]
-  },
-  "autoload": {
-    "classmap": [
-      "includes/",
-      "vendor_prefixed/"
+    "post-update-cmd": [
+    	"@prefix-mf2"
     ]
   }
 }
