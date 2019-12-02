@@ -22,7 +22,9 @@
     "squizlabs/php_codesniffer": "^3.4",
     "phpcompatibility/php-compatibility": "^9.2",
     "wp-coding-standards/wpcs": "^2.0",
-    "phpcompatibility/phpcompatibility-wp": "^2.0.0"
+    "phpcompatibility/phpcompatibility-wp": "^2.0.0",
+    "humbug/php-scoper": "^0.12.0",
+    "mf2/mf2": "^0.4.6"
   },
   "scripts": {
     "test": [
@@ -33,6 +35,12 @@
     "lint": "phpcs",
     "install-codestandards": [
       "Dealerdirect\\Composer\\Plugin\\Installers\\PHPCodeSniffer\\Plugin::run"
+    ],
+    "prefix-mf2": [
+			"@php ./vendor/humbug/php-scoper/bin/php-scoper add-prefix --prefix=Webmention --output-dir=./libraries/mf2 --config=config/php-scoper/mf2.inc.php --force --quiet"
+    ],
+    "post-update-cmd": [
+    	"@prefix-mf2"
     ]
   }
 }
