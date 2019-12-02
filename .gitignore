@@ -1,7 +1,10 @@
 .data
 node_modules
-vendor
 npm-debug.log
 .DS_Store
 package-lock.json
 composer.lock
+vendor/*
+vendor/composer/installers
+!vendor/autoload.php
+!vendor/composer/

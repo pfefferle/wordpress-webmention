@@ -8,6 +8,7 @@
 .github
 .wordpress-org
 .svnignore
+config
 Gruntfile.js
 LINGUAS
 Makefile
