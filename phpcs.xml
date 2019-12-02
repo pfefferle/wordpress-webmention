@@ -6,6 +6,7 @@
 	<file>./includes/</file>
 	<exclude-pattern>*/includes/*\.(inc|css|js|svg)</exclude-pattern>
 	<exclude-pattern>*/vendor/</exclude-pattern>
+	<exclude-pattern>*/libraries/</exclude-pattern>
 	<rule ref="PHPCompatibility"/>
 	<config name="testVersion" value="5.4-"/>
 	<rule ref="WordPress-Core" />
