@@ -38,7 +38,13 @@
     ],
     "prefix-mf2": [
 			"@php ./vendor/humbug/php-scoper/bin/php-scoper add-prefix --prefix=Webmention --output-dir=./vendor_prefixed/mf2 --config=config/php-scoper/mf2.inc.php --force --quiet"
-		]
+    ],
+    "post-install-cmd": [
+      "@prefix-mf2"
+    ],
+    "post-update-cmd": [
+      "@prefix-mf2"
+    ]
   },
   "autoload": {
     "classmap": [
