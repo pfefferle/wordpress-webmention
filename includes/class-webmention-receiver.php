@@ -803,7 +803,7 @@ class Webmention_Receiver {
 			return false;
 		}
 
-		foreach ( (array) $domains as $domain ) {
+		foreach ( (array) $whitelist as $domain ) {
 			$domain = trim( $domain );
 			if ( empty( $domain ) ) {
 				continue;
