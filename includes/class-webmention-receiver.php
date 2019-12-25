@@ -551,6 +551,21 @@ class Webmention_Receiver {
 		$content_type  = wp_remote_retrieve_header( $response, 'Content-Type' );
 		$commentdata   = compact( 'remote_source', 'remote_source_original', 'content_type' );
 
+		// If this is an mf2 object store
+		if ( 'application/mf2+json' === $content_type ) {
+			$commentdata['remote_source_mf2'] = json_decode( $remote_source_original );
+		}
+		if ( 'text/html' === $content_type ) {
+			// Pass the DOMDocument as it can be used to add additional properties should MF2 parsing not yield them
+			$commentdata['remote_source_domdocument'] = webmention_load_domdocument( $remote_source_original );
+			// Only try to load the MF2 Parser within this function
+			if ( ! class_exists( '\Webmention\Mf2\Parser' ) ) {
+				require_once plugin_dir_path( __DIR__ ) . 'libraries/mf2/Mf2/Parser.php';
+			}
+			$parser                           = new Webmention\Mf2\Parser( $commentdata['remote_source_domdocument'], $data['source'] );
+			$commentdata['remote_source_mf2'] = $parser->parse();
+		}
+
 		return array_merge( $commentdata, $data );
 	}
 
