@@ -27,7 +27,9 @@ defined( 'WEBMENTION_VOUCH' ) || define( 'WEBMENTION_VOUCH', false );
 
 // initialize admin settings
 require_once dirname( __FILE__ ) . '/includes/class-webmention-admin.php';
-add_action( 'admin_init', array( 'Webmention_Admin', 'init' ) );
+
+add_action( 'init', array( 'Webmention_Admin', 'init' ) );
+add_action( 'admin_init', array( 'Webmention_Admin', 'admin_init' ) );
 add_action( 'admin_menu', array( 'Webmention_Admin', 'admin_menu' ) );
 
 /**
@@ -58,6 +60,9 @@ function webmention_init() {
 	// initialize Webmention Sender
 	require_once dirname( __FILE__ ) . '/includes/class-webmention-sender.php';
 	add_action( 'init', array( 'Webmention_Sender', 'init' ) );
+
+	// load MF2 Handler
+	require_once dirname( __FILE__ ) . '/includes/class-webmention-mf2-handler.php';
 
 	// initialize Webmention Receiver
 	require_once dirname( __FILE__ ) . '/includes/class-webmention-receiver.php';

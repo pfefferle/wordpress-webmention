@@ -8,7 +8,7 @@ class Webmention_Admin {
 	/**
 	 * Register Webmention admin settings.
 	 */
-	public static function init() {
+	public static function admin_init() {
 		self::register_settings();
 
 		add_settings_field( 'discussion_settings', esc_html__( 'Webmention Settings', 'webmention' ), array( 'Webmention_Admin', 'discussion_settings' ), 'discussion', 'default' );
@@ -28,6 +28,72 @@ class Webmention_Admin {
 
 		self::add_privacy_policy_content();
 	}
+
+	public static function init() {
+		if ( WP_DEBUG ) {
+			add_action( 'rest_api_init', array( 'Webmention_Admin', 'register_routes' ) );
+		}
+	}
+
+	/**
+	 * Register the Route.
+	 */
+	public static function register_routes() {
+		$cls = get_called_class();
+		// Register a route to query the parser and return the results
+		register_rest_route(
+			'webmention/1.0',
+			'/parse',
+			array(
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array( $cls, 'read' ),
+					'args'                => array(
+						'url' => array(
+							'required'          => true,
+							'sanitize_callback' => 'esc_url_raw',
+						),
+					),
+					'permission_callback' => function () {
+						return current_user_can( 'read' );
+					},
+				),
+			)
+		);
+	}
+
+	public static function read( $request ) {
+		$url      = $request->get_param( 'url' );
+		$response = Webmention_Receiver::fetch( $url );
+		if ( is_wp_error( $response ) ) {
+			return $response;
+		}
+
+		$content_type = Webmention_Receiver::get_content_type( $response );
+		$body         = wp_remote_retrieve_body( $response );
+		// If this is an mf2 object
+		if ( 'application/mf2+json' === $content_type ) {
+			$mf_array = json_decode( $body, true );
+		} elseif ( 'text/html' === $content_type ) {
+			// Pass the DOMDocument as it can be used to add additional properties should MF2 parsing not yield them
+			$domdocument = webmention_load_domdocument( $body );
+			// Only try to load the MF2 Parser within this function
+			if ( ! class_exists( '\Webmention\Mf2\Parser' ) ) {
+				require_once plugin_dir_path( __DIR__ ) . 'libraries/mf2/Mf2/Parser.php';
+			}
+			$parser   = new Webmention\Mf2\Parser( $domdocument, $url );
+			$mf_array = $parser->parse();
+		} else {
+			return new WP_Error( 'unsupported_content', __( 'Currently not supporting this content type', 'webmention' ), array( 'content-type' => $content_type ) );
+		}
+		$item = Webmention_MF2_Handler::get_representative_item( $mf_array, $url );
+		if ( ! empty( $item ) ) {
+			return $item;
+		}
+		return false;
+	}
+
+
 
 	/**
 	 * Add Webmention options to the WordPress discussion settings page.

@@ -441,16 +441,6 @@ class Webmention_Receiver {
 			return new WP_Error( 'invalid_data', esc_html__( 'Invalid data passed', 'webmention' ), array( 'status' => 500 ) );
 		}
 
-		$wp_version = get_bloginfo( 'version' );
-
-		$user_agent = apply_filters( 'http_headers_useragent', 'WordPress/' . $wp_version . '; ' . get_bloginfo( 'url' ) );
-		$args       = array(
-			'timeout'             => 100,
-			'limit_response_size' => 153600,
-			'redirection'         => 20,
-			'user-agent'          => "$user_agent; verifying Webmention from " . $data['comment_author_IP'],
-		);
-
 		$response = wp_safe_remote_get( $data['source'], $args );
 
 		// check if source is accessible
@@ -465,61 +455,15 @@ class Webmention_Receiver {
 			);
 		}
 
-		// A valid response code from the other server would not be considered an error.
-		$response_code = wp_remote_retrieve_response_code( $response );
-		// not an (x)html, sgml, or xml page, no use going further
-		if ( preg_match( '#(image|audio|video|model)/#is', wp_remote_retrieve_header( $response, 'content-type' ) ) ) {
-			return new WP_Error(
-				'unsupported_content_type',
-				esc_html__( 'Content Type is not supported', 'webmention' ),
-				array(
-					'status' => 400,
-					'data'   => $data,
-				)
-			);
+		$response = self::head( $data['source'] );
+		if ( is_wp_error( $response ) ) {
+			return $response;
+		}
+		$response = self::fetch( $data['source'] );
+		if ( is_wp_error( $response ) ) {
+			return $response;
 		}
 
-		switch ( $response_code ) {
-			case 200:
-				$response = wp_safe_remote_get( $data['source'], $args );
-				break;
-			case 404:
-				return new WP_Error(
-					'resource_not_found',
-					esc_html__( 'Resource not found', 'webmention' ),
-					array(
-						'status' => 400,
-						'data'   => $data,
-					)
-				);
-			case 410:
-				return new WP_Error(
-					'resource_deleted',
-					esc_html__( 'Resource has been deleted', 'webmention' ),
-					array(
-						'status' => 400,
-						'data'   => $data,
-					)
-				);
-			case 452:
-				return new WP_Error(
-					'resource_removed',
-					esc_html__( 'Resource removed for legal reasons', 'webmention' ),
-					array(
-						'status' => 400,
-						'data'   => $data,
-					)
-				);
-			default:
-				return new WP_Error(
-					'source_error',
-					wp_remote_retrieve_response_message( $response ),
-					array(
-						'status' => 400,
-						'data'   => $data,
-					)
-				);
-		}
 		$remote_source_original = wp_remote_retrieve_body( $response );
 
 		// check if source really links to target
@@ -551,10 +495,182 @@ class Webmention_Receiver {
 		}
 
 		$remote_source = wp_kses_post( $remote_source_original );
-		$content_type  = wp_remote_retrieve_header( $response, 'Content-Type' );
+		$content_type  = self::get_content_type( $response );
 		$commentdata   = compact( 'remote_source', 'remote_source_original', 'content_type' );
 
 		return array_merge( $commentdata, $data );
+	}
+
+	/**
+	 * Return Arguments for Retrieving Webmention URLs
+	 *
+	 * @return array
+	 */
+	public static function remote_arguments() {
+
+		$wp_version = get_bloginfo( 'version' );
+		$user_agent = apply_filters( 'http_headers_useragent', 'WordPress/' . $wp_version . '; ' . get_bloginfo( 'url' ) );
+		$args       = array(
+			'timeout'             => 100,
+			'limit_response_size' => 153600,
+			'redirection'         => 20,
+			'headers'             => array(
+				'Accept' => 'application/mf2+json, text/html, text/plain',
+			),
+		);
+		return apply_filters( 'webmention_remote_get_args', $args );
+	}
+
+
+	/**
+	 * Do a head request to check the suitability of a URL
+	 *
+	 * @param string $url The URL to check.
+	 * @param boolean $safe Whether to use the safe or unfiltered version of HTTP API.
+	 *
+	 * @return WP_Error:array Return error or HTTP API response array.
+	 */
+	public static function head( $url, $safe = true ) {
+		$args = self::remote_arguments();
+		if ( $safe ) {
+			$response = wp_safe_remote_head( $url, $args );
+		} else {
+			$response = wp_remote_head( $url, $args );
+		}
+		if ( is_wp_error( $response ) ) {
+			return $response;
+		}
+		$check = self::check_response_code( wp_remote_retrieve_response_code( $response ) );
+		if ( is_wp_error( $check ) ) {
+						return $check;
+		}
+		$check = self::check_content_type( wp_remote_retrieve_header( $response, 'content-type' ) );
+		if ( is_wp_error( $check ) ) {
+			return $check;
+		}
+		return $response;
+	}
+
+	/**
+	 * Check if response is a supported content type
+	 *
+	 * @param int $code Status Code.
+	 *
+	 * @return WP_Error|true return an error or that something is supported
+	 */
+	public static function check_response_code( $code ) {
+		switch ( $code ) {
+			case 200:
+				return true;
+			case 404:
+				return new WP_Error(
+					'resource_not_found',
+					__( 'Resource not found', 'webmention' ),
+					array(
+						'status' => 400,
+					)
+				);
+			case 405:
+				return new WP_Error(
+					'method_not_allowed',
+					__( 'Method not allowed', 'webmention' ),
+					array(
+						'status' => 400,
+						'allow'  => wp_remote_retrieve_header( $response, 'allow' ),
+					)
+				);
+			case 410:
+				return new WP_Error(
+					'resource_deleted',
+					__( 'Resource has been deleted', 'webmention' ),
+					array(
+						'status' => 400,
+					)
+				);
+			case 452:
+				return new WP_Error(
+					'resource_removed',
+					__( 'Resource removed for legal reasons', 'webmention' ),
+					array(
+						'status' => 400,
+					)
+				);
+			default:
+				return new WP_Error(
+					'source_error',
+					wp_remote_retrieve_response_message( $response ),
+					array(
+						'status' => 400,
+					)
+				);
+		}
+	}
+
+	/**
+	 * Strip charset off content type for matching purposes
+	 * @param array $response HTTP_Response array
+	 *
+	 * @return string|false return either false or the stripped string
+	 *
+	 */
+	public static function get_content_type( $response ) {
+		$content_type = wp_remote_retrieve_header( $response, 'Content-Type' );
+		// Strip any character set off the content type
+		$ct = explode( ';', $content_type );
+		if ( is_array( $ct ) ) {
+			$content_type = array_shift( $ct );
+		}
+		return trim( $content_type );
+	}
+
+	/**
+	 * Check if response is a supportted content type
+	 *
+	 * @param  string $content_type The content type
+	 *
+	 * @return WP_Error|true return an error or that something is supported
+	 */
+	public static function check_content_type( $content_type ) {
+		// not an (x)html, sgml, or xml page, no use going further
+		if ( preg_match( '#(image|audio|video|model)/#is', $content_type ) ) {
+			return new WP_Error(
+				'unsupported_content_type',
+				__( 'Content Type is not supported', 'webmention' ),
+				array(
+					'status' => 400,
+				)
+			);
+		}
+		return true;
+	}
+
+	/**
+	 *  Retrieve a URL.
+	 *
+	 * @param string $url The URL to retrieve.
+	 * @param boolean $safe Whether to use the safe or unfiltered version of HTTP API.
+	 *
+	 * @return WP_Error|array Either an error or the complete return object
+	 */
+	public static function fetch( $url, $safe = true ) {
+		$args = self::remote_arguments();
+		if ( $safe ) {
+			$response = wp_safe_remote_get( $url, $args );
+		} else {
+			$response = wp_remote_get( $url, $args );
+		}
+		if ( is_wp_error( $response ) ) {
+				return $response;
+		}
+		$check = self::check_response_code( wp_remote_retrieve_response_code( $response ) );
+		if ( is_wp_error( $check ) ) {
+				return $check;
+		}
+		$check = self::check_content_type( wp_remote_retrieve_header( $response, 'content-type' ) );
+		if ( is_wp_error( $check ) ) {
+			return $check;
+		}
+		return $response;
 	}
 
 	/**
