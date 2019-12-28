@@ -200,7 +200,7 @@ class Webmention_MF2_Handler {
 	 *
 	 * @param $name string updated or published
 	 * @param array                            $mf
-	 * @param null|string                      $fallback
+	 * @param null|DateTime                      $fallback
 	 * @return mixed|null
 	 */
 	public static function get_datetime_property( $name, array $mf, $fallback = null ) {
@@ -210,8 +210,7 @@ class Webmention_MF2_Handler {
 			return $fallback;
 		}
 		try {
-			$date = new DateTime( $return );
-			return $date->format( DATE_W3C );
+			return new DateTime( $return );
 		} catch ( Exception $e ) {
 			return $fallback;
 		}
