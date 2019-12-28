@@ -553,7 +553,7 @@ class Webmention_Receiver {
 
 		// If this is an mf2 object store
 		if ( 'application/mf2+json' === $content_type ) {
-			$commentdata['remote_source_mf2'] = json_decode( $remote_source_original );
+			$commentdata['remote_source_mf2'] = json_decode( $remote_source_original, true );
 		}
 		if ( 'text/html' === $content_type ) {
 			// Pass the DOMDocument as it can be used to add additional properties should MF2 parsing not yield them
