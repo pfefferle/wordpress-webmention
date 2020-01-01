@@ -92,6 +92,8 @@ class Webmention_Avatar_Handler {
 			}
 			$hash = wp_parse_url( $args['url'], PHP_URL_PATH );
 			$hash = str_replace( '/avatar/', '', $hash );
+		} else {
+			return false;
 		}
 
 		$found = get_transient( 'webmention_gravatar_' . $hash );
