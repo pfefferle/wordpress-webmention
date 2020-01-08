@@ -83,8 +83,19 @@ class Webmention_Avatar_Handler {
 	 *
 	 * @return boolean
 	 */
-	public static function check_gravatar( $comment ) {
-		$hash  = md5( strtolower( trim( $comment->comment_author_email ) ) );
+	public static function check_gravatar( $comment, $args = null ) {
+		if ( ! empty( $comment->comment_author_email ) ) {
+			$hash = md5( strtolower( trim( $comment->comment_author_email ) ) );
+		} elseif ( is_array( $args ) && array_key_exists( 'url', $args ) ) {
+			if ( ! strpos( $args['url'], 'gravatar.com' ) ) {
+				return false;
+			}
+			$hash = wp_parse_url( $args['url'], PHP_URL_PATH );
+			$hash = str_replace( '/avatar/', '', $hash );
+		} else {
+			return false;
+		}
+
 		$found = get_transient( 'webmention_gravatar_' . $hash );
 
 		if ( false !== $found ) {
@@ -128,7 +139,7 @@ class Webmention_Avatar_Handler {
 			return $args;
 		}
 
-		if ( ! empty( $comment->comment_author_email ) && self::check_gravatar( $comment ) ) {
+		if ( self::check_gravatar( $comment, $args ) ) {
 			return $args;
 		}
 
