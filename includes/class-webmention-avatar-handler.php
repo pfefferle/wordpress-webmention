@@ -168,7 +168,7 @@ class Webmention_Avatar_Handler {
 		}
 
 		// If this type does not show avatars or if there is a user ID set then return
-		if ( ! is_avatar_comment_type( $comment->comment_type ) || $comment->user_id ) {
+		if ( ! is_avatar_comment_type( get_comment_type( $comment ) ) || $comment->user_id ) {
 			return $args;
 		}
 
