@@ -8,7 +8,7 @@
 
 		<?php if ( ! class_exists( 'Semantic_Linkbacks_Plugin' ) ) : ?>
 		<div class="notice notice-warning">
-			<p><?php printf ( __( 'The Webmention plugin primarily handles sending/receiving notifications of mentions from other websites, so the format of the comments can look odd on one\'s site. We highly recommend also installing and activating the <a class="thickbox open-plugin-details-modal" href="%1$s" target_"blank">Semantic Linkbacks Plugin</a> which has better parsing and display capabilities to allow richer looking comments as well as options for displaying many reply types as facepiles for improved user interface.', 'webmention' ), admin_url( '/plugin-install.php?tab=plugin-information&plugin=semantic-linkbacks&TB_iframe=true' ) ); ?></p>
+			<p><?php printf( __( 'The Webmention plugin primarily handles sending/receiving notifications of mentions from other websites, so the format of the comments can look odd on one\'s site. We highly recommend also installing and activating the <a class="thickbox open-plugin-details-modal" href="%1$s" target_"blank">Semantic Linkbacks Plugin</a> which has better parsing and display capabilities to allow richer looking comments as well as options for displaying many reply types as facepiles for improved user interface.', 'webmention' ), admin_url( '/plugin-install.php?tab=plugin-information&plugin=semantic-linkbacks&TB_iframe=true' ) ); ?></p>
 		</div>
 		<?php endif; ?>
 
@@ -148,7 +148,7 @@
 		<?php do_settings_sections( 'webmention' ); ?>
 
 		<?php submit_button(); ?>
-<?php if( WP_DEBUG ) { ?>
+<?php if ( WP_DEBUG ) { ?>
 	</form>
 		<div class="wrap">
 			<h2> <?php esc_html_e( 'Webmention Parsing Debugger', 'webmention' ); ?> </h2>
