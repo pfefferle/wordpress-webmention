@@ -35,6 +35,8 @@ class Webmention_Receiver {
 
 		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'auto_approve' ), 13, 1 );
 
+		add_filter( 'pre_comment_approved', array( 'Webmention_Receiver', 'set_comment_approved' ), 10, 2 );
+
 		// Allow for avatars on webmention comment types
 		if ( 0 !== (int) get_option( 'webmention_avatars', 1 ) ) {
 			add_filter( 'get_avatar_comment_types', array( 'Webmention_Receiver', 'get_avatar_comment_types' ), 99 );
@@ -787,6 +789,27 @@ class Webmention_Receiver {
 			$commentdata['comment_approved'] = 1;
 		}
 		return $commentdata;
+	}
+
+	/**
+	 * Determine if a webmention comment has been approved earlier in the
+	 * process of receiving the webmention.
+	 *
+	 * @param int   $approved The approval status. May be 1, 0, 'spam', 'trash', or WP_Error.
+	 * @param array $commentdata The list of data associated with the comment.
+	 *
+	 * @return int $approved The approval status. Accepts 1, 0, 'spam', 'trash', or WP_Error.
+	 */
+	public static function set_comment_approved( $approved, $commentdata ) {
+		if ( 'webmention' !== $commentdata['comment_type'] ) {
+			return $approved;
+		}
+
+		if ( 1 === $commentdata['comment_approved'] ) {
+			return 1;
+		}
+
+		return $approved;
 	}
 
 	/**
