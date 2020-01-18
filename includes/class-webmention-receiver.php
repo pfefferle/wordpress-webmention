@@ -290,7 +290,7 @@ class Webmention_Receiver {
 		// change this if your theme can't handle the Webmentions comment type
 		$comment_type = WEBMENTION_COMMENT_TYPE;
 
-		$commentdata = compact( 'comment_type', 'comment_approved', 'comment_agent', 'comment_date', 'comment_date_gmt', 'comment_meta', 'source', 'target', 'vouch' );
+		$commentdata = compact( 'comment_type', 'comment_agent', 'comment_date', 'comment_date_gmt', 'comment_meta', 'source', 'target', 'vouch' );
 
 		$commentdata['comment_post_ID']   = $comment_post_id;
 		$commentdata['comment_author_IP'] = $comment_author_ip;
