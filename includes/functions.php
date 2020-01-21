@@ -327,6 +327,12 @@ endif;
  * @return array URLs found in passed string.
  */
 function webmention_extract_urls( $content, $support_media_urls = false ) {
+
+	// If no content is provided, do not attempt to parse it for URLs.
+	if ( '' === $content ) {
+		return array();
+	}
+
 	$doc   = webmention_load_domdocument( $content );
 	$xpath = new DOMXPath( $doc );
 
