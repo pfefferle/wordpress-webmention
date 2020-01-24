@@ -62,7 +62,7 @@ class Webmention_MF2_Handler {
 	 * @param $propname
 	 * @return bool
 	 */
-	public static function has_prop( array $mf, $propname ) {
+	public static function has_property( array $mf, $propname ) {
 		return ! empty( $mf['properties'][ $propname ] ) && is_array( $mf['properties'][ $propname ] );
 	}
 
@@ -141,7 +141,7 @@ class Webmention_MF2_Handler {
 	 * @param array       $properties
 	 * @return null|array
 	 */
-	public static function get_prop_array( array $mf, $properties, $args = null ) {
+	public static function get_property_array( array $mf, $properties, $args = null ) {
 		if ( ! self::is_microformat( $mf ) ) {
 			return array();
 		}
@@ -204,7 +204,7 @@ class Webmention_MF2_Handler {
 	 * @return mixed|null
 	 */
 	public static function get_datetime_property( $name, array $mf, $fallback = null ) {
-		if ( self::has_prop( $mf, $name ) ) {
+		if ( self::has_property( $mf, $name ) ) {
 			$return = self::get_plaintext( $mf, $name );
 		} else {
 			return $fallback;
@@ -282,12 +282,12 @@ class Webmention_MF2_Handler {
 		}
 
 		// if entry does not have an author try to find one elsewhere
-		if ( ! self::has_prop( $item, 'author' ) ) {
+		if ( ! self::has_property( $item, 'author' ) ) {
 			$item['properties']['author'] = self::get_representative_author( $mf, $url );
 		}
 
 		// If u-syndication is not set use rel syndication
-		if ( array_key_exists( 'syndication', $mf['rels'] ) && ! self::has_prop( $item, 'syndication' ) ) {
+		if ( array_key_exists( 'syndication', $mf['rels'] ) && ! self::has_property( $item, 'syndication' ) ) {
 			$item['properties']['syndication'] = $mf['rels']['syndication'];
 		}
 
@@ -308,7 +308,7 @@ class Webmention_MF2_Handler {
 		// Author Discovery
 		// http://indieweb,org/authorship
 		$authorpage = false;
-		if ( self::has_prop( $item, 'author' ) ) {
+		if ( self::has_property( $item, 'author' ) ) {
 			// Check if any of the values of the author property are an h-card
 			foreach ( $item['properties']['author'] as $a ) {
 				if ( self::is_type( $a, 'h-card' ) ) {
