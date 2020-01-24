@@ -515,7 +515,7 @@ class Webmention_Receiver {
 			'limit_response_size' => 153600,
 			'redirection'         => 20,
 			'headers'             => array(
-				'Accept' => 'application/mf2+json, text/html, text/plain',
+				'Accept' => 'text/html, text/plain',
 			),
 		);
 		return apply_filters( 'webmention_remote_get_args', $args );

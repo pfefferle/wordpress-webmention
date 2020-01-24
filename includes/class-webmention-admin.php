@@ -71,10 +71,7 @@ class Webmention_Admin {
 
 		$content_type = Webmention_Receiver::get_content_type( $response );
 		$body         = wp_remote_retrieve_body( $response );
-		// If this is an mf2 object
-		if ( 'application/mf2+json' === $content_type ) {
-			$mf_array = json_decode( $body, true );
-		} elseif ( 'text/html' === $content_type ) {
+		if ( 'text/html' === $content_type ) {
 			// Pass the DOMDocument as it can be used to add additional properties should MF2 parsing not yield them
 			$domdocument = webmention_load_domdocument( $body );
 			// Only try to load the MF2 Parser within this function
