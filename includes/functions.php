@@ -2,9 +2,10 @@
 /**
  * A wrapper for Webmention_Sender::send_webmention.
  *
+ * @since 2.4.0
+ *
  * @param string $source source url.
  * @param string $target target url.
- *
  * @return array of results including HTTP headers
  */
 function send_webmention( $source, $target ) {
@@ -37,8 +38,7 @@ function get_default_webmention_form_text() {
 /**
  * Check the $url to see if it is on the domain whitelist.
  *
- * @param array $url Author url.
- *
+ * @param string $url URL to check.
  * @return boolean
  */
 function is_webmention_source_whitelisted( $url ) {
@@ -49,13 +49,12 @@ function is_webmention_source_whitelisted( $url ) {
  * Return the Number of Webmentions.
  *
  * @param int $post_id The post ID (optional).
- *
- * @return int The number of Webmentions for one Post.
+ * @return int the number of Webmentions for one Post
  */
 function get_webmentions_number( $post_id = 0 ) {
 	$post = get_post( $post_id );
 
-	// change this if your theme can't handle the Webmentions comment type
+	// change this if your theme can't handle the Webmentions comment type.
 	$comment_type = apply_filters( 'webmention_comment_type', WEBMENTION_COMMENT_TYPE );
 
 	$args = array(
@@ -98,11 +97,12 @@ function get_webmention_process_type() {
  * Allows redirecting to another id to add linkbacks to the home page or archive
  * page or taxonomy page.
  *
+ * @since 3.1.0
+ *
  * @uses apply_filters calls "webmention_post_id" on the post_ID
  *
  * @param string $url URL.
- *
- * @return mixed
+ * @return int $id Return 0 if no post ID found or a post ID.
  */
 function webmention_url_to_postid( $url ) {
 	$id = wp_cache_get( base64_encode( $url ), 'webmention_url_to_postid' );
@@ -131,15 +131,16 @@ function webmention_url_to_postid( $url ) {
 }
 
 /**
- * Extract host domain from a provided URL.
+ * Extract the domain for a url, sans www.
  *
- * @param string $url URL to get host from.
+ * @since 3.8.9
  *
+ * @param string $url URL to extract domain from.
  * @return string|string[]|null
  */
 function webmention_extract_domain( $url ) {
 	$host = wp_parse_url( $url, PHP_URL_HOST );
-	// strip leading www, if any
+	// strip leading www, if any.
 	return preg_replace( '/^www\./', '', $host );
 }
 
