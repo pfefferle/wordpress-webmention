@@ -21,4 +21,5 @@ readme.md
 .travis.yml
 .distignore
 .gitignore
+.gitattributes
 docker-compose.yml
