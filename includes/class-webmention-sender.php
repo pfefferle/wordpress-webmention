@@ -105,6 +105,9 @@ class Webmention_Sender {
 			'limit_response_size' => 1048576,
 			'redirection'         => 20,
 			'user-agent'          => "$user_agent; sending Webmention",
+			'headers'             => array(
+				'Content-Type' => 'application/x-www-form-urlencoded',
+			),
 		);
 
 		$body = array(
