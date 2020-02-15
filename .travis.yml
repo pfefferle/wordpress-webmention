@@ -9,7 +9,7 @@ cache:
   directories:
     - vendor
     - $HOME/.composer/cache
-after_success: bash bin/deploy.sh
+after_success:
 env:
   matrix:
   - WP_VERSION=latest WP_MULTISITE=0
@@ -17,7 +17,6 @@ env:
   - WP_TRAVISCI=travis:phpunit
   - SVN_REPO: https://plugins.svn.wordpress.org/webmention/
   - GH_REF: https://github.com/pfefferle/wordpress-webmention.git
-  - secure: "WaeBLo0MDuK4X7NQvk5Ie5BVnexHtyDfHAV8v7dB8B67d8GCWy9K5I54jTECNRUC+CecMakLq5DOfn+ThtWdkJmoJKnGNFp8ZrWkMsfVJRi3CDED2HkccOrxkmXBj8Z6A8jZjcfVNrEmq/6697xVNRGeaS08l9rokh7pyb8INWY="
 matrix:
   include:
   - php: 7.3
@@ -25,8 +24,6 @@ matrix:
   - php: 7.1
   - php: 7.0
   - php: 5.6
-  - php: 5.6
-    env: WP_PLUGIN_DEPLOY=1
 before_script:
 - |
   # Remove Xdebug for a huge performance increase:
