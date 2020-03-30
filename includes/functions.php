@@ -1,10 +1,11 @@
 <?php
 /**
- * A wrapper for Webmention_Sender::send_webmention
+ * A wrapper for Webmention_Sender::send_webmention.
  *
- * @param string $source source url
- * @param string $target target url
+ * @since 2.4.0
  *
+ * @param string $source source url.
+ * @param string $target target url.
  * @return array of results including HTTP headers
  */
 function send_webmention( $source, $target ) {
@@ -12,10 +13,10 @@ function send_webmention( $source, $target ) {
 }
 
 /**
- * Return the text for a webmention form allowing customization by post_id
+ * Return the text for a webmention form allowing customization by post_id.
  *
- * @param int $post_id Post ID
- *
+ * @param int $post_id Post ID.
+ * @return string
  */
 function get_webmention_form_text( $post_id ) {
 	$text = get_option( 'webmention_comment_form_text', '' );
@@ -26,10 +27,9 @@ function get_webmention_form_text( $post_id ) {
 }
 
 /**
- * Return the default text for a webmention form
+ * Return the default text for a webmention form.
  *
- * @param int $post_id Post ID
- *
+ * @return string
  */
 function get_default_webmention_form_text() {
 	return __( 'To respond on your own website, enter the URL of your response which should contain a link to this post\'s permalink URL. Your response will then appear (possibly after moderation) on this page. Want to update or remove your response? Update or delete your post and re-enter your post\'s URL again. (<a href="http://indieweb.org/webmention">Learn More</a>)', 'webmention' );
@@ -38,8 +38,7 @@ function get_default_webmention_form_text() {
 /**
  * Check the $url to see if it is on the domain whitelist.
  *
- * @param array $author_url
- *
+ * @param string $url URL to check.
  * @return boolean
  */
 function is_webmention_source_whitelisted( $url ) {
@@ -47,16 +46,15 @@ function is_webmention_source_whitelisted( $url ) {
 }
 
 /**
- * Return the Number of Webmentions
+ * Return the Number of Webmentions.
  *
- * @param int $post_id The post ID (optional)
- *
+ * @param int $post_id The post ID (optional).
  * @return int the number of Webmentions for one Post
  */
 function get_webmentions_number( $post_id = 0 ) {
 	$post = get_post( $post_id );
 
-	// change this if your theme can't handle the Webmentions comment type
+	// change this if your theme can't handle the Webmentions comment type.
 	$comment_type = apply_filters( 'webmention_comment_type', WEBMENTION_COMMENT_TYPE );
 
 	$args = array(
@@ -72,22 +70,22 @@ function get_webmentions_number( $post_id = 0 ) {
 }
 
 /**
- * Return Webmention Endpoint
+ * Return Webmention Endpoint.
  *
  * @see https://www.w3.org/TR/webmention/#sender-discovers-receiver-webmention-endpoint
  *
- * @return string the Webmention endpoint
+ * @return string The Webmention endpoint.
  */
 function get_webmention_endpoint() {
 	return apply_filters( 'webmention_endpoint', get_rest_url( null, '/webmention/1.0/endpoint' ) );
 }
 
 /**
- * Return Webmention process type
+ * Return Webmention process type.
  *
  * @see https://www.w3.org/TR/webmention/#receiving-webmentions
  *
- * @return string the Webmention process type
+ * @return string The Webmention process type.
  */
 function get_webmention_process_type() {
 	return apply_filters( 'webmention_process_type', WEBMENTION_PROCESS_TYPE );
@@ -95,13 +93,16 @@ function get_webmention_process_type() {
 
 /**
  * Return the post_id for a URL filtered for webmentions.
+ *
  * Allows redirecting to another id to add linkbacks to the home page or archive
  * page or taxonomy page.
  *
- * @param string $url URL
- * @param int Return 0 if no post ID found or a post ID
+ * @since 3.1.0
  *
  * @uses apply_filters calls "webmention_post_id" on the post_ID
+ *
+ * @param string $url URL.
+ * @return int $id Return 0 if no post ID found or a post ID.
  */
 function webmention_url_to_postid( $url ) {
 	$id = wp_cache_get( base64_encode( $url ), 'webmention_url_to_postid' );
@@ -129,12 +130,25 @@ function webmention_url_to_postid( $url ) {
 	return apply_filters( 'webmention_post_id', $id, $url );
 }
 
+/**
+ * Extract the domain for a url, sans www.
+ *
+ * @since 3.8.9
+ *
+ * @param string $url URL to extract domain from.
+ * @return string|string[]|null
+ */
 function webmention_extract_domain( $url ) {
 	$host = wp_parse_url( $url, PHP_URL_HOST );
-	// strip leading www, if any
+	// strip leading www, if any.
 	return preg_replace( '/^www\./', '', $host );
 }
 
+/**
+ * Retrieve list of approved domains.
+ *
+ * @return array|mixed|string|void
+ */
 function get_webmention_approve_domains() {
 	$whitelist = get_option( 'webmention_approve_domains' );
 	$whitelist = trim( $whitelist );
@@ -144,7 +158,7 @@ function get_webmention_approve_domains() {
 }
 
 /**
- * Finds a Webmention server URI based on the given URL
+ * Finds a Webmention server URI based on the given URL.
  *
  * Checks the HTML for the rel="webmention" link and webmention headers. It does
  * a check for the webmention headers first and returns that, if available. The
@@ -153,7 +167,7 @@ function get_webmention_approve_domains() {
  *
  * @see https://www.w3.org/TR/webmention/#sender-discovers-receiver-webmention-endpoint
  *
- * @param string $url URL to ping
+ * @param string $url URL to ping.
  *
  * @return bool|string False on failure, string containing URI on success
  */
@@ -238,12 +252,13 @@ function webmention_discover_endpoint( $url ) {
 
 if ( ! function_exists( 'wp_get_meta_tags' ) ) :
 	/**
-	 * Parse meta tags from source content
-	 * Based on the Press This Meta Parsing Code
+	 * Parse meta tags from source content.
 	 *
-	 * @param string $source_content Source Content
+	 * Based on the Press This Meta Parsing Code.
 	 *
-	 * @return array meta tags
+	 * @param string $source_content Source Content.
+	 *
+	 * @return array meta tags.
 	 */
 	function wp_get_meta_tags( $source_content ) {
 		$meta_tags = array();

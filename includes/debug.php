@@ -1,9 +1,10 @@
 <?php
 /**
- * Allow localhost URLs if WP_DEBUG is true
+ * Allow localhost URLs if WP_DEBUG is true.
  *
- * @param string       $url  The request URL.
- * @param string|array $args Array or string of HTTP request arguments.
+ * @param array  $r   Array of HTTP request args.
+ * @param string $url The request URL.
+ * @return array $args Array or string of HTTP request arguments.
  */
 function webmention_allow_localhost( $r, $url ) {
 	$r['reject_unsafe_urls'] = false;
