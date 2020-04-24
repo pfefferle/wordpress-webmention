@@ -62,7 +62,7 @@ class Webmention_Admin {
 		if ( 'comment_type' !== $column ) {
 			return;
 		}
-		echo esc_html( get_webmention_comment_string( $comment_id ) );
+		echo esc_html( get_webmention_comment_type_string( $comment_id ) );
 	}
 
 	/**

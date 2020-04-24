@@ -379,7 +379,7 @@ function is_webmention_comment_type( $comment ) {
  * @param int|WP_Comment $comment
  * @return string
 */
-function get_webmention_comment_string( $comment ) {
+function get_webmention_comment_type_string( $comment ) {
 	$comment = get_comment( $comment );
 	if ( ! $comment ) {
 		return false;

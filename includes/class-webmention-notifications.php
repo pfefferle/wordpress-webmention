@@ -9,18 +9,18 @@ class Webmention_Notifications {
 	 * Initialize the plugin, registering WordPress hooks.
 	 */
 	public static function init() {
-		$cls = get_called_class();
+		$self = get_called_class();
 
 		// Replace hooks with custom hook
 		remove_action( 'comment_post', 'wp_new_comment_notify_moderator' );
 		remove_action( 'comment_post', 'wp_new_comment_notify_postauthor' );
-		add_action( 'comment_post', array( $cls, 'wp_new_comment_notify_moderator' ) );
-		add_action( 'comment_post', array( $cls, 'wp_new_comment_notify_postauthor' ) );
+		add_action( 'comment_post', array( $self, 'wp_new_comment_notify_moderator' ) );
+		add_action( 'comment_post', array( $self, 'wp_new_comment_notify_postauthor' ) );
 
 		if ( WP_DEBUG ) {
 			// For testing outgoing comment email
-			add_filter( 'bulk_actions-edit-comments', array( $cls, 'register_bulk_send' ) );
-			add_filter( 'handle_bulk_actions-edit-comments', array( $cls, 'bulk_send_notifications' ), 10, 3 );
+			add_filter( 'bulk_actions-edit-comments', array( $self, 'register_bulk_send' ) );
+			add_filter( 'handle_bulk_actions-edit-comments', array( $self, 'bulk_send_notifications' ), 10, 3 );
 		}
 	}
 
@@ -30,6 +30,7 @@ class Webmention_Notifications {
 	public static function register_bulk_send( $bulk_actions ) {
 		$bulk_actions['resend_notification_email'] = __( 'Resend Comment Email', 'webmention' );
 		$bulk_actions['resend_moderation_email']   = __( 'Resend Moderation Email', 'webmention' );
+
 		return $bulk_actions;
 	}
 
@@ -40,6 +41,7 @@ class Webmention_Notifications {
 		if ( ! in_array( $doaction, array( 'resend_notification_email', 'resend_moderation_email' ), true ) ) {
 			return $redirect_to;
 		}
+
 		foreach ( $comment_ids as $comment_id ) {
 			switch ( $doaction ) {
 				case 'resend_notification_email':
@@ -50,17 +52,17 @@ class Webmention_Notifications {
 					break;
 			}
 		}
+
 		return $redirect_to;
 	}
 
-	/*
+	/**
 	 * Returns a text based summary of a comment/webmention for the purpose of display
 	 */
-
 	public static function get_comment_details( $comment ) {
 
 		/* translators: %s: Comment Type */
-		$message = sprintf( __( 'Comment Type: %s', 'webmention' ), get_webmention_comment_string( $comment ) ) . "\r\n";
+		$message = sprintf( __( 'Comment Type: %s', 'webmention' ), get_webmention_comment_type_string( $comment ) ) . "\r\n";
 		/* translators: %s: Post Permalink */
 		$message .= sprintf( __( 'Permalink: %s', 'webmention' ), get_permalink( $comment->comment_post_ID ) ) . "\r\n\r\n";
 		/* translators: %s: Comment Date */
@@ -80,8 +82,8 @@ class Webmention_Notifications {
 				$message .= sprintf( __( 'Comment: %s', 'webmention' ), "\r\n" . get_comment_text( $comment ) ) . "\r\n\r\n";
 				break;
 		}
-		return apply_filters( 'webmention_comment_details', $message, $comment );
 
+		return apply_filters( 'webmention_comment_details', $message, $comment );
 	}
 
 
@@ -217,7 +219,7 @@ class Webmention_Notifications {
 
 		// The blogname option is escaped with esc_html on the way into the database in sanitize_option
 		// we want to reverse this for the plain text arena of emails.
-		$blogname        = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
+		$blogname = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
 
 		/* translators: %s: post title */
 		$notify_message = sprintf( __( 'New response to your post "%s"', 'webmention' ), $post->post_title ) . "\r\n";
@@ -287,7 +289,7 @@ class Webmention_Notifications {
 		$message_headers = apply_filters( 'comment_notification_headers', $message_headers, $comment->comment_ID );
 
 		foreach ( $emails as $email ) {
-			@wp_mail( $email, wp_specialchars_decode( $subject ), $notify_message, $message_headers );
+			wp_mail( $email, wp_specialchars_decode( $subject ), $notify_message, $message_headers );
 		}
 
 		if ( $switched_locale ) {
@@ -333,7 +335,7 @@ class Webmention_Notifications {
 
 		// The blogname option is escaped with esc_html on the way into the database in sanitize_option
 		// we want to reverse this for the plain text arena of emails.
-		$blogname        = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
+		$blogname = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
 
 		/* translators: %s: post title */
 		$notify_message = sprintf( __( 'A new response to the post "%s" is waiting for your approval', 'webmention' ), get_the_title( $post ) ) . "\r\n";
@@ -411,7 +413,7 @@ class Webmention_Notifications {
 		$message_headers = apply_filters( 'comment_moderation_headers', $message_headers, $comment_id );
 
 		foreach ( $emails as $email ) {
-			@wp_mail( $email, wp_specialchars_decode( $subject ), $notify_message, $message_headers );
+			wp_mail( $email, wp_specialchars_decode( $subject ), $notify_message, $message_headers );
 		}
 
 		if ( $switched_locale ) {
