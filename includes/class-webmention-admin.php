@@ -24,7 +24,7 @@ class Webmention_Admin {
 		add_filter( 'manage_comments_custom_column', array( 'Webmention_Admin', 'manage_comments_custom_column' ), 10, 2 );
 
 		add_filter( 'comment_row_actions', array( 'Webmention_Admin', 'comment_row_actions' ), 13, 2 );
-		add_filter( 'comment_unapproved_to_approved', array( 'Webmention_Admin', 'transition_to_whitelist' ), 10 );
+		add_filter( 'comment_unapproved_to_approved', array( 'Webmention_Admin', 'transition_to_approvelist' ), 10 );
 
 		self::add_privacy_policy_content();
 	}
@@ -161,20 +161,20 @@ class Webmention_Admin {
 
 		$status = wp_get_comment_status( $comment );
 		if ( 'unapproved' === $status ) {
-			$actions['domainwhitelist'] = sprintf( '<a href="%1$s" aria-label="%2$s">%2$s</a>', esc_url( $approve_url ), esc_attr__( 'Approve & Whitelist', 'webmention' ) );
+			$actions['domainapprovelist'] = sprintf( '<a href="%1$s" aria-label="%2$s">%2$s</a>', esc_url( $approve_url ), esc_attr__( 'Approve & Always Allow', 'webmention' ) );
 		}
 		return $actions;
 	}
 
 	public static function add_webmention_approve_domain( $host ) {
-		$whitelist   = get_webmention_approve_domains();
-		$whitelist[] = $host;
-		$whitelist   = array_unique( $whitelist );
-		$whitelist   = implode( "\n", $whitelist );
-		update_option( 'webmention_approve_domains', $whitelist );
+		$approvelist   = get_webmention_approve_domains();
+		$approvelist[] = $host;
+		$approvelist   = array_unique( $approvelist );
+		$approvelist   = implode( "\n", $approvelist );
+		update_option( 'webmention_approve_domains', $approvelist );
 	}
 
-	public static function transition_to_whitelist( $comment ) {
+	public static function transition_to_approvelist( $comment ) {
 		if ( ! current_user_can( 'moderate_comments' ) ) {
 			return;
 		}
