@@ -63,7 +63,11 @@ function webmention_init() {
 	require_once dirname( __FILE__ ) . '/includes/class-webmention-receiver.php';
 	add_action( 'init', array( 'Webmention_Receiver', 'init' ) );
 
-	// initialize Webmention Vouch.
+	// initialize Webmention Notifications
+	require_once dirname( __FILE__ ) . '/includes/class-webmention-notifications.php';
+	add_action( 'init', array( 'Webmention_Notifications', 'init' ) );
+
+	// initialize Webmention Vouch
 	if ( WEBMENTION_VOUCH ) {
 		require_once dirname( __FILE__ ) . '/includes/class-webmention-vouch.php';
 		add_action( 'init', array( 'Webmention_Vouch', 'init' ) );

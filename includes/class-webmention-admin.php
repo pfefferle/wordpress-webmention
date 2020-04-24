@@ -62,23 +62,7 @@ class Webmention_Admin {
 		if ( 'comment_type' !== $column ) {
 			return;
 		}
-		$type = get_comment_type( $comment_id );
-		switch ( $type ) {
-			case 'trackback':
-				esc_html_e( 'Trackback', 'webmention' );
-				break;
-			case 'pingback':
-				esc_html_e( 'Pingback', 'webmention' );
-				break;
-			case 'comment':
-				echo esc_html_x( 'Comment', 'noun', 'webmention' );
-				break;
-			case 'webmention':
-				esc_html_e( 'Webmention', 'webmention' );
-				break;
-			default:
-				echo $type;
-		};
+		echo esc_html( get_webmention_comment_type_string( $comment_id ) );
 	}
 
 	/**
