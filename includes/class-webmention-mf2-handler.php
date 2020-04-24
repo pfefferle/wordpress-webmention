@@ -1,15 +1,14 @@
 <?php
 /**
- * takes MF2 JSON and processes it
- *
+ * Takes MF2 JSON and processes it.
  */
 class Webmention_MF2_Handler {
-
 
 	/**
 	 * Is string a URL.
 	 *
 	 * @param array $string
+	 *
 	 * @return bool
 	*/
 	public static function is_url( $string ) {
@@ -25,10 +24,11 @@ class Webmention_MF2_Handler {
 	}
 
 	/**
-	 * is this what type
+	 * Is this what type?
 	 *
-	 * @param array $mf Parsed Microformats Array
+	 * @param array  $mf   Parsed Microformats Array
 	 * @param string $type Type
+	 *
 	 * @return bool
 	*/
 	public static function is_type( $mf, $type ) {
@@ -39,6 +39,7 @@ class Webmention_MF2_Handler {
 	 * Verifies if $mf is an array without numeric keys, and has a 'properties' key.
 	 *
 	 * @param $mf
+	 *
 	 * @return bool
 	 */
 	public static function is_microformat( $mf ) {
@@ -49,6 +50,7 @@ class Webmention_MF2_Handler {
 	 * Verifies if $mf has an 'items' key which is also an array, returns true.
 	 *
 	 * @param $mf
+	 *
 	 * @return bool
 	 */
 	public static function is_microformat_collection( $mf ) {
@@ -58,8 +60,9 @@ class Webmention_MF2_Handler {
 	/**
 	 * Verifies if property named $propname is in array $mf.
 	 *
-	 * @param array    $mf
-	 * @param $propname
+	 * @param array  $mf
+	 * @param string $propname
+	 *
 	 * @return bool
 	 */
 	public static function has_property( array $mf, $propname ) {
@@ -71,6 +74,7 @@ class Webmention_MF2_Handler {
 	 * Verifies if $p is an array without numeric keys and has key 'value' and 'html' set.
 	 *
 	 * @param $p
+	 *
 	 * @return bool
 	 */
 	public static function is_embedded_html( $p ) {
@@ -80,8 +84,9 @@ class Webmention_MF2_Handler {
 	/**
 	 * Verifies if rel named $relname is in array $mf.
 	 *
-	 * @param array   $mf
-	 * @param $relname
+	 * @param array  $mf
+	 * @param string $relname
+	 *
 	 * @return bool
 	 */
 	public static function has_rel( array $mf, $relname ) {
@@ -92,6 +97,7 @@ class Webmention_MF2_Handler {
 	 * If $v is a microformat or embedded html, return $v['value']. Else return v.
 	 *
 	 * @param $v
+	 *
 	 * @return mixed
 	 */
 	public static function to_plaintext( $v ) {
@@ -104,12 +110,14 @@ class Webmention_MF2_Handler {
 	}
 
 	/**
-	 * Returns plaintext of $propname with optional $fallback
+	 * Returns plaintext of $propname with optional $fallback.
 	 *
 	 * @param array       $mf
-	 * @param $propname
+	 * @param string      $propname
 	 * @param null|string $fallback
+	 *
 	 * @return mixed|null
+	 *
 	 * @link http://php.net/manual/en/function.current.php
 	 */
 	public static function get_plaintext( array $mf, $propname, $fallback = null ) {
@@ -123,22 +131,25 @@ class Webmention_MF2_Handler {
 	 * Converts $propname in $mf into array_map plaintext, or $fallback if not valid.
 	 *
 	 * @param array       $mf
-	 * @param $propname
+	 * @param string      $propname
 	 * @param null|string $fallback
+	 *
 	 * @return null
 	 */
 	public static function get_plaintext_array( array $mf, $propname, $fallback = null ) {
 		if ( ! empty( $mf['properties'][ $propname ] ) && is_array( $mf['properties'][ $propname ] ) ) {
 			return array_map( array( get_called_class(), 'to_plaintext' ), $mf['properties'][ $propname ] );
 		}
-			return $fallback;
+
+		return $fallback;
 	}
 
 	/**
-	 *  Return an array of properties, and may contain plaintext content
+	 * Return an array of properties, and may contain plaintext content
 	 *
-	 * @param array       $mf
-	 * @param array       $properties
+	 * @param array $mf
+	 * @param array $properties
+	 *
 	 * @return null|array
 	 */
 	public static function get_property_array( array $mf, $properties, $args = null ) {
@@ -168,6 +179,7 @@ class Webmention_MF2_Handler {
 	 * Returns ['html'] element of $v, or ['value'] or just $v, in order of availablility.
 	 *
 	 * @param $v
+	 *
 	 * @return mixed
 	 */
 	public static function to_html( $v ) {
@@ -183,8 +195,9 @@ class Webmention_MF2_Handler {
 	 * Gets HTML of $propname or if not, $fallback
 	 *
 	 * @param array       $mf
-	 * @param $propname
+	 * @param string      $propname
 	 * @param null|string $fallback
+	 *
 	 * @return mixed|null
 	 */
 	public static function get_html( array $mf, $propname, $fallback = null ) {
@@ -198,9 +211,9 @@ class Webmention_MF2_Handler {
 	/**
 	 * Gets the DateTime properties including published or updated, depending on params.
 	 *
-	 * @param $name string updated or published
-	 * @param array                            $mf
-	 * @param null|DateTime                      $fallback
+	 * @param string        $name     updated or published
+	 * @param array         $mf
+	 * @param null|DateTime $fallback
 	 * @return mixed|null
 	 */
 	public static function get_datetime_property( $name, array $mf, $fallback = null ) {
@@ -217,10 +230,9 @@ class Webmention_MF2_Handler {
 	}
 
 	/**
-	 * get all top-level items
+	 * Get all top-level items.
 	 *
 	 * @param array $mf_array the microformats array
-	 * @param array an array of top level elements array
 	 *
 	 * @return array
 	 */
@@ -229,21 +241,21 @@ class Webmention_MF2_Handler {
 			return array();
 		}
 
-		// get first item
+		// Get first item
 		$first_item = $mf_array['items'][0];
 
-		// check if it is an h-feed
+		// Check if it is an h-feed
 		if ( self::is_type( $first_item, 'h-feed' ) && array_key_exists( 'children', $first_item ) ) {
 			$mf_array['items'] = $first_item['children'];
 		}
-		// return entries
+		// Return entries
 		return $mf_array['items'];
 	}
 
 	/**
-	 * helper to find the correct h- node
+	 * Helper to find the correct h- node.
 	 *
-	 * @param array $mf The parsed microformats json
+	 * @param array  $mf  the parsed microformats json
 	 * @param string $url the retrieved url
 	 *
 	 * @return array the h- node or false
@@ -256,7 +268,7 @@ class Webmention_MF2_Handler {
 		if ( 1 === count( $items ) ) {
 			return $items[0];
 		}
-		// iterate array
+		// Iterate array
 		foreach ( $items as $item ) {
 			if ( self::compare_urls( $url, $item['properties']['url'] ) ) {
 				return $item;
@@ -267,10 +279,10 @@ class Webmention_MF2_Handler {
 
 
 	/**
-	 * Takes the mf2 json array passed through and returns a cleaned up representative item
+	 * Takes the mf2 json array passed through and returns a cleaned up representative item.
 	 *
-	 * @param $mf The entire mf array
-	 * @param $url The source URL
+	 * @param $mf  the entire mf array
+	 * @param $url the source URL
 	 *
 	 * @return array
 	 */
@@ -281,7 +293,7 @@ class Webmention_MF2_Handler {
 			return array();
 		}
 
-		// if entry does not have an author try to find one elsewhere
+		// If entry does not have an author try to find one elsewhere
 		if ( ! self::has_property( $item, 'author' ) ) {
 			$item['properties']['author'] = self::get_representative_author( $mf, $url );
 		}
@@ -296,18 +308,19 @@ class Webmention_MF2_Handler {
 	}
 
 	/**
-	 * helper to find the correct author node
+	 * Helper to find the correct author node.
 	 *
-	 * @param array $item
-	 * @param array $mf the parsed microformats array
+	 * @param array  $item
+	 * @param array  $mf     the parsed microformats array
 	 * @param string $source the source url
 	 *
 	 * @return array|null the h-card node or null
+	 *
+	 * @see http://indieweb,org/authorship
 	 */
 	public static function get_representative_author( $item, $mf ) {
-		// Author Discovery
-		// http://indieweb,org/authorship
 		$authorpage = false;
+
 		if ( self::has_property( $item, 'author' ) ) {
 			// Check if any of the values of the author property are an h-card
 			foreach ( $item['properties']['author'] as $a ) {
@@ -357,10 +370,10 @@ class Webmention_MF2_Handler {
 	}
 
 	/**
-	 * compare an url with a list of urls
+	 * Compare an url with a list of urls.
 	 *
-	 * @param string $needle the target url
-	 * @param array $haystack a list of urls
+	 * @param string  $needle      the target url
+	 * @param array   $haystack    a list of urls
 	 * @param boolean $schemelesse define if the target url should be checked with http:// and https://
 	 *
 	 * @return boolean
@@ -373,17 +386,17 @@ class Webmention_MF2_Handler {
 			return false;
 		}
 		if ( true === $schemeless ) {
-			// remove url-scheme
+			// Remove url-scheme
 			$schemeless_target = preg_replace( '/^https?:\/\//i', '', $needle );
 
-			// add both urls to the needle
+			// Add both urls to the needle
 			$needle = array( 'http://' . $schemeless_target, 'https://' . $schemeless_target );
 		} else {
-			// make $needle an array
+			// Make $needle an array
 			$needle = array( $needle );
 		}
 
-		// compare both arrays
+		// Compare both arrays
 		return array_intersect( $needle, $haystack );
 	}
 }
