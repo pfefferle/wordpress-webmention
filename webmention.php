@@ -25,13 +25,18 @@ defined( 'WEBMENTION_PROCESS_TYPE' ) || define( 'WEBMENTION_PROCESS_TYPE', WEBME
 
 defined( 'WEBMENTION_VOUCH' ) || define( 'WEBMENTION_VOUCH', false );
 
-// initialize admin settings.
-require_once dirname( __FILE__ ) . '/includes/class-webmention-admin.php';
-add_action( 'admin_init', array( 'Webmention_Admin', 'init' ) );
-add_action( 'admin_menu', array( 'Webmention_Admin', 'admin_menu' ) );
+/**
+ * Initialize admin settings.
+ */
+function webmention_admin_init() {
+	require_once dirname( __FILE__ ) . '/includes/class-webmention-admin.php';
+	Webmention_Admin::init();
+	add_action( 'admin_menu', array( 'Webmention_Admin', 'admin_menu' ) );
+}
+add_action( 'admin_init', 'webmention_admin_init' );
 
 /**
- * Initialize Webmention Plugin
+ * Initialize Webmention Plugin.
  */
 function webmention_init() {
 	// Add support for webmentions to custom post types.
