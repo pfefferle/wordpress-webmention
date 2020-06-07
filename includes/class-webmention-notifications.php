@@ -299,7 +299,7 @@ class Webmention_Notifications {
 	}
 
 
-	public static function wp_notify_moderator( $comment_id ) {
+	public static function wp_notify_moderator( $comment ) {
 		global $wpdb;
 
 		$maybe_notify = get_option( 'moderation_notify' );
@@ -309,16 +309,16 @@ class Webmention_Notifications {
 		 *
 		 * @since 4.4.0
 		 *
-		 * @param bool $maybe_notify Whether to notify blog moderator.
-		 * @param int  $comment_ID   The id of the comment for the notification.
+		 * @param bool            $maybe_notify Whether to notify blog moderator.
+		 * @param int|WP_Comment  $comment      The id of the comment or the WP_Comment object for the notification.
 		 */
-		$maybe_notify = apply_filters( 'notify_moderator', $maybe_notify, $comment_id );
+		$maybe_notify = apply_filters( 'notify_moderator', $maybe_notify, $comment );
 
 		if ( ! $maybe_notify ) {
 			return true;
 		}
 
-		$comment = get_comment( $comment_id );
+		$comment = get_comment( $comment );
 		$post    = get_post( $comment->comment_post_ID );
 		$user    = get_userdata( $post->post_author );
 		// Send to the administration and to the post author if the author can modify the comment.
@@ -343,18 +343,18 @@ class Webmention_Notifications {
 		$notify_message .= self::get_comment_details( $comment );
 
 		/* translators: Comment moderation. %s: Comment action URL */
-		$notify_message .= sprintf( __( 'Approve it: %s', 'default' ), admin_url( "comment.php?action=approve&c={$comment_id}#wpbody-content" ) ) . "\r\n";
+		$notify_message .= sprintf( __( 'Approve it: %s', 'default' ), admin_url( "comment.php?action=approve&c={$comment->ID}#wpbody-content" ) ) . "\r\n";
 
 		if ( EMPTY_TRASH_DAYS ) {
 			/* translators: Comment moderation. %s: Comment action URL */
-			$notify_message .= sprintf( __( 'Trash it: %s', 'default' ), admin_url( "comment.php?action=trash&c={$comment_id}#wpbody-content" ) ) . "\r\n";
+			$notify_message .= sprintf( __( 'Trash it: %s', 'default' ), admin_url( "comment.php?action=trash&c={$comment->ID}#wpbody-content" ) ) . "\r\n";
 		} else {
 			/* translators: Comment moderation. %s: Comment action URL */
-			$notify_message .= sprintf( __( 'Delete it: %s', 'default' ), admin_url( "comment.php?action=delete&c={$comment_id}#wpbody-content" ) ) . "\r\n";
+			$notify_message .= sprintf( __( 'Delete it: %s', 'default' ), admin_url( "comment.php?action=delete&c={$comment->ID}#wpbody-content" ) ) . "\r\n";
 		}
 
 		/* translators: Comment moderation. %s: Comment action URL */
-		$notify_message .= sprintf( __( 'Spam it: %s', 'default' ), admin_url( "comment.php?action=spam&c={$comment_id}#wpbody-content" ) ) . "\r\n";
+		$notify_message .= sprintf( __( 'Spam it: %s', 'default' ), admin_url( "comment.php?action=spam&c={$comment->ID}#wpbody-content" ) ) . "\r\n";
 
 		$notify_message .= sprintf(
 			/* translators: Comment moderation. %s: Number of comments awaiting approval */
