@@ -1,49 +1,49 @@
 <?php
 /**
- * Webmention Receiver Class
+ * Webmention Receiver Class.
  *
  * @author Matthias Pfefferle
  */
 class Webmention_Receiver {
 	/**
-	 * Initialize the plugin, registering WordPress hooks
+	 * Initialize the plugin, registering WordPress hooks.
 	 */
 	public static function init() {
 		add_filter( 'query_vars', array( 'Webmention_Receiver', 'query_var' ) );
 
-		// Configure the REST API route
+		// Configure the REST API route.
 		add_action( 'rest_api_init', array( 'Webmention_Receiver', 'register_routes' ) );
-		// Filter the response to allow a webmention form if no parameters are passed
+		// Filter the response to allow a webmention form if no parameters are passed.
 		add_filter( 'rest_pre_serve_request', array( 'Webmention_Receiver', 'serve_request' ), 11, 4 );
 
 		add_filter( 'duplicate_comment_id', array( 'Webmention_Receiver', 'disable_wp_check_dupes' ), 20, 2 );
 
-		// endpoint discovery
+		// endpoint discovery.
 		add_action( 'wp_head', array( 'Webmention_Receiver', 'html_header' ), 99 );
 		add_action( 'template_redirect', array( 'Webmention_Receiver', 'http_header' ) );
 		add_filter( 'host_meta', array( 'Webmention_Receiver', 'jrd_links' ) );
 		add_filter( 'webfinger_user_data', array( 'Webmention_Receiver', 'jrd_links' ) );
 		add_filter( 'webfinger_post_data', array( 'Webmention_Receiver', 'jrd_links' ) );
 
-		// Webmention helper
+		// Webmention helper.
 		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'webmention_verify' ), 11, 1 );
 		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'check_dupes' ), 12, 1 );
 
-		// Webmention data handler
+		// Webmention data handler.
 		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'default_title_filter' ), 21, 1 );
 		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'default_content_filter' ), 22, 1 );
 
 		add_filter( 'pre_comment_approved', array( 'Webmention_Receiver', 'auto_approve' ), 11, 2 );
 
-		// Allow for avatars on webmention comment types
+		// Allow for avatars on webmention comment types.
 		if ( 0 !== (int) get_option( 'webmention_avatars', 1 ) ) {
 			add_filter( 'get_avatar_comment_types', array( 'Webmention_Receiver', 'get_avatar_comment_types' ), 99 );
 		}
 
-		// Threaded comments support
+		// Threaded comments support.
 		add_filter( 'template_include', array( 'Webmention_Receiver', 'comment_template_include' ) );
 
-		// Support Webmention delete
+		// Support Webmention delete.
 		add_action( 'webmention_data_error', array( 'Webmention_Receiver', 'delete' ) );
 
 		self::register_meta();
@@ -95,7 +95,7 @@ class Webmention_Receiver {
 		);
 		register_meta( 'comment', 'webmention_created_at', $args );
 
-		// Purpose of this is to store the response code returned during verification
+		// Purpose of this is to store the response code returned during verification.
 		$args = array(
 			'type'         => 'string',
 			'description'  => esc_html__( 'Response Code Returned During Webmention Verification', 'webmention' ),
@@ -104,7 +104,7 @@ class Webmention_Receiver {
 		);
 		register_meta( 'comment', 'webmention_response_code', $args );
 
-		// Purpose of this is to store a vouch URL
+		// Purpose of this is to store a vouch URL.
 		$args = array(
 			'type'         => 'string',
 			'description'  => esc_html__( 'Webmention Vouch URL', 'webmention' ),
@@ -115,11 +115,11 @@ class Webmention_Receiver {
 	}
 
 	/**
-	 * adds some query vars
+	 * adds some query vars.
 	 *
-	 * @param array $vars
+	 * @param array $vars Query variables.
 	 *
-	 * @return array
+	 * @return array Query variables.
 	 */
 	public static function query_var( $vars ) {
 		$vars[] = 'replytocom';
@@ -127,11 +127,11 @@ class Webmention_Receiver {
 	}
 
 	/**
-	 * Show avatars on webmentions if set
+	 * Show avatars on webmentions if set.
 	 *
-	 * @param array $types list of avatar enabled comment types
+	 * @param array $types list of avatar enabled comment types.
 	 *
-	 * @return array show avatars on webmentions
+	 * @return array show avatars on webmentions.
 	 */
 	public static function get_avatar_comment_types( $types ) {
 		$types[] = 'webmention';
@@ -188,7 +188,7 @@ class Webmention_Receiver {
 			return true;
 		}
 
-		// render nice HTML views for non API-calls
+		// render nice HTML views for non API-calls.
 		if ( $request->get_param( 'format' ) === 'html' ) {
 			// If someone tries to poll the webmention endpoint return a webmention form.
 			if ( ! headers_sent() ) {
@@ -225,11 +225,11 @@ class Webmention_Receiver {
 	 *
 	 * @param WP_REST_Request $request Full data about the request.
 	 *
-	 * @return WP_Error|WP_REST_Response
+	 * @return WP_Error|WP_REST_Response Return either an error or a REST Response object.
 	 *
-	 * @uses apply_filters calls "webmention_comment_data" on the comment data
-	 * @uses apply_filters calls "webmention_update" on the comment data
-	 * @uses apply_filters calls "webmention_success_message" on the success message
+	 * @uses apply_filters calls "webmention_comment_data" on the comment data.
+	 * @uses apply_filters calls "webmention_update" on the comment data.
+	 * @uses apply_filters calls "webmention_success_message" on the success message.
 	 */
 	public static function post( $request ) {
 		$params = array_filter( $request->get_params() );
@@ -252,7 +252,7 @@ class Webmention_Receiver {
 
 		$comment_post_id = webmention_url_to_postid( $target );
 
-		// check if post id exists
+		// check if post id exists.
 		if ( ! $comment_post_id ) {
 			return new WP_Error( 'target_not_valid', esc_html__( 'Target is not a valid post', 'webmention' ), array( 'status' => 400 ) );
 		}
@@ -261,7 +261,7 @@ class Webmention_Receiver {
 			return new WP_Error( 'source_equals_target', esc_html__( 'Target and source cannot direct to the same resource', 'webmention' ), array( 'status' => 400 ) );
 		}
 
-		// check if pings are allowed
+		// check if pings are allowed.
 		if ( ! pings_open( $comment_post_id ) ) {
 			return new WP_Error( 'pings_closed', esc_html__( 'Pings are disabled for this post', 'webmention' ), array( 'status' => 400 ) );
 		}
@@ -270,8 +270,7 @@ class Webmention_Receiver {
 		if ( ! $post ) {
 			return new WP_Error( 'target_not_valid', esc_html__( 'Target is not a valid post', 'webmention' ), array( 'status' => 400 ) );
 		}
-		// In the event of async processing this needs to be stored here as it might not be available
-		// later.
+		// In the event of async processing this needs to be stored here as it might not be available later.
 		$comment_meta                          = array();
 		$comment_author_ip                     = preg_replace( '/[^0-9a-fA-F:., ]/', '', $_SERVER['REMOTE_ADDR'] );
 		$comment_agent                         = isset( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT'] : '';
@@ -281,13 +280,13 @@ class Webmention_Receiver {
 		$comment_meta['protocol']              = 'webmention';
 
 		if ( isset( $params['vouch'] ) ) {
-			// If there is a vouch pass it along
+			// If there is a vouch pass it along.
 			$vouch = urldecode( $params['vouch'] );
-			// Safely store a version of the data
+			// Safely store a version of the data.
 			$comment_meta['webmention_vouch_url'] = esc_url_raw( $vouch );
 		}
 
-		// change this if your theme can't handle the Webmentions comment type
+		// change this if your theme can't handle the Webmentions comment type.
 		$comment_type = WEBMENTION_COMMENT_TYPE;
 
 		$commentdata = compact( 'comment_type', 'comment_agent', 'comment_date', 'comment_date_gmt', 'comment_meta', 'source', 'target', 'vouch' );
@@ -296,7 +295,7 @@ class Webmention_Receiver {
 		$commentdata['comment_author_IP'] = $comment_author_ip;
 		// Set Comment Author URL to Source
 		$commentdata['comment_author_url'] = esc_url_raw( $commentdata['source'] );
-		// Save Source to Meta to Allow Author URL to be Changed and Parsed
+		// Save Source to Meta to Allow Author URL to be Changed and Parsed.
 		$commentdata['comment_meta']['webmention_source_url'] = $commentdata['comment_author_url'];
 
 		$fragment = wp_parse_url( $commentdata['target'], PHP_URL_FRAGMENT );
@@ -306,7 +305,7 @@ class Webmention_Receiver {
 		$commentdata['comment_meta']['webmention_target_url'] = $commentdata['target'];
 
 		$commentdata['comment_parent'] = '';
-		// check if there is a parent comment
+		// check if there is a parent comment.
 		$query_string = wp_parse_url( $commentdata['target'], PHP_URL_QUERY );
 		if ( $query_string ) {
 			$query_array = array();
@@ -316,17 +315,17 @@ class Webmention_Receiver {
 			}
 		}
 
-		// add empty fields
+		// add empty fields.
 		$commentdata['comment_author_email'] = '';
 
-		// Define WEBMENTION_PROCESS_TYPE as true if you want to define an asynchronous handler
+		// Define WEBMENTION_PROCESS_TYPE as true if you want to define an asynchronous handler.
 		if ( WEBMENTION_PROCESS_TYPE_ASYNC === get_webmention_process_type() ) {
 			// Schedule an action a random period of time in the next 2 minutes to handle webmentions.
 			wp_schedule_single_event( time() + wp_rand( 0, 120 ), 'webmention_process_schedule', array( $commentdata ) );
 
-			// Return the source and target and the 202 Message
+			// Return the source and target and the 202 Message.
 			$return = array(
-				'link'    => '', // TODO add API link to check state of comment
+				'link'    => '', // TODO add API link to check state of comment.
 				'source'  => $commentdata['source'],
 				'target'  => $commentdata['target'],
 				'code'    => 'scheduled',
@@ -341,7 +340,7 @@ class Webmention_Receiver {
 		 *
 		 * All verification functions and content generation functions are added to the comment data.
 		 *
-		 * @param array $commentdata
+		 * @param array $commentdata Comment Array.
 		 *
 		 * @return array|null|WP_Error $commentdata The Filtered Comment Array or a WP_Error object.
 		 */
@@ -353,17 +352,17 @@ class Webmention_Receiver {
 			 *
 			 * Added to support deletion.
 			 *
-			 * @param array $commentdata
+			 * @param array $commentdata Comment Array
 			 */
 			do_action( 'webmention_data_error', $commentdata );
 
 			return $commentdata;
 		}
 
-		// disable flood control
+		// disable flood control.
 		remove_action( 'check_comment_flood', 'check_comment_flood_db', 10 );
 
-		// update or save webmention
+		// update or save webmention.
 		if ( empty( $commentdata['comment_ID'] ) ) {
 			// save comment
 			$commentdata['comment_ID'] = wp_new_comment( $commentdata, true );
@@ -383,7 +382,7 @@ class Webmention_Receiver {
 			/**
 			 * Fires after a webmention is updated in the database.
 			 *
-			 * The hook is needed as the comment_post hook uses filtered data
+			 * The hook is needed as the comment_post hook uses filtered data.
 			 *
 			 * @param int   $comment_ID The comment ID.
 			 * @param array $data       Comment data.
@@ -427,7 +426,7 @@ class Webmention_Receiver {
 	 *     $content_type
 	 * }
 	 *
-	 * @uses apply_filters calls "http_headers_useragent" on the user agent
+	 * @uses apply_filters calls "http_headers_useragent" on the user agent.
 	 */
 	public static function webmention_verify( $data ) {
 		if ( ! $data || is_wp_error( $data ) ) {
@@ -464,7 +463,7 @@ class Webmention_Receiver {
 
 		// A valid response code from the other server would not be considered an error.
 		$response_code = wp_remote_retrieve_response_code( $response );
-		// not an (x)html, sgml, or xml page, no use going further
+		// not an (x)html, sgml, or xml page, no use going further.
 		if ( preg_match( '#(image|audio|video|model)/#is', wp_remote_retrieve_header( $response, 'content-type' ) ) ) {
 			return new WP_Error(
 				'unsupported_content_type',
@@ -517,6 +516,7 @@ class Webmention_Receiver {
 					)
 				);
 		}
+		// remote_source_original is the raw source of the retrieved URL.
 		$remote_source_original = wp_remote_retrieve_body( $response );
 
 		// check if source really links to target
@@ -551,7 +551,7 @@ class Webmention_Receiver {
 		$content_type  = wp_remote_retrieve_header( $response, 'Content-Type' );
 		$commentdata   = compact( 'remote_source', 'remote_source_original', 'content_type' );
 
-		// If this is an mf2 object store
+		// If this is an mf2 object store it in the comment array. Will not be saved in database by this.
 		if ( 'application/mf2+json' === $content_type ) {
 			$commentdata['remote_source_mf2'] = json_decode( $remote_source_original, true );
 		}
@@ -822,7 +822,7 @@ class Webmention_Receiver {
 	 */
 	public static function is_source_whitelisted( $url ) {
 		$approvelist = get_webmention_approve_domains();
-		$host      = webmention_extract_domain( $url );
+		$host        = webmention_extract_domain( $url );
 		if ( empty( $approvelist ) ) {
 			return false;
 		}
