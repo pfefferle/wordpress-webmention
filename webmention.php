@@ -5,7 +5,7 @@
  * Description: Webmention support for WordPress posts
  * Author: Matthias Pfefferle
  * Author URI: https://notiz.blog/
- * Version: 4.0.1
+ * Version: 4.0.3
  * License: MIT
  * License URI: https://opensource.org/licenses/MIT
  * Text Domain: webmention
@@ -25,7 +25,7 @@ defined( 'WEBMENTION_PROCESS_TYPE' ) || define( 'WEBMENTION_PROCESS_TYPE', WEBME
 
 defined( 'WEBMENTION_VOUCH' ) || define( 'WEBMENTION_VOUCH', false );
 
-// initialize admin settings
+// initialize admin settings.
 require_once dirname( __FILE__ ) . '/includes/class-webmention-admin.php';
 add_action( 'admin_init', array( 'Webmention_Admin', 'init' ) );
 add_action( 'admin_menu', array( 'Webmention_Admin', 'admin_menu' ) );
@@ -34,7 +34,7 @@ add_action( 'admin_menu', array( 'Webmention_Admin', 'admin_menu' ) );
  * Initialize Webmention Plugin
  */
 function webmention_init() {
-	// Add support for webmentions to custom post types
+	// Add support for webmentions to custom post types.
 	$post_types = get_option( 'webmention_support_post_types', array( 'post', 'page' ) ) ? get_option( 'webmention_support_post_types', array( 'post', 'page' ) ) : array();
 
 	foreach ( $post_types as $post_type ) {
@@ -44,24 +44,28 @@ function webmention_init() {
 		require_once dirname( __FILE__ ) . '/includes/debug.php';
 	}
 
-	// list of various public helper functions
+	// list of various public helper functions.
 	require_once dirname( __FILE__ ) . '/includes/functions.php';
 
-	// load local avatar support
+	// load local avatar support.
 	require_once dirname( __FILE__ ) . '/includes/class-webmention-avatar-handler.php';
 	add_action( 'init', array( 'Webmention_Avatar_Handler', 'init' ) );
 
-	// load HTTP 410 support
+	// load HTTP 410 support.
 	require_once dirname( __FILE__ ) . '/includes/class-webmention-410.php';
 	add_action( 'init', array( 'Webmention_410', 'init' ) );
 
-	// initialize Webmention Sender
+	// initialize Webmention Sender.
 	require_once dirname( __FILE__ ) . '/includes/class-webmention-sender.php';
 	add_action( 'init', array( 'Webmention_Sender', 'init' ) );
 
-	// initialize Webmention Receiver
+	// initialize Webmention Receiver.
 	require_once dirname( __FILE__ ) . '/includes/class-webmention-receiver.php';
 	add_action( 'init', array( 'Webmention_Receiver', 'init' ) );
+
+	// initialize Webmention Notifications
+	require_once dirname( __FILE__ ) . '/includes/class-webmention-notifications.php';
+	add_action( 'init', array( 'Webmention_Notifications', 'init' ) );
 
 	// initialize Webmention Vouch
 	if ( WEBMENTION_VOUCH ) {
@@ -69,11 +73,11 @@ function webmention_init() {
 		add_action( 'init', array( 'Webmention_Vouch', 'init' ) );
 	}
 
-	// Default Comment Status
+	// Default Comment Status.
 	add_filter( 'get_default_comment_status', 'webmention_get_default_comment_status', 11, 3 );
 	add_filter( 'pings_open', 'webmention_pings_open', 10, 2 );
 
-	// Load language files
+	// Load language files.
 	webmention_plugin_textdomain();
 
 	add_action( 'comment_form_after', 'webmention_comment_form', 11 );
@@ -82,7 +86,7 @@ function webmention_init() {
 	add_filter( 'nodeinfo_data', 'webmention_nodeinfo', 10, 2 );
 	add_filter( 'nodeinfo2_data', 'webmention_nodeinfo2', 10 );
 
-	// remove old Webmention code
+	// remove old Webmention code.
 	remove_action( 'init', array( 'WebMentionFormPlugin', 'init' ) );
 	remove_action( 'init', array( 'WebMentionForCommentsPlugin', 'init' ) );
 
@@ -95,6 +99,18 @@ function webmention_init() {
 }
 add_action( 'plugins_loaded', 'webmention_init' );
 
+/**
+ * Retrieve the default comment status for a given post type.
+ *
+ * @since 3.8.9
+ *
+ * @param string $status       Default status for the given post type,
+ *                             either 'open' or 'closed'.
+ * @param string $post_type    Post type to check.
+ * @param string $comment_type Type of comment. Default is `comment`.
+ *
+ * @return string
+ */
 function webmention_get_default_comment_status( $status, $post_type, $comment_type ) {
 	if ( 'webmention' === $comment_type ) {
 		return post_type_supports( $post_type, 'webmentions' ) ? 'open' : 'closed';
@@ -108,7 +124,11 @@ function webmention_get_default_comment_status( $status, $post_type, $comment_ty
 }
 
 /**
- * render the comment form
+ * Render the webmention comment form.
+ *
+ * Can be filtered to load a custom template of your choosing.
+ *
+ * @since 3.8.9
  */
 function webmention_comment_form() {
 	$template = apply_filters( 'webmention_comment_form', plugin_dir_path( __FILE__ ) . 'templates/webmention-comment-form.php' );
@@ -119,11 +139,12 @@ function webmention_comment_form() {
 }
 
 /**
- * Return true if page is enabled for Homepage Webmentions
+ * Return enabled status of Homepage Webmentions.
+ *
+ * @since 3.8.9
  *
  * @param bool $open    Whether the current post is open for pings.
  * @param int  $post_id The post ID.
- *
  * @return boolean if pings are open
  */
 function webmention_pings_open( $open, $post_id ) {
@@ -135,17 +156,22 @@ function webmention_pings_open( $open, $post_id ) {
 }
 
 /**
- * Load language files
+ * Load language files.
+ *
+ * @since 3.8.9
  */
 function webmention_plugin_textdomain() {
 	load_plugin_textdomain( 'webmention', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 }
 
 /**
- * Extend NodeInfo data
+ * Extend NodeInfo data.
  *
- * @param array $nodeinfo NodeInfo data
- * @param array $version  updated data
+ * @since 3.8.9
+ *
+ * @param array $nodeinfo NodeInfo data.
+ * @param array $version  Updated data.
+ * @return array
  */
 function webmention_nodeinfo( $nodeinfo, $version ) {
 	if ( '2.0' === $version ) {
@@ -159,10 +185,12 @@ function webmention_nodeinfo( $nodeinfo, $version ) {
 }
 
 /**
- * Extend NodeInfo2 data
+ * Extend NodeInfo2 data.
  *
- * @param array $nodeinfo NodeInfo2 data
- * @param array $version  updated data
+ * @since 3.8.9
+ *
+ * @param array $nodeinfo NodeInfo2 data.
+ * @return array
  */
 function webmention_nodeinfo2( $nodeinfo ) {
 	$nodeinfo['protocols'][] = 'webmention';

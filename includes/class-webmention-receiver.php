@@ -33,7 +33,7 @@ class Webmention_Receiver {
 		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'default_title_filter' ), 21, 1 );
 		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'default_content_filter' ), 22, 1 );
 
-		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'auto_approve' ), 13, 1 );
+		add_filter( 'pre_comment_approved', array( 'Webmention_Receiver', 'auto_approve' ), 11, 2 );
 
 		// Allow for avatars on webmention comment types
 		if ( 0 !== (int) get_option( 'webmention_avatars', 1 ) ) {
@@ -290,10 +290,7 @@ class Webmention_Receiver {
 		// change this if your theme can't handle the Webmentions comment type
 		$comment_type = WEBMENTION_COMMENT_TYPE;
 
-		// change this if you want to auto approve your Webmentions
-		$comment_approved = WEBMENTION_COMMENT_APPROVE;
-
-		$commentdata = compact( 'comment_type', 'comment_approved', 'comment_agent', 'comment_date', 'comment_date_gmt', 'comment_meta', 'source', 'target', 'vouch' );
+		$commentdata = compact( 'comment_type', 'comment_agent', 'comment_date', 'comment_date_gmt', 'comment_meta', 'source', 'target', 'vouch' );
 
 		$commentdata['comment_post_ID']   = $comment_post_id;
 		$commentdata['comment_author_IP'] = $comment_author_ip;
@@ -773,37 +770,49 @@ class Webmention_Receiver {
 	}
 
 	/**
-	 * Use the whitelist check function to approve a comment if the source domain is on the whitelist.
+	 * Use the approved check function to approve a comment if the source domain is on the approve list.
 	 *
+	 * @param int|string/WP_Error $approved The approval status. Accepts 1, 0, spam, or WP_Error.
 	 * @param array $commentdata
 	 *
 	 * @return array $commentdata
 	 */
-	public static function auto_approve( $commentdata ) {
-		if ( ! $commentdata || is_wp_error( $commentdata ) ) {
-			return $commentdata;
+	public static function auto_approve( $approved, $commentdata ) {
+		if ( is_wp_error( $approved ) ) {
+			return $approved;
 		}
-		if ( self::is_source_whitelisted( $commentdata['source'] ) ) {
-			$commentdata['comment_approved'] = 1;
+		// Exit if there is no source to investigate
+		if ( ! array_key_exists( 'source', $commentdata ) ) {
+			return $approved;
 		}
-		return $commentdata;
+		if ( array_key_exists( 'comment_meta', $commentdata ) ) {
+			if ( ! array_key_exists( 'protocol', $commentdata['comment_meta'] ) || 'webmention' !== $commentdata['comment_meta']['protocol'] ) {
+				return $approved;
+			}
+		}
+		// If this is set auto approve all webmentions
+		if ( 1 === WEBMENTION_COMMENT_APPROVE ) {
+			return 1;
+		}
+
+		return self::is_source_whitelisted( $commentdata['source'] ) ? 1 : 0;
 	}
 
 	/**
-	 * Check the source $url to see if it is on the domain whitelist.
+	 * Check the source $url to see if it is on the domain approve list.
 	 *
 	 * @param array $author_url
 	 *
 	 * @return boolean
 	 */
 	public static function is_source_whitelisted( $url ) {
-		$whitelist = get_webmention_approve_domains();
+		$approvelist = get_webmention_approve_domains();
 		$host      = webmention_extract_domain( $url );
-		if ( empty( $whitelist ) ) {
+		if ( empty( $approvelist ) ) {
 			return false;
 		}
 
-		foreach ( (array) $domains as $domain ) {
+		foreach ( (array) $approvelist as $domain ) {
 			$domain = trim( $domain );
 			if ( empty( $domain ) ) {
 				continue;
