@@ -28,12 +28,12 @@ defined( 'WEBMENTION_VOUCH' ) || define( 'WEBMENTION_VOUCH', false );
 /**
  * Initialize admin settings.
  */
-function webmention_admin_init() {
+function webmention_admin_menu() {
 	require_once dirname( __FILE__ ) . '/includes/class-webmention-admin.php';
-	Webmention_Admin::init();
-	add_action( 'admin_menu', array( 'Webmention_Admin', 'admin_menu' ) );
+	Webmention_Admin::admin_menu();
+	add_action( 'admin_init', array( 'Webmention_Admin', 'init' ) );
 }
-add_action( 'admin_init', 'webmention_admin_init' );
+add_action( 'admin_menu', 'webmention_admin_menu' );
 
 /**
  * Initialize Webmention Plugin.
