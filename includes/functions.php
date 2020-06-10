@@ -391,11 +391,12 @@ function webmention_get_home_webmentions() {
 		return esc_html__( 'No webmentions to display.', 'webmention' );
 	}
 
-	$args          = [
+	$args = array(
 		'post_id' => $homepage,
 		'status'  => 'approve',
 		'type'    => 'webmention',
-	];
+	);
+
 	$home_mentions = get_comments( $args );
 
 	if ( ! empty( $home_mentions ) ) {
@@ -426,6 +427,7 @@ function webmention_home_webmentions_shortcode( $atts, $content = null ) {
  */
 function webmention_home_webmentions_widget() {
 	register_widget( 'Homepage_Webmentions_Widget' );
+}
 
 /*
  * Returns whether this is a webmention comment type
@@ -438,8 +440,7 @@ function is_webmention_comment_type( $comment ) {
 		return false;
 	}
 	$types = array( apply_filters( 'webmention_comment_type', WEBMENTION_COMMENT_TYPE ) );
-	return in_array( $comment->comment_type, $types );
-
+	return in_array( $comment->comment_type, $types, true );
 }
 
 /*
