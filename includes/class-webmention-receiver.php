@@ -149,6 +149,7 @@ class Webmention_Receiver {
 				array(
 					'methods'  => WP_REST_Server::CREATABLE,
 					'callback' => array( 'Webmention_Receiver', 'post' ),
+					'args'     => self::request_parameters(),
 				),
 				array(
 					'methods'  => WP_REST_Server::READABLE,
@@ -232,19 +233,8 @@ class Webmention_Receiver {
 	 * @uses apply_filters calls "webmention_success_message" on the success message
 	 */
 	public static function post( $request ) {
-		$params = array_filter( $request->get_params() );
-
-		if ( ! isset( $params['source'] ) ) {
-			return new WP_Error( 'source_missing', esc_html__( 'Source is missing', 'webmention' ), array( 'status' => 400 ) );
-		}
-
-		$source = urldecode( $params['source'] );
-
-		if ( ! isset( $params['target'] ) ) {
-			return new WP_Error( 'target_missing', esc_html__( 'Target is missing', 'webmention' ), array( 'status' => 400 ) );
-		}
-
-		$target = urldecode( $params['target'] );
+		$source = $request->get_param( 'source' );
+		$target = $request->get_param( 'target' );
 
 		if ( ! stristr( $target, preg_replace( '/^https?:\/\//i', '', home_url() ) ) ) {
 			return new WP_Error( 'target_mismatching_domain', esc_html__( 'Target is not on this domain', 'webmention' ), array( 'status' => 400 ) );
@@ -408,6 +398,26 @@ class Webmention_Receiver {
 		);
 
 		return new WP_REST_Response( $return, 200 );
+	}
+
+	public static function request_parameters() {
+		$params = array();
+
+		$params['source'] = array(
+			'required'          => true,
+			'type'              => 'string',
+			'validate_callback' => 'wp_http_validate_url',
+			'sanitize_callback' => 'esc_url_raw',
+		);
+
+		$params['target'] = array(
+			'required'          => true,
+			'type'              => 'string',
+			'validate_callback' => 'wp_http_validate_url',
+			'sanitize_callback' => 'esc_url_raw',
+		);
+
+		return $params;
 	}
 
 	/**
@@ -807,7 +817,7 @@ class Webmention_Receiver {
 	 */
 	public static function is_source_whitelisted( $url ) {
 		$approvelist = get_webmention_approve_domains();
-		$host      = webmention_extract_domain( $url );
+		$host        = webmention_extract_domain( $url );
 		if ( empty( $approvelist ) ) {
 			return false;
 		}
