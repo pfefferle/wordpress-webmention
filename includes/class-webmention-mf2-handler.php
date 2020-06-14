@@ -104,13 +104,12 @@ class Webmention_MF2_Handler {
 	}
 
 	/**
-	 * Returns plaintext of $propname with optional $fallback
+	 * Returns plaintext of $propname with optional $fallback.
 	 *
-	 * @param array       $mf
-	 * @param $propname
-	 * @param null|string $fallback
-	 * @return mixed|null
-	 * @link http://php.net/manual/en/function.current.php
+	 * @param array       $mf Microformats Array.
+	 * @param $propname Property to be retrieved.
+	 * @param null|string $fallback Fallback if not available.
+	 * @return mixed|null Return value.
 	 */
 	public static function get_plaintext( array $mf, $propname, $fallback = null ) {
 		if ( ! empty( $mf['properties'][ $propname ] ) && is_array( $mf['properties'][ $propname ] ) ) {
@@ -135,11 +134,11 @@ class Webmention_MF2_Handler {
 	}
 
 	/**
-	 *  Return an array of properties, and may contain plaintext content
+	 *  Return an array of properties, and may contain plaintext content.
 	 *
-	 * @param array       $mf
-	 * @param array       $properties
-	 * @return null|array
+	 * @param array       $mf Microformats Array.
+	 * @param array       $properties An array of the properties to be retrieved.
+	 * @return null|array The returned properties.
 	 */
 	public static function get_property_array( array $mf, $properties, $args = null ) {
 		if ( ! self::is_microformat( $mf ) ) {
@@ -149,14 +148,10 @@ class Webmention_MF2_Handler {
 		foreach ( $properties as $p ) {
 			if ( array_key_exists( $p, $mf['properties'] ) ) {
 				foreach ( $mf['properties'][ $p ] as $v ) {
-					if ( self::is_microformat( $v ) ) {
-						$data[ $p ] = self::parse_item( $v, $mf, $args );
+					if ( isset( $data[ $p ] ) ) {
+						$data[ $p ][] = $v;
 					} else {
-						if ( isset( $data[ $p ] ) ) {
-							$data[ $p ][] = $v;
-						} else {
-							$data[ $p ] = array( $v );
-						}
+						$data[ $p ] = array( $v );
 					}
 				}
 			}
@@ -167,8 +162,8 @@ class Webmention_MF2_Handler {
 	/**
 	 * Returns ['html'] element of $v, or ['value'] or just $v, in order of availablility.
 	 *
-	 * @param $v
-	 * @return mixed
+	 * @param $v Microformats Content.
+	 * @return mixed HTML Element if present.
 	 */
 	public static function to_html( $v ) {
 		if ( self::is_embedded_html( $v ) ) {
@@ -180,12 +175,12 @@ class Webmention_MF2_Handler {
 	}
 
 	/**
-	 * Gets HTML of $propname or if not, $fallback
+	 * Gets HTML of $propname or if not, $fallback.
 	 *
-	 * @param array       $mf
-	 * @param $propname
-	 * @param null|string $fallback
-	 * @return mixed|null
+	 * @param array       $mf Microformats JSON array.
+	 * @param $propname Property Name.
+	 * @param null|string $fallback Fallback if property not found.
+	 * @return mixed|null Value of proerty.
 	 */
 	public static function get_html( array $mf, $propname, $fallback = null ) {
 		if ( ! empty( $mf['properties'][ $propname ] ) && is_array( $mf['properties'][ $propname ] ) ) {
@@ -198,9 +193,9 @@ class Webmention_MF2_Handler {
 	/**
 	 * Gets the DateTime properties including published or updated, depending on params.
 	 *
-	 * @param $name string updated or published
-	 * @param array                            $mf
-	 * @param null|DateTimeImmutable           $fallback
+	 * @param $name string updated or published.
+	 * @param array                            $mf Microformats JSON array.
+	 * @param null|DateTimeImmutable           $fallback What to return if not a DateTime property.
 	 * @return mixed|null
 	 */
 	public static function get_datetime_property( $name, array $mf, $fallback = null ) {
@@ -217,36 +212,36 @@ class Webmention_MF2_Handler {
 	}
 
 	/**
-	 * get all top-level items
+	 * get all top-level items.
 	 *
-	 * @param array $mf_array the microformats array
-	 * @param array an array of top level elements array
+	 * @param array $mf_array the microformats array.
+	 * @param array an array of top level elements array.
 	 *
-	 * @return array
+	 * @return array Return the top level items in an array.
 	 */
 	public static function get_items( $mf_array ) {
 		if ( ! self::is_microformat_collection( $mf_array ) ) {
 			return array();
 		}
 
-		// get first item
+		// get first item.
 		$first_item = $mf_array['items'][0];
 
-		// check if it is an h-feed
+		// check if it is an h-feed.
 		if ( self::is_type( $first_item, 'h-feed' ) && array_key_exists( 'children', $first_item ) ) {
 			$mf_array['items'] = $first_item['children'];
 		}
-		// return entries
+		// return entries.
 		return $mf_array['items'];
 	}
 
 	/**
-	 * helper to find the correct h- node
+	 * helper to find the correct h- node.
 	 *
-	 * @param array $mf The parsed microformats json
-	 * @param string $url the retrieved url
+	 * @param array $mf The parsed microformats json.
+	 * @param string $url the retrieved url.
 	 *
-	 * @return array the h- node or false
+	 * @return array the h- node or false/
 	 */
 	public static function find_representative_item( $mf, $url ) {
 		$items = self::get_items( $mf );
@@ -267,12 +262,12 @@ class Webmention_MF2_Handler {
 
 
 	/**
-	 * Takes the mf2 json array passed through and returns a cleaned up representative item
+	 * Takes the mf2 json array passed through and returns a cleaned up representative item.
 	 *
-	 * @param $mf The entire mf array
-	 * @param $url The source URL
+	 * @param $mf The entire mf array.
+	 * @param $url The source URL.
 	 *
-	 * @return array
+	 * @return array Return the representative item on the page.
 	 */
 	public static function get_representative_item( $mf, $url ) {
 		$item = self::find_representative_item( $mf, $url );
@@ -281,12 +276,12 @@ class Webmention_MF2_Handler {
 			return array();
 		}
 
-		// if entry does not have an author try to find one elsewhere
+		// if entry does not have an author try to find one elsewhere.
 		if ( ! self::has_property( $item, 'author' ) ) {
 			$item['properties']['author'] = self::get_representative_author( $mf, $url );
 		}
 
-		// If u-syndication is not set use rel syndication
+		// If u-syndication is not set use rel syndication.
 		if ( array_key_exists( 'syndication', $mf['rels'] ) && ! self::has_property( $item, 'syndication' ) ) {
 			$item['properties']['syndication'] = $mf['rels']['syndication'];
 		}
@@ -296,20 +291,20 @@ class Webmention_MF2_Handler {
 	}
 
 	/**
-	 * helper to find the correct author node
+	 * helper to find the correct author node.
 	 *
-	 * @param array $item
-	 * @param array $mf the parsed microformats array
-	 * @param string $source the source url
+	 * @param array $item Item to find an author on.
+	 * @param array $mf the parsed microformats array.
+	 * @param string $source the source url.
 	 *
-	 * @return array|null the h-card node or null
+	 * @return array|null the h-card node or null.
 	 */
 	public static function get_representative_author( $item, $mf ) {
-		// Author Discovery
-		// http://indieweb,org/authorship
+		// Author Discovery.
+		// http://indieweb.org/authorship
 		$authorpage = false;
 		if ( self::has_property( $item, 'author' ) ) {
-			// Check if any of the values of the author property are an h-card
+			// Check if any of the values of the author property are an h-card.
 			foreach ( $item['properties']['author'] as $a ) {
 				if ( self::is_type( $a, 'h-card' ) ) {
 					// 5.1 "if it has an h-card, use it, exit."
@@ -320,11 +315,11 @@ class Webmention_MF2_Handler {
 						$authorpage = $a;
 					} else {
 						// 5.3 "otherwise use the author property as the author name, exit"
-						// We can only set the name, no h-card or URL was found
+						// We can only set the name, no h-card or URL was found.
 						$author = self::get_plaintext( $item, 'author' );
 					}
 				} else {
-					// This case is only hit when the author property is an mf2 object that is not an h-card
+					// This case is only hit when the author property is an mf2 object that is not an h-card.
 					$author = self::get_plaintext( $item, 'author' );
 				}
 				if ( ! $authorpage ) {
@@ -337,13 +332,13 @@ class Webmention_MF2_Handler {
 				}
 			}
 		}
-		// 6. "if no author page was found" ... check for rel-author link
+		// 6. "if no author page was found" ... check for rel-author link.
 		if ( ! $authorpage ) {
 			if ( isset( $mf2['rels'] ) && isset( $mf2['rels']['author'] ) ) {
 				$authorpage = $mf2['rels']['author'][0];
 			}
 		}
-		// 7. "if there is an author-page URL" ...
+		// 7. "if there is an author-page URL" .
 		if ( $authorpage ) {
 			if ( ! self::urls_match( $authorpage, self::get_plaintext( $mf2, 'url' ) ) ) {
 				return array(
@@ -357,11 +352,11 @@ class Webmention_MF2_Handler {
 	}
 
 	/**
-	 * compare an url with a list of urls
+	 * compare an url with a list of urls.
 	 *
-	 * @param string $needle the target url
-	 * @param array $haystack a list of urls
-	 * @param boolean $schemelesse define if the target url should be checked with http:// and https://
+	 * @param string $needle the target url.
+	 * @param array $haystack a list of urls.
+	 * @param boolean $schemelesse define if the target url should be checked with http:// and https:// .
 	 *
 	 * @return boolean
 	 */
