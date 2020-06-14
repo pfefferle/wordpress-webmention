@@ -3,8 +3,8 @@ Contributors: pfefferle, dshanske
 Donate link: https://notiz.blog/donate/
 Tags: webmention, pingback, trackback, linkback, indieweb, comment, response
 Requires at least: 4.9
-Tested up to: 5.3
-Stable tag: 4.0.1
+Tested up to: 5.3.2
+Stable tag: 4.0.3
 Requires PHP: 5.6
 License: MIT
 License URI: https://opensource.org/licenses/MIT
@@ -90,6 +90,14 @@ Webmention headers are only shown if webmentions are available for that particul
 == Changelog ==
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
+
+= 4.0.3 =
+* Move comment approve list and auto approve to the `wp_allow_comment` function called by the `wp_new_comment` function. 
+* Minor fix to avatar function to account for the fact comments have an empty comment type
+
+= 4.0.2 =
+
+* Cache in cases where stored avatar is a gravatar
 
 = 4.0.1 =
 
