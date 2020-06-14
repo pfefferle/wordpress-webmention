@@ -1,4 +1,40 @@
 <?php
+
+/**
+ * Registers a webmention comment type.
+ *
+ *
+ * @param string $comment_type Key for comment type.
+ * @param array $args Arguments.
+ *
+ * @return Webmention_Comment_Type The registered webmention comment type.
+ */
+function register_webmention_comment_type( $comment_type, $args = array() ) {
+	global $webmention_comment_types;
+
+	if ( ! is_array( $webmention_comment_types ) ) {
+		$webmention_comment_types = array();
+	}
+
+	// Sanitize comment type name.
+	$comment_type = sanitize_key( $comment_type );
+
+	$comment_type_object = new Webmention_Comment_Type( $comment_type, $args );
+
+	$webmention_comment_types[ $comment_type ] = $comment_type_object;
+
+	/**
+	 * Fires after a webmention comment type is registered.
+	 *
+	 *
+	 * @param string       $comment_type        Comment type.
+	 * @param Webmention_Comment_Type $comment_type_object Arguments used to register the comment type.
+	 */
+	 do_action( 'registered_webmention_comment_type', $comment_type, $comment_type_object );
+
+	return $comment_type_object;
+}
+
 /**
  * A wrapper for Webmention_Sender::send_webmention.
  *
@@ -401,27 +437,37 @@ function is_webmention_comment_type( $comment ) {
  * @return string
 */
 function get_webmention_comment_type_string( $comment ) {
+	global $webmention_comment_types;
 	$comment = get_comment( $comment );
 	if ( ! $comment ) {
 		return false;
 	}
 	$type = get_comment_type( $comment );
-	switch ( $type ) {
-		case 'comment':
-			$name = _x( 'Comment', 'noun', 'default' );
-			break;
-		case 'pingback':
-			$name = __( 'Pingback', 'default' );
-			break;
-		case 'trackback':
-			$name = __( 'Trackback', 'default' );
-			break;
-		case 'webmention':
-			$name = __( 'Webmention', 'webmention' );
-			break;
-		default:
-			$name = __( 'Response', 'webmention' );
+
+	$name = null;
+
+	if ( is_array( $webmention_comment_types ) && array_key_exists( $type, $webmention_comment_types ) ) {
+		$name = $webmention_comment_types[ $type ]->singular;
 	}
+	if ( ! $name ) {
+		switch ( $type ) {
+			case 'comment':
+				$name = _x( 'Comment', 'noun', 'default' );
+				break;
+			case 'pingback':
+				$name = __( 'Pingback', 'default' );
+				break;
+			case 'trackback':
+				$name = __( 'Trackback', 'default' );
+				break;
+			case 'webmention':
+				$name = __( 'Webmention', 'webmention' );
+				break;
+			default:
+				$name = __( 'Response', 'webmention' );
+		}
+	}
+
 	/**
 	 * Filters the returned comment type string.
 	 *
