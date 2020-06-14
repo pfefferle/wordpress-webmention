@@ -25,7 +25,7 @@ class Webmention_MF2_Handler {
 	}
 
 	/**
-	 * is this what type
+	 * is this what type.
 	 *
 	 * @param array $mf Parsed Microformats Array
 	 * @param string $type Type
@@ -200,7 +200,7 @@ class Webmention_MF2_Handler {
 	 *
 	 * @param $name string updated or published
 	 * @param array                            $mf
-	 * @param null|DateTime                      $fallback
+	 * @param null|DateTimeImmutable           $fallback
 	 * @return mixed|null
 	 */
 	public static function get_datetime_property( $name, array $mf, $fallback = null ) {
@@ -210,7 +210,7 @@ class Webmention_MF2_Handler {
 			return $fallback;
 		}
 		try {
-			return new DateTime( $return );
+			return new DateTimeImmutable( $return );
 		} catch ( Exception $e ) {
 			return $fallback;
 		}
