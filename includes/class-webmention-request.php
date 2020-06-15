@@ -16,7 +16,7 @@ class Webmention_Request_Handler {
 		if ( is_wp_error( $response ) ) {
 			return $response;
 		}
-		$response = $this->fetch( $url, $safe );
+		$response = $this->get( $url, $safe );
 
 		return $response;
 	}
@@ -191,14 +191,5 @@ class Webmention_Request_Handler {
 			$content_type = array_shift( $ct );
 		}
 		return trim( $content_type );
-	}
-
-	/**
-	 * Implement vouch verify here
-	 *
-	 * @return void
-	 */
-	public function verify() {
-		// @todo move verify code here
 	}
 }
