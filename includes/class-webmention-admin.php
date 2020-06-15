@@ -129,11 +129,16 @@ class Webmention_Admin {
 	 *
 	 * @param array $types the different comment types
 	 *
-	 * @return array the filtert comment types
+	 * @return array the filtered comment types
 	 */
 	public static function comment_types_dropdown( $types ) {
-		$types['webmention'] = esc_html__( 'Webmentions', 'webmention' );
-
+		global $webmention_comment_types;
+		if ( ! is_array( $webmention_comment_types ) ) {
+			return $types;
+		}
+		foreach ( $webmention_comment_types as $comment_type_object ) {
+			$types[ $comment_type_object->name ] = esc_html( $comment_type_object->label );
+		}
 		return $types;
 	}
 

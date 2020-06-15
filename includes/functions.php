@@ -1,4 +1,40 @@
 <?php
+
+/**
+ * Registers a webmention comment type.
+ *
+ *
+ * @param string $comment_type Key for comment type.
+ * @param array $args Arguments.
+ *
+ * @return Webmention_Comment_Type The registered webmention comment type.
+ */
+function register_webmention_comment_type( $comment_type, $args = array() ) {
+	global $webmention_comment_types;
+
+	if ( ! is_array( $webmention_comment_types ) ) {
+		$webmention_comment_types = array();
+	}
+
+	// Sanitize comment type name.
+	$comment_type = sanitize_key( $comment_type );
+
+	$comment_type_object = new Webmention_Comment_Type( $comment_type, $args );
+
+	$webmention_comment_types[ $comment_type ] = $comment_type_object;
+
+	/**
+	 * Fires after a webmention comment type is registered.
+	 *
+	 *
+	 * @param string       $comment_type        Comment type.
+	 * @param Webmention_Comment_Type $comment_type_object Arguments used to register the comment type.
+	 */
+	 do_action( 'registered_webmention_comment_type', $comment_type, $comment_type_object );
+
+	return $comment_type_object;
+}
+
 /**
  * A wrapper for Webmention_Sender::send_webmention.
  *
@@ -313,7 +349,7 @@ if ( ! function_exists( 'get_self_link' ) ) :
 	 * @return string Correct link for the atom:self element.
 	 */
 	function get_self_link() {
-		$host = @parse_url( home_url() );
+		$host = wp_parse_url( home_url() );
 		return set_url_scheme( 'http://' . $host['host'] . wp_unslash( $_SERVER['REQUEST_URI'] ) );
 	}
 endif;
@@ -380,48 +416,58 @@ function webmention_extract_urls( $content, $support_media_urls = false ) {
 }
 
 
-/*
+/**
  * Returns whether this is a webmention comment type
  * @param int|WP_Comment $comment
  * @return array
-*/
+ */
 function is_webmention_comment_type( $comment ) {
 	$comment = get_comment( $comment );
 	if ( ! $comment ) {
 		return false;
 	}
 	$types = array( apply_filters( 'webmention_comment_type', WEBMENTION_COMMENT_TYPE ) );
-	return in_array( $comment->comment_type, $types );
+	return in_array( $comment->comment_type, $types, true );
 
 }
 
-/*
+/**
  * Returns a string indicating the comment type
  * @param int|WP_Comment $comment
  * @return string
-*/
+ */
 function get_webmention_comment_type_string( $comment ) {
+	global $webmention_comment_types;
 	$comment = get_comment( $comment );
 	if ( ! $comment ) {
 		return false;
 	}
 	$type = get_comment_type( $comment );
-	switch ( $type ) {
-		case 'comment':
-			$name = _x( 'Comment', 'noun', 'default' );
-			break;
-		case 'pingback':
-			$name = __( 'Pingback', 'default' );
-			break;
-		case 'trackback':
-			$name = __( 'Trackback', 'default' );
-			break;
-		case 'webmention':
-			$name = __( 'Webmention', 'webmention' );
-			break;
-		default:
-			$name = __( 'Response', 'webmention' );
+
+	$name = null;
+
+	if ( is_array( $webmention_comment_types ) && array_key_exists( $type, $webmention_comment_types ) ) {
+		$name = $webmention_comment_types[ $type ]->singular;
 	}
+	if ( ! $name ) {
+		switch ( $type ) {
+			case 'comment':
+				$name = _x( 'Comment', 'noun', 'default' );
+				break;
+			case 'pingback':
+				$name = __( 'Pingback', 'default' );
+				break;
+			case 'trackback':
+				$name = __( 'Trackback', 'default' );
+				break;
+			case 'webmention':
+				$name = __( 'Webmention', 'webmention' );
+				break;
+			default:
+				$name = __( 'Response', 'webmention' );
+		}
+	}
+
 	/**
 	 * Filters the returned comment type string.
 	 *

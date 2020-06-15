@@ -44,6 +44,9 @@ function webmention_init() {
 		require_once dirname( __FILE__ ) . '/includes/debug.php';
 	}
 
+	// Comment Type Class
+	require_once dirname( __FILE__ ) . '/includes/class-webmention-comment-type.php';
+
 	// list of various public helper functions.
 	require_once dirname( __FILE__ ) . '/includes/functions.php';
 
@@ -89,6 +92,7 @@ function webmention_init() {
 	// remove old Webmention code.
 	remove_action( 'init', array( 'WebMentionFormPlugin', 'init' ) );
 	remove_action( 'init', array( 'WebMentionForCommentsPlugin', 'init' ) );
+
 }
 add_action( 'plugins_loaded', 'webmention_init' );
 
