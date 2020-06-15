@@ -349,7 +349,7 @@ if ( ! function_exists( 'get_self_link' ) ) :
 	 * @return string Correct link for the atom:self element.
 	 */
 	function get_self_link() {
-		$host = @parse_url( home_url() );
+		$host = wp_parse_url( home_url() );
 		return set_url_scheme( 'http://' . $host['host'] . wp_unslash( $_SERVER['REQUEST_URI'] ) );
 	}
 endif;
@@ -420,14 +420,14 @@ function webmention_extract_urls( $content, $support_media_urls = false ) {
  * Returns whether this is a webmention comment type
  * @param int|WP_Comment $comment
  * @return array
-*/
+ */
 function is_webmention_comment_type( $comment ) {
 	$comment = get_comment( $comment );
 	if ( ! $comment ) {
 		return false;
 	}
 	$types = array( apply_filters( 'webmention_comment_type', WEBMENTION_COMMENT_TYPE ) );
-	return in_array( $comment->comment_type, $types );
+	return in_array( $comment->comment_type, $types, true );
 
 }
 
