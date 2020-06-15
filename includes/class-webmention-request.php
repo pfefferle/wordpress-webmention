@@ -37,7 +37,7 @@ class Webmention_Request_Handler {
 			$response = wp_remote_get( $url, $args );
 		}
 		if ( is_wp_error( $response ) ) {
-				return $response;
+			return $response;
 		}
 		$check = $this->check_response_code( wp_remote_retrieve_response_code( $response ) );
 		if ( is_wp_error( $check ) ) {
