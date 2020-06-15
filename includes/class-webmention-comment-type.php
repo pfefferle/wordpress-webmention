@@ -57,7 +57,7 @@ final class Webmention_Comment_Type {
 	public function __construct( $post_type, $args = array() ) {
 		$this->name = $post_type;
 
-		$this->set_props( $args );
+		$this->set_properties( $args );
 	}
 
 	/**
@@ -65,7 +65,7 @@ final class Webmention_Comment_Type {
 	 *
 	 * @param array|string $args Array or string of arguments for registering a comment type.
 	 */
-	public function set_props( $args ) {
+	public function set_properties( $args ) {
 		$args = wp_parse_args( $args );
 
 		/**

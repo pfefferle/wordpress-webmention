@@ -416,7 +416,7 @@ function webmention_extract_urls( $content, $support_media_urls = false ) {
 }
 
 
-/*
+/**
  * Returns whether this is a webmention comment type
  * @param int|WP_Comment $comment
  * @return array
@@ -431,11 +431,11 @@ function is_webmention_comment_type( $comment ) {
 
 }
 
-/*
+/**
  * Returns a string indicating the comment type
  * @param int|WP_Comment $comment
  * @return string
-*/
+ */
 function get_webmention_comment_type_string( $comment ) {
 	global $webmention_comment_types;
 	$comment = get_comment( $comment );
