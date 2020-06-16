@@ -211,7 +211,7 @@ class Webmention_Request {
 	 *
 	 * @return array
 	 */
-	private function get_remote_arguments() {
+	protected function get_remote_arguments() {
 
 		$wp_version = get_bloginfo( 'version' );
 		$user_agent = apply_filters( 'http_headers_useragent', 'WordPress/' . $wp_version . '; ' . get_bloginfo( 'url' ) );
@@ -233,7 +233,7 @@ class Webmention_Request {
 	 *
 	 * @return WP_Error|true return an error or that something is supported
 	 */
-	private function check_content_type( $content_type ) {
+	protected function check_content_type( $content_type ) {
 		// not an (x)html, sgml, or xml page, no use going further
 		if ( preg_match( '#(image|audio|video|model)/#is', $content_type ) ) {
 			return new WP_Error(
@@ -254,7 +254,7 @@ class Webmention_Request {
 	 *
 	 * @return WP_Error|true return an error or that something is supported
 	 */
-	private function check_response_code( $code ) {
+	protected function check_response_code( $code ) {
 		switch ( $code ) {
 			case 200:
 				return true;
@@ -309,7 +309,7 @@ class Webmention_Request {
 	 * @return string|false return either false or the stripped string
 	 *
 	 */
-	private function get_content_type( $response ) {
+	protected function get_content_type( $response ) {
 		$content_type = wp_remote_retrieve_header( $response, 'Content-Type' );
 		// Strip any character set off the content type
 		$ct = explode( ';', $content_type );
