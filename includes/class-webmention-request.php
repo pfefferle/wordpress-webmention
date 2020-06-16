@@ -2,7 +2,7 @@
 /**
  * Encapsulates all Webmention HTTP requests
  */
-class Webmention_Request_Handler {
+class Webmention_Request {
 
 	/**
 	 * URL.
