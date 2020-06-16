@@ -3,6 +3,36 @@
  * Encapsulates all Webmention HTTP requests
  */
 class Webmention_Request_Handler {
+
+	/**
+	 * URL.
+	 *
+	 * @var string
+	 */
+	public $url;
+
+	/**
+	 * Body.
+	 *
+	 * @var string
+	 */
+	public $body;
+
+
+	/**
+	 * Content Type.
+	 *
+	 * @var string
+	 */
+	public $content_type;
+
+	/**
+	 * URL.
+	 *
+	 * @var int
+	 */
+	public $response_code;
+
 	/**
 	 *  Retrieve a URL.
 	 *
@@ -12,13 +42,84 @@ class Webmention_Request_Handler {
 	 * @return WP_Error|array Either an error or the complete return object
 	 */
 	public function fetch( $url, $safe = true ) {
-		$response = $this->head( $url, $safe );
+		$this->url = $url;
+		$response  = $this->head( $url, $safe );
 		if ( is_wp_error( $response ) ) {
 			return $response;
 		}
 		$response = $this->get( $url, $safe );
+		if ( is_wp_error( $response ) ) {
+			return $response;
+		}
+	}
 
-		return $response;
+	/**
+	 *  Sanitize HTML. To be used on content elements after parsing.
+	 *
+	 * @param string $content The HTML to Sanitize.
+	 *
+	 * @return string Sanitized HTML.
+	 */
+	public static function sanitize_html( $content ) {
+		if ( ! is_string( $content ) ) {
+			return $content;
+		}
+
+		// Strip HTML Comments.
+		$content = preg_replace( '/<!--(.|\s)*?-->/', '', $content );
+
+		// Only allow approved HTML elements
+		$allowed = array(
+			'a'          => array(
+				'href'     => array(),
+				'name'     => array(),
+				'hreflang' => array(),
+				'rel'      => array(),
+			),
+			'abbr'       => array(),
+			'b'          => array(),
+			'br'         => array(),
+			'code'       => array(),
+			'ins'        => array(),
+			'del'        => array(),
+			'em'         => array(),
+			'i'          => array(),
+			'q'          => array(),
+			'strike'     => array(),
+			'strong'     => array(),
+			'time'       => array(),
+			'blockquote' => array(),
+			'pre'        => array(),
+			'p'          => array(),
+			'h1'         => array(),
+			'h2'         => array(),
+			'h3'         => array(),
+			'h4'         => array(),
+			'h5'         => array(),
+			'h6'         => array(),
+			'ul'         => array(),
+			'li'         => array(),
+			'ol'         => array(),
+			'span'       => array(),
+			'img'        => array(
+				'src'    => array(),
+				'alt'    => array(),
+				'title'  => array(),
+				'srcset' => array(),
+			),
+			'video'      => array(
+				'src'      => array(),
+				'duration' => array(),
+				'poster'   => array(),
+			),
+			'audio'      => array(
+				'duration' => array(),
+				'src'      => array(),
+			),
+			'track'      => array(),
+			'source'     => array(),
+		);
+		return trim( wp_kses( $content, $allowed ) );
 	}
 
 	/**
@@ -29,7 +130,7 @@ class Webmention_Request_Handler {
 	 *
 	 * @return WP_Error|array Either an error or the complete return object
 	 */
-	public function get( $url, $safe = true ) {
+	private function get( $url, $safe = true ) {
 		$args = $this->get_remote_arguments();
 		if ( $safe ) {
 			$response = wp_safe_remote_get( $url, $args );
@@ -39,14 +140,19 @@ class Webmention_Request_Handler {
 		if ( is_wp_error( $response ) ) {
 			return $response;
 		}
+
 		$check = $this->check_response_code( wp_remote_retrieve_response_code( $response ) );
 		if ( is_wp_error( $check ) ) {
 				return $check;
 		}
-		$check = $this->check_content_type( wp_remote_retrieve_header( $response, 'content-type' ) );
+
+		$this->content_type = wp_remote_retrieve_header( $response, 'content-type' );
+		$check              = $this->check_content_type( $this->content_type );
 		if ( is_wp_error( $check ) ) {
 			return $check;
 		}
+
+		$this->body = wp_remote_retrieve_body( $response );
 
 		return $response;
 	}
@@ -59,7 +165,7 @@ class Webmention_Request_Handler {
 	 *
 	 * @return WP_Error|array Return error or HTTP API response array.
 	 */
-	public function head( $url, $safe = true ) {
+	private function head( $url, $safe = true ) {
 		$args = $this->get_remote_arguments();
 		if ( $safe ) {
 			$response = wp_safe_remote_head( $url, $args );
@@ -69,7 +175,8 @@ class Webmention_Request_Handler {
 		if ( is_wp_error( $response ) ) {
 			return $response;
 		}
-		$check = $this->check_response_code( wp_remote_retrieve_response_code( $response ) );
+		$this->response_code = wp_remote_retrieve_response_code( $response );
+		$check               = $this->check_response_code( $this->response_code );
 		if ( is_wp_error( $check ) ) {
 			return $check;
 		}
@@ -85,7 +192,7 @@ class Webmention_Request_Handler {
 	 *
 	 * @return array
 	 */
-	public function get_remote_arguments() {
+	private function get_remote_arguments() {
 
 		$wp_version = get_bloginfo( 'version' );
 		$user_agent = apply_filters( 'http_headers_useragent', 'WordPress/' . $wp_version . '; ' . get_bloginfo( 'url' ) );
@@ -107,7 +214,7 @@ class Webmention_Request_Handler {
 	 *
 	 * @return WP_Error|true return an error or that something is supported
 	 */
-	public function check_content_type( $content_type ) {
+	private function check_content_type( $content_type ) {
 		// not an (x)html, sgml, or xml page, no use going further
 		if ( preg_match( '#(image|audio|video|model)/#is', $content_type ) ) {
 			return new WP_Error(
@@ -128,7 +235,7 @@ class Webmention_Request_Handler {
 	 *
 	 * @return WP_Error|true return an error or that something is supported
 	 */
-	public function check_response_code( $code ) {
+	private function check_response_code( $code ) {
 		switch ( $code ) {
 			case 200:
 				return true;
@@ -183,7 +290,7 @@ class Webmention_Request_Handler {
 	 * @return string|false return either false or the stripped string
 	 *
 	 */
-	public function get_content_type( $response ) {
+	private function get_content_type( $response ) {
 		$content_type = wp_remote_retrieve_header( $response, 'Content-Type' );
 		// Strip any character set off the content type
 		$ct = explode( ';', $content_type );
