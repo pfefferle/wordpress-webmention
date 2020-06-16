@@ -32,6 +32,24 @@ class Webmention_Request_Handler {
 	 * @var int
 	 */
 	public $response_code;
+	/**
+	 * Magic function for getter/setter
+	 *
+	 * @param string $method
+	 * @param array  $params
+	 * @return void
+	 */
+	public function __call( $method, $params ) {
+		$var = \strtolower( \substr( $method, 4 ) );
+
+		if ( \strncasecmp( $method, 'get', 3 ) === 0 ) {
+			return $this->$var;
+		}
+
+		if ( \strncasecmp( $method, 'set', 3 ) === 0 ) {
+			$this->$var = $params[0];
+		}
+	}
 
 	/**
 	 *  Retrieve a URL.
