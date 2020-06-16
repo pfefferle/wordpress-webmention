@@ -149,7 +149,7 @@ class Webmention_Request {
 	 *
 	 * @return WP_Error|array Either an error or the complete return object
 	 */
-	private function get( $url, $safe = true ) {
+	public function get( $url, $safe = true ) {
 		$args = $this->get_remote_arguments();
 		if ( $safe ) {
 			$response = wp_safe_remote_get( $url, $args );
@@ -184,7 +184,7 @@ class Webmention_Request {
 	 *
 	 * @return WP_Error|array Return error or HTTP API response array.
 	 */
-	private function head( $url, $safe = true ) {
+	public function head( $url, $safe = true ) {
 		$args = $this->get_remote_arguments();
 		if ( $safe ) {
 			$response = wp_safe_remote_head( $url, $args );
