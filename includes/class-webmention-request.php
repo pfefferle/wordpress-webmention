@@ -9,14 +9,14 @@ class Webmention_Request {
 	 *
 	 * @var string
 	 */
-	public $url;
+	protected $url;
 
 	/**
 	 * Body.
 	 *
 	 * @var string
 	 */
-	public $body;
+	protected $body;
 
 
 	/**
@@ -24,14 +24,15 @@ class Webmention_Request {
 	 *
 	 * @var string
 	 */
-	public $content_type;
+	protected $content_type;
 
 	/**
 	 * URL.
 	 *
 	 * @var int
 	 */
-	public $response_code;
+	protected $response_code;
+
 	/**
 	 * Magic function for getter/setter
 	 *
