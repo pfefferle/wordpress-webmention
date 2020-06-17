@@ -72,13 +72,13 @@ function get_default_webmention_form_text() {
 }
 
 /**
- * Check the $url to see if it is on the domain whitelist.
+ * Check the $url to see if it is on the domain allowlist.
  *
  * @param string $url URL to check.
  * @return boolean
  */
-function is_webmention_source_whitelisted( $url ) {
-	return Webmention_Receiver::is_source_whitelisted( $url );
+function is_webmention_source_allowed( $url ) {
+	return Webmention_Receiver::is_source_allowed( $url );
 }
 
 /**
@@ -186,11 +186,11 @@ function webmention_extract_domain( $url ) {
  * @return array|mixed|string|void
  */
 function get_webmention_approve_domains() {
-	$whitelist = get_option( 'webmention_approve_domains' );
-	$whitelist = trim( $whitelist );
-	$whitelist = explode( "\n", $whitelist );
+	$allowlist = get_option( 'webmention_approve_domains' );
+	$allowlist = trim( $allowlist );
+	$allowlist = explode( "\n", $allowlist );
 
-	return $whitelist;
+	return $allowlist;
 }
 
 /**

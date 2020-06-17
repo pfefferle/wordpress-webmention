@@ -805,7 +805,7 @@ class Webmention_Receiver {
 			return 1;
 		}
 
-		return self::is_source_whitelisted( $commentdata['source'] ) ? 1 : 0;
+		return self::is_source_allowed( $commentdata['source'] ) ? 1 : 0;
 	}
 
 	/**
@@ -815,7 +815,7 @@ class Webmention_Receiver {
 	 *
 	 * @return boolean
 	 */
-	public static function is_source_whitelisted( $url ) {
+	public static function is_source_allowed( $url ) {
 		$approvelist = get_webmention_approve_domains();
 		$host        = webmention_extract_domain( $url );
 		if ( empty( $approvelist ) ) {
