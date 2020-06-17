@@ -44,7 +44,6 @@ function webmention_init() {
 		require_once dirname( __FILE__ ) . '/includes/debug.php';
 	}
 
-
 	// Request Handler.
 	require_once dirname( __FILE__ ) . '/includes/class-webmention-request.php';
 
