@@ -476,3 +476,72 @@ function get_webmention_comment_type_string( $comment ) {
 	 */
 	return apply_filters( 'webmention_comment_string', $name, $type );
 }
+
+/**
+ *  Sanitize HTML. To be used on content elements after parsing.
+ *
+ * @param string $content The HTML to Sanitize.
+ *
+ * @return string Sanitized HTML.
+ */
+function webmention_sanitize_html( $content ) {
+	if ( ! is_string( $content ) ) {
+		return $content;
+	}
+
+	// Strip HTML Comments.
+	$content = preg_replace( '/<!--(.|\s)*?-->/', '', $content );
+
+	// Only allow approved HTML elements
+	$allowed = array(
+		'a'          => array(
+			'href'     => array(),
+			'name'     => array(),
+			'hreflang' => array(),
+			'rel'      => array(),
+		),
+		'abbr'       => array(),
+		'b'          => array(),
+		'br'         => array(),
+		'code'       => array(),
+		'ins'        => array(),
+		'del'        => array(),
+		'em'         => array(),
+		'i'          => array(),
+		'q'          => array(),
+		'strike'     => array(),
+		'strong'     => array(),
+		'time'       => array(),
+		'blockquote' => array(),
+		'pre'        => array(),
+		'p'          => array(),
+		'h1'         => array(),
+		'h2'         => array(),
+		'h3'         => array(),
+		'h4'         => array(),
+		'h5'         => array(),
+		'h6'         => array(),
+		'ul'         => array(),
+		'li'         => array(),
+		'ol'         => array(),
+		'span'       => array(),
+		'img'        => array(
+			'src'    => array(),
+			'alt'    => array(),
+			'title'  => array(),
+			'srcset' => array(),
+		),
+		'video'      => array(
+			'src'      => array(),
+			'duration' => array(),
+			'poster'   => array(),
+		),
+		'audio'      => array(
+			'duration' => array(),
+			'src'      => array(),
+		),
+		'track'      => array(),
+		'source'     => array(),
+	);
+	return trim( wp_kses( $content, $allowed ) );
+}

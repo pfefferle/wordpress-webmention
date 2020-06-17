@@ -58,7 +58,7 @@ class Webmention_Request {
 	 * @param string $url The URL to retrieve.
 	 * @param boolean $safe Whether to use the safe or unfiltered version of HTTP API.
 	 *
-	 * @return WP_Error|array Either an error or the complete return object
+	 * @return WP_Error|true WP_Error or true if successful.
 	 */
 	public function fetch( $url, $safe = true ) {
 		$this->url = $url;
@@ -66,79 +66,11 @@ class Webmention_Request {
 		if ( is_wp_error( $response ) ) {
 			return $response;
 		}
-		$response = $this->get( $url, $safe );
+		$response = $this->remote_get( $url, $safe );
 		if ( is_wp_error( $response ) ) {
 			return $response;
 		}
-	}
-
-	/**
-	 *  Sanitize HTML. To be used on content elements after parsing.
-	 *
-	 * @param string $content The HTML to Sanitize.
-	 *
-	 * @return string Sanitized HTML.
-	 */
-	public static function sanitize_html( $content ) {
-		if ( ! is_string( $content ) ) {
-			return $content;
-		}
-
-		// Strip HTML Comments.
-		$content = preg_replace( '/<!--(.|\s)*?-->/', '', $content );
-
-		// Only allow approved HTML elements
-		$allowed = array(
-			'a'          => array(
-				'href'     => array(),
-				'name'     => array(),
-				'hreflang' => array(),
-				'rel'      => array(),
-			),
-			'abbr'       => array(),
-			'b'          => array(),
-			'br'         => array(),
-			'code'       => array(),
-			'ins'        => array(),
-			'del'        => array(),
-			'em'         => array(),
-			'i'          => array(),
-			'q'          => array(),
-			'strike'     => array(),
-			'strong'     => array(),
-			'time'       => array(),
-			'blockquote' => array(),
-			'pre'        => array(),
-			'p'          => array(),
-			'h1'         => array(),
-			'h2'         => array(),
-			'h3'         => array(),
-			'h4'         => array(),
-			'h5'         => array(),
-			'h6'         => array(),
-			'ul'         => array(),
-			'li'         => array(),
-			'ol'         => array(),
-			'span'       => array(),
-			'img'        => array(
-				'src'    => array(),
-				'alt'    => array(),
-				'title'  => array(),
-				'srcset' => array(),
-			),
-			'video'      => array(
-				'src'      => array(),
-				'duration' => array(),
-				'poster'   => array(),
-			),
-			'audio'      => array(
-				'duration' => array(),
-				'src'      => array(),
-			),
-			'track'      => array(),
-			'source'     => array(),
-		);
-		return trim( wp_kses( $content, $allowed ) );
+		return true;
 	}
 
 	/**
@@ -149,7 +81,7 @@ class Webmention_Request {
 	 *
 	 * @return WP_Error|array Either an error or the complete return object
 	 */
-	public function get( $url, $safe = true ) {
+	public function remote_get( $url, $safe = true ) {
 		$args = $this->get_remote_arguments();
 		if ( $safe ) {
 			$response = wp_safe_remote_get( $url, $args );
