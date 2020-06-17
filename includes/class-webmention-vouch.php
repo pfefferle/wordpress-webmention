@@ -121,7 +121,7 @@ class Webmention_Vouch {
 		}
 
 		// If this is not
-		if ( ! Webmention_Receiver::is_source_whitelisted( $data['vouch'] ) ) {
+		if ( ! Webmention_Receiver::is_source_allowed( $data['vouch'] ) ) {
 			$data['comment_meta']['webmention_vouched'] = '0';
 			return $data;
 		}

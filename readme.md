@@ -176,7 +176,7 @@ Thanks Sebastian Greger
 * Added GDPR recommendation text
 * Implemented help tab
 * Form Improvements
-* Domain whitelist
+* Domain allowlist
 * Add avatar settings control
 * Text improvements
 
