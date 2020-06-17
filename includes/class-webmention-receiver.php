@@ -487,7 +487,7 @@ class Webmention_Receiver {
 		$commentdata = array(
 			'content_type'           => $request->get_content_type(),
 			'remote_source_original' => $request->get_body(),
-			'remote_source'          => $request->sanitize_html( $request->get_body() ),
+			'remote_source'          => webmention_sanitize_html( $request->get_body() ),
 		);
 
 		return array_merge( $commentdata, $data );
