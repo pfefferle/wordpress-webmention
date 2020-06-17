@@ -275,6 +275,8 @@ class Webmention_Receiver {
 			$vouch = urldecode( $params['vouch'] );
 			// Safely store a version of the data
 			$comment_meta['webmention_vouch_url'] = esc_url_raw( $vouch );
+		} else {
+			$vouch = '';
 		}
 
 		// change this if your theme can't handle the Webmentions comment type
@@ -455,11 +457,9 @@ class Webmention_Receiver {
 			return $return;
 		}
 
-		$remote_source_original = $request->body;
-
 		// check if source really links to target
 		if ( ! strpos(
-			htmlspecialchars_decode( $request->body ),
+			htmlspecialchars_decode( $request->get_body() ),
 			str_replace(
 				array(
 					'http://www.',
@@ -486,9 +486,9 @@ class Webmention_Receiver {
 		}
 
 		$commentdata = array(
-			'content_type'           => $request->content_type,
-			'remote_source_original' => $request->body,
-			'remote_source'          => $request->sanitize_html( $request->body ),
+			'content_type'           => $request->get_content_type(),
+			'remote_source_original' => $request->get_body(),
+			'remote_source'          => $request->sanitize_html( $request->get_body() ),
 		);
 
 		return array_merge( $commentdata, $data );
