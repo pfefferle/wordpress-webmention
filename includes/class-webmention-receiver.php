@@ -235,6 +235,7 @@ class Webmention_Receiver {
 	public static function post( $request ) {
 		$source = $request->get_param( 'source' );
 		$target = $request->get_param( 'target' );
+		$vouch  = $request->get_param( 'vouch' );
 
 		if ( ! stristr( $target, preg_replace( '/^https?:\/\//i', '', home_url() ) ) ) {
 			return new WP_Error( 'target_mismatching_domain', esc_html__( 'Target is not on this domain', 'webmention' ), array( 'status' => 400 ) );
@@ -270,13 +271,11 @@ class Webmention_Receiver {
 		$comment_meta['webmention_created_at'] = $comment_date_gmt;
 		$comment_meta['protocol']              = 'webmention';
 
-		if ( isset( $params['vouch'] ) ) {
+		if ( $vouch ) {
 			// If there is a vouch pass it along
 			$vouch = urldecode( $params['vouch'] );
 			// Safely store a version of the data
 			$comment_meta['webmention_vouch_url'] = esc_url_raw( $vouch );
-		} else {
-			$vouch = '';
 		}
 
 		// change this if your theme can't handle the Webmentions comment type
