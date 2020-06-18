@@ -5,18 +5,23 @@
 abstract class Webmention_Handler {
 
 	/**
-	 * Parsed Data.
+	 * Parsed Data as Webmention_Entity.
 	 *
-	 * @var array
+	 * @var Webmention_Entity
 	 */
-	protected $data = array();
+	protected $webmention_entity;
 
-	public function __get( $name ) {
-		return array_key_exists( $name, $data ) ? $data[ $name ] : null;
+	public function get_webmention_entity() {
+		return $this->webmention_entity;
 	}
 
-	public function __set( $name, $value ) {
-		$this->data[ $name ] = $value;
+	public function set_webmention_entity( $webmention_entity ) {
+		if ( $webmention_entity instanceof Webmention_Entity ) {
+			return WP_Error( 'wrong_data_format', __( '$webmention_entity is not an instance of Webmention_Entity', 'webmention' ), $webmention_entity );
+		}
+
+		$this->webmention_entity = $webmention_entity;
+		return true;
 	}
 
 	/**
