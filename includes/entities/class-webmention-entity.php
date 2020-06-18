@@ -19,7 +19,7 @@ class Webmention_Entity {
 
 	protected $content;
 
-	protected $_respnse_type;
+	protected $_response_type;
 
 	protected $_raw;
 
@@ -57,6 +57,8 @@ class Webmention_Entity {
 
 	/**
 	 * Returns the representative entry as JF2 data
+	 *
+	 * return string the JF2 JSON
 	 */
 	public function to_json() {
 		$array = get_object_vars( $this );
