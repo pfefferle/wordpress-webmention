@@ -54,4 +54,13 @@ class Webmention_Entity {
 	public function is_complete() {
 
 	}
+
+	/**
+	 * Returns the representative entry as JF2 data
+	 */
+	public function to_json() {
+		$array = get_object_vars( $this );
+
+		return wp_json_encode( $array );
+	}
 }
