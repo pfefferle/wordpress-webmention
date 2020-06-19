@@ -331,6 +331,9 @@ class Webmention_Request {
 	 * @return WP_Error|true An Error object or true.
 	 */
 	public function domdocument() {
+		if ( $domdocument instanceof DOMDocument ) {
+			return true;
+		}
 		if ( ! in_array( $this->content_type, array( 'text/html', 'text/xml' ) ) ) {
 			return new WP_Error( 'wrong_content_type', __( 'Cannot Generate DOMDocument', 'webmention' ), array( $this->content_type ) );
 		}
