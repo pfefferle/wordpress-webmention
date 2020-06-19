@@ -11,7 +11,6 @@ class Webmention_Handler_Meta extends Webmention_Handler {
 	 * @return WP_Error|true Return error or true if successful.
 	 */
 	public function parse( $request ) {
-		$request->domdocument();
 		$dom   = clone $request->get_domdocument();
 		$xpath = new DOMXPath( $dom );
 
