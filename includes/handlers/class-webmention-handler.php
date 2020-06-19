@@ -5,33 +5,33 @@
 abstract class Webmention_Handler {
 
 	/**
-	 * Parsed Data as Webmention_Entity.
+	 * Parsed Data as Webmention_Item.
 	 *
-	 * @var Webmention_Entity
+	 * @var Webmention_Item
 	 */
-	protected $webmention_entity;
+	protected $webmention_item;
 
 	/**
-	 * Get Webmention_Entity
+	 * Get Webmention_Item
 	 *
-	 * @return Webmention_Entity
+	 * @return Webmention_Item
 	 */
-	public function get_webmention_entity() {
-		return $this->webmention_entity;
+	public function get_webmention_item() {
+		return $this->webmention_item;
 	}
 
 	/**
-	 * Set Webmention_Entity
+	 * Set Webmention_Item
 	 *
-	 * @param Webmention_Entity $webmention_entity the Webmention Entity
+	 * @param Webmention_Item $webmention_item the Webmention Item
 	 * @return WP_Error|true
 	 */
-	public function set_webmention_entity( $webmention_entity ) {
-		if ( $webmention_entity instanceof Webmention_Entity ) {
-			return WP_Error( 'wrong_data_format', __( '$webmention_entity is not an instance of Webmention_Entity', 'webmention' ), $webmention_entity );
+	public function set_webmention_item( $webmention_item ) {
+		if ( $webmention_item instanceof Webmention_Item ) {
+			return WP_Error( 'wrong_data_format', __( '$webmention_item is not an instance of Webmention_Item', 'webmention' ), $webmention_item );
 		}
 
-		$this->webmention_entity = $webmention_entity;
+		$this->webmention_item = $webmention_item;
 		return true;
 	}
 

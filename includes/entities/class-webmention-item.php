@@ -2,25 +2,65 @@
 /**
  * Represents a Remote Webmention
  */
-class Webmention_Entity {
+class Webmention_Item {
 
+	/**
+	 * The entity type
+	 *
+	 * @var string
+	 */
 	protected $type;
 
+	/**
+	 * The publish time
+	 *
+	 * @var string
+	 */
 	protected $published;
 
+	/**
+	 * The source URL
+	 *
+	 * @var string
+	 */
 	protected $url;
 
 	// mabe also an entity
 	protected $author = array( 'type', 'name', 'url', 'photo' );
 
+	/**
+	 * Array of category strings
+	 *
+	 * @var array
+	 */
 	protected $category = array();
 
-	protected $photo;
+	/**
+	 * Array of photos
+	 *
+	 * @var array
+	 */
+	protected $photo = array();
 
+	/**
+	 * The response content
+	 *
+	 * @var string
+	 */
 	protected $content;
 
+	/**
+	 * The response type
+	 *
+	 * @var string
+	 */
 	protected $_response_type;
 
+	/**
+	 * The raw document as JSON, HTML, XML, ...
+	 *
+	 * @var mixed
+	 */
 	protected $_raw;
 
 	/**

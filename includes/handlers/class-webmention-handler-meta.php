@@ -38,8 +38,8 @@ class Webmention_Handler_Meta extends Webmention_Handler {
 			$meta['og'] = self::parse_ogp( $meta['og'] );
 		}
 
-		$this->webmention_entity = new Webmention_Entity();
-		$this->webmention_entity->set__raw( $meta );
+		$this->webmention_item = new Webmention_Item();
+		$this->webmention_item->set__raw( $meta );
 	}
 
 	protected function add_property( $array, $key, $value ) {
