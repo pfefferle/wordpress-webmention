@@ -18,6 +18,12 @@ class Webmention_Request {
 	 */
 	protected $body;
 
+	/**
+	 * DOMDocument.
+	 *
+	 * @var DOMDocument
+	 */
+	protected $domdocument;
 
 	/**
 	 * Content Type.
@@ -317,5 +323,18 @@ class Webmention_Request {
 			$content_type = array_shift( $ct );
 		}
 		return trim( $content_type );
+	}
+
+	/**
+	 *  Takes the body and generates a DOMDocument.
+	 *
+	 * @return WP_Error|true An Error object or true.
+	 */
+	public function domdocument() {
+		if ( ! in_array( $this->content_type, array( 'text/html', 'text/xml' ) ) ) {
+			return new WP_Error( 'wrong_content_type', __( 'Cannot Generate DOMDocument', 'webmention' ), array( $this->content_type ) );
+		}
+		$this->domdocument = new webmention_load_domdocument( $this->body );
+		return true;
 	}
 }
