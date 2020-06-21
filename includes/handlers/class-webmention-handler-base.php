@@ -39,8 +39,9 @@ abstract class Webmention_Handler_Base {
 	 * Takes a request object and parses it.
 	 *
 	 * @param Webmention_Request $request Request Object.
+	 * @param Webmention_Item $item A Parsed Item. If null, a new one will be created.
 	 * @return WP_Error|true Return error or true if successful.
 	 */
-	abstract public function parse( $request );
+	abstract public function parse( $request, $item = null );
 
 }
