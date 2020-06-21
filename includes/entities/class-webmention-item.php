@@ -5,21 +5,28 @@
 class Webmention_Item {
 
 	/**
-	 * The entity type
+	 * The entity type.
 	 *
 	 * @var string
 	 */
 	protected $type;
 
 	/**
-	 * The publish time
+	 * The publish time.
 	 *
-	 * @var string
+	 * @var DateTimeImmutable
 	 */
 	protected $published;
 
 	/**
-	 * The source URL
+	 * The updated time.
+	 *
+	 * @var DateTimeImmutable
+	 */
+	protected $updated;
+
+	/**
+	 * The source URL.
 	 *
 	 * @var string
 	 */
@@ -42,12 +49,42 @@ class Webmention_Item {
 	 */
 	protected $photo = array();
 
+
+	/**
+	 * Location array.
+	 *
+	 * @var array
+	 */
+	protected $location = array();
+
+	/**
+	 * The response name
+	 *
+	 * @var string
+	 */
+	protected $name;
+
+
+	/**
+	 * The site name, if available.
+	 *
+	 * @var string
+	 */
+	protected $_site_name;
+
 	/**
 	 * The response content
 	 *
 	 * @var string
 	 */
 	protected $content;
+
+	/**
+	 * The response summary.
+	 *
+	 * @var string
+	 */
+	protected $summary;
 
 	/**
 	 * The response type

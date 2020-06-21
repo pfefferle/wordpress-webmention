@@ -39,7 +39,108 @@ class Webmention_Handler_Meta extends Webmention_Handler_Base {
 		}
 
 		$this->webmention_item = new Webmention_Item();
+
+		// Set raw data.
 		$this->webmention_item->set__raw( $meta );
+		$this->webmention_item->set__response_type = 'mention';
+		$item                                      = array();
+		// Start by looking at OGP.
+		if ( isset( $meta['og'] ) ) {
+			$og = $meta['og'];
+			if ( isset( $og['url'] ) ) {
+				$item['url'] = $og['url'];
+			}
+			if ( isset( $og['title'] ) ) {
+				$item['name'] = $og['title'];
+			}
+			if ( isset( $og['description'] ) ) {
+				$item['summary'] = $og['description'];
+			}
+			if ( isset( $og['image'] ) ) {
+				$image = $og['image'];
+				if ( is_string( $image ) ) {
+					$item['photo'] = array( $image );
+				} elseif ( wp_is_numeric_array( $image ) ) {
+					$item['photo'] = array( $image[0] );
+				} else {
+					$item['photo'] = array( $image['secure_url'] );
+				}
+			}
+			if ( isset( $og['site_name'] ) ) {
+				$item['_site_name'] = $og['site_name'];
+			}
+
+			if ( isset( $og['longitude'] ) ) {
+				$item['location'] = array(
+					'longitude' => $og['longitude'],
+					'latitude'  => $og['longitude'],
+				);
+			}
+			if ( isset( $og['type'] ) ) {
+				$type = $og['type'];
+				if ( isset( $meta[ $type ]['tag'] ) ) {
+					$item['category'] = $meta[ $type ]['tag'];
+				}
+				if ( ! empty( $meta[ $type ]['author'] ) ) {
+					$item['author'] = array( 'name' => $meta[ $type ]['author'] );
+				}
+				if ( 'article' === $type ) {
+					if ( isset( $meta['article']['published_time'] ) ) {
+						$item['published'] = new DateTimeImmutable( $meta['article']['published_time'] );
+					} elseif ( isset( $meta['article']['published'] ) ) {
+						$item['published'] = new DateTimeImmutable( $meta['article']['published'] );
+					}
+					if ( isset( $meta['article']['modified_time'] ) ) {
+						$item['updated'] = new DateTimeImmutable( $meta['article']['modified_time'] );
+					} elseif ( isset( $meta['article']['modified'] ) ) {
+						$item['updated'] = new DateTimeImmutable( $meta['article']['modified'] );
+					}
+				}
+			}
+		}
+
+		// Then look at Dublin Core Properties
+		if ( isset( $meta['dc'] ) ) {
+			$dc = $meta['dc'];
+			if ( isset( $dc['Title'] ) ) {
+				$item['name'] = $dc['Title'];
+			}
+			if ( isset( $dc['Creator'] ) ) {
+				if ( is_string( $dc['Creator'] ) ) {
+					$item['author'] = array( 'name' => $dc['Creator'] );
+				}
+			}
+			if ( isset( $dc['Description'] ) ) {
+				$item['summary'] = $dc['Description'];
+			}
+			if ( isset( $dc['Date'] ) && ! isset( $item['published'] ) ) {
+				$item['published'] = ( new DateTimeImmutable( $dc['Date'] ) );
+			}
+		}
+
+		if ( ! isset( $item['published'] ) ) {
+			if ( isset( $meta['citation_date'] ) ) {
+				$item['published'] = new DateTimeImmutable( $meta['citation_date'] );
+			} elseif ( isset( $meta['datePublished'] ) ) {
+				$item['published'] = new DateTimeImmutable( $meta['datePublished'] );
+			}
+		}
+		if ( empty( $item['author'] ) && ! empty( $meta['author'] ) ) {
+			$item['author'] = array( 'name' => $meta['author'] );
+		}
+		// If Site Name is not set use domain name less www
+		if ( ! isset( $item['_site_name'] ) && isset( $item['url'] ) ) {
+			$item['_site_name'] = preg_replace( '/^www\./', '', wp_parse_url( $item['url'], PHP_URL_HOST ) );
+		}
+
+		if ( ! isset( $item['name'] ) ) {
+			$item['name'] = $meta['title'];
+		}
+		$item = array_filter( $item );
+		foreach ( $item as $key => $value ) {
+			$key = 'set_' . $key;
+			$this->webmention_item->$key( $value );
+		}
 	}
 
 	protected function add_property( $array, $key, $value ) {
@@ -60,7 +161,7 @@ class Webmention_Handler_Meta extends Webmention_Handler_Base {
 		$return = array();
 		if ( isset( $meta ) && is_array( $meta ) ) {
 			foreach ( $meta as $key => $value ) {
-				$name = explode( ':', $key );
+				$nmeame = explode( ':', $key );
 				if ( 1 === count( $name ) ) {
 					$name = explode( '.', $key );
 				}
