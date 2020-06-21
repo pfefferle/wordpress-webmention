@@ -2,7 +2,7 @@
 /**
  * Class for webmention parsing using META tags.
 */
-class Webmention_Handler_Meta extends Webmention_Handler {
+class Webmention_Handler_Meta extends Webmention_Handler_Base {
 
 	/**
 	 * Takes a request object and parses it.

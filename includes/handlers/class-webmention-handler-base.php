@@ -2,7 +2,7 @@
 /**
  * Base class for webmention parsing and post processing.
 */
-abstract class Webmention_Handler {
+abstract class Webmention_Handler_Base {
 
 	/**
 	 * Parsed Data as Webmention_Item.
