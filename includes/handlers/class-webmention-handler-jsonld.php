@@ -1,7 +1,7 @@
 <?php
 /**
  * Class for webmention parsing using JSON-LD.
-*/
+ */
 class Webmention_Handler_JSONLD extends Webmention_Handler_Base {
 
 	/**

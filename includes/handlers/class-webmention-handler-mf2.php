@@ -1,7 +1,7 @@
 <?php
 /**
  * Class for webmention parsing using Microformats 2.
-*/
+ */
 class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 
 	/**
