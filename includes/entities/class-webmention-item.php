@@ -115,7 +115,13 @@ class Webmention_Item {
 		}
 
 		if ( strncasecmp( $method, 'set', 3 ) === 0 ) {
-			$this->$var = $params[0];
+			if ( $this->$var ) {
+				if ( isset( $params[1] ) && true === $params[1] ) {
+					$this->$var = $params[0];
+				}
+			} else {
+				$this->$var = $params[0];
+			}
 		}
 	}
 
