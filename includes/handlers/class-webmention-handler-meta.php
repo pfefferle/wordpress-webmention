@@ -41,8 +41,6 @@ class Webmention_Handler_Meta extends Webmention_Handler_Base {
 			$meta['og'] = self::parse_ogp( $meta['og'] );
 		}
 
-		$this->webmention_item = new Webmention_Item();
-
 		// Set raw data.
 		$this->webmention_item->set__raw( $meta );
 		$this->webmention_item->set__response_type = 'mention';
