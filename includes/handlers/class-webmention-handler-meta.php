@@ -169,7 +169,7 @@ class Webmention_Handler_Meta extends Webmention_Handler_Base {
 
 	/**
 	 * Tries to parse OGP Meta tags by hierarchy.
-	*/
+	 */
 	protected function parse_ogp( $meta ) {
 		$return = array();
 		if ( isset( $meta ) && is_array( $meta ) ) {

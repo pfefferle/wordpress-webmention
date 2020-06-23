@@ -18,6 +18,7 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 		if ( ! class_exists( '\Webmention\Mf2\Parser' ) ) {
 			require_once plugin_dir_path( __DIR__ ) . 'libraries/mf2/Mf2/Parser.php';
 		}
+
 		$parser   = new Webmention\Mf2\Parser( $domdocument, $url );
 		$mf_array = $parser->parse();
 
