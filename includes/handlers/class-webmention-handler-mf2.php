@@ -12,9 +12,8 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 	 * @return WP_Error|true Return error or true if successful.
 	 */
 	public function parse( $request, $item = null ) {
-		if ( $item instanceof Webmention_Item ) {
-			$this->webmention_item = $item;
-		}
+		$this->set_webmention_item( $item );
+
 		$dom = clone $request->get_domdocument();
 		if ( ! class_exists( '\Webmention\Mf2\Parser' ) ) {
 			require_once plugin_dir_path( __DIR__ ) . 'libraries/mf2/Mf2/Parser.php';
