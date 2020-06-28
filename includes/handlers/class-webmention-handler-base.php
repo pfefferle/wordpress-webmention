@@ -11,6 +11,14 @@ abstract class Webmention_Handler_Base {
 	 */
 	protected $webmention_item;
 
+
+	/**
+	 * Handler Slug to Uniquely Identify it.
+	 *
+	 * @var string
+	 */
+	protected $slug;
+
 	/**
 	 * Get Webmention_Item
 	 *
@@ -18,6 +26,15 @@ abstract class Webmention_Handler_Base {
 	 */
 	public function get_webmention_item() {
 		return $this->webmention_item;
+	}
+
+	/**
+	 * Get Name of Slug.
+	 *
+	 * @return string
+	 */
+	public function get_slug() {
+		return $this->slug;
 	}
 
 	/**

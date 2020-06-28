@@ -5,6 +5,13 @@
 class Webmention_Handler_Meta extends Webmention_Handler_Base {
 
 	/**
+	 * Handler Slug to Uniquely Identify it.
+	 *
+	 * @var string
+	 */
+	protected $slug = 'meta';
+
+	/**
 	 * Takes a request object and parses it.
 	 *
 	 * @param Webmention_Request $request Request Object.
