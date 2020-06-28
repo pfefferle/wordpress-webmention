@@ -1,7 +1,7 @@
 <?php
 /**
  * Class for webmention parsing using JSON-LD.
-*/
+ */
 class Webmention_Handler_JSONLD extends Webmention_Handler_Base {
 
 	/**
@@ -19,9 +19,8 @@ class Webmention_Handler_JSONLD extends Webmention_Handler_Base {
 	 * @return WP_Error|true Return error or true if successful.
 	 */
 	public function parse( $request, $item = null ) {
-		if ( $item instanceof Webmention_Item ) {
-			$this->webmention_item = $item;
-		}
+		$this->set_webmention_item( $item );
+
 		$dom   = clone $request->get_domdocument();
 		$xpath = new DOMXPath( $dom );
 

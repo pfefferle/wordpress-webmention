@@ -1,7 +1,7 @@
 <?php
 /**
  * Class for webmention parsing using META tags.
-*/
+ */
 class Webmention_Handler_Meta extends Webmention_Handler_Base {
 
 	/**
@@ -19,9 +19,8 @@ class Webmention_Handler_Meta extends Webmention_Handler_Base {
 	 * @return WP_Error|true Return error or true if successful.
 	 */
 	public function parse( $request, $item = null ) {
-		if ( $item instanceof Webmention_Item ) {
-			$this->webmention_item = $item;
-		}
+		$this->set_webmention_item( $item );
+
 		$dom   = clone $request->get_domdocument();
 		$xpath = new DOMXPath( $dom );
 
@@ -48,8 +47,6 @@ class Webmention_Handler_Meta extends Webmention_Handler_Base {
 		if ( isset( $meta['og'] ) ) {
 			$meta['og'] = self::parse_ogp( $meta['og'] );
 		}
-
-		$this->webmention_item = new Webmention_Item();
 
 		// Set raw data.
 		$this->webmention_item->set__raw( $meta );
@@ -179,7 +176,7 @@ class Webmention_Handler_Meta extends Webmention_Handler_Base {
 
 	/**
 	 * Tries to parse OGP Meta tags by hierarchy.
-	*/
+	 */
 	protected function parse_ogp( $meta ) {
 		$return = array();
 		if ( isset( $meta ) && is_array( $meta ) ) {
