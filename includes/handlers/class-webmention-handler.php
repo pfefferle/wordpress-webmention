@@ -47,9 +47,8 @@ class Webmention_Handler {
 	 *
 	 */
 	public function parse( $request ) {
-		$item = null;
 		foreach ( $handlers as $handler ) {
-			$handler->parse( $request, $item );
+			$handler->parse( $request );
 			$item = $handler->get_webmention_item();
 			if ( $item->is_complete() ) {
 				break;
