@@ -52,8 +52,8 @@ class Webmention_Handler_Meta extends Webmention_Handler_Base {
 		$this->webmention_item->set__raw( $meta );
 		$this->webmention_item->set__response_type = 'mention';
 
-		$item = $this->ogp( $meta );
-		$item = array_merge( $item, $this->dublin_core( $meta ) );
+		$item = $this->ogp_to_jf2( $meta );
+		$item = array_merge( $item, $this->dublin_core_to_jf2( $meta ) );
 
 		// If Site Name is not set use domain name less www
 		if ( ! isset( $item['_site_name'] ) && isset( $item['url'] ) ) {
@@ -81,7 +81,7 @@ class Webmention_Handler_Meta extends Webmention_Handler_Base {
 		}
 	}
 
-	protected function ogp( $meta ) {
+	protected function ogp_to_jf2( $meta ) {
 		$item = array();
 		// Start by looking at OGP.
 		if ( isset( $meta['og'] ) ) {
@@ -140,7 +140,7 @@ class Webmention_Handler_Meta extends Webmention_Handler_Base {
 		return $item;
 	}
 
-	protected function dublin_core( $meta ) {
+	protected function dublin_core_to_jf2( $meta ) {
 		$item = array();
 		// Then look at Dublin Core Properties
 		if ( isset( $meta['dc'] ) ) {
