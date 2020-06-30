@@ -119,14 +119,25 @@ class Webmention_Item {
 		}
 
 		if ( strncasecmp( $method, 'set', 3 ) === 0 ) {
-			if ( $this->$var ) {
-				if ( isset( $params[1] ) && true === $params[1] ) {
-					$this->$var = $params[0];
-				}
-			} elseif ( isset( $params[1] ) ) {
-				$this->$var = $params[0];
+			$value     = $params[0] ? $params[0] : null;
+			$overwrite = $params[1] ? $params[1] : false;
+
+			$this->set( $var, $value, $overwrite );
+		}
+	}
+
+	public function set( $key, $value, $overwrite = false ) {
+		if ( $this->$key ) {
+			if ( isset( $overwrite ) && false === $overwrite ) {
+				return;
 			}
 		}
+
+		if ( in_array( $key, array( 'updated', 'published' ), true ) ) {
+			$value = new DateTimeImmutable( $value );
+		}
+
+		$this->$key = $value;
 	}
 
 	public function to_commentdata() {
