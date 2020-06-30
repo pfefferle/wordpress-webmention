@@ -72,13 +72,13 @@ function get_default_webmention_form_text() {
 }
 
 /**
- * Check the $url to see if it is on the domain whitelist.
+ * Check the $url to see if it is on the domain allowlist.
  *
  * @param string $url URL to check.
  * @return boolean
  */
-function is_webmention_source_whitelisted( $url ) {
-	return Webmention_Receiver::is_source_whitelisted( $url );
+function is_webmention_source_allowed( $url ) {
+	return Webmention_Receiver::is_source_allowed( $url );
 }
 
 /**
@@ -186,11 +186,11 @@ function webmention_extract_domain( $url ) {
  * @return array|mixed|string|void
  */
 function get_webmention_approve_domains() {
-	$whitelist = get_option( 'webmention_approve_domains' );
-	$whitelist = trim( $whitelist );
-	$whitelist = explode( "\n", $whitelist );
+	$allowlist = get_option( 'webmention_approve_domains' );
+	$allowlist = trim( $allowlist );
+	$allowlist = explode( "\n", $allowlist );
 
-	return $whitelist;
+	return $allowlist;
 }
 
 /**
@@ -477,14 +477,13 @@ function get_webmention_comment_type_string( $comment ) {
 	return apply_filters( 'webmention_comment_string', $name, $type );
 }
 
-
-	/**
-	 *  Sanitize HTML. To be used on content elements after parsing.
-	 *
-	 * @param string $content The HTML to Sanitize.
-	 *
-	 * @return string Sanitized HTML.
-	 */
+/**
+ *  Sanitize HTML. To be used on content elements after parsing.
+ *
+ * @param string $content The HTML to Sanitize.
+ *
+ * @return string Sanitized HTML.
+ */
 function webmention_sanitize_html( $content ) {
 	if ( ! is_string( $content ) ) {
 		return $content;

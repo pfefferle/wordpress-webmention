@@ -3,7 +3,7 @@ module.exports = function(grunt) {
   grunt.initConfig({
     checktextdomain: {
       options:{
-        text_domain: 'webmention',
+        text_domain: ['webmention', 'default'],
         keywords: [
           '__:1,2d',
           '_e:1,2d',
