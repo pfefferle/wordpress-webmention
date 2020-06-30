@@ -64,7 +64,7 @@ class Webmention_Request {
 	 * @param string $url The URL to retrieve.
 	 * @param boolean $safe Whether to use the safe or unfiltered version of HTTP API.
 	 *
-	 * @return WP_Error|array Either an error or the complete return object
+	 * @return WP_Error|true WP_Error or true if successful.
 	 */
 	public function fetch( $url, $safe = true ) {
 		$this->url = $url;
@@ -72,7 +72,7 @@ class Webmention_Request {
 		if ( is_wp_error( $response ) ) {
 			return $response;
 		}
-		$response = $this->get( $url, $safe );
+		$response = $this->remote_get( $url, $safe );
 		if ( is_wp_error( $response ) ) {
 			return $response;
 		}
@@ -86,7 +86,7 @@ class Webmention_Request {
 	 *
 	 * @return WP_Error|array Either an error or the complete return object
 	 */
-	public function get( $url, $safe = true ) {
+	public function remote_get( $url, $safe = true ) {
 		$args = $this->get_remote_arguments();
 		if ( $safe ) {
 			$response = wp_safe_remote_get( $url, $args );
