@@ -40,6 +40,7 @@ class Webmention_Handler_JSONLD extends Webmention_Handler_Base {
 		// Set raw data.
 		$this->webmention_item->set__raw( $jsonld );
 		$this->webmention_item->set__response_type = 'mention';
+
 		foreach ( $jsonld as $json ) {
 			if ( ! $this->is_jsonld( $json ) ) {
 				continue;
@@ -51,24 +52,20 @@ class Webmention_Handler_JSONLD extends Webmention_Handler_Base {
 				if ( isset( $json['dateModified'] ) ) {
 					$this->webmention_item->set_updated( new DateTimeImmutable( $json['dateModified'] ) );
 				}
-				if ( isset( $json['headline'] ) ) {
-					$this->webmention_item->set_name( $json['headline'] );
-				} elseif ( isset( $json['name'] ) ) {
-					$this->webmention_item->set_name( $json['name'] );
-				}
-				if ( isset( $json['description'] ) ) {
-					$this->webmention_item->set_summary( $json['description'] );
-				}
-				if ( isset( $json['keywords'] ) ) {
-					$this->webmention_item->set_category( $json['keywords'] );
-				}
+
+				$this->webmention_item->set_name( $json['headline'] );
+				$this->webmention_item->set_name( $json['name'] );
+				$this->webmention_item->set_summary( $json['description'] );
+				$this->webmention_item->set_category( $json['keywords'] );
+
 				if ( isset( $json['articleBody'] ) ) {
-					$html           = webmention_sanitize_html( $json['articleBody'] );
-					$jf2['content'] = array(
+					$html            = webmention_sanitize_html( $json['articleBody'] );
+					$json['content'] = array(
 						'html'  => $html,
 						'value' => wp_strip_all_tags( $html ),
 					);
 				}
+
 				if ( isset( $json['image'] ) ) {
 					// For now extract only a single image because this is usually multiple sizes.
 					if ( wp_is_numeric_array( $json['image'] ) ) {
@@ -80,6 +77,7 @@ class Webmention_Handler_JSONLD extends Webmention_Handler_Base {
 						$this->webmention_item->set_photo( $json['image']['url'] );
 					}
 				}
+
 				if ( isset( $json['author'] ) ) {
 					// For now extract only a single author as we only support one.
 					if ( wp_is_numeric_array( $json['author'] ) ) {
