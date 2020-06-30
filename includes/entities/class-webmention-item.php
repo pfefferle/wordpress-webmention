@@ -114,6 +114,10 @@ class Webmention_Item {
 			return $this->$var;
 		}
 
+		if ( strncasecmp( $method, 'has', 3 ) === 0 ) {
+			return ! empty( $this->$var );
+		}
+
 		if ( strncasecmp( $method, 'set', 3 ) === 0 ) {
 			if ( $this->$var ) {
 				if ( isset( $params[1] ) && true === $params[1] ) {
