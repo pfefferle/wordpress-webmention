@@ -82,7 +82,7 @@ class Webmention_Handler_JSONLD extends Webmention_Handler_Base {
 				}
 				if ( isset( $json['author'] ) ) {
 					// For now extract only a single author as we only support one.
-					if ( wp_is_numeric_array( $json'author'] ) ) {
+					if ( wp_is_numeric_array( $json['author'] ) ) {
 						$json['author'] = end( $json['author'] );
 					}
 					if ( $this->is_jsonld( $json['author'] ) ) {
