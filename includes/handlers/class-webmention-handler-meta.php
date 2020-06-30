@@ -27,6 +27,8 @@ class Webmention_Handler_Meta extends Webmention_Handler_Base {
 		$dom   = clone $request->get_domdocument();
 		$xpath = new DOMXPath( $dom );
 
+		$meta = array();
+
 		// Look for OGP properties
 		foreach ( $xpath->query( '//meta[(@name or @property or @itemprop) and @content]' ) as $tag ) {
 			$meta_name = $tag->getAttribute( 'property' );
@@ -43,11 +45,14 @@ class Webmention_Handler_Meta extends Webmention_Handler_Base {
 				continue;
 			}
 
-			$this->add_property( $meta_name, $meta_value );
+			$meta[ $meta_name ] = $meta_value;
 		}
+
+		$this->add_properties( $meta );
 
 		// OGP has no concept of anything but mention so it is always a mention.
 		$this->webmention_item->set__response_type = 'mention';
+		$this->webmention_item->set_name( trim( $xpath->query( '//title' )->item( 0 )->textContent ) );
 
 		// If Site Name is not set use domain name less www
 		if ( ! $this->webmention_item->has_site_name() && $this->webmention_item->has_url() ) {
@@ -55,11 +60,30 @@ class Webmention_Handler_Meta extends Webmention_Handler_Base {
 		}
 	}
 
-	protected function add_property( $key, $value ) {
-		if ( in_array( $key, array( 'url', 'og:url' ), true ) ) {
-			$this->webmention_item->set_url( $value );
-		} elseif ( in_array( $key, array( 'DC.Title', 'og:title' ), true ) ) {
-			$this->webmention_item->set_name( $value );
+	/**
+	 * Set meta-properties to Webmention_Item
+	 *
+	 * @param string $key   The meta-key.
+	 *
+	 * @return void
+	 */
+	protected function add_properties( $meta ) {
+		$mapping = array(
+			'url'       => array( 'url', 'og:url' ),
+			'name'      => array( 'og:title', 'dc:title', 'DC.Title' ),
+			'content'   => array( 'og:description', 'dc:desciption', 'DC.Desciption', 'description' ),
+			'summary'   => array( 'og:description', 'dc:desciption', 'DC.Desciption', 'description' ),
+			'published' => array( 'article:published_time', 'article:published', 'DC.Date', 'dc:date', 'citation_date', 'datePublished' ),
+			'updated'   => array( 'article:modified_time', 'article:modified' ),
+		);
+
+		foreach ( $mapping as $key => $values ) {
+			foreach ( $values as $value ) {
+				if ( array_key_exists( $value, $meta ) ) {
+					$this->webmention_item->set( $key, $meta[ $value ] );
+					break;
+				}
+			}
 		}
 	}
 }
