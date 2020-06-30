@@ -123,7 +123,7 @@ class Webmention_Item {
 				if ( isset( $params[1] ) && true === $params[1] ) {
 					$this->$var = $params[0];
 				}
-			} else {
+			} elseif ( isset( $params[1] ) ) {
 				$this->$var = $params[0];
 			}
 		}
