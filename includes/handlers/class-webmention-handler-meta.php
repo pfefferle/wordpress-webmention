@@ -19,12 +19,52 @@ class Webmention_Handler_Meta extends Webmention_Handler_Base {
 	 * @return WP_Error|true Return error or true if successful.
 	 */
 	public function parse( $request, $item = null ) {
-		$this->set_webmention_item( $item );
+		if ( $item instanceof Webmention_Item ) {
+			$this->webmention_item = $item;
+		} else {
+			$this->webmention_item = new Webmention_Item();
+		}
+		$dom  = clone $request->get_domdocument();
+		$meta = $this->parse_meta( $dom );
 
-		$dom   = clone $request->get_domdocument();
+		// Set raw data.
+		$this->webmention_item->set__raw( $meta );
+
+		// OGP has no concept of anything but mention so it is always a mention.
+		$this->webmention_item->set__response_type = 'mention';
+
+		$this->ogp_to_jf2( $meta );
+		$this->dublin_core_to_jf2( $meta );
+
+		// If Site Name is not set use domain name less www
+		if ( ! $this->webmention_item->has_site_name() && $this->webmention_item->has_url() ) {
+			$this->webmention_item->set__site_name( preg_replace( '/^www\./', '', wp_parse_url( $this->webmention_item->get_url(), PHP_URL_HOST ) ) );
+		}
+
+		$this->webmention_item->set_name( $meta['title'] );
+
+		if ( ! $this->webmention_item->has_published() ) {
+			if ( isset( $meta['citation_date'] ) ) {
+				$this->webmention_item->set_published( new DateTimeImmutable( $meta['citation_date'] ) );
+			} elseif ( isset( $meta['datePublished'] ) ) {
+				$this->webmention_item->set_published( new DateTimeImmutable( $meta['datePublished'] ) );
+			}
+		}
+
+		if ( ! $this->webmention_item->has_author() ) {
+			$this->webmention->item->set_author( array( 'name' => $meta['author'] ) );
+		}
+	}
+
+	/**
+	 * Takes a DOMDocument and returns an array of parsed meta properties.
+	 *
+	 * @param DOMDocument $dom DOMDocument.
+	 * @return array Associative array.
+	 */
+	private function parse_meta( $dom ) {
 		$xpath = new DOMXPath( $dom );
-
-		$meta = array();
+		$meta  = array();
 		// Look for OGP properties
 		foreach ( $xpath->query( '//meta[(@name or @property or @itemprop) and @content]' ) as $tag ) {
 			$meta_name = $tag->getAttribute( 'property' );
@@ -47,97 +87,67 @@ class Webmention_Handler_Meta extends Webmention_Handler_Base {
 		if ( isset( $meta['og'] ) ) {
 			$meta['og'] = self::parse_ogp( $meta['og'] );
 		}
-
-		// Set raw data.
-		$this->webmention_item->set__raw( $meta );
-		$this->webmention_item->set__response_type = 'mention';
-
-		$item = $this->ogp_to_jf2( $meta );
-		$item = array_merge( $item, $this->dublin_core_to_jf2( $meta ) );
-
-		// If Site Name is not set use domain name less www
-		if ( ! isset( $item['_site_name'] ) && isset( $item['url'] ) ) {
-			$item['_site_name'] = preg_replace( '/^www\./', '', wp_parse_url( $item['url'], PHP_URL_HOST ) );
-		}
-
-		if ( ! isset( $item['name'] ) ) {
-			$item['name'] = $meta['title'];
-		}
-
-		if ( isset( $meta['citation_date'] ) && ! isset( $item['published'] ) ) {
-			$item['published'] = new DateTimeImmutable( $meta['citation_date'] );
-		} elseif ( isset( $meta['datePublished'] ) ) {
-			$item['published'] = new DateTimeImmutable( $meta['datePublished'] );
-		}
-
-		if ( ! isset( $item['author'] ) ) {
-			$item['author'] = array( 'name' => $meta['author'] );
-		}
-
-		$item = array_filter( $item );
-		foreach ( $item as $key => $value ) {
-			$key = 'set_' . $key;
-			$this->webmention_item->$key( $value );
-		}
+		return $meta;
 	}
 
+
 	protected function ogp_to_jf2( $meta ) {
-		$item = array();
 		// Start by looking at OGP.
 		if ( isset( $meta['og'] ) ) {
 			$og = $meta['og'];
 			if ( isset( $og['url'] ) ) {
-				$item['url'] = $og['url'];
+				$this->webmention_item->set_url( $og['url'] );
 			}
 			if ( isset( $og['title'] ) ) {
-				$item['name'] = $og['title'];
+				$this->webmention_item->set_name( $og['title'] );
 			}
 			if ( isset( $og['description'] ) ) {
-				$item['summary'] = $og['description'];
+				$this->webmention_item->set_summary( $og['description'] );
 			}
 			if ( isset( $og['image'] ) ) {
 				$image = $og['image'];
 				if ( is_string( $image ) ) {
-					$item['photo'] = array( $image );
+					$this->webmention_item->set_photo( array( $image ) );
 				} elseif ( wp_is_numeric_array( $image ) ) {
-					$item['photo'] = array( $image[0] );
+					$this->webmention_item->set_photo( array( $image[0] ) );
 				} else {
-					$item['photo'] = array( $image['secure_url'] );
+					$this->webmention_item->set_photo( array( $image['secure_url'] ) );
 				}
 			}
 			if ( isset( $og['site_name'] ) ) {
-				$item['_site_name'] = $og['site_name'];
+				$this->webmention_item->set__site_name( $og['site_name'] );
 			}
 
 			if ( isset( $og['longitude'] ) ) {
-				$item['location'] = array(
-					'longitude' => $og['longitude'],
-					'latitude'  => $og['longitude'],
+				$this->webmention_item->set_location(
+					array(
+						'longitude' => $og['longitude'],
+						'latitude'  => $og['longitude'],
+					)
 				);
 			}
 			if ( isset( $og['type'] ) ) {
 				$type = $og['type'];
 				if ( isset( $meta[ $type ]['tag'] ) ) {
-					$item['category'] = $meta[ $type ]['tag'];
+					$this->webmention_item->set_category( $meta[ $type ]['tag'] );
 				}
 				if ( ! empty( $meta[ $type ]['author'] ) ) {
-					$item['author'] = array( 'name' => $meta[ $type ]['author'] );
+					$this->webmention_item->set_author( array( 'name' => $meta[ $type ]['author'] ) );
 				}
 				if ( 'article' === $type ) {
 					if ( isset( $meta['article']['published_time'] ) ) {
-						$item['published'] = new DateTimeImmutable( $meta['article']['published_time'] );
+						$this->webmention_item->set_published( new DateTimeImmutable( $meta['article']['published_time'] ) );
 					} elseif ( isset( $meta['article']['published'] ) ) {
-						$item['published'] = new DateTimeImmutable( $meta['article']['published'] );
+						$this->webmention_item->set_published( new DateTimeImmutable( $meta['article']['published'] ) );
 					}
 					if ( isset( $meta['article']['modified_time'] ) ) {
-						$item['updated'] = new DateTimeImmutable( $meta['article']['modified_time'] );
+						$this->webmention_item->set_updated( new DateTimeImmutable( $meta['article']['modified_time'] ) );
 					} elseif ( isset( $meta['article']['modified'] ) ) {
-						$item['updated'] = new DateTimeImmutable( $meta['article']['modified'] );
+						$this->webmention_item->set_updated( new DateTimeImmutable( $meta['article']['modified'] ) );
 					}
 				}
 			}
 		}
-		return $item;
 	}
 
 	protected function dublin_core_to_jf2( $meta ) {
@@ -150,17 +160,16 @@ class Webmention_Handler_Meta extends Webmention_Handler_Base {
 			}
 			if ( isset( $dc['Creator'] ) ) {
 				if ( is_string( $dc['Creator'] ) ) {
-					$item['author'] = array( 'name' => $dc['Creator'] );
+					$this->webmention_item->set_author( array( 'name' => $dc['Creator'] ) );
 				}
 			}
 			if ( isset( $dc['Description'] ) ) {
-				$item['summary'] = $dc['Description'];
+				$this->webmention_item->set_summary( $dc['Description'] );
 			}
-			if ( isset( $dc['Date'] ) && ! isset( $item['published'] ) ) {
-				$item['published'] = ( new DateTimeImmutable( $dc['Date'] ) );
+			if ( isset( $dc['Date'] ) ) {
+				$this->webmention_item->set_published( new DateTimeImmutable( $dc['Date'] ) );
 			}
 		}
-		return $item;
 	}
 
 	protected function add_property( $array, $key, $value ) {
