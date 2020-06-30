@@ -266,11 +266,11 @@ class Webmention_Request {
 			return $this->domdocument;
 		}
 
-		if ( ! in_array( $this->content_type, array( 'text/html', 'text/xml' ) ) ) {
+		if ( ! in_array( $this->content_type, array( 'text/html', 'text/xml' ), true ) ) {
 			return new WP_Error( 'wrong_content_type', __( 'Cannot Generate DOMDocument', 'webmention' ), array( $this->content_type ) );
 		}
 
-		$this->domdocument = new webmention_load_domdocument( $this->body );
+		$this->domdocument = webmention_load_domdocument( $this->body );
 
 		return $this->domdocument;
 	}
