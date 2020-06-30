@@ -79,13 +79,13 @@ class Webmention_Handler_Meta extends Webmention_Handler_Base {
 			if ( strlen( $meta_name ) > 200 ) {
 				continue;
 			}
-			$meta = self::add_property( $meta, $meta_name, $meta_value );
+			$meta = $this->add_property( $meta, $meta_name, $meta_value );
 		}
 
 		$meta['title'] = trim( $xpath->query( '//title' )->item( 0 )->textContent );
-		$meta          = self::parse_ogp( $meta );
+		$meta          = $this->parse_ogp( $meta );
 		if ( isset( $meta['og'] ) ) {
-			$meta['og'] = self::parse_ogp( $meta['og'] );
+			$meta['og'] = $this->parse_ogp( $meta['og'] );
 		}
 		return $meta;
 	}
