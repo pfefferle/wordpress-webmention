@@ -545,3 +545,44 @@ function webmention_sanitize_html( $content ) {
 	);
 	return trim( wp_kses( $content, $allowed ) );
 }
+
+/**
+ * Inverse of wp_parse_url
+ *
+ * Slightly modified from p3k-utils (https://github.com/aaronpk/p3k-utils)
+ * Copyright 2017 Aaron Parecki, used with permission under MIT License
+ *
+ * @link http://php.net/parse_url
+ * @param  string $parsed_url the parsed URL (wp_parse_url)
+ * @return string             the final URL
+ */
+if ( ! function_exists( 'build_url' ) ) {
+	function build_url( $parsed_url ) {
+		$scheme   = ! empty( $parsed_url['scheme'] ) ? $parsed_url['scheme'] . '://' : '';
+		$host     = ! empty( $parsed_url['host'] ) ? $parsed_url['host'] : '';
+		$port     = ! empty( $parsed_url['port'] ) ? ':' . $parsed_url['port'] : '';
+		$user     = ! empty( $parsed_url['user'] ) ? $parsed_url['user'] : '';
+		$pass     = ! empty( $parsed_url['pass'] ) ? ':' . $parsed_url['pass'] : '';
+		$pass     = ( $user || $pass ) ? "$pass@" : '';
+		$path     = ! empty( $parsed_url['path'] ) ? $parsed_url['path'] : '';
+		$query    = ! empty( $parsed_url['query'] ) ? '?' . $parsed_url['query'] : '';
+		$fragment = ! empty( $parsed_url['fragment'] ) ? '#' . $parsed_url['fragment'] : '';
+
+		return "$scheme$user$pass$host$port$path$query$fragment";
+	}
+}
+
+if ( ! function_exists( 'normalize_url' ) ) {
+	// Adds slash if no path is in the URL, and convert hostname to lowercase
+	function normalize_url( $url ) {
+
+		$parts = wp_parse_url( $url );
+		if ( empty( $parts['path'] ) ) {
+			$parts['path'] = '/';
+		}
+		if ( isset( $parts['host'] ) ) {
+			$parts['host'] = strtolower( $parts['host'] );
+			return build_url( $parts );
+		}
+	}
+}

@@ -87,6 +87,13 @@ class Webmention_Item {
 	protected $summary;
 
 	/**
+	 * Any syndication links.
+	 *
+	 * @var array
+	 */
+	protected $syndication;
+
+	/**
 	 * The response type
 	 *
 	 * @var string
