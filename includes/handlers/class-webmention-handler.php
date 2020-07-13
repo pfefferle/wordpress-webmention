@@ -8,15 +8,19 @@ class Webmention_Handler {
 
 	/**
 	 * Must be instantiated with at least one handler.
-	 *
-	 * @param array|Webmention_Handler_Base $handler
-	 *
 	 */
-	public function __construct( $handler ) {
-		if ( is_array( $handler ) ) {
-			$this->handlers = $handler;
-		}
-		$this->handlers = array( $handler );
+	public function __construct() {
+		// Meta Handler Class
+		require_once dirname( __FILE__ ) . '/class-webmention-handler-meta.php';
+		$this->handlers[] = new Webmention_Handler_Meta();
+
+		// MF2 Handler  Class
+		require_once dirname( __FILE__ ) . '/class-webmention-handler-mf2.php';
+		$this->handlers[] = new Webmention_Handler_Mf2();
+
+		// JSON-LD Handler  Class
+		require_once dirname( __FILE__ ) . '/class-webmention-handler-jsonld.php';
+		$this->handlers[] = new Webmention_Handler_Jsonld();
 	}
 
 	/**
@@ -44,10 +48,9 @@ class Webmention_Handler {
 	 * Iterate through a list of handlers and return an item.
 	 *
 	 * @return Webmention_Handler_Item
-	 *
 	 */
 	public function parse( $request ) {
-		foreach ( $handlers as $handler ) {
+		foreach ( $this->handlers as $handler ) {
 			$handler->parse( $request );
 			$item = $handler->get_webmention_item();
 			if ( $item->is_complete() ) {
@@ -57,6 +60,40 @@ class Webmention_Handler {
 		return $item;
 	}
 
+	public function parse_aggregated( $request ) {
+		$item = new Webmention_Item();
+
+		foreach ( $this->handlers as $handler ) {
+			$handler->set_webmention_item( $item );
+			$handler->parse( $request );
+			$item = $handler->get_webmention_item();
+
+			if ( $item->is_complete() ) {
+				break;
+			}
+		}
+		return $item;
+	}
+
+	/**
+	 * Iterate through a list of handlers and return an item.
+	 *
+	 * @return Webmention_Handler_Item
+	 */
+	public function parse_grouped( $request ) {
+		$result = array();
+
+		foreach ( $this->handlers as $handler ) {
+			$handler->parse( $request );
+			$item = $handler->get_webmention_item();
+
+			if ( ! is_wp_error( $item ) ) {
+				$result[ $handler->get_slug() ] = $item->to_array();
+			}
+		}
+
+		return $result;
+	}
 }
 
 

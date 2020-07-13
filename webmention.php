@@ -60,15 +60,6 @@ function webmention_init() {
 	// Handler Base Class
 	require_once dirname( __FILE__ ) . '/includes/handlers/class-webmention-handler-base.php';
 
-	// Meta Handler Class
-	require_once dirname( __FILE__ ) . '/includes/handlers/class-webmention-handler-meta.php';
-
-	// MF2 Handler  Class
-	require_once dirname( __FILE__ ) . '/includes/handlers/class-webmention-handler-mf2.php';
-
-	// JSON-LD Handler  Class
-	require_once dirname( __FILE__ ) . '/includes/handlers/class-webmention-handler-jsonld.php';
-
 	// Webmention Item Class
 	require_once dirname( __FILE__ ) . '/includes/entities/class-webmention-item.php';
 
