@@ -29,6 +29,7 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 		if ( ! class_exists( '\Webmention\Mf2\Parser' ) ) {
 			require_once plugin_dir_path( __FILE__ ) . 'libraries/mf2/Mf2/Parser.php';
 		}
+
 		$url      = $request->get_url();
 		$parser   = new Webmention\Mf2\Parser( $dom, $url );
 		$mf_array = $parser->parse();
@@ -245,10 +246,10 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 			return array();
 		}
 
-			// Get first item.
-			$first_item = $mf_array['items'][0];
+		// Get first item.
+		$first_item = $mf_array['items'][0];
 
-			// Check if it is an h-feed.
+		// Check if it is an h-feed.
 		if ( $this->is_type( $first_item, 'h-feed' ) && array_key_exists( 'children', $first_item ) ) {
 			$mf_array['items'] = $first_item['children'];
 		}
