@@ -241,7 +241,7 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 		}
 
 		// Get first item.
-		$first_item = $mf_array['items'][0];
+		$first_item = current( $mf_array['items'] );
 
 		// Check if it is an h-feed.
 		if ( $this->is_type( $first_item, 'h-feed' ) && array_key_exists( 'children', $first_item ) ) {
