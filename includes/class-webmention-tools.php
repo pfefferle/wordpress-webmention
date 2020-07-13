@@ -52,7 +52,7 @@ class Webmention_Tools {
 	}
 
 	public static function read( $request ) {
-		$url              = $request->get_param( 'url' );
+		$url     = $request->get_param( 'url' );
 		$request = new Webmention_Request();
 		$return  = $request->fetch( $url );
 
@@ -67,7 +67,6 @@ class Webmention_Tools {
 		}
 		$item = $meta->get_webmention_item();
 		$json['meta'] = $item->to_array();
-
 
 		$jsonld = new Webmention_Handler_JSONLD();
 		$return = $jsonld->parse( $request );

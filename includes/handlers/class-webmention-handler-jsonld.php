@@ -15,16 +15,10 @@ class Webmention_Handler_JSONLD extends Webmention_Handler_Base {
 	 * Takes a request object and parses it.
 	 *
 	 * @param Webmention_Request $request Request Object.
-	 * @param Webmention_Item $item A Parsed Item. If null, a new one will be created.
+	 *
 	 * @return WP_Error|true Return error or true if successful.
 	 */
-	public function parse( Webmention_Request $request, $item = null ) {
-		if ( $item instanceof Webmention_Item ) {
-			$this->set_webmention_item( $item );
-		} else {
-			$this->webmention_item = new Webmention_Item();
-		}
-
+	public function parse( Webmention_Request $request ) {
 		$dom   = clone $request->get_domdocument();
 		$xpath = new DOMXPath( $dom );
 
