@@ -18,13 +18,13 @@ class Webmention_Handler_Meta extends Webmention_Handler_Base {
 	 * @param Webmention_Item $item A Parsed Item. If null, a new one will be created.
 	 * @return WP_Error|true Return error or true if successful.
 	 */
-	public function parse( $request, $item = null ) {
+	public function parse( Webmention_Request $request, $item = null ) {
 		if ( $item instanceof Webmention_Item ) {
 			$this->webmention_item = $item;
 		} else {
 			$this->webmention_item = new Webmention_Item();
 		}
-		$dom   = clone $request->get_domdocument();
+		$dom = clone $request->get_domdocument();
 		if ( is_wp_error( $dom ) ) {
 			return $dom;
 		}
