@@ -57,8 +57,8 @@ abstract class Webmention_Handler_Base {
 	 * @return WP_Error|true
 	 */
 	public function set_webmention_item( $webmention_item ) {
-		if ( $webmention_item instanceof Webmention_Item ) {
-			return WP_Error( 'wrong_data_format', __( '$webmention_item is not an instance of Webmention_Item', 'webmention' ), $webmention_item );
+		if ( ! ( $webmention_item instanceof Webmention_Item ) ) {
+			return new WP_Error( 'wrong_data_format', __( '$webmention_item is not an instance of Webmention_Item', 'webmention' ), $webmention_item );
 		}
 
 		$this->webmention_item = $webmention_item;
