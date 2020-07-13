@@ -48,11 +48,18 @@ class Webmention_Handler_JSONLD extends Webmention_Handler_Base {
 				if ( isset( $json['dateModified'] ) ) {
 					$this->webmention_item->set_updated( new DateTimeImmutable( $json['dateModified'] ) );
 				}
-
-				$this->webmention_item->set_name( $json['headline'] );
-				$this->webmention_item->set_name( $json['name'] );
-				$this->webmention_item->set_summary( $json['description'] );
-				$this->webmention_item->set_category( $json['keywords'] );
+				if ( isset( $json['headline'] ) ) {
+					$this->webmention_item->set_category( $json['headline'] );
+				}
+				if ( isset( $json['name'] ) ) {
+					$this->webmention_item->set_category( $json['name'] );
+				}
+				if ( isset( $json['description'] ) ) {
+					$this->webmention_item->set_category( $json['description'] );
+				}
+				if ( isset( $json['keywords'] ) ) {
+					$this->webmention_item->set_category( $json['keywords'] );
+				}
 
 				if ( isset( $json['articleBody'] ) ) {
 					$html            = webmention_sanitize_html( $json['articleBody'] );
@@ -69,7 +76,7 @@ class Webmention_Handler_JSONLD extends Webmention_Handler_Base {
 					}
 					if ( is_string( $json['image'] ) ) {
 						$this->webmention_item->set_photo( $json['image'] );
-					} elseif ( ! $this->is_jsonld( $image ) && $this->is_jsonld_type( $json['image'], 'ImageObject' ) ) {
+					} elseif ( ! $this->is_jsonld( $json['image'] ) && $this->is_jsonld_type( $json['image'], 'ImageObject' ) ) {
 						$this->webmention_item->set_photo( $json['image']['url'] );
 					}
 				}
