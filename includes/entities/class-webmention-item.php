@@ -161,13 +161,22 @@ class Webmention_Item {
 	}
 
 	/**
+	 * Returns the representative entry as array
+	 *
+	 * return array;
+	 */
+	public function toArray() {
+		$array = get_object_vars( $this );
+
+		return array_filter( $array );
+	}
+
+	/**
 	 * Returns the representative entry as JF2 data
 	 *
 	 * return string the JF2 JSON
 	 */
 	public function to_json() {
-		$array = get_object_vars( $this );
-
-		return wp_json_encode( $array );
+		return wp_json_encode( $this->toArray() );
 	}
 }

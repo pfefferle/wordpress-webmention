@@ -25,6 +25,9 @@ class Webmention_Handler_Meta extends Webmention_Handler_Base {
 			$this->webmention_item = new Webmention_Item();
 		}
 		$dom   = clone $request->get_domdocument();
+		if ( is_wp_error( $dom ) ) {
+			return $dom;
+		}
 		$xpath = new DOMXPath( $dom );
 
 		$meta = array();

@@ -21,11 +21,13 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 	public function parse( $request, $item = null ) {
 		if ( $item instanceof Webmention_Item ) {
 			$this->set_webmention_item( $item );
+		} else {
+			$this->webmention_item = new Webmention_Item();
 		}
 
 		$dom = clone $request->get_domdocument();
 		if ( ! class_exists( '\Webmention\Mf2\Parser' ) ) {
-			require_once plugin_dir_path( __DIR__ ) . 'libraries/mf2/Mf2/Parser.php';
+			require_once plugin_dir_path( __FILE__ ) . 'libraries/mf2/Mf2/Parser.php';
 		}
 		$url      = $request->get_url();
 		$parser   = new Webmention\Mf2\Parser( $domdocument, $url );
@@ -100,6 +102,17 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 	 */
 	protected function is_microformat( $mf ) {
 		return ( is_array( $mf ) && ! wp_is_numeric_array( $mf ) && ! empty( $mf['type'] ) && isset( $mf['properties'] ) );
+	}
+
+	/**
+	 * Verifies if $mf has an 'items' key which is also an array, returns true.
+ 	 *
+ 	 * @param $mf
+ 	 *
+ 	 * @return bool
+ 	 */
+ 	protected function is_microformat_collection( $mf ) {
+		return ( is_array( $mf ) && isset( $mf['items'] ) && is_array( $mf['items'] ) );
 	}
 
 	/**

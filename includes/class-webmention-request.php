@@ -102,8 +102,8 @@ class Webmention_Request {
 				return $check;
 		}
 
-		$this->content_type = wp_remote_retrieve_header( $response, 'content-type' );
-		$check              = $this->check_content_type( $this->content_type );
+		$this->content_type = $this->get_content_type( $response );
+		$check = $this->check_content_type( $this->content_type );
 		if ( is_wp_error( $check ) ) {
 			return $check;
 		}

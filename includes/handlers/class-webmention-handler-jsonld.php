@@ -21,6 +21,8 @@ class Webmention_Handler_JSONLD extends Webmention_Handler_Base {
 	public function parse( $request, $item = null ) {
 		if ( $item instanceof Webmention_Item ) {
 			$this->set_webmention_item( $item );
+		} else {
+			$this->webmention_item = new Webmention_Item();
 		}
 
 		$dom   = clone $request->get_domdocument();

@@ -53,7 +53,39 @@ class Webmention_Tools {
 
 	public static function read( $request ) {
 		$url              = $request->get_param( 'url' );
+		$request = new Webmention_Request();
+		$return  = $request->fetch( $url );
 
+		if ( is_wp_error( $return ) ) {
+			return $return;
+		}
+		$json = array();
+		$meta = new Webmention_Handler_Meta();
+		$return = $meta->parse( $request );
+		if ( is_wp_error( $return ) ) {
+			return $return;
+		}
+		$item = $meta->get_webmention_item();
+		$json['meta'] = $item->toArray();
+
+
+		$jsonld = new Webmention_Handler_JSONLD();
+		$return = $jsonld->parse( $request );
+		if ( is_wp_error( $return ) ) {
+			return $return;
+		}
+		$item = $jsonld->get_webmention_item();
+		$json['jsonld'] = $item->toArray();
+
+		$mf2 = new Webmention_Handler_MF2();
+		$return = $mf2->parse( $request );
+		if ( is_wp_error( $return ) ) {
+			return $return;
+		}
+		$item = $mf2->get_webmention_item();
+		$json['mf2'] = $item->toArray();
+
+		return $json;
 	}
 
 	/**
