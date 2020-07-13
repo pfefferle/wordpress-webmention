@@ -38,7 +38,6 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 
 		// Only store the raw representative item and discard other information.
 		$this->webmention_item->set_raw( $mf_array );
-		return true;
 
 		// Retrieve time properties if available.
 		$this->webmention_item->set_published( $this->get_datetime_property( 'published', $mf_array ) );

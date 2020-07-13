@@ -33,7 +33,7 @@ class Webmention_Item {
 	protected $url;
 
 	// mabe also an entity
-	protected $author = array( 'type', 'name', 'url', 'photo' );
+	protected $author = array(); 
 
 	/**
 	 * Array of category strings
@@ -174,7 +174,7 @@ class Webmention_Item {
 	public function toArray() {
 		$array = get_object_vars( $this );
 
-		return $array;
+		return array_filter( $array );
 	}
 
 	/**
