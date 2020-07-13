@@ -35,7 +35,7 @@ class Webmention_Handler_JSONLD extends Webmention_Handler_Base {
 
 		// Set raw data.
 		$this->webmention_item->set_raw( $jsonld );
-		$this->webmention_item->set_response_type = 'mention';
+		$this->webmention_item->set_response_type( 'mention' );
 
 		foreach ( $jsonld as $json ) {
 			if ( ! $this->is_jsonld( $json ) ) {
