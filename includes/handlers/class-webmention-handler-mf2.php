@@ -30,14 +30,15 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 			require_once plugin_dir_path( __FILE__ ) . 'libraries/mf2/Mf2/Parser.php';
 		}
 		$url      = $request->get_url();
-		$parser   = new Webmention\Mf2\Parser( $domdocument, $url );
+		$parser   = new Webmention\Mf2\Parser( $dom, $url );
 		$mf_array = $parser->parse();
 
 		// Attempts to remove everything but the representative item.
 		$mf_array = $this->get_representative_item( $mf_array, $url );
 
 		// Only store the raw representative item and discard other information.
-		$this->webmention_item->set__raw( $mf_array );
+		$this->webmention_item->set_raw( $mf_array );
+		return true;
 
 		// Retrieve time properties if available.
 		$this->webmention_item->set_published( $this->get_datetime_property( 'published', $mf_array ) );

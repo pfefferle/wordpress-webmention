@@ -115,6 +115,9 @@ class Webmention_Item {
 	 * @return void
 	 */
 	public function __call( $method, $params ) {
+		if ( ! array_key_exists( 1, $params ) ) {
+			$params[1] = false;
+		}
 		$var = strtolower( substr( $method, 4 ) );
 
 		if ( strncasecmp( $method, 'get', 3 ) === 0 ) {
@@ -134,13 +137,16 @@ class Webmention_Item {
 	}
 
 	public function set( $key, $value, $overwrite = false ) {
+		if ( in_array( $key, array( 'raw', 'site_name', 'response_type' ), true ) ) {
+			$key = '_' . $key;
+		}
 		if ( $this->$key ) {
 			if ( isset( $overwrite ) && false === $overwrite ) {
 				return;
 			}
 		}
 
-		if ( in_array( $key, array( 'updated', 'published' ), true ) ) {
+		if ( in_array( $key, array( 'updated', 'published' ), true ) && ! $value instanceof DateTimeImmutable ) {
 			$value = new DateTimeImmutable( $value );
 		}
 
@@ -168,7 +174,7 @@ class Webmention_Item {
 	public function toArray() {
 		$array = get_object_vars( $this );
 
-		return array_filter( $array );
+		return $array;
 	}
 
 	/**

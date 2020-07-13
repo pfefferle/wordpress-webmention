@@ -51,10 +51,12 @@ class Webmention_Handler_Meta extends Webmention_Handler_Base {
 			$meta[ $meta_name ] = $meta_value;
 		}
 
+		$this->webmention_item->set_raw( $meta );
+
 		$this->add_properties( $meta );
 
 		// OGP has no concept of anything but mention so it is always a mention.
-		$this->webmention_item->set__response_type = 'mention';
+		$this->webmention_item->set_response_type = 'mention';
 		$this->webmention_item->set_name( trim( $xpath->query( '//title' )->item( 0 )->textContent ) );
 
 		// If Site Name is not set use domain name less www
