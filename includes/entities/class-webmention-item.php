@@ -164,7 +164,9 @@ class Webmention_Item {
 	 * @return boolean
 	 */
 	public function is_complete() {
-
+		// returns false for now
+		// @todo implement
+		return false;
 	}
 
 	/**
