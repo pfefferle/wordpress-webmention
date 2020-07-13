@@ -33,7 +33,7 @@ class Webmention_Item {
 	protected $url;
 
 	// mabe also an entity
-	protected $author = array(); 
+	protected $author = array();
 
 	/**
 	 * Array of category strings
@@ -171,7 +171,7 @@ class Webmention_Item {
 	 *
 	 * return array;
 	 */
-	public function toArray() {
+	public function to_array() {
 		$array = get_object_vars( $this );
 
 		return array_filter( $array );
@@ -183,6 +183,6 @@ class Webmention_Item {
 	 * return string the JF2 JSON
 	 */
 	public function to_json() {
-		return wp_json_encode( $this->toArray() );
+		return wp_json_encode( $this->to_array() );
 	}
 }

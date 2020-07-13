@@ -66,7 +66,7 @@ class Webmention_Tools {
 			return $return;
 		}
 		$item = $meta->get_webmention_item();
-		$json['meta'] = $item->toArray();
+		$json['meta'] = $item->to_array();
 
 
 		$jsonld = new Webmention_Handler_JSONLD();
@@ -75,7 +75,7 @@ class Webmention_Tools {
 			return $return;
 		}
 		$item = $jsonld->get_webmention_item();
-		$json['jsonld'] = $item->toArray();
+		$json['jsonld'] = $item->to_array();
 
 		$mf2 = new Webmention_Handler_MF2();
 		$return = $mf2->parse( $request );
@@ -83,7 +83,7 @@ class Webmention_Tools {
 			return $return;
 		}
 		$item = $mf2->get_webmention_item();
-		$json['mf2'] = $item->toArray();
+		$json['mf2'] = $item->to_array();
 
 		return $json;
 	}
