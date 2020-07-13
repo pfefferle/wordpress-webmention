@@ -140,6 +140,7 @@ class Webmention_Item {
 		if ( in_array( $key, array( 'raw', 'site_name', 'response_type' ), true ) ) {
 			$key = '_' . $key;
 		}
+
 		if ( $this->$key ) {
 			if ( isset( $overwrite ) && false === $overwrite ) {
 				return;

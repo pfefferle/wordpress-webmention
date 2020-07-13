@@ -56,8 +56,8 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 
 		$this->webmention_item->set_summary( $this->get_html( $mf_array, 'summary' ) );
 		$this->webmention_item->set_content( $this->get_html( $mf_array, 'content' ) );
-		return true;
 
+		return true;
 	}
 
 	/**
@@ -106,12 +106,12 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 
 	/**
 	 * Verifies if $mf has an 'items' key which is also an array, returns true.
- 	 *
- 	 * @param $mf
- 	 *
- 	 * @return bool
- 	 */
- 	protected function is_microformat_collection( $mf ) {
+	 *
+	 * @param $mf
+	 *
+	 * @return bool
+	 */
+	protected function is_microformat_collection( $mf ) {
 		return ( is_array( $mf ) && isset( $mf['items'] ) && is_array( $mf['items'] ) );
 	}
 
@@ -182,11 +182,11 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 	}
 
 	/**
-		 * Returns ['html'] element of $v, or ['value'] or just $v, in order of availablility.
-			 *
-				 * @param $v Microformats Content.
-					 * @return mixed HTML Element if present.
-						 */
+	 * Returns ['html'] element of $v, or ['value'] or just $v, in order of availablility.
+	 *
+	 * @param $v Microformats Content.
+	 * @return mixed HTML Element if present.
+	 */
 	protected function to_html( $v ) {
 		if ( $this->is_embedded_html( $v ) ) {
 			return $v['html'];
@@ -208,7 +208,7 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 		if ( ! empty( $mf['properties'][ $propname ] ) && is_array( $mf['properties'][ $propname ] ) ) {
 			return $this->to_html( current( $mf['properties'][ $propname ] ) );
 		}
-																														return $fallback;
+		return $fallback;
 	}
 
 	/**
@@ -252,18 +252,19 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 		if ( $this->is_type( $first_item, 'h-feed' ) && array_key_exists( 'children', $first_item ) ) {
 			$mf_array['items'] = $first_item['children'];
 		}
-			// Return entries.
-			return $mf_array['items'];
+
+		// Return entries.
+		return $mf_array['items'];
 	}
 
-			/**
-			 * Helper to find the correct h- node.
-			 *
-			 * @param array $mf The parsed microformats json.
-			 * @param string $url the retrieved url.
-			 *
-			 * @return array the h- node or false/
-			 */
+	/**
+	 * Helper to find the correct h- node.
+	 *
+	 * @param array $mf The parsed microformats json.
+	 * @param string $url the retrieved url.
+	 *
+	 * @return array the h- node or false/
+	 */
 	protected function find_representative_item( $mf, $url ) {
 		$items = $this->get_items( $mf );
 		if ( ! is_array( $items ) || empty( $items ) ) {
@@ -469,5 +470,4 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 	protected function urls_match( $url1, $url2 ) {
 		return ( normalize_url( $url1 ) === normalize_url( $url2 ) );
 	}
-
 }
