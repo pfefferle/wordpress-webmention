@@ -76,6 +76,7 @@ class Webmention_Handler_Meta extends Webmention_Handler_Base {
 			'published' => array( 'article:published_time', 'article:published', 'DC.Date', 'dc:date', 'citation_date', 'datePublished' ),
 			'updated'   => array( 'article:modified_time', 'article:modified' ),
 			'site_name' => array( 'og:site_name' ),
+			'author' => array( 'DC.creator' )
 		);
 
 		foreach ( $mapping as $key => $values ) {

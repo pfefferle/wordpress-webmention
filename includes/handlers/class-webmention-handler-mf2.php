@@ -399,6 +399,8 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 		// Check and parse for location property
 		if ( $this->has_property( $mf, 'location' ) ) {
 			$mf = current( $this->get_property( $mf, 'location' ) );
+		} else {
+			return null;
 		}
 
 		if ( $this->is_microformat( $mf ) ) {

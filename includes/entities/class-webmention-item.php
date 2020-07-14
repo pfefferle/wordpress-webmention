@@ -152,6 +152,23 @@ class Webmention_Item {
 			$value = webmention_sanitize_html( $value );
 		}
 
+		// Standardize Author Property to h-card
+		if ( 'author' === $key ) {
+			if ( is_string( $value ) ) {
+				if ( wp_http_validate_url( $value ) ) {
+					$value = array(
+							'type' => 'card',
+							'url' => $value
+					);
+				} else {
+					$value = array(
+							'type' => 'card',
+							'name' => $value
+					);
+				}
+			}
+		}
+
 		if ( in_array( $key, array( 'updated', 'published' ), true ) && ! $value instanceof DateTimeImmutable  && is_string( $value ) ) {
 			$value = new DateTimeImmutable( $value );
 		}
