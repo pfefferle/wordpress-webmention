@@ -21,7 +21,7 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 	public function parse( Webmention_Request $request ) {
 		$dom = clone $request->get_domdocument();
 		if ( ! class_exists( '\Webmention\Mf2\Parser' ) ) {
-			require_once plugin_dir_path( __FILE__ ) . 'libraries/mf2/Mf2/Parser.php';
+			require_once plugin_dir_path( __FILE__ ) . '../../libraries/mf2/Mf2/Parser.php';
 		}
 
 		$url      = $request->get_url();
@@ -37,7 +37,7 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 		// Retrieve time properties if available.
 		$this->webmention_item->set_published( $this->get_datetime_property( 'published', $mf_array ) );
 		$this->webmention_item->set_updated( $this->get_datetime_property( 'updated', $mf_array ) );
-		
+
 		$this->webmention_item->set_url( $this->get_plaintext( $mf_array, 'url' ) );
 		$this->webmention_item->set_url( $url ); // If there is no URL property then use the retrieved URL.
 		$this->webmention_item->set_author( $this->get_author( $mf_array ) );
@@ -453,7 +453,7 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 			} else {
 				$author['name'] = $text;
 			}
-		} 
+		}
 		return array_filter( $author );
 	}
 
