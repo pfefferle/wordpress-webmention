@@ -52,7 +52,9 @@ class Webmention_Handler_Meta extends Webmention_Handler_Base {
 
 		// OGP has no concept of anything but mention so it is always a mention.
 		$this->webmention_item->set_response_type( 'mention' );
-		$this->webmention_item->set_name( trim( $xpath->query( '//title' )->item( 0 )->textContent ) );
+		if ( ! $this->webmention_item->get_name() ) {
+			$this->webmention_item->set_name( trim( $xpath->query( '//title' )->item( 0 )->textContent ) );
+		}
 
 		// If Site Name is not set use domain name less www
 		if ( ! $this->webmention_item->has_site_name() && $this->webmention_item->has_url() ) {
@@ -76,8 +78,8 @@ class Webmention_Handler_Meta extends Webmention_Handler_Base {
 			'published' => array( 'article:published_time', 'article:published', 'DC.Date', 'dc:date', 'citation_date', 'datePublished' ),
 			'updated'   => array( 'article:modified_time', 'article:modified' ),
 			'site_name' => array( 'og:site_name' ),
-			'author' => array( 'DC.creator' ),
-			'photo' => array( 'og:image' )
+			'author'    => array( 'DC.creator' ),
+			'photo'     => array( 'og:image' ),
 		);
 
 		foreach ( $mapping as $key => $values ) {
