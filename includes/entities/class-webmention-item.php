@@ -140,23 +140,6 @@ class Webmention_Item {
 	}
 
 	public function set( $key, $value ) {
-		// Standardize Author Property to h-card
-		if ( 'author' === $key ) {
-			if ( is_string( $value ) ) {
-				if ( wp_http_validate_url( $value ) ) {
-					$value = array(
-							'type' => 'card',
-							'url' => $value
-					);
-				} else {
-					$value = array(
-							'type' => 'card',
-							'name' => $value
-					);
-				}
-			}
-		}
-
 		call_user_func( array( $this, 'set_' . $key ), $value );
 	}
 
@@ -212,6 +195,36 @@ class Webmention_Item {
 		}
 	}
 
+	/**
+	 * Setter for $this->author
+	 *
+	 * @param mixed $author
+	 *
+	 * @return void
+	 */
+	public function set_author( $author ) {
+		if ( is_string( $author ) ) {
+			if ( wp_http_validate_url( $author ) ) {
+				$this->author = array(
+					'type' => 'card',
+					'url'  => $author,
+				);
+			} else {
+				$this->author = array(
+					'type' => 'card',
+					'name' => $author,
+				);
+			}
+		} else {
+			$this->author = $author;
+		}
+	}
+
+	/**
+	 * Transform to commentdata
+	 *
+	 * @return WP_Comment
+	 */
 	public function to_commentdata() {
 
 	}
