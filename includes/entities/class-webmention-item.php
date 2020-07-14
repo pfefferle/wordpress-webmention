@@ -147,6 +147,11 @@ class Webmention_Item {
 			}
 		}
 
+		// Sanitize Content and Summary Before Setting
+		if ( in_array( $key, array( 'content', 'summary' ), true ) ) {
+			$value = webmention_sanitize_html( $value );
+		}
+
 		if ( in_array( $key, array( 'updated', 'published' ), true ) && ! $value instanceof DateTimeImmutable  && is_string( $value ) ) {
 			$value = new DateTimeImmutable( $value );
 		}
