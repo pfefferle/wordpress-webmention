@@ -101,6 +101,9 @@ class Webmention_Handler_JSONLD extends Webmention_Handler_Base {
 						$this->webmention_item->set_author( array_filter( $author ) );
 					}
 				}
+				if ( isset( $json['isPartOf'] ) ) {
+					$this->webmention_item->set_site_name( $json['isPartOf']['name'] );
+				}
 			}
 		}
 	}

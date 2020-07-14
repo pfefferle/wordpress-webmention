@@ -437,7 +437,7 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 	 * @param array Author array.
 	 */
 	protected function get_author( $mf_array ) {
-		$properties = $this->get_property( $mf_array, 'author' );
+		$properties = current( $this->get_property( $mf_array, 'author' ) );
 		if ( empty( $properties ) ) {
 			return null;
 		}
@@ -446,7 +446,6 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 			foreach ( array( 'name', 'nickname', 'given-name', 'family-name', 'url', 'email', 'photo' ) as $prop ) {
 				$author[ $prop ] = $this->get_plaintext( $properties, $prop );
 			}
-			return array_filter( $author );
 		} else {
 			$text = $this->get_plaintext( $mf_array, 'author' );
 			if ( wp_http_validate_url( $text ) ) {
@@ -454,8 +453,8 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 			} else {
 				$author['name'] = $text;
 			}
-		}
-		return $author;
+		} 
+		return array_filter( $author );
 	}
 
 	/**
