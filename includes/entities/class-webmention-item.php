@@ -68,9 +68,11 @@ class Webmention_Item {
 	/**
 	 * The site name, if available.
 	 *
+	 * @example comment-meta
+	 *
 	 * @var string
 	 */
-	protected $_site_name;
+	protected $site_name;
 
 	/**
 	 * The response content
@@ -96,16 +98,20 @@ class Webmention_Item {
 	/**
 	 * The response type
 	 *
+	 * @example comment-meta
+	 *
 	 * @var string
 	 */
-	protected $_response_type;
+	protected $response_type;
 
 	/**
 	 * The raw document as JSON, HTML, XML, ...
 	 *
+	 * @example comment-meta
+	 *
 	 * @var mixed
 	 */
-	protected $_raw;
+	protected $raw;
 
 	/**
 	 * Magic function for getter/setter
@@ -129,29 +135,11 @@ class Webmention_Item {
 		}
 
 		if ( strncasecmp( $method, 'set', 3 ) === 0 ) {
-			$value     = $params[0] ? $params[0] : null;
-			$overwrite = $params[1] ? $params[1] : false;
-
-			$this->set( $var, $value, $overwrite );
+			$this->$var = current( $params );
 		}
 	}
 
-	public function set( $key, $value, $overwrite = false ) {
-		if ( in_array( $key, array( 'raw', 'site_name', 'response_type' ), true ) ) {
-			$key = '_' . $key;
-		}
-
-		if ( $this->$key ) {
-			if ( isset( $overwrite ) && false === $overwrite ) {
-				return;
-			}
-		}
-
-		// Sanitize Content and Summary Before Setting
-		if ( in_array( $key, array( 'content', 'summary' ), true ) ) {
-			$value = webmention_sanitize_html( $value );
-		}
-
+	public function set( $key, $value ) {
 		// Standardize Author Property to h-card
 		if ( 'author' === $key ) {
 			if ( is_string( $value ) ) {
@@ -169,11 +157,59 @@ class Webmention_Item {
 			}
 		}
 
-		if ( in_array( $key, array( 'updated', 'published' ), true ) && ! $value instanceof DateTimeImmutable  && is_string( $value ) ) {
-			$value = new DateTimeImmutable( $value );
-		}
+		call_user_func( array( $this, 'set_' . $key ), $value );
+	}
 
-		$this->$key = $value;
+	/**
+	 * Setter for $this->updated
+	 *
+	 * @param mixed $updated
+	 *
+	 * @return void
+	 */
+	public function set_updated( $updated ) {
+		if ( $updated instanceof DateTimeImmutable ) {
+			$this->updated = $updated;
+		} else {
+			$this->updated = new DateTimeImmutable( $updated );
+		}
+	}
+
+	/**
+	 * Setter for $this->content
+	 *
+	 * @param string $content
+	 *
+	 * @return void
+	 */
+	public function set_content( $content ) {
+		$this->content = webmention_sanitize_html( $content );
+	}
+
+	/**
+	 * Setter for $this->summary
+	 *
+	 * @param mixed $summary
+	 *
+	 * @return void
+	 */
+	public function set_summary( $summary ) {
+		$this->summary = webmention_sanitize_html( $summary );
+	}
+
+	/**
+	 * Setter for $this->published
+	 *
+	 * @param mixed $published
+	 *
+	 * @return void
+	 */
+	public function set_published( $published ) {
+		if ( $published instanceof DateTimeImmutable ) {
+			$this->published = $published;
+		} else {
+			$this->published = new DateTimeImmutable( $published );
+		}
 	}
 
 	public function to_commentdata() {
