@@ -37,8 +37,9 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 		// Retrieve time properties if available.
 		$this->webmention_item->set_published( $this->get_datetime_property( 'published', $mf_array ) );
 		$this->webmention_item->set_updated( $this->get_datetime_property( 'updated', $mf_array ) );
-
-		$this->webmention_item->set_url( $url );
+		
+		$this->webmention_item->set_url( $this->get_plaintext( $mf_array, 'url' ) );
+		$this->webmention_item->set_url( $url ); // If there is no URL property then use the retrieved URL.
 		$this->webmention_item->set_author( $this->get_author( $mf_array ) );
 		$this->webmention_item->set_category( $this->get_property( $mf_array, 'category' ) );
 		$this->webmention_item->set_syndication( $this->get_plaintext( $mf_array, 'syndication' ) );
@@ -442,7 +443,7 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 		}
 		$author = array( 'type' => 'card' );
 		if ( $this->is_microformat( $properties ) ) {
-			foreach ( array( 'name', 'url', 'email', 'photo' ) as $prop ) {
+			foreach ( array( 'name', 'nickname', 'given-name', 'family-name', 'url', 'email', 'photo' ) as $prop ) {
 				$author[ $prop ] = $this->get_plaintext( $properties, $prop );
 			}
 			return array_filter( $author );
