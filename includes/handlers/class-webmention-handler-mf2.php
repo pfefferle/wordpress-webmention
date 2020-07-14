@@ -40,14 +40,14 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 
 		$this->webmention_item->set_url( $url );
 		$this->webmention_item->set_author( $this->get_author( $mf_array ) );
-		$this->webmention_item->set_category( $this->get_plaintext( $mf_array, 'category' ) );
+		$this->webmention_item->set_category( $this->get_property( $mf_array, 'category' ) );
 		$this->webmention_item->set_syndication( $this->get_plaintext( $mf_array, 'syndication' ) );
 
 		// Sometimes the featured image is stored in featured. Otherwise try photo.
 		$this->webmention_item->set_photo( $this->get_plaintext( $mf_array, 'featured' ) );
 		$this->webmention_item->set_photo( $this->get_plaintext( $mf_array, 'photo' ) );
 
-		$this->webmention_item->set_location( $this->get_location( $mf_array, 'location' ) );
+		$this->webmention_item->set_location( $this->get_location( $mf_array ) );
 
 		$this->webmention_item->set_summary( $this->get_html( $mf_array, 'summary' ) );
 		$this->webmention_item->set_content( $this->get_html( $mf_array, 'content' ) );
@@ -86,6 +86,19 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 	*/
 	protected function is_type( $mf, $type ) {
 		return is_array( $mf ) && ! empty( $mf['type'] ) && is_array( $mf['type'] ) && in_array( $type, $mf['type'], true );
+	}
+
+	/**
+	 * Returns type
+	 *
+	 * @param array       $mf Microformats Array.
+	 * @return string|null Return value.
+	 */
+	protected function get_type( array $mf ) {
+		if ( ! $this->is_microformat( $mf ) ) {
+			return null;
+		}
+		return str_replace( 'h-', '', $mf['type'][0] );
 	}
 
 	/**
@@ -161,7 +174,6 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 		return $v;
 	}
 
-
 	/**
 	 * Returns property $propname  $fallback.
 	 *
@@ -172,7 +184,7 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 	 */
 	protected function get_property( array $mf, $propname, $fallback = null ) {
 		if ( ! empty( $mf['properties'][ $propname ] ) && is_array( $mf['properties'][ $propname ] ) ) {
-			return current( $mf['properties'][ $propname ] );
+			return $mf['properties'][ $propname ];
 		}
 		return $fallback;
 	}
@@ -386,35 +398,33 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 		$return = array();
 		// Check and parse for location property
 		if ( $this->has_property( $mf, 'location' ) ) {
-			$location = $this->get_property( $mf, 'location' );
-			if ( $this->is_microformat( $location ) ) {
-				if ( $this->has_property( $location, 'latitude' ) ) {
-					$return['latitude'] = $this->get_plaintext( $location, 'latitude' );
-				}
-				if ( $this->has_property( $location, 'longitude' ) ) {
-					$return['longitude'] = $this->get_plaintext( $location, 'longitude' );
-				}
-				if ( $this->has_property( $location, 'name' ) ) {
-					$return['name'] = $this->get_plaintext( $location, 'name' );
-				}
+			$mf = current( $this->get_property( $mf, 'location' ) );
+		}
+
+		if ( $this->is_microformat( $mf ) ) {
+			foreach ( array( 'latitude', 'longitude', 'label', 'name', 'locality', 'region', 'country-name', 'altitude' ) as $prop ) {
+				$return[ $prop ] = $this->get_plaintext( $mf, $prop );
+			}
+			$return['type'] = $this->get_type( $mf );
+		} else {
+			if ( substr( $mf, 0, 4 ) === 'geo:' ) {
+				$geo    = explode( ':', substr( urldecode( $mf ), 4 ) );
+				$geo    = explode( ';', $geo[0] );
+				$coords = explode( ',', $geo[0] );
+				$return = array(
+					'type'      => 'geo',
+					'latitude'  => trim( $coords[0] ),
+					'longitude' => trim( $coords[1] ),
+					'altitude'  => trim( ifset( $coords[2], '' ) ),
+				);
 			} else {
-				if ( 1 === count( $location ) ) {
-					$location = $location[0];
-				}
-				if ( substr( $location, 0, 4 ) === 'geo:' ) {
-					$geo    = explode( ':', substr( urldecode( $location ), 4 ) );
-					$geo    = explode( ';', $geo[0] );
-					$coords = explode( ',', $geo[0] );
-					$return = array(
-						'latitude'  => trim( $coords[0] ),
-						'longitude' => trim( $coords[1] ),
-					);
-				} else {
-					$return = array( 'name' => $location );
-				}
+				$return = array(
+					'type'  => 'adr',
+					'label' => $mf,
+				);
 			}
 		}
-		return $return;
+		return array_filter( $return );
 	}
 
 	/**
@@ -425,24 +435,24 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 	 */
 	protected function get_author( $mf_array ) {
 		$properties = $this->get_property( $mf_array, 'author' );
-		$author     = array( 'type' => 'card' );
+		if ( empty( $properties ) ) {
+			return null;
+		}
+		$author = array( 'type' => 'card' );
 		if ( $this->is_microformat( $properties ) ) {
 			foreach ( array( 'name', 'url', 'email', 'photo' ) as $prop ) {
 				$author[ $prop ] = $this->get_plaintext( $properties, $prop );
 			}
 			return array_filter( $author );
 		} else {
-			$author = $this->get_plaintext( $mf_array, 'author' );
-			if ( wp_http_validate_url( $author ) ) {
-				return array(
-					'url' => $author,
-				);
+			$text = $this->get_plaintext( $mf_array, 'author' );
+			if ( wp_http_validate_url( $text ) ) {
+				$author['url'] = $text;
 			} else {
-				return array(
-					'name' => $author,
-				);
+				$author['name'] = $text;
 			}
 		}
+		return $author;
 	}
 
 	/**
