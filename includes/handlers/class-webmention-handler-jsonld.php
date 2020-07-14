@@ -41,21 +41,23 @@ class Webmention_Handler_JSONLD extends Webmention_Handler_Base {
 			if ( ! $this->is_jsonld( $json ) ) {
 				continue;
 			}
-			if ( in_array( $json['@type'], array( 'WebPage', 'Article', 'NewsArticle' ), true ) ) {
+			if ( in_array( $json['@type'], array( 'WebPage', 'Article', 'NewsArticle', 'BlogPosting' ), true ) ) {
 				if ( isset( $json['datePublished'] ) ) {
 					$this->webmention_item->set_published( new DateTimeImmutable( $json['datePublished'] ) );
 				}
 				if ( isset( $json['dateModified'] ) ) {
 					$this->webmention_item->set_updated( new DateTimeImmutable( $json['dateModified'] ) );
 				}
-				if ( isset( $json['headline'] ) ) {
-					$this->webmention_item->set_category( $json['headline'] );
+				if ( isset( $json['url'] ) ) {
+					$this->webmention_item->set_url( $json['url'] );
 				}
-				if ( isset( $json['name'] ) ) {
-					$this->webmention_item->set_category( $json['name'] );
+				if ( isset( $json['headline'] ) ) {
+					$this->webmention_item->set_name( $json['headline'] );
+				} elseif ( isset( $json['name'] ) ) {
+					$this->webmention_item->set_name( $json['name'] );
 				}
 				if ( isset( $json['description'] ) ) {
-					$this->webmention_item->set_category( $json['description'] );
+					$this->webmention_item->set_summary( $json['description'] );
 				}
 				if ( isset( $json['keywords'] ) ) {
 					$this->webmention_item->set_category( $json['keywords'] );
@@ -88,6 +90,7 @@ class Webmention_Handler_JSONLD extends Webmention_Handler_Base {
 					}
 					if ( $this->is_jsonld( $json['author'] ) ) {
 						$author = array(
+							'type'  => 'card',
 							'name'  => isset( $json['author']['name'] ) ? $json['author']['name'] : null,
 							'email' => isset( $json['author']['email'] ) ? $json['author']['name'] : null,
 							'photo' => isset( $json['image'] ) ? $json['author']['image'] : null,
