@@ -161,6 +161,22 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 		return $v;
 	}
 
+
+	/**
+	 * Returns property $propname  $fallback.
+	 *
+	 * @param array       $mf Microformats Array.
+	 * @param $propname Property to be retrieved.
+	 * @param null|string $fallback Fallback if not available.
+	 * @return mixed|null Return value.
+	 */
+	protected function get_property( array $mf, $propname, $fallback = null ) {
+		if ( ! empty( $mf['properties'][ $propname ] ) && is_array( $mf['properties'][ $propname ] ) ) {
+			return current( $mf['properties'][ $propname ] );
+		}
+		return $fallback;
+	}
+
 	/**
 	 * Returns plaintext of $propname with optional $fallback.
 	 *
@@ -366,33 +382,25 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 		}
 	}
 
-	/**
-	 * Returns the first item in $val if it's a non-empty array, otherwise $val itself.
-	 */
-	protected function first( $val ) {
-		if ( $val && is_array( $val ) ) {
-			return $val[0];
-		}
-		return $val;
-	}
-
-
 	protected function get_location( $mf ) {
 		$return = array();
 		// Check and parse for location property
 		if ( $this->has_property( $mf, 'location' ) ) {
-			$location = $mf['properties']['location'];
-			if ( is_array( $location ) ) {
-				if ( array_key_exists( 'latitude', $location ) ) {
-					$return['latitude'] = $this->first( $location['latitude'] );
+			$location = $this->get_property( $mf, 'location' );
+			if ( $this->is_microformat( $location ) ) {
+				if ( $this->has_property( $location, 'latitude' ) ) {
+					$return['latitude'] = $this->get_plaintext( $location, 'latitude' );
 				}
-				if ( array_key_exists( 'longitude', $location ) ) {
-					$return['longitude'] = $this->first( $location['longitude'] );
+				if ( $this->has_property( $location, 'longitude' ) ) {
+					$return['longitude'] = $this->get_plaintext( $location, 'longitude' );
 				}
-				if ( array_key_exists( 'name', $location ) ) {
-					$return['name'] = $this->first( $location['name'] );
+				if ( $this->has_property( $location, 'name' ) ) {
+					$return['name'] = $this->get_plaintext( $location, 'name' );
 				}
 			} else {
+				if ( 1 === count( $location ) ) {
+					$location = $location[0];
+				}
 				if ( substr( $location, 0, 4 ) === 'geo:' ) {
 					$geo    = explode( ':', substr( urldecode( $location ), 4 ) );
 					$geo    = explode( ';', $geo[0] );
@@ -416,11 +424,25 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 	 * @param array Author array.
 	 */
 	protected function get_author( $mf_array ) {
-		$author = array();
-		foreach ( array( 'name', 'url', 'email', 'photo' ) as $prop ) {
-			$author[ $prop ] = $this->get_plaintext( $mf_array, $prop );
+		$properties = $this->get_property( $mf_array, 'author' );
+		$author     = array( 'type' => 'card' );
+		if ( $this->is_microformat( $properties ) ) {
+			foreach ( array( 'name', 'url', 'email', 'photo' ) as $prop ) {
+				$author[ $prop ] = $this->get_plaintext( $properties, $prop );
+			}
+			return array_filter( $author );
+		} else {
+			$author = $this->get_plaintext( $mf_array, 'author' );
+			if ( wp_http_validate_url( $author ) ) {
+				return array(
+					'url' => $author,
+				);
+			} else {
+				return array(
+					'name' => $author,
+				);
+			}
 		}
-		return array_filter( $author );
 	}
 
 	/**

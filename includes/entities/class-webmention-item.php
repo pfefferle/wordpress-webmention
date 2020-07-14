@@ -147,7 +147,7 @@ class Webmention_Item {
 			}
 		}
 
-		if ( in_array( $key, array( 'updated', 'published' ), true ) && ! $value instanceof DateTimeImmutable ) {
+		if ( in_array( $key, array( 'updated', 'published' ), true ) && ! $value instanceof DateTimeImmutable  && is_string( $value ) ) {
 			$value = new DateTimeImmutable( $value );
 		}
 
