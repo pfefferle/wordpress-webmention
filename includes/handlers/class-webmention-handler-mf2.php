@@ -30,7 +30,18 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 
 		// Attempts to remove everything but the representative item.
 		$mf_array = $this->get_representative_item( $mf_array, $url );
+		$return   = $this->add_properties( $mf_array );
+		return is_wp_error( $return ) ? $return : true;
+	}
 
+
+	/**
+	 * Takes mf2 json and generates a Webmention Item.
+	 *
+	 * @param array $mf_array JSON Array of Parsed Microformats.
+	 * @return WP_Error|true Return error or true if successful.
+	 */
+	public function add_properties( $mf_array ) {
 		// Only store the raw representative item and discard other information.
 		$this->webmention_item->set_raw( $mf_array );
 

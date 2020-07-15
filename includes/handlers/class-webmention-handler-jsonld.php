@@ -36,7 +36,20 @@ class Webmention_Handler_JSONLD extends Webmention_Handler_Base {
 		// Set raw data.
 		$this->webmention_item->set_raw( $jsonld );
 		$this->webmention_item->set_response_type( 'mention' );
+		$return = $this->add_properties( $jsonld );
+		return is_wp_error( $return ) ? $return : true;
+	}
 
+
+
+
+	/**
+	 * Takes JSON-LD and generates a Webmention Item.
+	 *
+	 * @param array $jsonld Array of JSON-LD objects.
+	 * @return WP_Error|true Return error or true if successful.
+	 */
+	public function add_properties( $jsonld ) {
 		foreach ( $jsonld as $json ) {
 			if ( ! $this->is_jsonld( $json ) ) {
 				continue;
@@ -106,6 +119,7 @@ class Webmention_Handler_JSONLD extends Webmention_Handler_Base {
 				}
 			}
 		}
+		return true;
 	}
 
 	protected function is_jsonld( $jsonld ) {
