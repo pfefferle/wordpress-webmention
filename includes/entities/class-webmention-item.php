@@ -259,4 +259,38 @@ class Webmention_Item {
 	public function to_json() {
 		return wp_json_encode( $this->to_array() );
 	}
+
+	/**
+	 * Returns the representative entry as a comment array.
+	 *
+	 * return array;
+	 */
+	public function to_commentdata_array() {
+		$published_gmt = $this->published->setTimeZone( 'GMT' );
+		$meta          = array(
+			'mf2_category'    => $this->category,
+			'mf2_photo'       => $this->photo,
+			'avatar'          => ifset( $this->author['photo'] ),
+			'mf2_syndication' => $this->syndication,
+			'mf2_updated'     => isset( $this->updated ) ? $this->updated->format( DATE_W3C ) : null,
+			'geo_latitude'    => ifset( $this->location['latitude'] ),
+			'geo_longitude'   => ifset( $this->location['longitude'] ),
+			'geo_altitude'    => ifset( $this->location['altitude'] ),
+			'mf2_location'    => $this->location,
+			'geo_address'     => ifset( $this->location['label'], ifset( $this->location['name'] ) ),
+		);
+
+		$comment = array(
+			'comment_author'     => ifset( $this->author['name'] ),
+			'comment_author_url' => ifset( $this->author['email'] ),
+			'comment_author_url' => ifset( $this->author['url'] ),
+			'comment_content'    => $this->content,
+			'comment_date'       => $this->published->format( 'Y-m-d H:i:s' ),
+			'comment_date_gmt'   => $published_gmt->format( 'Y-m-d H:i:s' ),
+			'comment_type'       => $this->response_type,
+			'comment_meta'       => array_filter( $meta ),
+		);
+		return array_filter( $comment );
+
+	}
 }
