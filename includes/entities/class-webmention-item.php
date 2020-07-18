@@ -151,6 +151,9 @@ class Webmention_Item {
 	 * @return void
 	 */
 	public function set_updated( $updated ) {
+		if ( is_null( $updated ) ) {
+			return;
+		}
 		if ( $updated instanceof DateTimeImmutable ) {
 			$this->updated = $updated;
 		} else {
@@ -188,6 +191,9 @@ class Webmention_Item {
 	 * @return void
 	 */
 	public function set_published( $published ) {
+		if ( is_null( $published ) ) {
+			return;
+		}
 		if ( $published instanceof DateTimeImmutable ) {
 			$this->published = $published;
 		} else {
