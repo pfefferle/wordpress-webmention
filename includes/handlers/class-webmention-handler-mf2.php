@@ -31,6 +31,7 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 		// Attempts to remove everything but the representative item.
 		$mf_array = $this->get_representative_item( $mf_array, $url );
 		$return   = $this->add_properties( $mf_array );
+		$this->webmention_item->set_url( $url ); // If there is no URL property then use the retrieved URL.
 		return is_wp_error( $return ) ? $return : true;
 	}
 
@@ -42,6 +43,7 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 	 * @return WP_Error|true Return error or true if successful.
 	 */
 	public function add_properties( $mf_array ) {
+
 		// Only store the raw representative item and discard other information.
 		$this->webmention_item->set_raw( $mf_array );
 
@@ -50,7 +52,6 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 		$this->webmention_item->set_updated( $this->get_datetime_property( 'updated', $mf_array ) );
 
 		$this->webmention_item->set_url( $this->get_plaintext( $mf_array, 'url' ) );
-		$this->webmention_item->set_url( $url ); // If there is no URL property then use the retrieved URL.
 		$this->webmention_item->set_author( $this->get_author( $mf_array ) );
 		$this->webmention_item->set_category( $this->get_property( $mf_array, 'category' ) );
 		$this->webmention_item->set_syndication( $this->get_plaintext( $mf_array, 'syndication' ) );
@@ -87,7 +88,7 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 		  * @link http://indieweb.org/rsvp
 		 */
 		if ( $this->has_property( $mf_array, 'rsvp' ) ) {
-			return sprintf( 'rsvp:%1$', $this->get_plaintext( $mf_array, 'rsvp' ) );
+			return sprintf( 'rsvp:%1$s', $this->get_plaintext( $mf_array, 'rsvp' ) );
 		}
 
 		/*
@@ -446,7 +447,7 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 		}
 		// Iterate array
 		foreach ( $items as $item ) {
-			if ( $this->compare_urls( $url, $item['properties']['url'] ) ) {
+			if ( $this->urls_match( $url, $this->get_plaintext( $item, 'url' ) ) ) {
 				return $item;
 			}
 		}
