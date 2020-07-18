@@ -276,8 +276,10 @@ class Webmention_Item {
 			'geo_latitude'    => ifset( $this->location['latitude'] ),
 			'geo_longitude'   => ifset( $this->location['longitude'] ),
 			'geo_altitude'    => ifset( $this->location['altitude'] ),
-			'mf2_location'    => $this->location,
 			'geo_address'     => ifset( $this->location['label'], ifset( $this->location['name'] ) ),
+			'mf2_location'    => $this->location,
+			'protocol'        => 'webmention', // Since this is the webmention plugin it should always be a webmention.
+			'url'             => $this->url // This is the parsed URL, which may or may not be the same as the source URL.
 		);
 
 		$comment = array(
