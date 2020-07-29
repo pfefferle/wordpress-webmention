@@ -299,6 +299,26 @@ class Webmention_Item {
 			'comment_meta'       => array_filter( $meta ),
 		);
 		return array_filter( $comment );
+	}
 
+	/**
+	 * Returns a property from the raw data in the webmention_item.
+	 *
+	 * @param $string $key Property Key.
+	 *
+	 * @return mixed Return property or false if not found.
+	 */
+	public function get_raw( $key = null ) {
+		if ( ! $key ) {
+			return $this->raw;
+		}
+
+		$raw = $this->raw;
+
+		if ( array_key_exists( $key, $raw ) ) {
+			return $raw[ $key ];
+		}
+
+		return false;
 	}
 }

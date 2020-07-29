@@ -41,24 +41,6 @@ class Webmention_Handler_JSONLD extends Webmention_Handler_Base {
 	}
 
 	/**
-	 * Returns a property from the raw data in the webmention_item.
-	 *
-	 * @param $string $key Property Key.
-	 *
-	 * @return mixed Return property or false if not found.
-	 */
-	public function get_raw( $key = null ) {
-		if ( ! $this->webmention_item ) {
-			return false;
-		}
-		if ( ! $key ) {
-			return $this->webmention_item->get_raw();
-		}
-		return array_key_exists( $key, $this->webmention_item->get_raw() );
-	}
-
-
-	/**
 	 * Takes JSON-LD and generates a Webmention Item.
 	 *
 	 * @param array $jsonld Array of JSON-LD objects.

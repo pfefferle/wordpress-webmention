@@ -63,24 +63,6 @@ class Webmention_Handler_Meta extends Webmention_Handler_Base {
 	}
 
 	/**
-	 * Returns a property from the raw data in the webmention_item.
-	 *
-	 * @param $string $key Property Key.
-	 *
-	 * @return mixed Return property or false if not found.
-	 */
-	public function get_raw( $key = null ) {
-		if ( ! $this->webmention_item ) {
-			return false;
-		}
-		if ( ! $key ) {
-			return $this->webmention_item->get_raw();
-		}
-		return array_key_exists( $key, $this->webmention_item->get_raw() );
-	}
-
-
-	/**
 	 * Set meta-properties to Webmention_Item
 	 *
 	 * @param string $key   The meta-key.
