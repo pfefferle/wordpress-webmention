@@ -132,6 +132,7 @@ class Webmention_Handler_JSONLD extends Webmention_Handler_Base {
 				if ( isset( $json['isPartOf'] ) ) {
 					$this->webmention_item->set_site_name( $json['isPartOf']['name'] );
 				}
+				return true;
 			}
 		}
 		return true;
