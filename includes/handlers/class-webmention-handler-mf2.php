@@ -85,7 +85,7 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 
 		/*
 		 * rsvp
-		  * @link http://indieweb.org/rsvp
+		 * @link http://indieweb.org/rsvp
 		 */
 		if ( $this->has_property( $mf_array, 'rsvp' ) ) {
 			return sprintf( 'rsvp:%1$s', $this->get_plaintext( $mf_array, 'rsvp' ) );
@@ -94,7 +94,7 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 		/*
 		 * invitation
 		 * Make sure invitation is to this site.
-		  * @link http://indieweb.org/invitation
+		 * @link http://indieweb.org/invitation
 		 */
 		if ( $this->has_url_property( $mf_array, 'invite' ) && $this->urls_match( $this->get_plaintext( $mf_array, 'invite' ), home_url() ) ) {
 			return 'invite';
@@ -102,7 +102,7 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 
 		/*
 		 * tag-reply
-		  * @link http://indieweb.org/tag-reply
+		 * @link http://indieweb.org/tag-reply
 		 */
 		if ( $this->has_url_property( $mf_array, 'tag-of' ) ) {
 			return 'tag-reply';
@@ -110,7 +110,7 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 
 		/*
 		 * person-tag
-		  * @link http://indieweb.org/person-tag
+		 * @link http://indieweb.org/person-tag
 		 */
 		if ( $this->has_url_property( $mf_array, 'category' ) && $this->is_type( $mf_array, 'h-card' ) ) {
 			return 'person-tag';
@@ -118,7 +118,7 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 
 		/*
 		 * reposts
-		  * @link http://indieweb.org/reposts
+		 * @link http://indieweb.org/reposts
 		 */
 		if ( $this->has_url_property( $mf_array, 'repost-of' ) ) {
 			return 'repost';
@@ -126,7 +126,7 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 
 		/*
 		 * likes
-		  * @link http://indieweb.org/likes
+		 * @link http://indieweb.org/likes
 		 */
 		if ( $this->has_url_property( $mf_array, 'like-of' ) ) {
 			return 'like';
@@ -134,7 +134,7 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 
 		/*
 		 * Semantic Linkbacks supported favorites and it should be supported here.
-		  * @link http://indieweb.org/favorites
+		 * @link http://indieweb.org/favorites
 		 */
 		if ( $this->has_url_property( $mf_array, 'favorite-of' ) ) {
 			return 'favorite';
@@ -142,7 +142,7 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 
 		/*
 		 * bookmarks
-		  * @link http://indieweb.org/bookmarks
+		 * @link http://indieweb.org/bookmarks
 		 */
 		if ( $this->has_url_property( $mf_array, 'bookmark-of' ) ) {
 			return 'bookmark';
@@ -150,7 +150,7 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 
 		/*
 		 * read
-		  * @link http://indieweb.org/read
+		 * @link http://indieweb.org/read
 		 */
 		if ( $this->has_url_property( $mf_array, 'read-of' ) ) {
 			return 'read';
@@ -158,7 +158,7 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 
 		/*
 		 * listen
-		  * @link http://indieweb.org/listen
+		 * @link http://indieweb.org/listen
 		 */
 		if ( $this->has_url_property( $mf_array, 'listen-of' ) ) {
 			return 'listen';
@@ -166,7 +166,7 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 
 		/*
 		 * watch
-		  * @link http://indieweb.org/watch
+		 * @link http://indieweb.org/watch
 		 */
 		if ( $this->has_url_property( $mf_array, 'watch-of' ) ) {
 			return 'watch';
@@ -174,7 +174,7 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 
 		/*
 		 * follow
-		  * @link http://indieweb.org/follow
+		 * @link http://indieweb.org/follow
 		 */
 		if ( $this->has_url_property( $mf_array, 'follow-of' ) ) {
 			return 'follow';
@@ -182,7 +182,7 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 
 		/*
 		 * replies
-		  * @link http://indieweb.org/replies
+		 * @link http://indieweb.org/replies
 		 */
 		if ( $this->has_url_property( $mf_array, 'in-reply-to' ) || $this->has_rel( $mf_array, 'in-reply-to' ) ) {
 			return 'reply';
