@@ -73,4 +73,14 @@ abstract class Webmention_Handler_Base {
 	 * @return WP_Error|true Return error or true if successful.
 	 */
 	abstract public function parse( Webmention_Request $request );
+
+	/**
+	 * Returns a property from the raw data in the webmention_item.
+	 * Each handler will implement this to transform raw data appropriately.
+	 *
+	 * @param $string $key Property Key. If not provided all properties returned.
+	 *
+	 * @return mixed Return property or false if not found.
+	 */
+	abstract public function get_raw( $key = null );
 }
