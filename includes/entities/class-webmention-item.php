@@ -295,7 +295,7 @@ class Webmention_Item {
 			'geo_address'     => ifset( $this->location['label'], ifset( $this->location['name'] ) ),
 			'mf2_location'    => $this->location,
 			'protocol'        => 'webmention', // Since this is the webmention plugin it should always be a webmention.
-			'url'             => $this->url, // This is the parsed URL, which may or may not be the same as the source URL.
+			'url'             => $this->url, // This is the parsed URL, which may or may not be the same as the source URL, which will be added as source_url.
 		);
 
 		$comment = array(
