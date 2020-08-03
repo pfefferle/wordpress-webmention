@@ -66,6 +66,17 @@ abstract class Webmention_Handler_Base {
 	}
 
 	/**
+	 * Generate Summary from Content.
+	 *
+	 * @param string $content Content.
+	 * @return string Summary.
+	 */
+	public function generate_summary( $content ) {
+		$content = wp_strip_all_tags( $content );
+		return wp_trim_words( $content, 25 );
+	}
+
+	/**
 	 * Takes a request object and parses it.
 	 *
 	 * @param Webmention_Request $request Request Object.

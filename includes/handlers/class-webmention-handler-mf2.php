@@ -62,8 +62,16 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 
 		$this->webmention_item->set_location( $this->get_location( $mf_array ) );
 
-		$this->webmention_item->set_summary( $this->get_html( $mf_array, 'summary' ) );
-		$this->webmention_item->set_content( $this->get_html( $mf_array, 'content' ) );
+		$content = $this->get_html( $mf_array, 'content' );
+		$this->webmention_item->set_content( $content );
+
+		$summary = $this->get_plaintext( $mf_array, 'summary' );
+		if ( empty( $summary ) ) {
+			$summary = $this->generate_summary( $content );
+		}
+
+		$this->webmention_item->set_summary( $summary );
+
 		$this->webmention_item->set_response_type( $this->response_type_discovery( $mf_array ) );
 
 		return true;

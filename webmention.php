@@ -25,6 +25,9 @@ defined( 'WEBMENTION_PROCESS_TYPE' ) || define( 'WEBMENTION_PROCESS_TYPE', WEBME
 
 defined( 'WEBMENTION_VOUCH' ) || define( 'WEBMENTION_VOUCH', false );
 
+// Mentions with content less than this length will be rendered in full.
+defined( 'MAX_INLINE_MENTION_LENGTH' ) || define( 'MAX_INLINE_MENTION_LENGTH', 300 );
+
 // initialize admin settings.
 require_once dirname( __FILE__ ) . '/includes/class-webmention-admin.php';
 add_action( 'admin_init', array( 'Webmention_Admin', 'admin_init' ) );
