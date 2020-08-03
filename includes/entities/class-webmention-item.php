@@ -241,9 +241,19 @@ class Webmention_Item {
 	 * @return boolean
 	 */
 	public function is_complete() {
-		// returns false for now
-		// @todo implement
-		return false;
+		$vars = $this->to_array();
+
+		// If there is no author information then try something else.
+		if ( ! array_key_exists( 'author', $vars ) ) {
+			return false;
+		}
+
+		// If this is a reply it needs a summary. Summary should be generated from content if no summary.
+		if ( 'reply' === $type && ! array_key_exists( 'summary', $vars ) ) {
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
@@ -285,7 +295,7 @@ class Webmention_Item {
 			'geo_address'     => ifset( $this->location['label'], ifset( $this->location['name'] ) ),
 			'mf2_location'    => $this->location,
 			'protocol'        => 'webmention', // Since this is the webmention plugin it should always be a webmention.
-			'url'             => $this->url // This is the parsed URL, which may or may not be the same as the source URL.
+			'url'             => $this->url, // This is the parsed URL, which may or may not be the same as the source URL.
 		);
 
 		$comment = array(
