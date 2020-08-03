@@ -78,6 +78,9 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 	 * @return string Response Type. Default 'mention'.
 	 */
 	public function response_type_discovery( $mf_array ) {
+		if ( ! class_exists( '\Webmention\Emoji' ) ) {
+			require_once plugin_dir_path( __FILE__ ) . '../../libraries/emoji-detector/src/Emoji.php';
+		}
 		// Sanity check.
 		if ( ! $this->is_microformat( $mf_array ) ) {
 			return 'mention';
@@ -178,6 +181,10 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 		 */
 		if ( $this->has_url_property( $mf_array, 'follow-of' ) ) {
 			return 'follow';
+		}
+
+		if ( \Webmention\Emoji\is_single_emoji( $this->get_plaintext( $mf_array, 'content' ) ) ) {
+			return 'reacji';
 		}
 
 		/*

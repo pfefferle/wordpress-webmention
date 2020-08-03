@@ -3,7 +3,8 @@
   "description": "A Webmention plugin for WordPress https://wordpress.org/plugins/webmention/",
   "require": {
     "php": ">=5.6.0",
-    "composer/installers": "~1.0"
+    "composer/installers": "~1.0",
+    "p3k/emoji-detector": "^0.2.1"
   },
   "type": "wordpress-plugin",
   "license": "MIT",
@@ -36,11 +37,13 @@
     "install-codestandards": [
       "Dealerdirect\\Composer\\Plugin\\Installers\\PHPCodeSniffer\\Plugin::run"
     ],
-    "prefix-mf2": [
-			"@php ./vendor/humbug/php-scoper/bin/php-scoper add-prefix --prefix=Webmention --output-dir=./libraries/mf2 --config=config/php-scoper/mf2.inc.php --force --quiet"
+    "prefix": [
+		"@php ./vendor/humbug/php-scoper/bin/php-scoper add-prefix --prefix=Webmention --output-dir=./libraries/mf2 --config=config/php-scoper/mf2.inc.php --force --quiet",
+		"@php ./vendor/humbug/php-scoper/bin/php-scoper add-prefix --prefix=Webmention --output-dir=./libraries/emoji-detector --config=config/php-scoper/emoji-detector.inc.php --force --quiet"
+
     ],
     "post-update-cmd": [
-    	"@prefix-mf2"
+    	"@prefix"
     ]
   }
 }
