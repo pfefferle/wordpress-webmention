@@ -378,7 +378,7 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 		}
 
 		// return first h-entry
-		//return $items[0];
+		return false;
 	}
 
 	/**
