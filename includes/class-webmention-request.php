@@ -72,6 +72,7 @@ class Webmention_Request {
 		if ( is_wp_error( $response ) ) {
 			return $response;
 		}
+
 		$response = $this->remote_get( $url, $safe );
 		if ( is_wp_error( $response ) ) {
 			return $response;
@@ -103,7 +104,7 @@ class Webmention_Request {
 		}
 
 		$this->content_type = $this->get_content_type( $response );
-		$check = $this->check_content_type( $this->content_type );
+		$check              = $this->check_content_type( $this->content_type );
 		if ( is_wp_error( $check ) ) {
 			return $check;
 		}
@@ -128,14 +129,17 @@ class Webmention_Request {
 		} else {
 			$response = wp_remote_head( $url, $args );
 		}
+
 		if ( is_wp_error( $response ) ) {
 			return $response;
 		}
+
 		$this->response_code = wp_remote_retrieve_response_code( $response );
 		$check               = $this->check_response_code( $this->response_code );
 		if ( is_wp_error( $check ) ) {
 			return $check;
 		}
+
 		$check = $this->check_content_type( wp_remote_retrieve_header( $response, 'content-type' ) );
 		if ( is_wp_error( $check ) ) {
 			return $check;
@@ -149,7 +153,6 @@ class Webmention_Request {
 	 * @return array
 	 */
 	protected function get_remote_arguments() {
-
 		$wp_version = get_bloginfo( 'version' );
 		$user_agent = apply_filters( 'http_headers_useragent', 'WordPress/' . $wp_version . '; ' . get_bloginfo( 'url' ) );
 		$args       = array(
@@ -249,10 +252,12 @@ class Webmention_Request {
 	protected function get_content_type( $response ) {
 		$content_type = wp_remote_retrieve_header( $response, 'Content-Type' );
 		// Strip any character set off the content type
-		$ct = explode( ';', $content_type );
+		$content_type = explode( ';', $content_type );
+
 		if ( is_array( $ct ) ) {
-			$content_type = array_shift( $ct );
+			$content_type = array_shift( $content_type );
 		}
+
 		return trim( $content_type );
 	}
 
