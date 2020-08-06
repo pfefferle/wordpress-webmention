@@ -35,11 +35,11 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 			return false;
 		}
 
-		$this->add_properties( $item );
-
 		$author = $this->get_representative_author( $item, $data );
 
-		$this->webmention_item->set_author( $this->get_author( $author ) );
+		$this->set_properties( $item );
+		$this->set_property_author( $author );
+
 		$this->webmention_item->set_url( $source_url ); // If there is no URL property then use the retrieved URL.
 
 		return true;
@@ -52,7 +52,7 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 	 * @param array $mf_array JSON Array of Parsed Microformats.
 	 * @return WP_Error|true Return error or true if successful.
 	 */
-	public function add_properties( $mf_array ) {
+	public function set_properties( $mf_array ) {
 
 		// Only store the raw representative item and discard other information.
 		$this->webmention_item->set_raw( $mf_array );
@@ -82,6 +82,23 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 		$this->webmention_item->set_summary( $summary );
 
 		return true;
+	}
+
+	/**
+	 * Takes author property and returns simplified array of selected properties.
+	 *
+	 * @param array $mf_array
+	 * @param array Author array.
+	 */
+	protected function set_property_author( $properties ) {
+		$author = array( 'type' => 'card' );
+		if ( $this->is_microformat( $properties ) ) {
+			foreach ( array( 'name', 'nickname', 'given-name', 'family-name', 'url', 'email', 'photo' ) as $prop ) {
+				$author[ $prop ] = $this->get_plaintext( $properties, $prop );
+			}
+		}
+
+		$this->webmention_item->set_author( array_filter( $author ) );
 	}
 
 	/**
@@ -500,23 +517,6 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 			}
 		}
 		return array_filter( $return );
-	}
-
-	/**
-	 * Takes author property and returns simplified array of selected properties.
-	 *
-	 * @param array $mf_array
-	 * @param array Author array.
-	 */
-	protected function get_author( $properties ) {
-		$author = array( 'type' => 'card' );
-		if ( $this->is_microformat( $properties ) ) {
-			foreach ( array( 'name', 'nickname', 'given-name', 'family-name', 'url', 'email', 'photo' ) as $prop ) {
-				$author[ $prop ] = $this->get_plaintext( $properties, $prop );
-			}
-		}
-
-		return array_filter( $author );
 	}
 
 	/**
