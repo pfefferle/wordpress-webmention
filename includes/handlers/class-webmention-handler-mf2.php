@@ -24,19 +24,24 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 			require_once plugin_dir_path( __FILE__ ) . '../../libraries/mf2/Mf2/Parser.php';
 		}
 
-		$url      = $request->get_url();
-		$parser   = new Webmention\Mf2\Parser( $dom, $url );
-		$mf_array = $parser->parse();
+		$url    = $request->get_url();
+		$parser = new Webmention\Mf2\Parser( $dom, $url );
+		$data   = $parser->parse();
 
 		// Attempts to remove everything but the representative item.
-		$mf_array = $this->get_representative_item( $mf_array, $url );
-		if ( ! $mf_array ) {
+		$item = $this->get_representative_item( $data, $url );
+		if ( ! $item ) {
 			return false;
 		}
 
-		$return = $this->add_properties( $mf_array );
+		$this->add_properties( $item );
+
+		$author = $this->get_representative_author( $item, $data );
+
+		$this->webmention_item->set_author( $this->get_author( $author ) );
 		$this->webmention_item->set_url( $url ); // If there is no URL property then use the retrieved URL.
-		return is_wp_error( $return ) ? $return : true;
+
+		return true;
 	}
 
 
@@ -56,7 +61,6 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 		$this->webmention_item->set_updated( $this->get_datetime_property( 'updated', $mf_array ) );
 
 		$this->webmention_item->set_url( $this->get_plaintext( $mf_array, 'url' ) );
-		$this->webmention_item->set_author( $this->get_author( $mf_array ) );
 		$this->webmention_item->set_category( $this->get_property( $mf_array, 'category' ) );
 		$this->webmention_item->set_syndication( $this->get_plaintext( $mf_array, 'syndication' ) );
 
@@ -234,6 +238,9 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 	 * @return mixed|null Return value.
 	 */
 	protected function get_plaintext( array $mf, $propname, $fallback = null ) {
+		if ( ! array_key_exists( 'properties', $mf ) ) {
+			return $fallback;
+		}
 		if ( ! empty( $mf['properties'][ $propname ] ) && is_array( $mf['properties'][ $propname ] ) ) {
 			return $this->to_plaintext( current( $mf['properties'][ $propname ] ) );
 		}
@@ -317,25 +324,60 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 	}
 
 	/**
-	 * Helper to find the correct h- node.
+	 * helper to find the correct h-entry node
 	 *
-	 * @param array $mf The parsed microformats json.
-	 * @param string $url the retrieved url.
+	 * @param array $mf_array the parsed microformats array
+	 * @param string $target the target url
 	 *
-	 * @return array the h- node or false/
+	 * @return array the h-entry node or false
 	 */
-	protected function find_representative_item( $mf, $url ) {
+	public function find_representative_item( $mf, $target ) {
 		$items = $this->get_items( $mf );
 		if ( ! is_array( $items ) || empty( $items ) ) {
 			return false;
 		}
-		// Iterate array
+
 		foreach ( $items as $item ) {
-			if ( $this->urls_match( $url, $this->get_plaintext( $item, 'url' ) ) ) {
-				return $item;
+			// check properties
+			if ( isset( $item['properties'] ) ) {
+				// check properties if target urls was mentioned
+				foreach ( $item['properties'] as $key => $values ) {
+					// check "normal" links
+					if ( $this->compare_urls( $target, $values ) ) {
+						return $item;
+					}
+
+					// check included h-* formats and their links
+					foreach ( $values as $obj ) {
+						// check if reply is a "cite"
+						if ( isset( $obj['type'] ) && array_intersect( array( 'h-cite', 'h-entry' ), $obj['type'] ) ) {
+							// check url
+							if ( isset( $obj['properties'] ) && isset( $obj['properties']['url'] ) ) {
+								// check target
+								if ( $this->compare_urls( $target, $obj['properties']['url'] ) ) {
+									return $item;
+								}
+							}
+						}
+					}
+				}
+
+				// check properties if target urls was mentioned
+				foreach ( $item['properties'] as $key => $values ) {
+					// check content for the link
+					if ( 'content' === $key &&
+						preg_match_all( '/<a[^>]+?' . preg_quote( $target, '/' ) . '[^>]*>([^>]+?)<\/a>/i', $values[0]['html'], $context ) ) {
+						return $item;
+					} elseif ( 'summary' === $key &&
+						preg_match_all( '/<a[^>]+?' . preg_quote( $target, '/' ) . '[^>]*>([^>]+?)<\/a>/i', $values[0], $context ) ) {
+						return $item;
+					}
+				}
 			}
 		}
-		return false;
+
+		// return first h-entry
+		//return $items[0];
 	}
 
 	/**
@@ -350,10 +392,6 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 		$item = $this->find_representative_item( $mf, $url );
 		if ( empty( $item ) || ! is_array( $item ) ) {
 			return array();
-		}
-		// If entry does not have an author try to find one elsewhere.
-		if ( ! $this->has_property( $item, 'author' ) ) {
-			$item['properties']['author'] = $this->get_representative_author( $mf, $url );
 		}
 
 		// If u-syndication is not set use rel syndication.
@@ -379,28 +417,29 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 
 		if ( $this->has_property( $item, 'author' ) ) {
 			// Check if any of the values of the author property are an h-card.
-			foreach ( $item['properties']['author'] as $a ) {
-				if ( $this->is_type( $a, 'h-card' ) ) {
+			foreach ( $item['properties']['author'] as $author ) {
+				if ( $this->is_type( $author, 'h-card' ) ) {
 					// 5.1 "if it has an h-card, use it, exit."
-					return $a;
-				} elseif ( is_string( $a ) ) {
-					if ( wp_http_validate_url( $a ) ) {
+					return $author;
+				} elseif ( is_string( $author ) ) {
+					if ( wp_http_validate_url( $author ) ) {
 						// 5.2 "otherwise if author property is an http(s) URL, let the author-page have that URL"
-						$authorpage = $a;
+						$authorpage = $author;
 					} else {
 						// 5.3 "otherwise use the author property as the author name, exit"
 						// We can only set the name, no h-card or URL was found.
-						$author = $this->get_plaintext( $item, 'author' );
+						$name = $this->get_plaintext( $item, 'author' );
 					}
 				} else {
 					// This case is only hit when the author property is an mf2 object that is not an h-card.
-					$author = $this->get_plaintext( $item, 'author' );
+					$name = $this->get_plaintext( $item, 'author' );
 				}
+
 				if ( ! $authorpage ) {
 					return array(
 						'type'       => array( 'h-card' ),
 						'properties' => array(
-							'name' => array( $author ),
+							'name' => array( $name ),
 						),
 					);
 				}
@@ -468,24 +507,14 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 	 * @param array $mf_array
 	 * @param array Author array.
 	 */
-	protected function get_author( $mf_array ) {
-		$properties = current( $this->get_property( $mf_array, 'author' ) );
-		if ( empty( $properties ) ) {
-			return null;
-		}
+	protected function get_author( $properties ) {
 		$author = array( 'type' => 'card' );
 		if ( $this->is_microformat( $properties ) ) {
 			foreach ( array( 'name', 'nickname', 'given-name', 'family-name', 'url', 'email', 'photo' ) as $prop ) {
 				$author[ $prop ] = $this->get_plaintext( $properties, $prop );
 			}
-		} else {
-			$text = $this->get_plaintext( $mf_array, 'author' );
-			if ( wp_http_validate_url( $text ) ) {
-				$author['url'] = $text;
-			} else {
-				$author['name'] = $text;
-			}
 		}
+
 		return array_filter( $author );
 	}
 

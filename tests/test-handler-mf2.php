@@ -10,7 +10,7 @@ class Webmention_Handler_MF2_Test extends WP_UnitTestCase {
 
 		$request = new Webmention_Request();
 		$request->set_content_type( 'text/html' );
-		$request->set_url( 'http://example.com/webmention/target/placeholder' );
+		$request->set_url( 'http://example.com/webmention/source/placeholder' );
 		$request->set_body( file_get_contents( $path ) );
 
 		$handler = new Webmention_Handler_Mf2();
