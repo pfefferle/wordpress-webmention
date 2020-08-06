@@ -15,7 +15,7 @@ class Webmention_Handler_MF2_Test extends WP_UnitTestCase {
 
 		$handler = new Webmention_Handler_Mf2();
 
-		$handler->parse( $request );
+		$handler->parse( $request, 'http://example.com/webmention/target/placeholder' );
 
 		$subset = json_decode( file_get_contents( substr( $path, 0, -4 ) . 'json' ), true );
 

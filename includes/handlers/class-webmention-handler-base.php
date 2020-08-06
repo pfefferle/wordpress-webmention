@@ -80,8 +80,9 @@ abstract class Webmention_Handler_Base {
 	 * Takes a request object and parses it.
 	 *
 	 * @param Webmention_Request $request Request Object.
+	 * @param string $target_url The target URL
 	 *
 	 * @return WP_Error|true Return error or true if successful.
 	 */
-	abstract public function parse( Webmention_Request $request );
+	abstract public function parse( Webmention_Request $request, $target_url );
 }

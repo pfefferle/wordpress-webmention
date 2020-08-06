@@ -36,6 +36,8 @@ class Webmention_Handler {
 	/**
 	 * Insert a Handler at the front of the list
 	 *
+	 * @param Webmention_Request $request Request Object.
+	 *
 	 * @param Webmention_Handler_Base $handler
 	 *
 	 */
@@ -47,11 +49,14 @@ class Webmention_Handler {
 	/**
 	 * Iterate through a list of handlers and return an item.
 	 *
+	 * @param Webmention_Request $request Request Object.
+	 * @param string $target_url The target URL
+	 *
 	 * @return Webmention_Handler_Item
 	 */
-	public function parse( $request ) {
+	public function parse( Webmention_Request $request, $target_url ) {
 		foreach ( $this->handlers as $handler ) {
-			$handler->parse( $request );
+			$handler->parse( $request, $target_url );
 			$item = $handler->get_webmention_item();
 			if ( $item->is_complete() ) {
 				break;
@@ -60,12 +65,20 @@ class Webmention_Handler {
 		return $item;
 	}
 
-	public function parse_aggregated( $request ) {
+	/**
+	 * Iterate through a list of handlers and return an aggregated item.
+	 *
+	 * @param Webmention_Request $request Request Object.
+	 * @param string $target_url The target URL
+	 *
+	 * @return Webmention_Handler_Item
+	 */
+	public function parse_aggregated( Webmention_Request $request, $target_url ) {
 		$item = new Webmention_Item();
 
 		foreach ( $this->handlers as $handler ) {
 			$handler->set_webmention_item( $item );
-			$handler->parse( $request );
+			$handler->parse( $request, $target_url );
 			$item = $handler->get_webmention_item();
 
 			if ( $item->is_complete() ) {
@@ -76,15 +89,18 @@ class Webmention_Handler {
 	}
 
 	/**
-	 * Iterate through a list of handlers and return an item.
+	 * Iterate through a list of handlers and return an array of items.
+	 *
+	 * @param Webmention_Request $request Request Object.
+	 * @param string $target_url The target URL
 	 *
 	 * @return Webmention_Handler_Item
 	 */
-	public function parse_grouped( $request ) {
+	public function parse_grouped( Webmention_Request $request, $target_url ) {
 		$result = array();
 
 		foreach ( $this->handlers as $handler ) {
-			$handler->parse( $request );
+			$handler->parse( $request, $target_url );
 			$item = $handler->get_webmention_item();
 
 			if ( ! is_wp_error( $item ) ) {

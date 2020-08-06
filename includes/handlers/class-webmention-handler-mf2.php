@@ -15,21 +15,22 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 	 * Takes a request object and parses it.
 	 *
 	 * @param Webmention_Request $request Request Object.
-	 * @param Webmention_Item $item A Parsed Item. If null, a new one will be created.
+	 * @param string $target_url The target URL
+	 *
 	 * @return WP_Error|true Return error or true if successful.
 	 */
-	public function parse( Webmention_Request $request ) {
+	public function parse( Webmention_Request $request, $target_url ) {
 		$dom = clone $request->get_domdocument();
 		if ( ! class_exists( '\Webmention\Mf2\Parser' ) ) {
 			require_once plugin_dir_path( __FILE__ ) . '../../libraries/mf2/Mf2/Parser.php';
 		}
 
-		$url    = $request->get_url();
-		$parser = new Webmention\Mf2\Parser( $dom, $url );
-		$data   = $parser->parse();
+		$source_url = $request->get_url();
+		$parser     = new Webmention\Mf2\Parser( $dom, $source_url );
+		$data       = $parser->parse();
 
 		// Attempts to remove everything but the representative item.
-		$item = $this->get_representative_item( $data, $url );
+		$item = $this->get_representative_item( $data, $target_url );
 		if ( ! $item ) {
 			return false;
 		}
@@ -39,7 +40,7 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 		$author = $this->get_representative_author( $item, $data );
 
 		$this->webmention_item->set_author( $this->get_author( $author ) );
-		$this->webmention_item->set_url( $url ); // If there is no URL property then use the retrieved URL.
+		$this->webmention_item->set_url( $source_url ); // If there is no URL property then use the retrieved URL.
 
 		return true;
 	}
