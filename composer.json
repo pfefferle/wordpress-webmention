@@ -38,9 +38,8 @@
       "Dealerdirect\\Composer\\Plugin\\Installers\\PHPCodeSniffer\\Plugin::run"
     ],
     "prefix": [
-		"@php ./vendor/humbug/php-scoper/bin/php-scoper add-prefix --prefix=Webmention --output-dir=./libraries/mf2 --config=config/php-scoper/mf2.inc.php --force --quiet",
-		"@php ./vendor/humbug/php-scoper/bin/php-scoper add-prefix --prefix=Webmention --output-dir=./libraries/emoji-detector --config=config/php-scoper/emoji-detector.inc.php --force --quiet"
-
+		  "@php ./vendor/humbug/php-scoper/bin/php-scoper add-prefix --prefix=Webmention --output-dir=./libraries/mf2 --config=config/php-scoper/mf2.inc.php --force --quiet",
+		  "@php ./vendor/humbug/php-scoper/bin/php-scoper add-prefix --prefix=Webmention --output-dir=./libraries/emoji-detector --config=config/php-scoper/emoji-detector.inc.php --force --quiet"
     ],
     "post-update-cmd": [
     	"@prefix"

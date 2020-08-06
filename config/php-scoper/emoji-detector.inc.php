@@ -8,7 +8,7 @@ return [
 	'finders' => [
 		Finder::create()
 			->files()
-			->in( 'vendor/mf2/mf2' )
+			->in( 'vendor/p3k/emoji-detector' )
 			->ignoreVCS( true )
 			->notName( '/.*\\.xml|.*\\.dist|Makefile|composer\\.json|composer\\.lock/' )
 			->exclude( [
@@ -19,6 +19,7 @@ return [
 				'Tests',
 				'vendor-bin',
 				'bin',
+				'build'
 			]
 		)
 	],
