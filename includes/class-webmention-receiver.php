@@ -30,8 +30,7 @@ class Webmention_Receiver {
 		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'check_dupes' ), 12, 1 );
 
 		// Webmention data handler
-		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'default_title_filter' ), 21, 1 );
-		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'default_content_filter' ), 22, 1 );
+		add_filter( 'webmention_comment_data', array( 'Webmention_Receiver', 'default_commentdata' ), 21, 1 );
 
 		add_filter( 'pre_comment_approved', array( 'Webmention_Receiver', 'auto_approve' ), 11, 2 );
 
@@ -261,6 +260,7 @@ class Webmention_Receiver {
 		if ( ! $post ) {
 			return new WP_Error( 'target_not_valid', esc_html__( 'Target is not a valid post', 'webmention' ), array( 'status' => 400 ) );
 		}
+
 		// In the event of async processing this needs to be stored here as it might not be available
 		// later.
 		$comment_meta                          = array();
@@ -610,71 +610,22 @@ class Webmention_Receiver {
 	}
 
 	/**
-	 * Try to make a nice title (username)
-	 *
-	 * @param array $commentdata the comment-data
-	 *
-	 * @return array the filtered comment-data
-	 */
-	public static function default_title_filter( $commentdata ) {
-		if ( ! $commentdata || is_wp_error( $commentdata ) ) {
-			return $commentdata;
-		}
-
-		$match = array();
-
-		$meta_tags = wp_get_meta_tags( $commentdata['remote_source_original'] );
-
-		// use meta-author
-		if ( array_key_exists( 'author', $meta_tags ) ) {
-			$commentdata['comment_author'] = $meta_tags['author'];
-		} elseif ( array_key_exists( 'og:title', $meta_tags ) ) {
-			// Use Open Graph Title if set
-			$commentdata['comment_author'] = $meta_tags['og:title'];
-		} elseif ( preg_match( '/<title>(.+)<\/title>/i', $commentdata['remote_source_original'], $match ) ) { // use title
-			$commentdata['comment_author'] = trim( $match[1] );
-		} else {
-			// or host
-			$host = wp_parse_url( $commentdata['comment_author_url'], PHP_URL_HOST );
-			// strip leading www, if any
-			$commentdata['comment_author'] = preg_replace( '/^www\./', '', $host );
-		}
-
-		return $commentdata;
-	}
-
-	/**
 	 * Try to make a nice comment
 	 *
 	 * @param array $commentdata the comment-data
 	 *
 	 * @return array the filtered comment-data
 	 */
-	public static function default_content_filter( $commentdata ) {
-		if ( ! $commentdata || is_wp_error( $commentdata ) ) {
-			return $commentdata;
-		}
+	public static function default_commentdata( $commentdata ) {
+		$request = new Webmention_Request();
+		$request->fetch( $commentdata['source'] );
 
-		// get post format
-		$post_id     = $commentdata['comment_post_ID'];
-		$post_format = get_post_format( $post_id );
+		$handler = new Webmention_Handler();
+		$item    = $handler->parse( $request, $commentdata['target'] );
 
-		// replace "standard" with "Article"
-		if ( ! $post_format || 'standard' === $post_format ) {
-			$post_format = 'Article';
-		} else {
-			$post_formatstrings = get_post_format_strings();
-			// get the "nice" name
-			$post_format = $post_formatstrings[ $post_format ];
-		}
+		$commentdata_array = $item->to_commentdata_array();
 
-		$host = webmention_extract_domain( $commentdata['comment_author_url'] );
-
-		// generate default text
-		// translators: This post format was mentioned on this URL with this domain name
-		$commentdata['comment_content'] = sprintf( __( 'This %1$s was mentioned on <a href="%2$s">%3$s</a>', 'webmention' ), $post_format, esc_url( $commentdata['comment_author_url'] ), $host );
-
-		return $commentdata;
+		return array_merge( $commentdata, $commentdata_array );
 	}
 
 	/**
