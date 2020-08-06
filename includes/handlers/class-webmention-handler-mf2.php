@@ -30,7 +30,11 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 
 		// Attempts to remove everything but the representative item.
 		$mf_array = $this->get_representative_item( $mf_array, $url );
-		$return   = $this->add_properties( $mf_array );
+		if ( ! $mf_array ) {
+			return false;
+		}
+
+		$return = $this->add_properties( $mf_array );
 		$this->webmention_item->set_url( $url ); // If there is no URL property then use the retrieved URL.
 		return is_wp_error( $return ) ? $return : true;
 	}
