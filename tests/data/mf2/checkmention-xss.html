@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>XSS test</title>
+<base href="https://checkmention.appspot.com/" />
+</head>
+<body>
+<div class="h-entry h-as-note">
+<p>This test mentions
+<a class="u-in-reply-to h-cite"
+href="http://example.com/webmention/target/placeholder">
+this page</a>
+and is a
+<span class="p-author h-card">
+<img class="u-photo" src="/static/img/q.jpg" alt="XSS test"/>
+<a class="p-name u-url" href="/">Checkmention XSS test</a></span>
+</p>
+<p class="p-name e-content">
+<a href="javascript:alert('xss-a')">Clicking this</a>
+should not cause an alert.
+<span style="background-image: url(javascript:alert(document.cookie))">This div
+should not alert.</span>
+Try clicking <a href="javajavascript:script:alert('xss-kylewm')">this link</a>
+&#00060script>alert("encoded-xss")&#00060/script>
+and <a href="javascript:javascript:alert('xss-a1')">this too</a>.
+<b onmouseover="alert('xss-b')">Mouse over this</b>
+should not cause an alert. This broken
+<img src="http://not.really.an.image" style="width: 2em; height: 2em;" onerror="alert('xss-c')"/> should not throw an alert.
+<<SCRIPT>alert("XSS4");//<</SCRIPT>
+<LINK REL="stylesheet" HREF="javascript:alert('XSS5');">
+Neither should <img src="j&#x41vascript:alert('test2')" style="width: 2em; height: 2em;"/>.<br/>
+Please look at the <a href="https://www.owasp.org/index.php/XSS_%28Cross_Site_Scripting%29_Prevention_Cheat_Sheet">Owasp XSS prevention cheat sheet</a> for more information.
+</p>
+
+<p>This note was created on
+<time class="dt-published"
+datetime="%%time">
+%%nice_time
+</time>
+</p>
+</div>
+</body>
+</html>

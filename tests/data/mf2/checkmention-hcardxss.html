@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="utf-8"/>
+<title>XSS in hcard test</title>
+<base href="https://checkmention.appspot.com/" />
+</head>
+<body>
+<div class="h-entry h-as-note">
+<p>This test mentions
+<a class="u-in-reply-to h-cite"
+href="http://example.com/webmention/target/placeholder">
+this page</a>
+and is a
+<span class="p-author h-card">
+<img class="u-photo" src="/static/img/q.jpg"/>
+<a class="p-name u-url" href="javascript:alert('hcard')">Does clicking me alert?</a></span>
+</p>
+
+<p class="p-name e-content">
+This test embeds XSS within the hcard name and time field. Clicking on
+the name or title should not raise an alert.  </p>
+
+<p>This note was created on
+<time class="dt-published"
+datetime="%%time">
+&lt;script&gt;alert('time-xss')&lt;/script&gt;
+</time>
+</p>
+</div>
+</body>
+</html>

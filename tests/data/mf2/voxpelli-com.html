@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" class="">
+<head>
+  <meta charset="utf-8" />
+
+  <title>New service: WebMentions for static pages</title>
+
+  <link rel="stylesheet" type="text/css" media="all" href="/css/style.css" />
+  <link rel="home alternate" type="application/atom+xml" href="/all.xml" title="All posts" />
+  <link rel="home alternate" type="application/atom+xml" href="/english.xml" title="English posts" />
+  <link rel="canonical" href="/2013/12/webmentions-for-static-pages/" />
+  <link rel="author" type="text/html" href="/" title="Pelle Wessman" />
+  <link rel="payment" type="text/html" href="https://flattr.com/submit/auto?url=http%3A%2F%2Fvoxpelli.com%2F2013%2F12%2Fwebmentions-for-static-pages%2F&amp;user_id=voxpelli&amp;title=New+service%3A+WebMentions+for+static+pages&amp;category=text&amp;tags=blog&amp;language=en" title="Flattr this post" />
+  <link rel="webmention" href="https://webmention.herokuapp.com/api/webmention" />
+  <base href="http://voxpelli.com/" />
+</head>
+<body>
+  <div class="page">
+    <header>
+      <h1><a href="/">Pelle Wessman</a></h1>
+      <div class="subtitle">Things <a  href="/about">about me</a> and the world around us</div>
+    </header>
+
+    <article class="h-entry" >
+  <header>
+    <h2 class="p-name">New service: WebMentions for static pages</h2>
+  </header>
+
+  <div class="e-content">
+    <p><span class='p-summary'>I&#39;m now launching a service that can receive and embeds WebMentions for sites. Useful for eg. static blogs on GitHub Pages.</span></p>
+
+<p>Earlier this year when I went to the <a href="http://indiewebcamp.com/2013/UK">IndieWebCamp in Brighton</a>, a very nice event, the thing people were most excited about, at least when it came to the actually implementing it, was <a href="http://indiewebcamp.com/webmention">WebMentions</a>.</p>
+
+<p>So when it was time to get hands on with code I wanted to do so as well, my only trouble was: This blog is on Jekyll/GitHub Pages <a href="/2011/08/moving-to-jekyll-and-english/">since two years</a> and I like it there. How can I then accept something as dynamic as a comment from someone elses blog?</p>
+
+<p>I know you’re already thinking it – a hosted solution like Disqus could surely solve my problem and yes indeed, therefore I went ahead and built one. Then came ordinary life and occupied me with other stuff, but now finally a very first rough version is ready for launch and can be found at <a href="https://webmention.herokuapp.com/">webmention.herokuapp.com</a>.</p>
+
+<p>This post will prove that it works by appearing as the first WebMention on <a href="http://example.com/webmention/target/placeholder" rel='in-reply-to'>webmention.herokuapp.com</a> itself and hopefully mentions from others will start appearing both there and on this blog eventually so that maybe I’ll become as cool as <a href="http://aaronparecki.com/replies/2013/06/20/1/webmention-indieweb">Aaron Parecki</a>, <a href="http://adactio.com/journal/6495/">Jeremy Keith</a> and <a href="http://indiewebcamp.com/webmention#IndieWeb_implementations">the others</a> in the end.</p>
+
+<p>I’m aware that this service isn’t totally inline with the spirit of the IndieWeb, that you should own and host your own stuff (I’m not even using IndieAuth yet!), but it’s my pragmatic solution for getting a step closer to such a world and a solution I’m happy to share with others.</p>
+
+<p>I’m opening up just <strong>five accounts</strong> for others now, considering this is still an early alpha, and will keep the development <a href="https://github.com/voxpelli/webpage-webmentions/">open on GitHub</a> – all feedback is welcome!</p>
+  </div>
+
+  <footer  >
+    <time class="dt-published" datetime="2013-12-18T22:45:00Z" pubdate>
+      18 December 2013
+    </time> by
+    <a class="p-author h-card" href="/"><img class="u-photo" src="/avatar.jpg" alt="" /> Pelle Wessman</a>
+    <a class="FlattrButton" href="http://voxpelli.com/2013/12/webmentions-for-static-pages/" title="New service: WebMentions for static pages" lang="en" rel="flattr;tags:blog;"></a>
+    <div class="Plus1Button">
+      <g:plusone size="medium" count="false"></g:plusone>
+    </div>
+  </footer>
+</article>
+
+<div>
+  Have you written a response to this? Let me know the URL:
+  <form action="https://webmention.herokuapp.com/api/webmention" method="post">
+    <input name="source" type="url" placeholder="http://example.com/my-cool-post" />
+    <input name="target" value="http://voxpelli.com/2013/12/webmentions-for-static-pages/" type="hidden">
+    <input value="Send Webmention" type="submit">
+  </form>
+</div>
+
+<script id="webmention-hosted">
+  (function () {
+    var sn = document.createElement("script"), s = document.getElementsByTagName("script")[0], url;
+    url = document.querySelectorAll ? document.querySelectorAll("link[rel~=canonical]") : false;
+    url = url && url[0] ? url[0].href : false;
+    sn.type = "text/javascript"; sn.async = true;
+    sn.src = "//webmention.herokuapp.com/api/embed?url=" + encodeURIComponent(url || window.location);
+    s.parentNode.insertBefore(sn, s);
+  }());
+</script>
+
+  </div>
+
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-6823873-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+  <script type="text/javascript">
+    (function() {
+      var s = document.createElement('script'), t = document.getElementsByTagName('script')[0];
+      s.type = 'text/javascript';
+      s.async = true;
+      s.src = 'http://api.flattr.com/js/0.6/load.js?mode=auto&button=compact&uid=voxpelli&category=text&popout=1';
+      t.parentNode.insertBefore(s, t);
+    })();
+  </script>
+  <script type="text/javascript">
+    (function() {
+      var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+      po.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+    })();
+  </script>
+</body>

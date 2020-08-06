@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="de-DE" prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width" />
+	<link rel="profile" href="http://microformats.org/profile/specs" />
+	<link rel="profile" href="http://microformats.org/profile/hatom" />
+	<link rel="pingback" href="https://notiz.blog/xmlrpc.php" />
+
+	<link type="text/css" media="all" href="//cdn.notiz.blog/wp-content/cache/autoptimize/css/autoptimize_2dbaf161c48904d712cf8124d1d59614.css" rel="stylesheet" /><title>Microformats: The next generation &#8211; notiz.Blog</title>
+<link rel='dns-prefetch' href='//notiz.blog' />
+<link rel="alternate" type="application/rss+xml" title="notiz.Blog &raquo; Feed" href="https://notiz.blog/feed/" />
+<link rel="alternate" type="application/rss+xml" title="notiz.Blog &raquo; Kommentar-Feed" href="https://notiz.blog/comments/feed/" />
+<link rel="alternate" type="application/rss+xml" title="notiz.Blog &raquo; Microformats: The next generation Kommentar-Feed" href="https://notiz.blog/2012/07/03/microformats-the-next-generation/feed/" />
+<link rel="meta" type="application/xml+apml" title="APML 0.6" href="https://notiz.blog/apml" />
+<link rel="alternate" type="application/stream+json" title="notiz.Blog &raquo; Activity-Streams Feed" href="https://notiz.blog/feed/as1/" />
+<link rel="alternate" type="application/stream+json" title="notiz.Blog &raquo; Activity-Streams Comments Feed " href="https://notiz.blog/comments/feed/as1/" />
+		<link rel="alternate" type="application/stream+json" title="notiz.Blog &raquo; Microformats: The next generation Activity-Streams Comments Feed" href="https://notiz.blog/2012/07/03/microformats-the-next-generation/feed/as1/" />
+		<link rel="alternate" type="application/mf2+json" href="https://notiz.blog/2012/07/03/microformats-the-next-generation/feed/mf2/" />
+<link rel="alternate" type="application/jf2+json" href="https://notiz.blog/2012/07/03/microformats-the-next-generation/feed/jf2/" />
+		<link rel="http://oexchange.org/spec/0.8/rel/related-target" type="application/xrd+xml" href="https://notiz.blog/?oexchange=xrd" />
+		<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/notiz.blog\/wp-content\/plugins\/compressed-emoji\/images\/png\/","ext":".png","svgUrl":"https:\/\/notiz.blog\/wp-content\/plugins\/compressed-emoji\/images\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/notiz.blog\/wp-includes\/js\/wp-emoji-release.min.js?ver=4.9.8"}};
+			!function(a,b,c){function d(a,b){var c=String.fromCharCode;l.clearRect(0,0,k.width,k.height),l.fillText(c.apply(this,a),0,0);var d=k.toDataURL();l.clearRect(0,0,k.width,k.height),l.fillText(c.apply(this,b),0,0);var e=k.toDataURL();return d===e}function e(a){var b;if(!l||!l.fillText)return!1;switch(l.textBaseline="top",l.font="600 32px Arial",a){case"flag":return!(b=d([55356,56826,55356,56819],[55356,56826,8203,55356,56819]))&&(b=d([55356,57332,56128,56423,56128,56418,56128,56421,56128,56430,56128,56423,56128,56447],[55356,57332,8203,56128,56423,8203,56128,56418,8203,56128,56421,8203,56128,56430,8203,56128,56423,8203,56128,56447]),!b);case"emoji":return b=d([55358,56760,9792,65039],[55358,56760,8203,9792,65039]),!b}return!1}function f(a){var c=b.createElement("script");c.src=a,c.defer=c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var g,h,i,j,k=b.createElement("canvas"),l=k.getContext&&k.getContext("2d");for(j=Array("flag","emoji"),c.supports={everything:!0,everythingExceptFlag:!0},i=0;i<j.length;i++)c.supports[j[i]]=e(j[i]),c.supports.everything=c.supports.everything&&c.supports[j[i]],"flag"!==j[i]&&(c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&c.supports[j[i]]);c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&!c.supports.flag,c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.everything||(h=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",h,!1),a.addEventListener("load",h,!1)):(a.attachEvent("onload",h),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),g=c.source||{},g.concatemoji?f(g.concatemoji):g.wpemoji&&g.twemoji&&(f(g.twemoji),f(g.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+
+
+
+
+
+
+
+
+
+<link rel='stylesheet' id='zenpress-print-style-css'  href='https://notiz.blog/wp-content/themes/zenpress/css/print.css?ver=1.0.0' type='text/css' media='print' />
+<link rel='stylesheet' id='zenpress-narrow-style-css'  href='https://notiz.blog/wp-content/themes/zenpress/css/narrow-width.css?ver=1.0.0' type='text/css' media='(max-width: 800px)' />
+<link rel='stylesheet' id='zenpress-default-style-css'  href='https://notiz.blog/wp-content/themes/zenpress/css/default-width.css?ver=1.0.0' type='text/css' media='(min-width: 800px)' />
+<link rel='stylesheet' id='zenpress-wide-style-css'  href='https://notiz.blog/wp-content/themes/zenpress/css/wide-width.css?ver=1.0.0' type='text/css' media='(min-width: 1000px)' />
+	<script>
+		if ( navigator.serviceWorker ) {
+			window.addEventListener('load', function() {
+									navigator.serviceWorker.register(
+						"https:\/\/notiz.blog\/?wp_service_worker=1",
+						{"scope":"\/"}					);
+							} );
+		}
+	</script>
+	<script type='text/javascript' src='https://notiz.blog/wp-includes/js/jquery/jquery.js?ver=1.12.4'></script>
+
+<link rel='https://api.w.org/' href='https://notiz.blog/wp-api/' />
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://notiz.blog/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://notiz.blog/wp-includes/wlwmanifest.xml" />
+<link rel='prev' title='Twitter Cards' href='https://notiz.blog/2012/06/22/twitter-cards/' />
+<link rel='next' title='OAut(sc)h' href='https://notiz.blog/2012/08/02/oautsch/' />
+
+<link rel="canonical" href="https://notiz.blog/2012/07/03/microformats-the-next-generation/" />
+<link rel='shortlink' href='https://notiz.blog/b/1CP' />
+<link rel="alternate" type="application/json+oembed" href="https://notiz.blog/wp-api/oembed/1.0/embed?url=https%3A%2F%2Fnotiz.blog%2F2012%2F07%2F03%2Fmicroformats-the-next-generation%2F" />
+<link rel="alternate" type="text/xml+oembed" href="https://notiz.blog/wp-api/oembed/1.0/embed?url=https%3A%2F%2Fnotiz.blog%2F2012%2F07%2F03%2Fmicroformats-the-next-generation%2F&#038;format=xml" />
+<meta name="flattr:id" content="4vxek8" />
+<link rel="authorization_endpoint" href="https://notiz.blog/wp-api/indieauth/1.0/auth" />
+<link rel="token_endpoint" href="https://notiz.blog/wp-api/indieauth/1.0/token" />
+<link rel="alternate" type="application/json" title="JSON Feed" href="https://notiz.blog/feed/json/" /><link rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/" type="text/html" />
+<link rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/rdf" type="application/rdf+xml" />
+<meta property="og:title" content="Microformats: The next generation" />
+<meta property="og:type" content="article" />
+<meta property="og:image" content="https://notiz.blog/wp-content/uploads/2015/09/cropped-notizblog-logo.png" />
+<meta property="og:image" content="https://notiz.blog/wp-content/uploads/2017/02/cropped-Unknown.jpeg" />
+<meta property="og:url" content="https://notiz.blog/2012/07/03/microformats-the-next-generation/" />
+<meta property="og:description" content="microformats.org wird 7... Alles Gute! Zur Feier des Tages hat sich Frances Berriman die Mühe gemacht, die letzten 7 Jahre zusammen zu fassen und einen Ausblick auf die kommenden Änderungen zu geben. Da ich, seit ich bloggen kann, schon über Microformats berichte, will ich den Rückblick nicht weiter kommentieren und nur auf die kommende Weiterentwicklung [...]" />
+<meta property="og:locale" content="de_DE" />
+<meta property="og:site_name" content="notiz.Blog" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:creator" content="@pfefferle" />
+<meta property="article:tag" content="Microformats" />
+<meta property="article:tag" content="Mikroformate" />
+<meta property="article:tag" content="RDFa" />
+<meta property="article:tag" content="Schema.org" />
+<meta property="article:tag" content="Semantic HTML" />
+<meta property="article:section" content="Open Web" />
+<meta property="article:published_time" content="2012-07-03T08:43:02+00:00" />
+<meta property="article:modified_time" content="2018-03-05T23:59:23+00:00" />
+<meta property="article:author" content="https://notiz.blog/author/matthias-pfefferle/" />
+<meta property="article:author" content="https://facebook.com/pfefferle" />
+		<link rel="manifest" href="https://notiz.blog/wp-api/app/v1/web-manifest">
+		<meta name="theme-color" content="#fff">
+		<meta http-equiv="X-XRDS-Location" content="https://notiz.blog/?xrds" />
+<meta http-equiv="X-Yadis-Location" content="https://notiz.blog/?xrds" />
+<link rel="search" type="application/opensearchdescription+xml" title="Search notiz.Blog" href="https://notiz.blog/wp-api/opensearch/1.1/document" /><link rel="amphtml" href="https://notiz.blog/2012/07/03/microformats-the-next-generation/amp/"><link rel="icon" href="https://notiz.blog/wp-content/uploads/2015/09/cropped-notizblog-logo-32x32.png" sizes="32x32" />
+<link rel="icon" href="https://notiz.blog/wp-content/uploads/2015/09/cropped-notizblog-logo-192x192.png" sizes="192x192" />
+<link rel="apple-touch-icon-precomposed" href="https://notiz.blog/wp-content/uploads/2015/09/cropped-notizblog-logo-180x180.png" />
+<meta name="msapplication-TileImage" content="https://notiz.blog/wp-content/uploads/2015/09/cropped-notizblog-logo-270x270.png" />
+<link rel="micropub" href="https://notiz.blog/?micropub=endpoint" />
+<link rel="webmention" href="https://notiz.blog/wp-api/webmention/1.0/endpoint" />
+<link rel="http://webmention.org/" href="https://notiz.blog/wp-api/webmention/1.0/endpoint" />
+
+	</head>
+
+<body class="post-template-default single single-post postid-4343 single-format-standard wp-custom-logo multi-column single-author custom-header h-entry hentry" itemscope="" itemtype="http://schema.org/BlogPosting">
+<div id="page">
+	<div class="skip-link screen-reader-text"><a href="#content" title="Skip to content">Skip to content</a></div>
+		<header id="site-header" class="site-header">
+		<div class="site-branding">
+			<a href="https://notiz.blog/" class="custom-logo-link" rel="home" itemprop="url"><img width="30" height="30" src="https://notiz.blog/wp-content/uploads/2015/09/cropped-cropped-cropped-cropped-notizblog-logo-1.png" class="custom-logo" alt="notiz.Blog" itemprop="logo" /></a>			<div id="site-title">
+				<a href="https://notiz.blog/" title="notiz.Blog" rel="home">
+				notiz.Blog				</a>
+			</div>
+
+			<form itemprop="potentialAction" itemscope itemtype="http://schema.org/SearchAction" role="search" method="get" class="search-form" action="https://notiz.blog/">
+				<label>
+					<span class="screen-reader-text">Suche nach:</span>
+					<input type="search" itemprop="query-input" class="search-field" placeholder="Suche&#160;&hellip;" value="" name="s" />
+				</label>
+				<input type="submit" class="search-submit" value="Suche" />
+			<meta itemprop="target" content="https://notiz.blog/?s={search} "/></form>		</div>
+
+		<nav id="site-navigation" class="site-navigation">
+			<button class="menu-toggle" aria-controls="site-navigation" aria-expanded="false">Primary Menu</button>
+
+			<div class="menu-main-menu-container"><ul id="menu-main-menu" class="menu"><li id="menu-item-3533" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-3533"><a href="/">Home</a></li>
+<li id="menu-item-3535" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3535"><a href="https://notiz.blog/about/">About</a></li>
+<li id="menu-item-3536" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3536"><a href="https://notiz.blog/projects/">Projekte</a></li>
+<li id="menu-item-3537" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3537"><a href="https://notiz.blog/publications/">Artikel &#038; Vorträge</a></li>
+<li id="menu-item-3538" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3538"><a href="https://notiz.blog/kontakt/">Kontakt</a></li>
+</ul></div>		</nav><!-- #site-navigation -->
+
+			</header><!-- #site-header -->
+
+			<main id="primary">
+
+
+
+<article id="post-4343" class="post-4343 post type-post status-publish format-standard category-web tag-microformats tag-mikroformate tag-rdfa tag-schema-org tag-semantic-html">
+		<header class="entry-header">
+
+				<h2 class="entry-title p-name" itemprop="name headline">
+			<a href="https://notiz.blog/2012/07/03/microformats-the-next-generation/" class="u-url url" title="Permalink to Microformats: The next generation" rel="bookmark" itemprop="url">
+				Microformats: The next generation			</a>
+		</h2>
+
+				<div class="entry-meta">
+			<address class="byline"><span class="author p-author vcard hcard h-card" itemprop="author" itemscope itemtype="http://schema.org/Person"><img alt='' src='https://secure.gravatar.com/avatar/75512bb584bbceae57dfc503692b16b2?s=40&#038;d=https://notiz.blog/wp-content/plugins/semantic-linkbacks/img/mm.jpg&#038;r=g' srcset='https://secure.gravatar.com/avatar/75512bb584bbceae57dfc503692b16b2?s=80&#038;d=https://notiz.blog/wp-content/plugins/semantic-linkbacks/img/mm.jpg&#038;r=g 2x' class='avatar avatar-40 photo u-photo' height='40' width='40' itemprop="image"/> <a class="url uid u-url u-uid fn p-name" href="https://notiz.blog/author/matthias-pfefferle/" title="View all posts by Matthias Pfefferle" rel="author" itemprop="url"><span itemprop="name">Matthias Pfefferle</span></a></span></address> <span class="sep"> | </span> <a href="https://notiz.blog/2012/07/03/microformats-the-next-generation/" title="08:43" rel="bookmark" class="url u-url"><time class="entry-date updated published dt-updated dt-published" datetime="2012-07-03T08:43:02+00:00" itemprop="dateModified datePublished">3. Juli 2012</time></a>		</div>
+			</header><!-- .entry-header -->
+
+			<div class="entry-content e-content" itemprop="description articleBody">
+		<figure class="wp-block-image alignright" style="max-width:50%"><img src="https://notiz.blog/wp-content/uploads/2007/03/mf-white.png" alt="mf-white" /></figure>
+
+<p><a href="http://microformats.org/2012/06/25/microformats-org-at-7">microformats.org wird 7</a>&#8230; Alles Gute!</p>
+
+<p>Zur Feier des Tages hat sich Frances Berriman die Mühe gemacht, die letzten 7 Jahre zusammen zu fassen und einen Ausblick auf die kommenden Änderungen zu geben.</p>
+
+<p>Da ich, seit ich bloggen kann, schon <a href="https://notiz.blog/tag/microformats/">über Microformats berichte</a>, will ich den Rückblick nicht weiter kommentieren und nur auf die kommende Weiterentwicklung ein wenig eingehen.</p>
+
+<h2>Microformats und HTML5</h2>
+
+<p>Seit dem ich das letzte mal <a href="https://notiz.blog/2008/07/30/html5-is-made-for-microformats/">über diese Kombination geschrieben habe</a>, hat sich leider nicht viel geändert&#8230; Die Microformats Community weigert sich weiterhin auf Microdata oder RDFa &quot;upzugraden&quot; und hält krampfhaft an den semantischen <code>classes</code> fest. Nichtsdestotrotz macht HTML5 mit <code>&lt;time /&gt;</code> und <code>&lt;data /&gt;</code> dem leidigen Thema <a href="https://notiz.blog/2009/05/12/microformats-value-class-pattern/"><code>abbr-design-pattern</code> bzw. <code>value-class-pattern</code></a> ein Ende. Statt Meta-Informationen umständlich in HTML-Attributen zu verwurschteln, können Termine und GEO Daten bald sauber dargestellt werden:</p>
+
+<pre class="wp-block-code"><code>&lt;time class=&quot;dtstart&quot; datetime=&quot;2006-09-23&quot;&gt;a Saturday&lt;/time&gt;
+...
+&lt;data class=&quot;geo&quot; value=&quot;37.386013;-122.082932&quot; &gt;Mountain View&lt;/data&gt;</code></pre>
+
+<p>Immerhin! Mehr dazu im <a href="http://microformats.org/wiki/html5">microformats-wiki</a>.</p>
+
+<h2>Namespaces</h2>
+
+<p>Die wohl größten Veränderungen sind aber die geplanten <a href="http://microformats.org/wiki/microformats-2#distinguishing_properties_from_other_classes">Pseudo-Namespaces</a> welche hauptsächlich das Parsen von Microformats vereinfachen sollen. Microformats waren bisher sehr fehleranfällig, da sie sich die <code>class</code>-Attribute mit CSS und JavaScript zu teilen hatten. Es besteht immer die Gefahr dass rein für CSS genutzte Attribute fälschlicherweise für Microformats genutzt wurden oder dass die semantischen Class-Names einem Re-Design zum Opfer fielen. Die Prefixes &#x27;<code>h-</code>&#x27;, &#x27;<code>p-</code>&#x27;, &#x27;<code>u-</code>&#x27;, &#x27;<code>dt-</code>&#x27; und &#x27;<code>e-</code>&#x27; sollen das Zukünftig verhindern und ein generisches parsen ermöglichen.</p>
+
+<h3>&#x27;<code>h-</code>&#x27; kennzeichnet einen Microformats-Container</h3>
+
+<p>Bisher ist die Microformats Community etwas inkonsequent mit der Benennung ihrer Formate&#8230; Mal mit beginnendem &quot;v&quot;, mal mit &quot;h&quot; und in seltenen Fällen auch ohne oder mit anderem Buchstaben:</p>
+
+<ul>
+    <li>hCard: <code>class=&quot;vcard&quot;</code></li>
+    <li>hAtom: <code>class=&quot;hfeed&quot;</code></li>
+    <li>adr: <code>class=&quot;adr&quot;</code></li>
+    <li>xFolk: <code>class=&quot;xfolkentry&quot;</code></li>
+    <li>XOXO: <code>class=&quot;xoxo&quot;</code></li>
+</ul>
+
+<p>Mit den Prefixes soll das jetzt alles vereinheitlicht werden:</p>
+
+<ul>
+    <li>hCard: <code>class=&quot;h-card&quot;</code></li>
+    <li>hAtom: <code>class=&quot;h-feed&quot;</code></li>
+    <li>adr: <code>class=&quot;h-adr&quot;</code></li>
+</ul>
+
+<h3>&#x27;<code>p-</code>&#x27; zeichnet <em>Properties</em> aus</h3>
+
+<p>Die mit &#x27;<code>p-</code>&#x27; gekennzeichnet Properties sollten, wenn nicht expliziert definiert, als Plain-Text interpretiert werden (kein HTML). Ein klassisches Property ist beispielsweise der Name einer Person:</p>
+
+<pre class="wp-block-code"><code>&lt;div class=&quot;h-card&quot;&gt;
+ &lt;span class=&quot;p-fn&quot;&gt;Tantek Çelik&lt;/span&gt;
+&lt;/div&gt;</code></pre>
+
+<h3>&#x27;<code>e-</code>&#x27; zeichnet <em>Rich Text</em> aus</h3>
+
+<p>Das &#x27;<code>e-</code>&#x27; Prefix könnte als Abkürzung für &quot;element tree&quot;, &quot;embedded markup&quot;, oder &quot;encapsulated markup&quot; stehen und kann im Gegansatz zu den Properties auch HTML-Code beinhalten. In hAtom könnte der <code>entry-content</code> zu <code>e-entry-content</code> und bei der hReview die <code>description</code> zur <code>e-description</code> werden.</p>
+
+<h3>&#x27;<code>dt-</code>&#x27; für DateTime und &#x27;<code>u-</code>&#x27; für URL</h3>
+
+<p>Aus <code>dtstart</code> wird <code>dt-start</code> und alle URL-Felder bekommen ein vorgestelltes &#x27;<code>u-</code>&#x27;:</p>
+
+<pre class="wp-block-code"><code>&lt;a class=&quot;u-url&quot; href=&quot;...&quot;&gt;...&lt;/a&gt;
+
+&lt;img class=&quot;u-photo&quot; src=&quot;...&quot; /&gt;</code></pre>
+
+<p>Die URL kann in bestimmten Situtionen auch weg fallen, dazu aber im nächsten Beispiel mehr&#8230;</p>
+
+<h2>Simpel und unabhängig vom Format</h2>
+
+<p>Zukünftig soll es auch nicht mehr so umständlich sein Informationen semantisch auszuzeichnen. Will man derzeit einen simplen Link mit einer <a href="http://microformats.org/wiki/hcard">hCard</a> versehen, muss man ihn wie folgt aufblähen:</p>
+
+<pre class="wp-block-code"><code>&lt;div class=&quot;vcard&quot;&gt;
+ &lt;a class=&quot;url fn&quot; href=&quot;http://tantek.com/&quot;&gt;Tantek Çelik&lt;/a&gt;
+&lt;/div&gt;</code></pre>
+
+<p>Nach der Überarbeitung soll folgendes reichen:</p>
+
+<pre class="wp-block-code"><code>&lt;a class=&quot;h-card&quot; href=&quot;http://tantek.com/&quot;&gt;Tantek Çelik&lt;/a&gt;</code></pre>
+
+<p>Dabei gilt die Regel: Wenn es sich bei (z.B.) einer vCard um einen Link oder ein Bild handelt, kann man auf &#x27;<code>u-*</code>&#x27; und &#x27;<code>p-name</code>&#x27; verzichten&#8230; so ungefär zumindest 😉</p>
+
+<p>Mehr dazu im Microformats-Wiki: <a href="http://microformats.org/wiki/microformats-2-implied-properties">implied properties</a></p>
+
+<p>Außerdem kommt mit v2 eine Anleitung wie Microformats auf andere Formate wie JSON gemappt werden sollen. Aus&#8230;</p>
+
+<pre class="wp-block-code"><code>&lt;a class=&quot;h-card&quot; href=&quot;http://benward.me&quot;&gt;Ben Ward&lt;/a&gt;</code></pre>
+
+<p>wird&#8230;</p>
+
+<pre class="wp-block-code"><code>[{
+  &quot;type&quot;: [&quot;h-card&quot;],
+  &quot;properties&quot;: {
+    &quot;name&quot;: [&quot;Frances Berriman&quot;]
+  }
+}]</code></pre>
+
+<h2>Fazit</h2>
+
+<p>Ich bin mir noch nicht ganz sicher was ich von den geplanten Änderungen halten soll&#8230; die Nutzung der neuen HTML5 Tags und die Vereinfachung und Vereinheitlichung der Formate finde ich gut und notwendig&#8230; Auch eine einheitliche Regel, wie Microformats in anderen Formaten abgebildet werden sollen (z.B. JSON) macht durchaus Sinn (warum das Sinn macht, <a href="http://microformats.org/wiki/JSON">hier</a>)&#8230; aber den Pseudo-Namespaces kann ich bisher nichts abgewinnen! Der &quot;Namespace&quot; sorgt zwar für mehr Qualität beim Parsen der Microformats, aber auf Kosten des semantischen HTMLs.</p>
+
+<p>Microformats sollten weiterhin für schönes, semantisches HTML sorgen und mehr nicht. Geht es um maschinenlesbaren Code, sollte man mit der Zeit gehen und auf <a href="https://notiz.blog/2009/06/18/microdata-semantisches-html5/">Microdata</a> oder <a href="https://notiz.blog/2009/07/16/rdfa-wird-wohl-doch-in-html5-integriert/">RDFa</a> setzen. Ob man seinen Quelltext an Microformats v2 anpasst oder mit <a href="http://schema.org/">Schema.org</a> auszeichnet sollte kaum mehr Aufwand sein.</p>
+
+<p>&#8230;Übrigens: Wer noch mehr über die Vorteile von Microdata gegenüber Microformats lesen will, sollte sich die <a href="https://notiz.blog/2011/06/21/pfefferles-openweb-microformats-v2/">Ausgabe 10 des Webstandards-Magazin</a> durchlesen oder die Reihe &quot;<a href="https://notiz.blog/2009/08/10/microdata-wie-microformats-bloss-besser-teil-1/">Microdata – wie Microformats bloß besser…</a>&quot; hier im Blog!</p>
+			</div><!-- .entry-content -->
+
+		<footer class="entry-footer entry-meta">
+		<address class="author p-author vcard hcard h-card" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+			<img alt='' src='https://secure.gravatar.com/avatar/75512bb584bbceae57dfc503692b16b2?s=100&#038;d=https://notiz.blog/wp-content/plugins/semantic-linkbacks/img/mm.jpg&#038;r=g' srcset='https://secure.gravatar.com/avatar/75512bb584bbceae57dfc503692b16b2?s=200&#038;d=https://notiz.blog/wp-content/plugins/semantic-linkbacks/img/mm.jpg&#038;r=g 2x' class='avatar avatar-100 photo u-photo' height='100' width='100' itemprop="image"/>			<a class="url uid u-url u-uid fn p-name" href="https://notiz.blog/author/matthias-pfefferle/">
+				<span itemprop="name">Matthias Pfefferle</span>
+			</a>
+			<div class="note e-note" itemprop="description">Ich bin Webworker und arbeite als Head of MyWebsite Core für die 1&amp;1 Internet SE in Karlsruhe.
+
+Ich blogge, podcaste und schreibe eine Kolumne über das open, independent und federated social Web.</div>
+			<a class="subscribe" href="https://notiz.blog/author/matthias-pfefferle/feed/"><i class="openwebicons-feed"></i> Subscribe to author feed</a>
+		</address>
+
+				<div class="cat-links">
+			Categories			<ul class="post-categories">
+	<li><a href="https://notiz.blog/category/web/" rel="category tag">Open Web</a></li></ul>		</div>
+
+				<div class="tag-links" itemprop="keywords">
+			Tags			<ul><li><a href="https://notiz.blog/tag/microformats/" rel="tag">Microformats</a></li><li><a href="https://notiz.blog/tag/mikroformate/" rel="tag">Mikroformate</a></li><li><a href="https://notiz.blog/tag/rdfa/" rel="tag">RDFa</a></li><li><a href="https://notiz.blog/tag/schema-org/" rel="tag">Schema.org</a></li><li><a href="https://notiz.blog/tag/semantic-html/" rel="tag">Semantic HTML</a></li></ul>		</div>
+
+
+				<div class="comments-link"><a href="https://notiz.blog/2012/07/03/microformats-the-next-generation/#comments">11 Comments</a></div>
+			</footer><!-- #entry-meta -->
+</article><!-- #post-4343 -->
+
+					<div id="comments">
+
+
+			<h2 id="comments-title">
+			11 thoughts on &ldquo;<span>Microformats: The next generation</span>&rdquo;		</h2>
+
+
+		<ol class="commentlist">
+					<li class="comment even thread-even depth-1 h-cite h-entry p-comment" id="li-comment-182592">
+			<article id="comment-182592" class="comment " itemprop="comment" itemscope itemtype="http://schema.org/Comment">
+				<div class="edit-link"></div>
+				<footer class="comment-meta commentmetadata">
+					<address class="comment-author p-author author vcard hcard h-card" itemprop="creator" itemscope itemtype="http://schema.org/Person">
+						<img alt='' src='https://secure.gravatar.com/avatar/5eebf017e9ef222fd106d72a93bc00d7?s=100&#038;d=https://notiz.blog/wp-content/plugins/semantic-linkbacks/img/mm.jpg&#038;r=g' srcset='https://secure.gravatar.com/avatar/5eebf017e9ef222fd106d72a93bc00d7?s=100&#038;d=https://notiz.blog/wp-content/plugins/semantic-linkbacks/img/mm.jpg&#038;r=g 2x' class='avatar avatar-40 photo avatar-default u-photo avatar-semantic-linkbacks' height='40' width='40' itemprop="image"/>						<cite class="fn p-name" itemprop="name">eric.eggert</cite>					</address><!-- .comment-author .vcard -->
+
+					<a href="https://notiz.blog/2012/07/03/microformats-the-next-generation/#comment-182592"><time class="updated published dt-updated dt-published" datetime="2012-07-03T12:38:24+00:00" itemprop="dateCreated">
+					3. Juli 2012 at 12:38					</time></a>
+				</footer>
+
+				<div class="comment-content e-content p-summary p-name" itemprop="text name description"><p>Wie aus „Ben Ward“ im HTML „Frances Berriman“ im JSON wird kann ich zwar nicht nachvollziehen 😉 aber ansonsten finde ich die Neuerungen ganz praktisch. Die Namespaces finde ich zwar auch unschön aber wichtig um interoperablen Code zu haben. Problematisch ist, dass der Prefix den Inhaltstyp beschreibt, ich hätte mir da etwas nachvollziehbareres gewünscht, da das nicht immer aus dem Inhalt zu erschließen ist. (Wo darf man nur plain text, wo rich text, benutzen?)</p>
+</div>
+
+				<div class="reply">
+					<indie-action do="reply" with="https://notiz.blog/2012/07/03/microformats-the-next-generation/?replytocom=182592"><a rel='nofollow' class='comment-reply-link' href='https://notiz.blog/2012/07/03/microformats-the-next-generation/?replytocom=182592#respond' onclick='return addComment.moveForm( "comment-182592", "182592", "respond", "4343" )' aria-label='Antworte auf eric.eggert'>Antworten</a></indie-action>				</div><!-- .reply -->
+			</article><!-- #comment-## -->
+		<ul class="children">
+		<li class="comment byuser comment-author-matthias-pfefferle bypostauthor odd alt depth-2 h-cite h-entry p-comment" id="li-comment-182596">
+			<article id="comment-182596" class="comment " itemprop="comment" itemscope itemtype="http://schema.org/Comment">
+				<div class="edit-link"></div>
+				<footer class="comment-meta commentmetadata">
+					<address class="comment-author p-author author vcard hcard h-card" itemprop="creator" itemscope itemtype="http://schema.org/Person">
+						<img alt='' src='https://secure.gravatar.com/avatar/75512bb584bbceae57dfc503692b16b2?s=40&#038;d=https://notiz.blog/wp-content/plugins/semantic-linkbacks/img/mm.jpg&#038;r=g' srcset='https://secure.gravatar.com/avatar/75512bb584bbceae57dfc503692b16b2?s=80&#038;d=https://notiz.blog/wp-content/plugins/semantic-linkbacks/img/mm.jpg&#038;r=g 2x' class='avatar avatar-40 photo u-photo' height='40' width='40' itemprop="image"/>						<cite class="fn p-name" itemprop="name"><a href='https://notiz.blog' rel='external nofollow' class='u-url url'>Matthias Pfefferle</a></cite>					</address><!-- .comment-author .vcard -->
+
+					<a href="https://notiz.blog/2012/07/03/microformats-the-next-generation/#comment-182596"><time class="updated published dt-updated dt-published" datetime="2012-07-03T13:20:29+00:00" itemprop="dateCreated">
+					3. Juli 2012 at 13:20					</time></a>
+				</footer>
+
+				<div class="comment-content e-content p-summary p-name" itemprop="text name description"><blockquote><p>Wie aus „Ben Ward“ im HTML „Frances Berriman“ im JSON wird kann ich zwar nicht nachvollziehen 😉</p></blockquote>
+<p>Das ist die Magie der Microformats 🙂</p>
+<p>Zu den Prefixes: Für Parser sind die Prefixes sicher ein Segen (interpretier alles was mit &#8218;<code>*-</code>&#8218; beginnt) aber wie du schon sagst sollten sie wirklich nicht vom Typ abhängig sein. Manche Prefixes wie &#8218;<code>dt-</code>&#8218; oder &#8218;<code>u-</code>&#8218; sind überflüssig, da sie schon über die HTML-Tags (&#8218;<code>&lt;time /&gt;</code>&#8218; oder &#8218;<code>&lt;a /&gt;</code>&#8218;) definiert sind und bei &#8218;<code>p-</code>&#8218; oder &#8218;<code>e-</code>&#8218; ist es schwer einen Unterschied zu definieren.</p>
+<p>Eigentlich hätten zwei Prefixes ausgereicht: &#8218;<code>h-</code>&#8218; für den Container und &#8218;<code>p-</code>&#8218; für die Properties (bei Microdata <code>itemscope</code> und <code>itemprop</code>).</p>
+<p>Aber auch mit der Variante gibt man, meiner Meinung nach, den semantischen Code zu Gunsten einer besseren Maschinenlesbarkeit auf, die immer noch höchst fehleranfällig ist.</p>
+</div>
+
+				<div class="reply">
+					<indie-action do="reply" with="https://notiz.blog/2012/07/03/microformats-the-next-generation/?replytocom=182596"><a rel='nofollow' class='comment-reply-link' href='https://notiz.blog/2012/07/03/microformats-the-next-generation/?replytocom=182596#respond' onclick='return addComment.moveForm( "comment-182596", "182596", "respond", "4343" )' aria-label='Antworte auf Matthias Pfefferle'>Antworten</a></indie-action>				</div><!-- .reply -->
+			</article><!-- #comment-## -->
+		</li><!-- #comment-## -->
+</ul><!-- .children -->
+</li><!-- #comment-## -->
+		<li class="comment even thread-odd thread-alt depth-1 h-cite h-entry p-comment" id="li-comment-182620">
+			<article id="comment-182620" class="comment " itemprop="comment" itemscope itemtype="http://schema.org/Comment">
+				<div class="edit-link"></div>
+				<footer class="comment-meta commentmetadata">
+					<address class="comment-author p-author author vcard hcard h-card" itemprop="creator" itemscope itemtype="http://schema.org/Person">
+						<img alt='' src='https://secure.gravatar.com/avatar/a42e868fcda1bccf47ef7a48697b30ac?s=80&#038;d=https://notiz.blog/wp-content/plugins/semantic-linkbacks/img/mm.jpg&#038;r=g' srcset='https://secure.gravatar.com/avatar/a42e868fcda1bccf47ef7a48697b30ac?s=80&#038;d=https://notiz.blog/wp-content/plugins/semantic-linkbacks/img/mm.jpg&#038;r=g 2x' class='avatar avatar-40 photo avatar-default u-photo avatar-semantic-linkbacks' height='40' width='40' itemprop="image"/>						<cite class="fn p-name" itemprop="name"><a href='http://www.rorkvell.de' rel='external nofollow' class='u-url url'>Siegfried</a></cite>					</address><!-- .comment-author .vcard -->
+
+					<a href="https://notiz.blog/2012/07/03/microformats-the-next-generation/#comment-182620"><time class="updated published dt-updated dt-published" datetime="2012-07-04T09:53:01+00:00" itemprop="dateCreated">
+					4. Juli 2012 at 09:53					</time></a>
+				</footer>
+
+				<div class="comment-content e-content p-summary p-name" itemprop="text name description"><p>Zweierlei:</p>
+<p>1. html und css teilen sich die class Namen? Na und? Wenn man konsequent vorgeht und im html nur semantische Bezeichner verwendet (keinerlei Präsentations-Auszeichnungen im html, also auch keine Präsentations-orientierten class Namen), dann bedeutet das weder für die Semantik noch für die Klassen einen Verlust oder eine Einschränkung. Und verwenden kann man diese Klassen im css immer noch, ebenfalls ohne Einschränkung. Es ist einfach eine Frage der Konsequenz.</p>
+<p>2. Das mit den Namespaces ist interessant. Aber dafür *- zu verwenden finde ich nicht gut. Wie Namespace Prefixes auszusehen haben, dafür gibt es Spezifikationen beim w3c. Ansonsten fügen Namespaces zwar Aufwand hinzu, aber es lohnt sich. Der Gewinn an Flexibilität und Eindeutigkeit gleicht den Mehraufwand mehr als aus.</p>
+</div>
+
+				<div class="reply">
+					<indie-action do="reply" with="https://notiz.blog/2012/07/03/microformats-the-next-generation/?replytocom=182620"><a rel='nofollow' class='comment-reply-link' href='https://notiz.blog/2012/07/03/microformats-the-next-generation/?replytocom=182620#respond' onclick='return addComment.moveForm( "comment-182620", "182620", "respond", "4343" )' aria-label='Antworte auf Siegfried'>Antworten</a></indie-action>				</div><!-- .reply -->
+			</article><!-- #comment-## -->
+		<ul class="children">
+		<li class="comment byuser comment-author-matthias-pfefferle bypostauthor odd alt depth-2 h-cite h-entry p-comment" id="li-comment-182625">
+			<article id="comment-182625" class="comment " itemprop="comment" itemscope itemtype="http://schema.org/Comment">
+				<div class="edit-link"></div>
+				<footer class="comment-meta commentmetadata">
+					<address class="comment-author p-author author vcard hcard h-card" itemprop="creator" itemscope itemtype="http://schema.org/Person">
+						<img alt='' src='https://secure.gravatar.com/avatar/75512bb584bbceae57dfc503692b16b2?s=40&#038;d=https://notiz.blog/wp-content/plugins/semantic-linkbacks/img/mm.jpg&#038;r=g' srcset='https://secure.gravatar.com/avatar/75512bb584bbceae57dfc503692b16b2?s=80&#038;d=https://notiz.blog/wp-content/plugins/semantic-linkbacks/img/mm.jpg&#038;r=g 2x' class='avatar avatar-40 photo u-photo' height='40' width='40' itemprop="image"/>						<cite class="fn p-name" itemprop="name"><a href='https://notiz.blog' rel='external nofollow' class='u-url url'>Matthias Pfefferle</a></cite>					</address><!-- .comment-author .vcard -->
+
+					<a href="https://notiz.blog/2012/07/03/microformats-the-next-generation/#comment-182625"><time class="updated published dt-updated dt-published" datetime="2012-07-04T12:38:52+00:00" itemprop="dateCreated">
+					4. Juli 2012 at 12:38					</time></a>
+				</footer>
+
+				<div class="comment-content e-content p-summary p-name" itemprop="text name description"><p>Im Punkt &#8222;1.&#8220; sind wir einer Meinung! Ich schätze Microformats sehr, da sie für schönes und beschreibendes HTML sorgen. Worauf ich hinaus wollte ist, dass Microformats immer noch ein Nischenprodukt sind und eine relativ kleine Entwicklergemeinde von deren Existenz weiß, was dazu führt dass Microformats immer wieder durch Re-Designs zerstört werden, weil <code>classes</code> im Zuge von CSS Änderungen umbenannt werden oder neu JS-Funktionalität hinzu kommt. Es ist meiner Meinung nach einfacher jemandem zu erklären die <code>itemprop</code> oder <code>property</code> Attribute stehen zu lassen, als ihm zu erklären dass die Klassen die er für sein CSS nutzt auch für Google interessant sind.</p>
+<p>Bei Punkt &#8222;2.&#8220; muss ich dir widersprechen, weil die Namespaces genau das kaputt machen was Microformats gerade ausmachen. Bisher kann jeder mit Begriffen wie <code>description</code>, <code>note</code>, <code>entry-title</code> oder <code>name</code> etwas Anfangen, ob er Micorformats kennt oder nicht. Mit der Einführung der Namespaces sieht das anders aus, vor allem weil der Prfix für den Daten-Typ steht.</p>
+<p>Ich bin der Meinung, dass man Microformats mit den Prefixes krampfhaft zu etwas machen will, was Microdata und RDFa viel besser leisten können und damit das kaputt macht was Microformas sind&#8230; schönes <em>Plain Old Semantic HTML</em>.</p>
+</div>
+
+				<div class="reply">
+					<indie-action do="reply" with="https://notiz.blog/2012/07/03/microformats-the-next-generation/?replytocom=182625"><a rel='nofollow' class='comment-reply-link' href='https://notiz.blog/2012/07/03/microformats-the-next-generation/?replytocom=182625#respond' onclick='return addComment.moveForm( "comment-182625", "182625", "respond", "4343" )' aria-label='Antworte auf Matthias Pfefferle'>Antworten</a></indie-action>				</div><!-- .reply -->
+			</article><!-- #comment-## -->
+		</li><!-- #comment-## -->
+</ul><!-- .children -->
+</li><!-- #comment-## -->
+		<li class="comment even thread-even depth-1 h-cite h-entry p-comment" id="li-comment-182626">
+			<article id="comment-182626" class="comment " itemprop="comment" itemscope itemtype="http://schema.org/Comment">
+				<div class="edit-link"></div>
+				<footer class="comment-meta commentmetadata">
+					<address class="comment-author p-author author vcard hcard h-card" itemprop="creator" itemscope itemtype="http://schema.org/Person">
+						<img alt='' src='https://secure.gravatar.com/avatar/a42e868fcda1bccf47ef7a48697b30ac?s=100&#038;d=https://notiz.blog/wp-content/plugins/semantic-linkbacks/img/mm.jpg&#038;r=g' srcset='https://secure.gravatar.com/avatar/a42e868fcda1bccf47ef7a48697b30ac?s=100&#038;d=https://notiz.blog/wp-content/plugins/semantic-linkbacks/img/mm.jpg&#038;r=g 2x' class='avatar avatar-40 photo avatar-default u-photo avatar-semantic-linkbacks' height='40' width='40' itemprop="image"/>						<cite class="fn p-name" itemprop="name"><a href='http://www.rorkvell.de' rel='external nofollow' class='u-url url'>Siegfried</a></cite>					</address><!-- .comment-author .vcard -->
+
+					<a href="https://notiz.blog/2012/07/03/microformats-the-next-generation/#comment-182626"><time class="updated published dt-updated dt-published" datetime="2012-07-04T15:35:46+00:00" itemprop="dateCreated">
+					4. Juli 2012 at 15:35					</time></a>
+				</footer>
+
+				<div class="comment-content e-content p-summary p-name" itemprop="text name description"><p>Zu 1.: Naja, wer sich erst mal durchgerungen hat, semantisches statt präsentationsorientiertes Markup zu schreiben, wer also z.B. dafür zu Microformats greift, der wird vermutlich auch eher bereit sein, die Klassennamen weiterhin auch bei einem Redesign ordentlich zu wählen. Aber das ist natürlich nur eine Vermutung von mir 🙂</p>
+<p>Zu 2.: Ich verstehe Deine Argumentation. Da ist auch was dran. Der Mehraufwand wirkt zunächst tatsächlich abschreckend. Wobei hier m.M.n. vor Allem die Vielzahl der Präfixe abschreckend ist. Weniger wäre hier deutlich mehr. Aber ich denke immer noch, dass die Vorteile die durchaus vorhandenen Nachteile aufwiegen könnten. Aber natürlich ist auch dies eine persönliche Vermutung.</p>
+<p>Zu den Alternativen: RDFa finde ich recht ordentlich. Bei Microdata sehe ich noch nicht so recht klar. Was soll z.B. dieses &#8222;itemscope&#8220;? Ist das ein Attribut? Dann fehlt hier der Wert. Ohne Wert ist es wertlos (im Sinne des Wortes, und im anderen Sinn auch). Auch, für die entsprechende Meta-Information ein neues Attribut (itemprop) zu erfinden finde ich nicht so das Gelbe vom Ei. Der Inhalt des class Attributs soll den Inhalt des html-Containers (näher) klassifizieren. Daher heisst es ja auch &#8222;class&#8220;. Es ist nur konsequent, dafür auch genau dieses Attribut zu verwenden.</p>
+<p>Und nur als Ergänzung: Natürlich sollte die erste Wahl zur Klassifizierung eines Inhalts immer das passende html-Element sein. Daher bringt hier html5 wirklich Nützliches. Auch, dass man jetzt endlich meta-Informationen nicht nur im Header, also gültig für die gesamte Seite, sondern auch für einen Teilbereich der Seite einfügen kann, ist sehr sehr nützlich. Das war überfällig. Und Vieles von dem, was jetzt endlich realisiert wurde, macht Einiges von dem, was bisher Microformats und Ähnliche leisteten, obsolet. Kann man getrost begraben. Deswegen werden Microformats, RDFa und Dergleichen nicht gleich überflüssig. Aber ich denke, das hast Du ja so oder so ähnlich hier auch schon geschrieben. </p>
+<p>Und was den Blick in die Glaskugel (Zukunft) angeht: Das kann man getrost unterschiedlich interpretieren. Wir werden sehen.</p>
+</div>
+
+				<div class="reply">
+					<indie-action do="reply" with="https://notiz.blog/2012/07/03/microformats-the-next-generation/?replytocom=182626"><a rel='nofollow' class='comment-reply-link' href='https://notiz.blog/2012/07/03/microformats-the-next-generation/?replytocom=182626#respond' onclick='return addComment.moveForm( "comment-182626", "182626", "respond", "4343" )' aria-label='Antworte auf Siegfried'>Antworten</a></indie-action>				</div><!-- .reply -->
+			</article><!-- #comment-## -->
+		</li><!-- #comment-## -->
+		<li class="comment odd alt thread-odd thread-alt depth-1 h-cite h-entry p-comment" id="li-comment-183987">
+			<article id="comment-183987" class="comment " itemprop="comment" itemscope itemtype="http://schema.org/Comment">
+				<div class="edit-link"></div>
+				<footer class="comment-meta commentmetadata">
+					<address class="comment-author p-author author vcard hcard h-card" itemprop="creator" itemscope itemtype="http://schema.org/Person">
+						<img alt='' src='https://notiz.blog/wp-content/plugins/semantic-linkbacks/img/mm.jpg' srcset='https://notiz.blog/wp-content/plugins/semantic-linkbacks/img/mm.jpg 2x' class='avatar avatar-40 photo avatar-default u-photo avatar-semantic-linkbacks' height='40' width='40' itemprop="image"/>						<cite class="fn p-name" itemprop="name">nik</cite>					</address><!-- .comment-author .vcard -->
+
+					<a href="https://notiz.blog/2012/07/03/microformats-the-next-generation/#comment-183987"><time class="updated published dt-updated dt-published" datetime="2012-08-10T20:43:03+00:00" itemprop="dateCreated">
+					10. August 2012 at 20:43					</time></a>
+				</footer>
+
+				<div class="comment-content e-content p-summary p-name" itemprop="text name description"><p>„Die Prefixes ‘h-‘, ‘p-‘, ‘u-‘, ‘dt-‘ und ‘e-‘ sollen das Zukünftig verhindern und ein generisches parsen ermöglichen.“</p>
+<p>Mit Verlaub &#8211; na ist ja jetzt richtiger Bullshit! Jetzt werden auf 5 Ebenen Namespaces in Anspruch genommen. Was das jetzt verbessert ist ja nun wirklich die Frage!</p>
+</div>
+
+				<div class="reply">
+					<indie-action do="reply" with="https://notiz.blog/2012/07/03/microformats-the-next-generation/?replytocom=183987"><a rel='nofollow' class='comment-reply-link' href='https://notiz.blog/2012/07/03/microformats-the-next-generation/?replytocom=183987#respond' onclick='return addComment.moveForm( "comment-183987", "183987", "respond", "4343" )' aria-label='Antworte auf nik'>Antworten</a></indie-action>				</div><!-- .reply -->
+			</article><!-- #comment-## -->
+		<ul class="children">
+		<li class="comment byuser comment-author-matthias-pfefferle bypostauthor even depth-2 h-cite h-entry p-comment" id="li-comment-185155">
+			<article id="comment-185155" class="comment " itemprop="comment" itemscope itemtype="http://schema.org/Comment">
+				<div class="edit-link"></div>
+				<footer class="comment-meta commentmetadata">
+					<address class="comment-author p-author author vcard hcard h-card" itemprop="creator" itemscope itemtype="http://schema.org/Person">
+						<img alt='' src='https://secure.gravatar.com/avatar/75512bb584bbceae57dfc503692b16b2?s=40&#038;d=https://notiz.blog/wp-content/plugins/semantic-linkbacks/img/mm.jpg&#038;r=g' srcset='https://secure.gravatar.com/avatar/75512bb584bbceae57dfc503692b16b2?s=80&#038;d=https://notiz.blog/wp-content/plugins/semantic-linkbacks/img/mm.jpg&#038;r=g 2x' class='avatar avatar-40 photo u-photo' height='40' width='40' itemprop="image"/>						<cite class="fn p-name" itemprop="name"><a href='https://notiz.blog' rel='external nofollow' class='u-url url'>Matthias Pfefferle</a></cite>					</address><!-- .comment-author .vcard -->
+
+					<a href="https://notiz.blog/2012/07/03/microformats-the-next-generation/#comment-185155"><time class="updated published dt-updated dt-published" datetime="2012-09-06T22:59:33+00:00" itemprop="dateCreated">
+					6. September 2012 at 22:59					</time></a>
+				</footer>
+
+				<div class="comment-content e-content p-summary p-name" itemprop="text name description"><p>Ja, je mehr Namespaces es gibt desto fehleranfälliger wird es wieder. Außerdem ist der eine Buchstabe auch nicht wirklich deskriptiv und sorgt sicherlich wieder für eine Menge Namens-Kollisionen.</p>
+</div>
+
+				<div class="reply">
+					<indie-action do="reply" with="https://notiz.blog/2012/07/03/microformats-the-next-generation/?replytocom=185155"><a rel='nofollow' class='comment-reply-link' href='https://notiz.blog/2012/07/03/microformats-the-next-generation/?replytocom=185155#respond' onclick='return addComment.moveForm( "comment-185155", "185155", "respond", "4343" )' aria-label='Antworte auf Matthias Pfefferle'>Antworten</a></indie-action>				</div><!-- .reply -->
+			</article><!-- #comment-## -->
+		</li><!-- #comment-## -->
+</ul><!-- .children -->
+</li><!-- #comment-## -->
+		<li class="comment odd alt thread-even depth-1 h-cite h-entry p-comment" id="li-comment-185102">
+			<article id="comment-185102" class="comment " itemprop="comment" itemscope itemtype="http://schema.org/Comment">
+				<div class="edit-link"></div>
+				<footer class="comment-meta commentmetadata">
+					<address class="comment-author p-author author vcard hcard h-card" itemprop="creator" itemscope itemtype="http://schema.org/Person">
+						<img alt='' src='https://secure.gravatar.com/avatar/a42e868fcda1bccf47ef7a48697b30ac?s=80&#038;d=https://notiz.blog/wp-content/plugins/semantic-linkbacks/img/mm.jpg&#038;r=g' srcset='https://secure.gravatar.com/avatar/a42e868fcda1bccf47ef7a48697b30ac?s=80&#038;d=https://notiz.blog/wp-content/plugins/semantic-linkbacks/img/mm.jpg&#038;r=g 2x' class='avatar avatar-40 photo avatar-default u-photo avatar-semantic-linkbacks' height='40' width='40' itemprop="image"/>						<cite class="fn p-name" itemprop="name"><a href='http://www.rorkvell.de' rel='external nofollow' class='u-url url'>Siegfried</a></cite>					</address><!-- .comment-author .vcard -->
+
+					<a href="https://notiz.blog/2012/07/03/microformats-the-next-generation/#comment-185102"><time class="updated published dt-updated dt-published" datetime="2012-09-05T14:18:59+00:00" itemprop="dateCreated">
+					5. September 2012 at 14:18					</time></a>
+				</footer>
+
+				<div class="comment-content e-content p-summary p-name" itemprop="text name description"><p>Ich habe jetzt noch mal einige Zeit darüber nachgedacht und neige nun eher dazu, Dir zuzustimmen: Namespaces bei Microformats sind eher hinderlich. Die nötige Flexibilität erreicht man ggf. über RDFa und/oder Microdata.</p>
+<p>Ich teste übrigens gerade viele verschiedene HTML Versionen von Blogs auf Microformats. Die sind gar nicht mal so selten. Und bislang ausschließlich ohne Prefix. Also &#8222;plain old&#8220;. Hat sich vielleicht doch mehr durchgesetzt, als Du derzeit vermutest.</p>
+</div>
+
+				<div class="reply">
+					<indie-action do="reply" with="https://notiz.blog/2012/07/03/microformats-the-next-generation/?replytocom=185102"><a rel='nofollow' class='comment-reply-link' href='https://notiz.blog/2012/07/03/microformats-the-next-generation/?replytocom=185102#respond' onclick='return addComment.moveForm( "comment-185102", "185102", "respond", "4343" )' aria-label='Antworte auf Siegfried'>Antworten</a></indie-action>				</div><!-- .reply -->
+			</article><!-- #comment-## -->
+		<ul class="children">
+		<li class="comment byuser comment-author-matthias-pfefferle bypostauthor even depth-2 h-cite h-entry p-comment" id="li-comment-185156">
+			<article id="comment-185156" class="comment " itemprop="comment" itemscope itemtype="http://schema.org/Comment">
+				<div class="edit-link"></div>
+				<footer class="comment-meta commentmetadata">
+					<address class="comment-author p-author author vcard hcard h-card" itemprop="creator" itemscope itemtype="http://schema.org/Person">
+						<img alt='' src='https://secure.gravatar.com/avatar/75512bb584bbceae57dfc503692b16b2?s=40&#038;d=https://notiz.blog/wp-content/plugins/semantic-linkbacks/img/mm.jpg&#038;r=g' srcset='https://secure.gravatar.com/avatar/75512bb584bbceae57dfc503692b16b2?s=80&#038;d=https://notiz.blog/wp-content/plugins/semantic-linkbacks/img/mm.jpg&#038;r=g 2x' class='avatar avatar-40 photo u-photo' height='40' width='40' itemprop="image"/>						<cite class="fn p-name" itemprop="name"><a href='https://notiz.blog' rel='external nofollow' class='u-url url'>Matthias Pfefferle</a></cite>					</address><!-- .comment-author .vcard -->
+
+					<a href="https://notiz.blog/2012/07/03/microformats-the-next-generation/#comment-185156"><time class="updated published dt-updated dt-published" datetime="2012-09-06T23:07:26+00:00" itemprop="dateCreated">
+					6. September 2012 at 23:07					</time></a>
+				</footer>
+
+				<div class="comment-content e-content p-summary p-name" itemprop="text name description"><p>Ich habe bei meinem <a href="https://notiz.blog/2012/09/06/ive-made-a-wordpress-theme-kind-of/">WordPress Theme</a> mal versucht Microformats 2 umzusetzen&#8230; Das größte Probleme war für mich der Zusammenhang von Namespace und Datentyp&#8230; Ist der hAtom-Title jetzt <code>e-entry-title</code> oder <code>p-entry-title</code>&#8230;</p>
+<p>Dass <a href="https://notiz.blog/2008/11/12/microformats-in-zahlen/">Microformats erfolgreich sind, war mir schon klar</a>&#8230; ich bin nur der Meinung dass es langsam Zeit für eine Weiterentwicklung ist 😉</p>
+</div>
+
+				<div class="reply">
+					<indie-action do="reply" with="https://notiz.blog/2012/07/03/microformats-the-next-generation/?replytocom=185156"><a rel='nofollow' class='comment-reply-link' href='https://notiz.blog/2012/07/03/microformats-the-next-generation/?replytocom=185156#respond' onclick='return addComment.moveForm( "comment-185156", "185156", "respond", "4343" )' aria-label='Antworte auf Matthias Pfefferle'>Antworten</a></indie-action>				</div><!-- .reply -->
+			</article><!-- #comment-## -->
+		<ul class="children">
+		<li class="comment odd alt depth-3 h-cite h-entry p-comment" id="li-comment-185166">
+			<article id="comment-185166" class="comment " itemprop="comment" itemscope itemtype="http://schema.org/Comment">
+				<div class="edit-link"></div>
+				<footer class="comment-meta commentmetadata">
+					<address class="comment-author p-author author vcard hcard h-card" itemprop="creator" itemscope itemtype="http://schema.org/Person">
+						<img alt='' src='https://secure.gravatar.com/avatar/a42e868fcda1bccf47ef7a48697b30ac?s=100&#038;d=https://notiz.blog/wp-content/plugins/semantic-linkbacks/img/mm.jpg&#038;r=g' srcset='https://secure.gravatar.com/avatar/a42e868fcda1bccf47ef7a48697b30ac?s=100&#038;d=https://notiz.blog/wp-content/plugins/semantic-linkbacks/img/mm.jpg&#038;r=g 2x' class='avatar avatar-40 photo avatar-default u-photo avatar-semantic-linkbacks' height='40' width='40' itemprop="image"/>						<cite class="fn p-name" itemprop="name"><a href='http://www.rorkvell.de' rel='external nofollow' class='u-url url'>Siegfried</a></cite>					</address><!-- .comment-author .vcard -->
+
+					<a href="https://notiz.blog/2012/07/03/microformats-the-next-generation/#comment-185166"><time class="updated published dt-updated dt-published" datetime="2012-09-07T08:10:03+00:00" itemprop="dateCreated">
+					7. September 2012 at 08:10					</time></a>
+				</footer>
+
+				<div class="comment-content e-content p-summary p-name" itemprop="text name description"><p>Naja, Du weisst ja: Mit Computer geht Alles viel schneller, es dauert nur etwas länger 🙂</p>
+</div>
+
+				<div class="reply">
+					<indie-action do="reply" with="https://notiz.blog/2012/07/03/microformats-the-next-generation/?replytocom=185166"><a rel='nofollow' class='comment-reply-link' href='https://notiz.blog/2012/07/03/microformats-the-next-generation/?replytocom=185166#respond' onclick='return addComment.moveForm( "comment-185166", "185166", "respond", "4343" )' aria-label='Antworte auf Siegfried'>Antworten</a></indie-action>				</div><!-- .reply -->
+			</article><!-- #comment-## -->
+		</li><!-- #comment-## -->
+</ul><!-- .children -->
+</li><!-- #comment-## -->
+</ul><!-- .children -->
+</li><!-- #comment-## -->
+		</ol>
+
+
+
+
+	<indie-action do="reply" with="https://notiz.blog/2012/07/03/microformats-the-next-generation/">
+<div class="likes">
+	<h3>Likes</h3>
+	<ul class="mention-list linkback-like"><li class="webmention even thread-odd thread-alt depth-1 linkback-like-single u-like h-cite h-entry p-comment comment" id="comment-675691">
+				<span class="p-author h-card">
+					<a class="u-url" title="Sebastian Lasse hat diesen Artikel auf plus.google.com geliked." href="https://profiles.google.com/108751138108005469822"><img alt='' src='https://lh3.googleusercontent.com/-JberdLklCkk/AAAAAAAAAAI/AAAAAAAAAAA/jgElm9btNQg/photo.jpg?sz=50' srcset='https://lh3.googleusercontent.com/-JberdLklCkk/AAAAAAAAAAI/AAAAAAAAAAA/jgElm9btNQg/photo.jpg?sz=50 2x' class='avatar avatar-64 photo avatar-default u-photo avatar-semantic-linkbacks' height='64' width='64' itemprop="image"/> </a>
+					<span class="hide-name p-name">Sebastian Lasse</span>
+				</span>
+				<a class="u-url" href="https://plus.google.com/+MatthiasPfefferle/posts/L5WoBry6JqH"></a>
+			</li></ul></div>
+
+
+
+
+
+
+
+
+
+
+
+
+	<div id="respond" class="comment-respond">
+		<h3 id="reply-title" class="comment-reply-title">Schreibe einen Kommentar <small><a rel="nofollow" id="cancel-comment-reply-link" href="/2012/07/03/microformats-the-next-generation/#respond" style="display:none;">Antworten abbrechen</a></small></h3>			<form action="https://notiz.blog/wp-comments-post.php" method="post" id="commentform" class="comment-form">
+				<p class="comment-notes"><span id="email-notes">Deine E-Mail-Adresse wird nicht veröffentlicht.</span> Erforderliche Felder sind mit <span class="required">*</span> markiert.</p><p class="comment-form-comment"><label for="comment">Kommentar</label> <textarea autocomplete="nope"  id="9564c2089c"  name="164b313f28"   cols="45" rows="8" maxlength="65525" required="required"></textarea><textarea id="comment" aria-hidden="true" name="comment" autocomplete="nope" style="padding:0;clip:rect(1px, 1px, 1px, 1px);position:absolute !important;white-space:nowrap;height:1px;width:1px;overflow:hidden;" tabindex="-1"></textarea><script type="text/javascript">document.getElementById("comment").setAttribute( "id", "dac268d9b1db0d6f482decb05e9cd6e8" );document.getElementById("9564c2089c").setAttribute( "id", "comment" );</script></p><p class="comment-form-author"><label for="author">Name <span class="required">*</span></label> <input autocomplete="nickname name"  id="author" name="author" type="text" value="" size="30" maxlength="245" required='required' /></p>
+<p class="comment-form-email"><label for="email">E-Mail <span class="required">*</span></label> <input autocomplete="email"  id="email" name="email" type="text" value="" size="30" maxlength="100" aria-describedby="email-notes" required='required' /></p>
+<p class="comment-form-url"><label for="url">Website</label> <input autocomplete="url"  id="url" name="url" type="text" value="" size="30" maxlength="200" /></p>
+<p class="form-submit"><input name="submit" type="submit" id="submit" class="submit" value="Kommentar abschicken" /> <input type='hidden' name='comment_post_ID' value='4343' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+</p>			</form>
+			</div><!-- #respond -->
+	</indie-action><form id="webmention-form" action="https://notiz.blog/wp-api/webmention/1.0/endpoint" method="post">
+	<p>
+		<label for="webmention-source"><p>To respond on your own website, enter the URL of your response which should contain a link to this post's permalink URL. Your response will then appear (possibly after moderation) on this page. Want to update or remove your response? Update or delete your post and re-enter your post's URL again. (<a href="http://indieweb.org/webmention">Learn More</a>)</p>
+</label>
+		<input id="webmention-source" type="url" name="source" placeholder="URL deines Artikels" />
+	</p>
+	<p>
+		<input id="webmention-submit" type="submit" name="submit" value="Gib Bescheid!" />
+	</p>
+	<input id="webmention-format" type="hidden" name="format" value="html" />
+	<input id="webmention-target" type="hidden" name="target" value="https://notiz.blog/2012/07/03/microformats-the-next-generation/" />
+</form>
+	<p>
+		<label for="indie-cite-shortlink">Shortlink</label>
+		<input id="indie-cite-shortlink" class="u-url url shortlink" type="text" value="https://notiz.blog/b/1CP" />
+	</p>
+	<p>
+		<label for="indie-cite-permalink">Permalink</label>
+		<input id="indie-cite-permalink" class="u-url url u-uid uid bookmark" type="text" value="https://notiz.blog/2012/07/03/microformats-the-next-generation/" />
+	</p>
+		<p>
+		<label for="indie-cite-cite">HTML</label>
+		<input id="indie-cite-cite" class="code" type="text" size="70" value="&lt;cite class=&quot;h-cite&quot;&gt;&lt;a class=&quot;u-url p-name&quot; href=&quot;https://notiz.blog/2012/07/03/microformats-the-next-generation/&quot;&gt;Microformats: The next generation&lt;/a&gt; (&lt;span class=&quot;p-author h-card&quot; title=&quot;Matthias Pfefferle&quot;&gt;Matthias Pfefferle&lt;/span&gt; &lt;time class=&quot;dt-published&quot; datetime=&quot;2012-07-03T08:43:02+00:00&quot;&gt;3. Juli 2012&lt;/time&gt;)&lt;/cite&gt;">
+	</p>
+
+</div><!-- #comments -->
+
+
+			</main><!-- #content -->
+
+							<nav id="nav-below">
+			<h1 class="assistive-text section-heading">Post navigation</h1>
+			<div class="nav-previous"><a href="https://notiz.blog/2012/06/22/twitter-cards/" rel="prev"><span class="meta-nav">&laquo;</span></a></div>			<div class="nav-next"><a href="https://notiz.blog/2012/08/02/oautsch/" rel="next"><span class="meta-nav">&raquo;</span></a></div>		</nav><!-- #nav-below -->
+
+	<footer id="colophon">
+			<div id="sidebar">
+
+		<div id="secondary" class="widget-area" role="complementary">
+			<aside id="pages-2" class="widget widget_pages"><h2 class="widget-title">Seiten</h2>		<ul>
+			<li class="page_item page-item-15387"><a href="https://notiz.blog/datenschutz/">Datenschutzerklärung</a></li>
+<li class="page_item page-item-15055"><a href="https://notiz.blog/donate/">Donate</a></li>
+<li class="page_item page-item-16025"><a href="https://notiz.blog/impressum/">Impressum</a></li>
+<li class="page_item page-item-4 page_item_has_children"><a href="https://notiz.blog/about/">About</a>
+<ul class='children'>
+	<li class="page_item page-item-14977"><a href="https://notiz.blog/about/notiz-blog/">notiz.Blog</a></li>
+</ul>
+</li>
+<li class="page_item page-item-320 page_item_has_children"><a href="https://notiz.blog/projects/">Projekte</a>
+<ul class='children'>
+	<li class="page_item page-item-659"><a href="https://notiz.blog/projects/apml-for-wordpress/">APML for WordPress</a></li>
+	<li class="page_item page-item-885"><a href="https://notiz.blog/projects/haudio-icons/">hAudio (Microformats) Icons</a></li>
+	<li class="page_item page-item-682"><a href="https://notiz.blog/projects/wp-hcard-commenting/">hCard Commenting</a></li>
+	<li class="page_item page-item-444"><a href="https://notiz.blog/projects/microformats-icons/">Microformats Icons</a></li>
+	<li class="page_item page-item-438"><a href="https://notiz.blog/projects/mycroformats/">Mycroformats</a></li>
+	<li class="page_item page-item-522"><a href="https://notiz.blog/projects/operator-user-scripts/">Operator User Scripts</a></li>
+	<li class="page_item page-item-321"><a href="https://notiz.blog/projects/save-microformats/">Save Microformats</a></li>
+	<li class="page_item page-item-4839"><a href="https://notiz.blog/projects/sempress/">SemPress</a></li>
+</ul>
+</li>
+<li class="page_item page-item-1724"><a href="https://notiz.blog/publications/">Artikel &#038; Vorträge</a></li>
+<li class="page_item page-item-255"><a href="https://notiz.blog/kontakt/">Kontakt</a></li>
+		</ul>
+		</aside><aside id="meta-3" class="widget widget_meta"><h2 class="widget-title">Meta</h2>			<ul>
+						<li><a href="https://notiz.blog/wp-login.php">Anmelden</a></li>
+			<li><a href="https://notiz.blog/feed/">Beitrags-Feed (<abbr title="Really Simple Syndication">RSS</abbr>)</a></li>
+			<li><a href="https://notiz.blog/comments/feed/">Kommentare als <abbr title="Really Simple Syndication">RSS</abbr></a></li>
+			<li><a href="https://de.wordpress.org/" title="Powered by WordPress, state-of-the-art semantic personal publishing platform.">WordPress.org</a></li>			</ul>
+			</aside>		</div><!-- #secondary .widget-area -->
+
+				<div id="tertiary" class="widget-area" role="complementary">
+			<aside id="search-2" class="widget widget_search"><form itemprop="potentialAction" itemscope itemtype="http://schema.org/SearchAction" role="search" method="get" class="search-form" action="https://notiz.blog/">
+				<label>
+					<span class="screen-reader-text">Suche nach:</span>
+					<input type="search" itemprop="query-input" class="search-field" placeholder="Suche&#160;&hellip;" value="" name="s" />
+				</label>
+				<input type="submit" class="search-submit" value="Suche" />
+			<meta itemprop="target" content="https://notiz.blog/?s={search} "/></form></aside><aside id="custom_html-2" class="widget_text widget widget_custom_html"><h2 class="widget-title">OpenWeb Podcast</h2><div class="textwidget custom-html-widget"><p>Der Podcast über offene Standards im Internet!</p>
+
+<ul><li><a href="http://openwebpodcast.de/" rel="me">Seite besuchen</a></li>
+<li><a href="http://openwebpodcast.de/feed/" rel="alternate">Den RSS-Feed abonnieren</a></li>
+<li><a href="https://notiz.blog/projects/#podcast">Mehr Infos</a></li></ul></div></aside><aside id="rss-2" class="widget widget_rss"><h2 class="widget-title"><a class="rsswidget" href="http://openwebpodcast.de/feed/"><img class="rss-widget-icon" style="border:0" width="14" height="14" src="https://notiz.blog/wp-includes/images/rss.png" alt="RSS" /></a> <a class="rsswidget" href="http://openwebpodcast.de/">Der deutsche OpenWeb-Podcast</a></h2><ul><li><a class='rsswidget' href='http://openwebpodcast.de/1872/lang-lebe-der-openweb-podcast/'>Lang Lebe Der Openweb Podcast</a></li><li><a class='rsswidget' href='http://openwebpodcast.de/1862/der-openweb-podcast-ist-tot/'>Der Openweb Podcast Ist Tot</a></li><li><a class='rsswidget' href='http://openwebpodcast.de/409/folge-33-das-neue-facebook-und-ein-bisschen-google/'>Folge 33 Das Neue Facebook Und Ein Bisschen Google</a></li><li><a class='rsswidget' href='http://openwebpodcast.de/401/owp32-eingekreist/'>Owp32 Eingekreist</a></li><li><a class='rsswidget' href='http://openwebpodcast.de/382/owp31/'>Owp31</a></li></ul></aside><aside id="tag_cloud-2" class="widget widget_tag_cloud"><h2 class="widget-title">Schlagwörter</h2><div class="tagcloud"><a href="https://notiz.blog/tag/addon/" class="tag-cloud-link tag-link-176 tag-link-position-1" style="font-size: 8.7716535433071pt;" aria-label="Addon (13 Einträge)">Addon</a>
+<a href="https://notiz.blog/tag/apml/" class="tag-cloud-link tag-link-449 tag-link-position-2" style="font-size: 9.6535433070866pt;" aria-label="APML (16 Einträge)">APML</a>
+<a href="https://notiz.blog/tag/atom/" class="tag-cloud-link tag-link-105 tag-link-position-3" style="font-size: 8.7716535433071pt;" aria-label="ATOM (13 Einträge)">ATOM</a>
+<a href="https://notiz.blog/tag/bud-spencer/" class="tag-cloud-link tag-link-77 tag-link-position-4" style="font-size: 8.7716535433071pt;" aria-label="Bud-Spencer (13 Einträge)">Bud-Spencer</a>
+<a href="https://notiz.blog/tag/comic/" class="tag-cloud-link tag-link-64 tag-link-position-5" style="font-size: 8.3307086614173pt;" aria-label="Comic (12 Einträge)">Comic</a>
+<a href="https://notiz.blog/tag/dataportability/" class="tag-cloud-link tag-link-478 tag-link-position-6" style="font-size: 14.724409448819pt;" aria-label="DataPortability (48 Einträge)">DataPortability</a>
+<a href="https://notiz.blog/tag/diso/" class="tag-cloud-link tag-link-470 tag-link-position-7" style="font-size: 10.645669291339pt;" aria-label="DiSo (20 Einträge)">DiSo</a>
+<a href="https://notiz.blog/tag/facebook/" class="tag-cloud-link tag-link-480 tag-link-position-8" style="font-size: 12.188976377953pt;" aria-label="Facebook (28 Einträge)">Facebook</a>
+<a href="https://notiz.blog/tag/federated-social-web/" class="tag-cloud-link tag-link-892 tag-link-position-9" style="font-size: 9.6535433070866pt;" aria-label="federated social web (16 Einträge)">federated social web</a>
+<a href="https://notiz.blog/tag/firefox/" class="tag-cloud-link tag-link-130 tag-link-position-10" style="font-size: 12.188976377953pt;" aria-label="Firefox (28 Einträge)">Firefox</a>
+<a href="https://notiz.blog/tag/google/" class="tag-cloud-link tag-link-123 tag-link-position-11" style="font-size: 13.842519685039pt;" aria-label="Google (40 Einträge)">Google</a>
+<a href="https://notiz.blog/tag/hcalendar/" class="tag-cloud-link tag-link-167 tag-link-position-12" style="font-size: 9.1023622047244pt;" aria-label="hCalendar (14 Einträge)">hCalendar</a>
+<a href="https://notiz.blog/tag/hcard/" class="tag-cloud-link tag-link-166 tag-link-position-13" style="font-size: 15.275590551181pt;" aria-label="hCard (54 Einträge)">hCard</a>
+<a href="https://notiz.blog/tag/html5/" class="tag-cloud-link tag-link-700 tag-link-position-14" style="font-size: 9.3228346456693pt;" aria-label="HTML5 (15 Einträge)">HTML5</a>
+<a href="https://notiz.blog/tag/indieweb/" class="tag-cloud-link tag-link-992 tag-link-position-15" style="font-size: 11.086614173228pt;" aria-label="IndieWeb (22 Einträge)">IndieWeb</a>
+<a href="https://notiz.blog/tag/kolumne/" class="tag-cloud-link tag-link-828 tag-link-position-16" style="font-size: 8.7716535433071pt;" aria-label="Kolumne (13 Einträge)">Kolumne</a>
+<a href="https://notiz.blog/tag/mac/" class="tag-cloud-link tag-link-70 tag-link-position-17" style="font-size: 8pt;" aria-label="Mac (11 Einträge)">Mac</a>
+<a href="https://notiz.blog/tag/microdata/" class="tag-cloud-link tag-link-815 tag-link-position-18" style="font-size: 9.9842519685039pt;" aria-label="Microdata (17 Einträge)">Microdata</a>
+<a href="https://notiz.blog/tag/microformats/" class="tag-cloud-link tag-link-164 tag-link-position-19" style="font-size: 22pt;" aria-label="Microformats (221 Einträge)">Microformats</a>
+<a href="https://notiz.blog/tag/microsoft/" class="tag-cloud-link tag-link-216 tag-link-position-20" style="font-size: 9.3228346456693pt;" aria-label="Microsoft (15 Einträge)">Microsoft</a>
+<a href="https://notiz.blog/tag/mikroformate/" class="tag-cloud-link tag-link-183 tag-link-position-21" style="font-size: 16.708661417323pt;" aria-label="Mikroformate (73 Einträge)">Mikroformate</a>
+<a href="https://notiz.blog/tag/mr-t/" class="tag-cloud-link tag-link-92 tag-link-position-22" style="font-size: 8.3307086614173pt;" aria-label="Mr. T (12 Einträge)">Mr. T</a>
+<a href="https://notiz.blog/tag/oauth/" class="tag-cloud-link tag-link-422 tag-link-position-23" style="font-size: 13.070866141732pt;" aria-label="OAuth (34 Einträge)">OAuth</a>
+<a href="https://notiz.blog/tag/openid/" class="tag-cloud-link tag-link-423 tag-link-position-24" style="font-size: 17.370078740157pt;" aria-label="OpenID (84 Einträge)">OpenID</a>
+<a href="https://notiz.blog/tag/open-web/" class="tag-cloud-link tag-link-737 tag-link-position-25" style="font-size: 9.6535433070866pt;" aria-label="Open Web (16 Einträge)">Open Web</a>
+<a href="https://notiz.blog/tag/open-web-podcast/" class="tag-cloud-link tag-link-751 tag-link-position-26" style="font-size: 9.1023622047244pt;" aria-label="Open Web Podcast (14 Einträge)">Open Web Podcast</a>
+<a href="https://notiz.blog/tag/operator/" class="tag-cloud-link tag-link-195 tag-link-position-27" style="font-size: 9.1023622047244pt;" aria-label="Operator (14 Einträge)">Operator</a>
+<a href="https://notiz.blog/tag/plugin/" class="tag-cloud-link tag-link-181 tag-link-position-28" style="font-size: 11.527559055118pt;" aria-label="Plugin (24 Einträge)">Plugin</a>
+<a href="https://notiz.blog/tag/podcast/" class="tag-cloud-link tag-link-213 tag-link-position-29" style="font-size: 9.9842519685039pt;" aria-label="Podcast (17 Einträge)">Podcast</a>
+<a href="https://notiz.blog/tag/portable-contacts/" class="tag-cloud-link tag-link-669 tag-link-position-30" style="font-size: 8.3307086614173pt;" aria-label="Portable Contacts (12 Einträge)">Portable Contacts</a>
+<a href="https://notiz.blog/tag/pubsubhubbub/" class="tag-cloud-link tag-link-840 tag-link-position-31" style="font-size: 9.6535433070866pt;" aria-label="pubsubhubbub (16 Einträge)">pubsubhubbub</a>
+<a href="https://notiz.blog/tag/rdf/" class="tag-cloud-link tag-link-104 tag-link-position-32" style="font-size: 8.7716535433071pt;" aria-label="RDF (13 Einträge)">RDF</a>
+<a href="https://notiz.blog/tag/rdfa/" class="tag-cloud-link tag-link-527 tag-link-position-33" style="font-size: 13.622047244094pt;" aria-label="RDFa (38 Einträge)">RDFa</a>
+<a href="https://notiz.blog/tag/rss/" class="tag-cloud-link tag-link-103 tag-link-position-34" style="font-size: 8.3307086614173pt;" aria-label="RSS (12 Einträge)">RSS</a>
+<a href="https://notiz.blog/tag/semantic-web/" class="tag-cloud-link tag-link-535 tag-link-position-35" style="font-size: 8pt;" aria-label="Semantic Web (11 Einträge)">Semantic Web</a>
+<a href="https://notiz.blog/tag/theme/" class="tag-cloud-link tag-link-58 tag-link-position-36" style="font-size: 8pt;" aria-label="theme (11 Einträge)">theme</a>
+<a href="https://notiz.blog/tag/twitter/" class="tag-cloud-link tag-link-285 tag-link-position-37" style="font-size: 11.637795275591pt;" aria-label="Twitter (25 Einträge)">Twitter</a>
+<a href="https://notiz.blog/tag/w3c/" class="tag-cloud-link tag-link-533 tag-link-position-38" style="font-size: 9.1023622047244pt;" aria-label="W3C (14 Einträge)">W3C</a>
+<a href="https://notiz.blog/tag/webfinger/" class="tag-cloud-link tag-link-843 tag-link-position-39" style="font-size: 8.3307086614173pt;" aria-label="WebFinger (12 Einträge)">WebFinger</a>
+<a href="https://notiz.blog/tag/wordpress/" class="tag-cloud-link tag-link-57 tag-link-position-40" style="font-size: 15.275590551181pt;" aria-label="WordPress (54 Einträge)">WordPress</a>
+<a href="https://notiz.blog/tag/x-box/" class="tag-cloud-link tag-link-115 tag-link-position-41" style="font-size: 8pt;" aria-label="X-Box (11 Einträge)">X-Box</a>
+<a href="https://notiz.blog/tag/xbmc/" class="tag-cloud-link tag-link-114 tag-link-position-42" style="font-size: 9.3228346456693pt;" aria-label="XBMC (15 Einträge)">XBMC</a>
+<a href="https://notiz.blog/tag/xfn/" class="tag-cloud-link tag-link-165 tag-link-position-43" style="font-size: 10.204724409449pt;" aria-label="XFN (18 Einträge)">XFN</a>
+<a href="https://notiz.blog/tag/xhtml/" class="tag-cloud-link tag-link-112 tag-link-position-44" style="font-size: 8pt;" aria-label="XHTML (11 Einträge)">XHTML</a>
+<a href="https://notiz.blog/tag/yahoo/" class="tag-cloud-link tag-link-487 tag-link-position-45" style="font-size: 11.086614173228pt;" aria-label="Yahoo (22 Einträge)">Yahoo</a></div>
+</aside>		</div><!-- #tertiary .widget-area -->
+
+				<div id="quaternary" class="widget-area" role="complementary">
+			<aside id="custom_html-3" class="widget_text widget widget_custom_html"><h2 class="widget-title">IndieWebRing</h2><div class="textwidget custom-html-widget"><a href="https://xn--sr8hvo.ws/&#x1F48A;&#x1f401;/previous">←</a> <img draggable="false" class="emoji" alt="&#x1f578;" src="https://s.w.org/images/core/emoji/2.4/svg/1f578.svg"><img draggable="false" class="emoji" alt="&#xe034;" src="https://s.w.org/images/core/emoji/2.4/svg/1f48d.svg"><a href="https://xn--sr8hvo.ws/&#x1F48A;&#x1f401;/next">→</a></div></aside><aside id="linkcat-922" class="widget widget_links"><h2 class="widget-title">12things</h2>
+	<ul class='xoxo blogroll'>
+<li><a href="http://12sites.de/" rel="friend co-worker colleague" title="Deine Homepage in Minuten">12Sites</a></li>
+<li><a href="http://12things.de/" rel="me" title="12Things">12Things</a></li>
+<li><a href="http://ichmagrot.de/" rel="me">ich mag rot</a></li>
+
+	</ul>
+</aside>
+<aside id="linkcat-618" class="widget widget_links"><h2 class="widget-title">Blogroll (english)</h2>
+	<ul class='xoxo blogroll'>
+<li><a href="https://werd.io" rel="contact">Ben Werdmüller</a></li>
+<li><a href="http://adactio.com/" rel="contact">Jeremy Keith</a></li>
+<li><a href="http://tantek.com" rel="contact">Tantek Çelik</a></li>
+
+	</ul>
+</aside>
+<aside id="linkcat-51" class="widget widget_links"><h2 class="widget-title">Blogrolle (deutsch)</h2>
+	<ul class='xoxo blogroll'>
+<li><a href="http://mrtopf.de/" rel="contact met colleague">Christian Scholz</a></li>
+<li><a href="http://screengui.de/" rel="acquaintance co-worker colleague">Das Screenguide Magazin</a></li>
+<li><a href="http://hackr.de" rel="contact">hackr</a></li>
+<li><a href="http://jonas-berg.de" rel="kin">Jonas Berg</a></li>
+<li><a href="http://www.schoenstoll.de" rel="contact met neighbor" title="Meine überaus talentierte Vermieterin&#8230;">Malerin und Lyrikerin</a></li>
+
+	</ul>
+</aside>
+<aside id="linkcat-938" class="widget widget_links"><h2 class="widget-title">me on...</h2>
+	<ul class='xoxo blogroll'>
+<li><a href="https://plus.google.com/+MatthiasPfefferle?rel=author" rel="me">+Matthias Pfefferle</a></li>
+<li><a href="http://twitter.com/pfefferle" rel="me">@pfefferle</a></li>
+<li><a href="https://www.bloglovin.com/blog/18821433/?claim=skshx5azbaf" rel="me">Bloglovin</a></li>
+<li><a href="https://www.crunchbase.com/person/matthias-pfefferle" rel="me">CrunchBase</a></li>
+<li><a href="https://github.com/pfefferle" rel="me">GitHub</a></li>
+<li><a href="https://indieweb.org/User:Notizblog.org" rel="me">IndieWeb</a></li>
+<li><a href="https://keybase.io/pfefferle" rel="me">Keybase</a></li>
+<li><a href="https://www.linkedin.com/in/pfefferle/" rel="me">LinkedIN</a></li>
+<li><a href="https://mastodon.social/@pfefferle" rel="me">Mastodon</a></li>
+<li><a href="https://micro.blog/pfefferle" rel="me">Micro.blog</a></li>
+<li><a href="http://microformats.org/wiki/User:Pfefferle" rel="me">Microformats</a></li>
+<li><a href="https://www.npmjs.com/~pfefferle" rel="me">npm</a></li>
+<li><a href="https://packagist.org/packages/pfefferle/" rel="me">Packagist</a></li>
+<li><a href="http://www.slideshare.net/pfefferle" rel="me">SlideShare</a></li>
+<li><a href="http://stackoverflow.com/cv/pfefferle" rel="me">Stack Overflow</a></li>
+<li><a href="http://profiles.wordpress.org/pfefferle" rel="me" title="my WordPress.org profile">WordPress</a></li>
+<li><a href="https://www.xing.com/profile/Matthias_Pfefferle" rel="me">XING</a></li>
+
+	</ul>
+</aside>
+		</div><!-- #quaternary .widget-area -->
+			</div>
+
+		<div id="site-publisher" itemprop="publisher" itemscope itemtype="https://schema.org/Organization">
+			<meta itemprop="name" content="notiz.Blog" />
+			<meta itemprop="url" content="https://notiz.blog/" />
+							<div itemprop="logo" itemscope itemtype="https://schema.org/ImageObject">
+					<meta itemprop="url" content="https://notiz.blog/wp-content/uploads/2015/09/cropped-cropped-cropped-cropped-notizblog-logo-1.png" />
+					<meta itemprop="width" content="30" />
+					<meta itemprop="height" content="30" />
+				</div>
+					</div>
+
+		<div id="site-generator">
+						This site is powered by <a href="http://wordpress.org/" rel="generator">WordPress</a> and styled with <a href="https://github.com/pfefferle/ZenPress">ZenPress</a>		</div>
+	</footer><!-- #colophon -->
+</div><!-- #page -->
+
+<script type='text/javascript'>
+/* <![CDATA[ */
+var wpcf7 = {"apiSettings":{"root":"https:\/\/notiz.blog\/wp-api\/contact-form-7\/v1","namespace":"contact-form-7\/v1"},"recaptcha":{"messages":{"empty":"Bitte best\u00e4tige, dass du keine Maschine bist."}},"cached":"1"};
+/* ]]> */
+</script>
+
+
+
+
+
+
+
+<script type="text/javascript"  defer='defer' src="//cdn.notiz.blog/wp-content/cache/autoptimize/js/autoptimize_7fdbb1d080655c89b7f89ccfb44ac6a0.js"></script></body>
+</html>
+
+
+<!-- Cache Enabler by KeyCDN @ 21.08.2018 00:14:05 (html) -->
