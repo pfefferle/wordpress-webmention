@@ -205,12 +205,12 @@ class Webmention_Item {
 	}
 
 	/**
-	 * Transform to commentdata
+	 * Getter for content with fallback to summary
 	 *
-	 * @return WP_Comment
+	 * @return string
 	 */
-	public function to_commentdata() {
-
+	public function get_content() {
+		return $this->content ? $this->content : $this->summary;
 	}
 
 	/**
@@ -268,14 +268,14 @@ class Webmention_Item {
 		);
 
 		$comment = array(
-			'comment_author'     => ifset( $this->author['name'] ),
-			'comment_author_url' => ifset( $this->author['email'] ),
-			'comment_author_url' => ifset( $this->author['url'] ),
-			'comment_content'    => $this->content,
-			'comment_date'       => $this->published->format( 'Y-m-d H:i:s' ),
-			'comment_date_gmt'   => $published_gmt->format( 'Y-m-d H:i:s' ),
-			'comment_type'       => $this->response_type,
-			'comment_meta'       => array_filter( $meta ),
+			'comment_author'       => ifset( $this->author['name'] ),
+			'comment_author_email' => ifset( $this->author['email'] ),
+			'comment_author_url'   => ifset( $this->author['url'] ),
+			'comment_content'      => $this->get_content(),
+			'comment_date'         => $this->published->format( 'Y-m-d H:i:s' ),
+			'comment_date_gmt'     => $published_gmt->format( 'Y-m-d H:i:s' ),
+			'comment_type'         => $this->response_type,
+			'comment_meta'         => array_filter( $meta ),
 		);
 
 		return apply_filters( 'webmention_item_commentdata_array', array_filter( $comment ), $this->get_raw() );
