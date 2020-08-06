@@ -47,7 +47,7 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 
 
 	/**
-	 * Takes mf2 json and generates a Webmention Item.
+	 * Takes mf2 item and generates a Webmention Item.
 	 *
 	 * @param array $mf_array JSON Array of Parsed Microformats.
 	 * @return WP_Error|true Return error or true if successful.
@@ -108,111 +108,111 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 	/**
 	 * Is this what type?
 	 *
-	 * @param array  $mf   Parsed Microformats Array
+	 * @param array  $mf_array   Parsed Microformats Array
 	 * @param string $type Type
 	 *
 	 * @return bool
 	*/
-	protected function is_type( $mf, $type ) {
-		return is_array( $mf ) && ! empty( $mf['type'] ) && is_array( $mf['type'] ) && in_array( $type, $mf['type'], true );
+	protected function is_type( $mf_array, $type ) {
+		return is_array( $mf_array ) && ! empty( $mf_array['type'] ) && is_array( $mf_array['type'] ) && in_array( $type, $mf_array['type'], true );
 	}
 
 	/**
 	 * Returns type
 	 *
-	 * @param array       $mf Microformats Array.
+	 * @param array       $mf_array Microformats Array.
 	 * @return string|null Return value.
 	 */
-	protected function get_type( array $mf ) {
-		if ( ! $this->is_microformat( $mf ) ) {
+	protected function get_type( array $mf_array ) {
+		if ( ! $this->is_microformat( $mf_array ) ) {
 			return null;
 		}
-		return str_replace( 'h-', '', $mf['type'][0] );
+		return str_replace( 'h-', '', $mf_array['type'][0] );
 	}
 
 	/**
-	 * Verifies if $mf is an array without numeric keys, and has a 'properties' key.
+	 * Verifies if $mf_array is an array without numeric keys, and has a 'properties' key.
 	 *
-	 * @param $mf
+	 * @param $mf_array
 	 *
 	 * @return bool
 	 */
-	protected function is_microformat( $mf ) {
-		return ( is_array( $mf ) && ! wp_is_numeric_array( $mf ) && ! empty( $mf['type'] ) && isset( $mf['properties'] ) );
+	protected function is_microformat( $mf_array ) {
+		return ( is_array( $mf_array ) && ! wp_is_numeric_array( $mf_array ) && ! empty( $mf_array['type'] ) && isset( $mf_array['properties'] ) );
 	}
 
 	/**
-	 * Verifies if $mf has an 'items' key which is also an array, returns true.
+	 * Verifies if $mf_array has an 'items' key which is also an array, returns true.
 	 *
-	 * @param $mf
+	 * @param $mf_array
 	 *
 	 * @return bool
 	 */
-	protected function is_microformat_collection( $mf ) {
-		return ( is_array( $mf ) && isset( $mf['items'] ) && is_array( $mf['items'] ) );
+	protected function is_microformat_collection( $mf_array ) {
+		return ( is_array( $mf_array ) && isset( $mf_array['items'] ) && is_array( $mf_array['items'] ) );
 	}
 
 	/**
-	 * Verifies if property named $propname is in array $mf.
+	 * Verifies if property named $propname is in array $mf_array.
 	 *
-	 * @param array  $mf
+	 * @param array  $mf_array
 	 * @param string $propname
 	 *
 	 * @return bool
 	 */
-	protected function has_property( array $mf, $propname ) {
-		return ! empty( $mf['properties'][ $propname ] ) && is_array( $mf['properties'][ $propname ] );
+	protected function has_property( array $mf_array, $propname ) {
+		return ! empty( $mf_array['properties'][ $propname ] ) && is_array( $mf_array['properties'][ $propname ] );
 	}
 
 	/**
-	 * Verifies if property named $propname is in array $mf and is a valid URL.
+	 * Verifies if property named $propname is in array $mf_array and is a valid URL.
 	 *
-	 * @param array  $mf
+	 * @param array  $mf_array
 	 * @param string $propname
 	 *
 	 * @return bool
 	 */
-	protected function has_url_property( array $mf, $propname ) {
-		return ( $this->has_property( $mf, $propname ) && ( $this->is_url( $this->get_plaintext( $mf, $propname ) ) ) );
+	protected function has_url_property( array $mf_array, $propname ) {
+		return ( $this->has_property( $mf_array, $propname ) && ( $this->is_url( $this->get_plaintext( $mf_array, $propname ) ) ) );
 	}
 
 	/**
-	 * Verifies if rel named $relname is in array $mf.
+	 * Verifies if rel named $relname is in array $mf_array.
 	 *
-	 * @param array  $mf
+	 * @param array  $mf_array
 	 * @param string $relname
 	 *
 	 * @return bool
 	 */
-	protected function has_rel( array $mf, $relname ) {
-		return ! empty( $mf['rels'][ $relname ] ) && is_array( $mf['rels'][ $relname ] );
+	protected function has_rel( array $mf_array, $relname ) {
+		return ! empty( $mf_array['rels'][ $relname ] ) && is_array( $mf_array['rels'][ $relname ] );
 	}
 
 	/**
-	 * Verifies if $p is an array without numeric keys and has key 'value' and 'html' set.
+	 * Verifies if $property is an array without numeric keys and has key 'value' and 'html' set.
 	 *
-	 * @param $p
+	 * @param $property
 	 *
 	 * @return bool
 	 */
-	protected function is_embedded_html( $p ) {
-		return is_array( $p ) && ! wp_is_numeric_array( $p ) && isset( $p['value'] ) && isset( $p['html'] );
+	protected function is_embedded_html( $property ) {
+		return is_array( $property ) && ! wp_is_numeric_array( $property ) && isset( $property['value'] ) && isset( $property['html'] );
 	}
 
 	/**
-	 * If $v is a microformat or embedded html, return $v['value']. Else return v.
+	 * If $value is a microformat or embedded html, return $value['value']. Else return v.
 	 *
-	 * @param $v
+	 * @param $value
 	 *
 	 * @return mixed
 	 */
-	protected function to_plaintext( $v ) {
-		if ( $this->is_microformat( $v ) || $this->is_embedded_html( $v ) ) {
-			return $v['value'];
-		} elseif ( is_array( $v ) && isset( $v['text'] ) ) {
-			return $v['text'];
+	protected function to_plaintext( $value ) {
+		if ( $this->is_microformat( $value ) || $this->is_embedded_html( $value ) ) {
+			return $value['value'];
+		} elseif ( is_array( $value ) && isset( $value['text'] ) ) {
+			return $value['text'];
 		}
-		return $v;
+		return $value;
 	}
 
 	/**
@@ -223,9 +223,9 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 	 * @param null|string $fallback Fallback if not available.
 	 * @return mixed|null Return value.
 	 */
-	protected function get_property( array $mf, $propname, $fallback = null ) {
-		if ( ! empty( $mf['properties'][ $propname ] ) && is_array( $mf['properties'][ $propname ] ) ) {
-			return $mf['properties'][ $propname ];
+	protected function get_property( array $mf_array, $propname, $fallback = null ) {
+		if ( ! empty( $mf_array['properties'][ $propname ] ) && is_array( $mf_array['properties'][ $propname ] ) ) {
+			return $mf_array['properties'][ $propname ];
 		}
 		return $fallback;
 	}
@@ -233,47 +233,47 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 	/**
 	 * Returns plaintext of $propname with optional $fallback.
 	 *
-	 * @param array       $mf Microformats Array.
+	 * @param array       $mf_array Microformats Array.
 	 * @param $propname Property to be retrieved.
 	 * @param null|string $fallback Fallback if not available.
 	 * @return mixed|null Return value.
 	 */
-	protected function get_plaintext( array $mf, $propname, $fallback = null ) {
-		if ( ! array_key_exists( 'properties', $mf ) ) {
+	protected function get_plaintext( array $mf_array, $propname, $fallback = null ) {
+		if ( ! array_key_exists( 'properties', $mf_array ) ) {
 			return $fallback;
 		}
-		if ( ! empty( $mf['properties'][ $propname ] ) && is_array( $mf['properties'][ $propname ] ) ) {
-			return $this->to_plaintext( current( $mf['properties'][ $propname ] ) );
+		if ( ! empty( $mf_array['properties'][ $propname ] ) && is_array( $mf_array['properties'][ $propname ] ) ) {
+			return $this->to_plaintext( current( $mf_array['properties'][ $propname ] ) );
 		}
 		return $fallback;
 	}
 
 	/**
-	 * Returns ['html'] element of $v, or ['value'] or just $v, in order of availablility.
+	 * Returns ['html'] element of $value, or ['value'] or just $value, in order of availablility.
 	 *
-	 * @param $v Microformats Content.
+	 * @param $value Microformats Content.
 	 * @return mixed HTML Element if present.
 	 */
-	protected function to_html( $v ) {
-		if ( $this->is_embedded_html( $v ) ) {
-			return $v['html'];
-		} elseif ( $this->is_microformat( $v ) ) {
-			return webmention_sanitize_html( htmlspecialchars( $v['value'] ) );
+	protected function to_html( $value ) {
+		if ( $this->is_embedded_html( $value ) ) {
+			return $value['html'];
+		} elseif ( $this->is_microformat( $value ) ) {
+			return webmention_sanitize_html( htmlspecialchars( $value['value'] ) );
 		}
-		return webmention_sanitize_html( htmlspecialchars( $v ) );
+		return webmention_sanitize_html( htmlspecialchars( $value ) );
 	}
 
 	/**
 	 * Gets HTML of $propname or if not, $fallback.
 	 *
-	 * @param array       $mf Microformats JSON array.
+	 * @param array       $mf_array Microformats JSON array.
 	 * @param $propname Property Name.
 	 * @param null|string $fallback Fallback if property not found.
 	 * @return mixed|null Value of proerty.
 	 */
-	protected function get_html( array $mf, $propname, $fallback = null ) {
-		if ( ! empty( $mf['properties'][ $propname ] ) && is_array( $mf['properties'][ $propname ] ) ) {
-			return $this->to_html( current( $mf['properties'][ $propname ] ) );
+	protected function get_html( array $mf_array, $propname, $fallback = null ) {
+		if ( ! empty( $mf_array['properties'][ $propname ] ) && is_array( $mf_array['properties'][ $propname ] ) ) {
+			return $this->to_html( current( $mf_array['properties'][ $propname ] ) );
 		}
 		return $fallback;
 	}
@@ -282,13 +282,13 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 	 * Gets the DateTime properties including published or updated, depending on params.
 	 *
 	 * @param $name string updated or published.
-	 * @param array                            $mf Microformats JSON array.
+	 * @param array                            $mf_array Microformats JSON array.
 	 * @param null|DateTimeImmutable           $fallback What to return if not a DateTime property.
 	 * @return mixed|null
 	 */
-	protected function get_datetime_property( $name, array $mf, $fallback = null ) {
-		if ( $this->has_property( $mf, $name ) ) {
-			$return = $this->get_plaintext( $mf, $name );
+	protected function get_datetime_property( $name, array $mf_array, $fallback = null ) {
+		if ( $this->has_property( $mf_array, $name ) ) {
+			$return = $this->get_plaintext( $mf_array, $name );
 		} else {
 			return $fallback;
 		}
@@ -332,8 +332,8 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 	 *
 	 * @return array the h-entry node or false
 	 */
-	public function find_representative_item( $mf, $target ) {
-		$items = $this->get_items( $mf );
+	public function find_representative_item( $mf_array, $target ) {
+		$items = $this->get_items( $mf_array );
 		if ( ! is_array( $items ) || empty( $items ) ) {
 			return false;
 		}
@@ -384,20 +384,20 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 	/**
 	 * Takes the mf2 json array passed through and returns a cleaned up representative item.
 	 *
-	 * @param $mf The entire mf array.
+	 * @param $mf_array The entire mf array.
 	 * @param $url The source URL.
 	 *
 	 * @return array Return the representative item on the page.
 	 */
-	protected function get_representative_item( $mf, $url ) {
-		$item = $this->find_representative_item( $mf, $url );
+	protected function get_representative_item( $mf_array, $url ) {
+		$item = $this->find_representative_item( $mf_array, $url );
 		if ( empty( $item ) || ! is_array( $item ) ) {
 			return array();
 		}
 
 		// If u-syndication is not set use rel syndication.
-		if ( array_key_exists( 'syndication', $mf['rels'] ) && ! $this->has_property( $item, 'syndication' ) ) {
-			$item['properties']['syndication'] = $mf['rels']['syndication'];
+		if ( array_key_exists( 'syndication', $mf_array['rels'] ) && ! $this->has_property( $item, 'syndication' ) ) {
+			$item['properties']['syndication'] = $mf_array['rels']['syndication'];
 		}
 
 		return $item;
@@ -407,13 +407,13 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 	 * Helper to find the correct author node.
 	 *
 	 * @param array $item Item to find an author on.
-	 * @param array $mf The parsed microformats array.
+	 * @param array $mf_array The parsed microformats array.
 	 * @param string $source The source url.
 	 * @see http://indieweb.org/authorship
 	 *
 	 * @return array|null the h-card node or null.
 	 */
-	protected function get_representative_author( $item, $mf ) {
+	protected function get_representative_author( $item, $mf_array ) {
 		$authorpage = false;
 
 		if ( $this->has_property( $item, 'author' ) ) {
@@ -449,14 +449,14 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 
 		// 6. "if no author page was found" ... check for rel-author link.
 		if ( ! $authorpage ) {
-			if ( isset( $mf2['rels'] ) && isset( $mf2['rels']['author'] ) ) {
-				$authorpage = $mf2['rels']['author'][0];
+			if ( isset( $mf_array['rels'] ) && isset( $mf_array['rels']['author'] ) ) {
+				$authorpage = $mf_array['rels']['author'][0];
 			}
 		}
 
 		// 7. "if there is an author-page URL" .
 		if ( $authorpage ) {
-			if ( ! $this->urls_match( $authorpage, $this->get_plaintext( $mf2, 'url' ) ) ) {
+			if ( ! $this->urls_match( $authorpage, $this->get_plaintext( $mf_array, 'url' ) ) ) {
 				return array(
 					'type'       => array( 'h-card' ),
 					'properties' => array(
@@ -467,23 +467,23 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 		}
 	}
 
-	protected function get_location( $mf ) {
+	protected function get_location( $mf_array ) {
 		$return = array();
 		// Check and parse for location property
-		if ( $this->has_property( $mf, 'location' ) ) {
-			$mf = current( $this->get_property( $mf, 'location' ) );
+		if ( $this->has_property( $mf_array, 'location' ) ) {
+			$mf_array = current( $this->get_property( $mf_array, 'location' ) );
 		} else {
 			return null;
 		}
 
-		if ( $this->is_microformat( $mf ) ) {
+		if ( $this->is_microformat( $mf_array ) ) {
 			foreach ( array( 'latitude', 'longitude', 'label', 'name', 'locality', 'region', 'country-name', 'altitude' ) as $prop ) {
-				$return[ $prop ] = $this->get_plaintext( $mf, $prop );
+				$return[ $prop ] = $this->get_plaintext( $mf_array, $prop );
 			}
-			$return['type'] = $this->get_type( $mf );
+			$return['type'] = $this->get_type( $mf_array );
 		} else {
-			if ( substr( $mf, 0, 4 ) === 'geo:' ) {
-				$geo    = explode( ':', substr( urldecode( $mf ), 4 ) );
+			if ( substr( $mf_array, 0, 4 ) === 'geo:' ) {
+				$geo    = explode( ':', substr( urldecode( $mf_array ), 4 ) );
 				$geo    = explode( ';', $geo[0] );
 				$coords = explode( ',', $geo[0] );
 				$return = array(
@@ -495,7 +495,7 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 			} else {
 				$return = array(
 					'type'  => 'adr',
-					'label' => $mf,
+					'label' => $mf_array,
 				);
 			}
 		}
