@@ -62,14 +62,10 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 		$this->webmention_item->set_updated( $this->get_datetime_property( 'updated', $mf_array ) );
 
 		$this->webmention_item->set_url( $this->get_plaintext( $mf_array, 'url' ) );
-		$this->webmention_item->set_category( $this->get_property( $mf_array, 'category' ) );
-		$this->webmention_item->set_syndication( $this->get_plaintext( $mf_array, 'syndication' ) );
 
 		// Sometimes the featured image is stored in featured. Otherwise try photo.
 		$this->webmention_item->set_photo( $this->get_plaintext( $mf_array, 'featured' ) );
 		$this->webmention_item->set_photo( $this->get_plaintext( $mf_array, 'photo' ) );
-
-		$this->webmention_item->set_location( $this->get_location( $mf_array ) );
 
 		$content = $this->get_html( $mf_array, 'content' );
 		$this->webmention_item->set_content( $content );
@@ -412,11 +408,6 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 			return array();
 		}
 
-		// If u-syndication is not set use rel syndication.
-		if ( array_key_exists( 'syndication', $mf_array['rels'] ) && ! $this->has_property( $item, 'syndication' ) ) {
-			$item['properties']['syndication'] = $mf_array['rels']['syndication'];
-		}
-
 		return $item;
 	}
 
@@ -482,41 +473,6 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 				);
 			}
 		}
-	}
-
-	protected function get_location( $mf_array ) {
-		$return = array();
-		// Check and parse for location property
-		if ( $this->has_property( $mf_array, 'location' ) ) {
-			$mf_array = current( $this->get_property( $mf_array, 'location' ) );
-		} else {
-			return null;
-		}
-
-		if ( $this->is_microformat( $mf_array ) ) {
-			foreach ( array( 'latitude', 'longitude', 'label', 'name', 'locality', 'region', 'country-name', 'altitude' ) as $prop ) {
-				$return[ $prop ] = $this->get_plaintext( $mf_array, $prop );
-			}
-			$return['type'] = $this->get_type( $mf_array );
-		} else {
-			if ( substr( $mf_array, 0, 4 ) === 'geo:' ) {
-				$geo    = explode( ':', substr( urldecode( $mf_array ), 4 ) );
-				$geo    = explode( ';', $geo[0] );
-				$coords = explode( ',', $geo[0] );
-				$return = array(
-					'type'      => 'geo',
-					'latitude'  => trim( $coords[0] ),
-					'longitude' => trim( $coords[1] ),
-					'altitude'  => trim( ifset( $coords[2], '' ) ),
-				);
-			} else {
-				$return = array(
-					'type'  => 'adr',
-					'label' => $mf_array,
-				);
-			}
-		}
-		return array_filter( $return );
 	}
 
 	/**

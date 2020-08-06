@@ -36,26 +36,11 @@ class Webmention_Item {
 	protected $author = array();
 
 	/**
-	 * Array of category strings
-	 *
-	 * @var array
-	 */
-	protected $category = array();
-
-	/**
 	 * Array of photos
 	 *
 	 * @var array
 	 */
 	protected $photo = array();
-
-
-	/**
-	 * Location array.
-	 *
-	 * @var array
-	 */
-	protected $location = array();
 
 	/**
 	 * The response name
@@ -87,13 +72,6 @@ class Webmention_Item {
 	 * @var string
 	 */
 	protected $summary;
-
-	/**
-	 * Any syndication links.
-	 *
-	 * @var array
-	 */
-	protected $syndication;
 
 	/**
 	 * The response type
@@ -284,18 +262,9 @@ class Webmention_Item {
 	public function to_commentdata_array() {
 		$published_gmt = $this->published->setTimeZone( 'GMT' );
 		$meta          = array(
-			'mf2_category'    => $this->category,
-			'mf2_photo'       => $this->photo,
-			'avatar'          => ifset( $this->author['photo'] ),
-			'mf2_syndication' => $this->syndication,
-			'mf2_updated'     => isset( $this->updated ) ? $this->updated->format( DATE_W3C ) : null,
-			'geo_latitude'    => ifset( $this->location['latitude'] ),
-			'geo_longitude'   => ifset( $this->location['longitude'] ),
-			'geo_altitude'    => ifset( $this->location['altitude'] ),
-			'geo_address'     => ifset( $this->location['label'], ifset( $this->location['name'] ) ),
-			'mf2_location'    => $this->location,
-			'protocol'        => 'webmention', // Since this is the webmention plugin it should always be a webmention.
-			'url'             => $this->url, // This is the parsed URL, which may or may not be the same as the source URL, which will be added as source_url.
+			'avatar'   => ifset( $this->author['photo'] ),
+			'protocol' => 'webmention', // Since this is the webmention plugin it should always be a webmention.
+			'url'      => $this->url, // This is the parsed URL, which may or may not be the same as the source URL, which will be added as source_url.
 		);
 
 		$comment = array(
@@ -308,7 +277,8 @@ class Webmention_Item {
 			'comment_type'       => $this->response_type,
 			'comment_meta'       => array_filter( $meta ),
 		);
-		return array_filter( $comment );
+
+		return apply_filters( 'webmention_item_commentdata_array', array_filter( $comment ), $this->get_raw() );
 	}
 
 	/**
