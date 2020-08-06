@@ -450,9 +450,6 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 		if ( ! is_array( $items ) || empty( $items ) ) {
 			return false;
 		}
-		if ( 1 === count( $items ) ) {
-			return $items[0];
-		}
 		// Iterate array
 		foreach ( $items as $item ) {
 			if ( $this->urls_match( $url, $this->get_plaintext( $item, 'url' ) ) ) {
