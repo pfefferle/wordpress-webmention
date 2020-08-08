@@ -38,7 +38,11 @@ class Webmention_Tools {
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => array( static::class, 'read' ),
 					'args'                => array(
-						'url' => array(
+						'source' => array(
+							'required'          => true,
+							'sanitize_callback' => 'esc_url_raw',
+						),
+						'target' => array(
 							'required'          => true,
 							'sanitize_callback' => 'esc_url_raw',
 						),
@@ -58,9 +62,11 @@ class Webmention_Tools {
 	 * @return void
 	 */
 	public static function read( $request ) {
-		$url     = $request->get_param( 'url' );
+		$source     = $request->get_param( 'source' );
+		$target     = $request->get_param( 'target' );
+
 		$request = new Webmention_Request();
-		$return  = $request->fetch( $url, false );
+		$return  = $request->fetch( $source, false );
 
 		if ( is_wp_error( $return ) ) {
 			return $return;
@@ -68,7 +74,7 @@ class Webmention_Tools {
 
 		$handler = new Webmention_Handler();
 
-		return $handler->parse_grouped( $request );
+		return $handler->parse_grouped( $request, $target );
 	}
 
 	/**

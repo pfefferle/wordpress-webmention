@@ -21,6 +21,9 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 	 */
 	public function parse( Webmention_Request $request, $target_url ) {
 		$dom = clone $request->get_domdocument();
+		if ( is_wp_error( $dom ) ) {
+			return $dom;
+		}
 		if ( ! class_exists( '\Webmention\Mf2\Parser' ) ) {
 			require_once plugin_dir_path( __FILE__ ) . '../../libraries/mf2/Mf2/Parser.php';
 		}

@@ -254,7 +254,7 @@ class Webmention_Request {
 		// Strip any character set off the content type
 		$content_type = explode( ';', $content_type );
 
-		if ( is_array( $ct ) ) {
+		if ( is_array( $content_type ) ) {
 			$content_type = array_shift( $content_type );
 		}
 

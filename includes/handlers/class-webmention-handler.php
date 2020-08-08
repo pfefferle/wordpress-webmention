@@ -100,7 +100,10 @@ class Webmention_Handler {
 		$result = array();
 
 		foreach ( $this->handlers as $handler ) {
-			$handler->parse( $request, $target_url );
+			$return = $handler->parse( $request, $target_url );
+			if ( is_wp_error( $return ) ) {
+				return $return;
+			}
 			$item = $handler->get_webmention_item();
 
 			if ( ! is_wp_error( $item ) ) {

@@ -21,6 +21,9 @@ class Webmention_Handler_JSONLD extends Webmention_Handler_Base {
 	 */
 	public function parse( Webmention_Request $request, $target_url ) {
 		$dom   = clone $request->get_domdocument();
+		if ( is_wp_error( $dom ) ) {
+			return $dom;
+		}
 		$xpath = new DOMXPath( $dom );
 
 		$jsonld  = array();
