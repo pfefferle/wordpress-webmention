@@ -97,7 +97,7 @@ class Webmention_Item {
 	 *
 	 * @var array
 	 */
-	protected $meta = array();
+	protected $meta;
 
 	/**
 	 * Magic function for getter/setter
@@ -269,6 +269,10 @@ class Webmention_Item {
 	 */
 	public function to_commentdata_array() {
 		$published_gmt = $this->published->setTimeZone( 'GMT' );
+
+		if ( ! is_array( $meta ) ) {
+			$meta = array();
+		}
 
 		$this->meta['avatar']   = ifset( $this->author['photo'] );
 		$this->meta['protocol'] = 'webmention'; // Since this is the webmention plugin it should always be a webmention.
