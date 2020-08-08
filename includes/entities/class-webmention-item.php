@@ -92,6 +92,14 @@ class Webmention_Item {
 	protected $raw;
 
 	/**
+	 * Optional Parsed Properties to be Saved in Comment Meta
+	 *
+	 *
+	 * @var array
+	 */
+	protected $meta = array();
+
+	/**
 	 * Magic function for getter/setter
 	 *
 	 * @param string $method
@@ -261,11 +269,10 @@ class Webmention_Item {
 	 */
 	public function to_commentdata_array() {
 		$published_gmt = $this->published->setTimeZone( 'GMT' );
-		$meta          = array(
-			'avatar'   => ifset( $this->author['photo'] ),
-			'protocol' => 'webmention', // Since this is the webmention plugin it should always be a webmention.
-			'url'      => $this->url, // This is the parsed URL, which may or may not be the same as the source URL, which will be added as source_url.
-		);
+
+		$this->meta['avatar']   = ifset( $this->author['photo'] );
+		$this->meta['protocol'] = 'webmention'; // Since this is the webmention plugin it should always be a webmention.
+		$this->meta['url']      = $this->url; // This is the parsed URL, which may or may not be the same as the source URL, which will be added as source_url.
 
 		$comment = array(
 			'comment_author'       => ifset( $this->author['name'] ),
@@ -275,7 +282,7 @@ class Webmention_Item {
 			'comment_date'         => $this->published->format( 'Y-m-d H:i:s' ),
 			'comment_date_gmt'     => $published_gmt->format( 'Y-m-d H:i:s' ),
 			'comment_type'         => $this->response_type,
-			'comment_meta'         => array_filter( $meta ),
+			'comment_meta'         => array_filter( $this->meta ),
 		);
 
 		return apply_filters( 'webmention_item_commentdata_array', array_filter( $comment ), $this->get_raw() );
