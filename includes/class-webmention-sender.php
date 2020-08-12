@@ -19,7 +19,7 @@ class Webmention_Sender {
 		// Send Webmentions from Every Type that Declared Webmention Support
 		$post_types = get_post_types_by_support( 'webmentions' );
 		foreach ( $post_types as $post_type ) {
-			add_action( 'publish_' . $post_type, array( 'Webmention_Sender', 'publish_hook' ) );
+			add_action( 'publish_' . $post_type, array( 'Webmention_Sender', 'publish_hook' ), 3 );
 		}
 
 		add_action( 'comment_post', array( 'Webmention_Sender', 'comment_post' ) );
