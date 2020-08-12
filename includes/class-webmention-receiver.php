@@ -625,7 +625,7 @@ class Webmention_Receiver {
 
 		$commentdata_array = $item->to_commentdata_array();
 
-		return array_merge( $commentdata, $commentdata_array );
+		return array_replace_recursive( $commentdata, $commentdata_array );
 	}
 
 	/**
