@@ -91,5 +91,6 @@ class Webmention_Handler_Meta extends Webmention_Handler_Base {
 				}
 			}
 		}
+		$this->webmention_item->set_meta( apply_filters( 'webmention_handler_meta_set_properties', array(), $this ) );
 	}
 }
