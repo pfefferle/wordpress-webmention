@@ -268,7 +268,8 @@ class Webmention_Item {
 	 * return array;
 	 */
 	public function to_commentdata_array() {
-		$published_gmt = $this->published->setTimeZone( 'GMT' );
+		$published_gmt = clone $this->published;
+		$published_gmt->setTimeZone( 'GMT' );
 
 		if ( ! is_array( $meta ) ) {
 			$meta = array();
@@ -287,7 +288,7 @@ class Webmention_Item {
 			'comment_date_gmt'     => $published_gmt->format( 'Y-m-d H:i:s' ),
 			'comment_type'         => $this->response_type,
 			'comment_meta'         => array_filter( $this->meta ),
-			'remote_source_mf2'    => $this->get_raw()
+			'remote_source_mf2'    => $this->get_raw(),
 		);
 
 		return apply_filters( 'webmention_item_commentdata_array', array_filter( $comment ), $this );
