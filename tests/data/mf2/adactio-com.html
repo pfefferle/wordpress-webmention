@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="en-ie">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#ffffff" />
+<title>Adactio: Journal—Parsing webmentions</title>
+<meta name="description" content="Hell has frozen over &hellip;you can now comment on my site. But there&rsquo;s a catch." />
+<meta name="author" content="Jeremy Keith" />
+<meta name="robots" content="index,follow" />
+<meta property="og:type" content="article" />
+<meta property="article:author" content="Jeremy Keith" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:image" property="og:image" content="https://adactio.com/images/photo-300.jpg" />
+<meta name="twitter:site" content="@adactio" />
+<meta name="twitter:site:id" content="11250" />
+<meta name="twitter:creator" content="@adactio" />
+<meta name="twitter:creator:id" content="11250" />
+<meta name="twitter:url" property="og:url" content="https://adactio.com/journal/6495" />
+<meta name="twitter:title" property="og:title" content="Parsing webmentions" />
+<meta name="twitter:description" property="og:description" content="Hell has frozen over &hellip;you can now comment on my site. But there&rsquo;s a catch." />
+<link rel="canonical" href="https://adactio.com/journal/6495">
+<link rel="alternate amphtml" type="text/html" href="https://adactio.com/journal/6495/amp" />
+<link rel="me" href="mailto:jeremy@adactio.com" />
+<link rel="me" href="sms:+447792069292" />
+<link rel="me" href="ni:///sha-256;y5LuBRUHdxOlutHxDS2OnyEHuyFDai-rTxWMTuauXlI?ct=application/x-x509-user-cert" />
+<link rel="webmention" href="https://adactio.com/webmention" />
+<link rel="authorization_endpoint" href="https://indieauth.com/auth" />
+<link rel="token_endpoint" href="https://tokens.indieauth.com/token" />
+<link rel="micropub" href="https://adactio.com/micropub" />
+<link rel="search" type="application/opensearchdescription+xml" href="/opensearch.xml" title="Adactio" />
+<link rel="openid.server" href="https://indieauth.com/openid" />
+<link rel="openid.delegate" href="https://adactio.com/" />
+<link rel="alternate" type="application/rss+xml" title="Journal RSS" href="/journal/rss" />
+<link rel="alternate" type="application/rss+xml" title="Links RSS" href="/links/rss" />
+<link rel="alternate" type="application/rss+xml" title="Articles RSS" href="/articles/rss" />
+<link rel="alternate" type="application/rss+xml" title="Notes RSS" href="/notes/rss" />
+<link rel="alternate" type="application/rss+xml" title="Journal, links, articles and notes RSS" href="/rss/" />
+<link rel="alternate" type="application/json" title="Journal JSON Feed" href="/journal/feed.json" />
+<link rel="alternate" type="application/json" title="Links JSON Feed" href="/links/feed.json" />
+<link rel="alternate" type="application/json" title="Articles JSON Feed" href="/articles/feed.json" />
+<link rel="alternate" type="application/json" title="Notes JSON Feed" href="/notes/feed.json" />
+<link rel="author" href="/about/myself" title="About the author" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" type="image/png" />
+<link rel="shortcut icon" href="/icon.png" sizes="300x300" type="image/png" />
+<link rel="icon" href="/favicon-96x96.png" sizes="96x96" type="image/png" />
+<link rel="icon" href="/favicon-32x32.png" sizes="32x32" type="image/png" />
+<link rel="icon" href="/favicon-16x16.png" sizes="16x16" type="image/png" />
+<link rel="manifest" href="/manifest.json" />
+<link rel="stylesheet" href="/skins/default/global.css" />
+<link rel="stylesheet" href="/includes/css/print.css" media="print" title="print" />
+
+<!-- Ah, I see you want a peek at the source code. -->
+<!-- That's the great thing about the web: -->
+<!-- reverse engineering. -->
+<!-- If you have any questions, feel free to write to me: -->
+<!-- jeremy at adactio dot com -->
+
+</head>
+<body>
+
+<!-- Begin with the logo -->
+
+<div id="logo">
+<a href="//adactio.com" title="Home"><span>adactio</span></a>
+</div>
+
+<header role="banner">
+
+<!-- Show any nice pictures here -->
+
+<div role="presentation">
+<div class="journal"></div>
+</div>
+
+<!-- Now we have the navigation -->
+
+<div role="navigation">
+
+<nav>
+<ul>
+<li><a aria-current="location" class="here" href="/journal/" title="My thoughts and ramblings">Journal</a></li>
+<li><a href="/links/" title="Handpicked hyperlinks">Links</a></li>
+<li><a href="/articles/" title="Longer thoughts and ramblings">Articles</a></li>
+<li><a href="/notes/" title="Brief observations">Notes</a></li>
+<li><a href="/about/" title="Background information">About</a></li>
+</ul>
+</nav>
+
+</div>
+
+</header>
+
+<!-- Here's the main content -->
+
+<main role="main">
+<div class="h-entry">
+<!-- Hell has frozen over &hellip;you can now comment on my site. But there&rsquo;s a catch. -->
+
+<h1 class="p-name">
+Parsing webmentions
+</h1>
+<h2>
+<time class="dt-published" datetime="2013-09-15T23:49:25">
+September 15th, 2013
+</time>
+</h2>
+
+<div class="e-content">
+<p>Thanks to everyone who helped me <a href="http://adactio.com/journal/6469/">test webmentions</a> that I hacked together at <a href="http://indiewebcamp.com/">Indie Web Camp</a> last weekend.</p>
+
+<p>Let me explain what <a href="http://webmention.org/">web mentions</a> are all about&hellip;</p>
+
+<p>Basically, it&rsquo;s an equivalent to pingback. Let&rsquo;s say I write something here on adactio.com. Suppose that prompts you to write something in response on your own site. A <a href="http://webmention.org/">web mention</a> is a way for you to let me know that your response exists.</p>
+
+<p>If you look in the <code>head</code> of any of my journal posts, you&rsquo;ll see this <code>link</code> element:</p>
+
+<pre><code>&lt;link rel="webmention" href="http://adactio.com/webmention.php" /&gt;
+</code></pre>
+
+<p>That&rsquo;s my web mention endpoint: <a href="http://adactio.com/webmention.php">http://adactio.com/webmention.php</a> &hellip;it&#8217;s kind of like a <a href="http://en.wikipedia.org/wiki/Webhook">webhook</a>: a URL that&rsquo;s intended to be hit by machines rather than people. So when you publish your response to my post, you ping that URL with a POST request that sends two parameters:</p>
+
+<ol>
+<li><code>target</code>: the URL of my post and</li>
+<li><code>source</code>: the URL of your response.</li>
+</ol>
+
+<p>Ideally your own CMS or blogging system would take care of doing the pinging, but until that&rsquo;s more widely implemented, I&rsquo;m providing <a href="https://gist.github.com/adactio/6575229">this form</a> at the end of each of my posts:</p>
+
+<script src="https://gist.github.com/adactio/6575229.js"></script>
+
+<p>Either way, once you ping my web mention endpoint&mdash;discoverable through that <code>link rel="webmention"</code>&mdash;with those two parameters, I just need to confirm that your post does indeed contain a link to my post&mdash;by making a <a href="http://en.wikipedia.org/wiki/CURL">cURL</a> request and parsing your source&mdash;and then I return a server response of 202 (Accepted).</p>
+
+<p>Here&rsquo;s the code for <a href="https://gist.github.com/adactio/6484118">a minimum viable web mention in PHP</a>.</p>
+
+<script src="https://gist.github.com/adactio/6484118.js"></script>
+
+<p>That&rsquo;s as far as I got at Indie Web Camp but it was enough for me to start collecting responses to posts.</p>
+
+<p><a href="https://www.flickr.com/photos/adactio/9739046079/"><img src="https://farm8.staticflickr.com/7292/9739046079_03c2f7a0e9_c.jpg" alt="Webmentions as links"></a></p>
+
+<p>The next step is to do something with the responses. After all, I&rsquo;ve already got the source of each response from those cURL requests.</p>
+
+<p><a href="http://waterpigs.co.uk/">Barnaby</a> has a written a nice straightforward <a href="https://github.com/indieweb/php-mf2">microformats parser in PHP</a>. I&rsquo;m using that to check the cURLed source for any responses that have been marked up using <a href="http://microformats.org/wiki/h-entry">h-entry</a>. That&rsquo;s one of the <a href="http://microformats.org/wiki/microformats2">microformats 2</a> vocabularies&mdash;a much simpler way of writing structured content with microformats.</p>
+
+<p><a href="http://aaronparecki.com/replies/2013/09/08/1/indiewebcampuk-webmention">Aaron</a>, <a href="http://example.com/webmention/target/placeholder">Amber</a>, and <a href="http://waterpigs.co.uk/notes/4RzBAg/">Barnaby</a> all sent responses that were marked up with <a href="http://microformats.org/wiki/h-entry">h-entry</a> so now their responses appear in full.</p>
+
+<p><a href="http://example.com/webmention/target/placeholder"><img src="https://farm8.staticflickr.com/7379/9739045839_44b74fcf90_c.jpg" alt="Webmentions as comments"></a></p>
+
+<p>So there you have it. Comments are now open on every <a href="http://adactio.com/journal">journal</a> post on adactio.com &hellip;the only catch is that you have to write the comment on your own site. And if you want the content of your post to appear here (instead of just a link) then update your blog post template to include a handful of <a href="http://microformats.org/wiki/h-entry">h-entry</a> classes.</p>
+
+<p>Feel free to use this post as a test. Mark up your blog with h-entry, write a post that links to this URL, and enter the URL of your post in the form below.</p>
+
+</div>
+
+<footer>
+<p class="meta">
+<time datetime="2013-09-15T23:49:25Z">
+11:49pm
+</time>
+</p>
+<p class="meta">
+Tagged with
+<a rel="tag" href="/journal/tags/indieweb">indieweb</a>
+<a rel="tag" href="/journal/tags/webmentions">webmentions</a>
+<a rel="tag" href="/journal/tags/microformats">microformats</a>
+<a rel="tag" href="/journal/tags/comments">comments</a>
+<a rel="tag" href="/journal/tags/blogging">blogging</a>
+<a rel="tag" href="/journal/tags/code">code</a>
+<a rel="tag" href="/journal/tags/parsing">parsing</a>
+</p>
+</footer>
+
+<p>
+<a rel="prev" href="/journal/6507" title="CERN and the line-mode browser">&laquo; Newer</a>
+<a rel="next" href="/journal/6488" title="Smashing">Older &raquo;</a>
+</p>
+
+<form method="post" action="/webmention">
+<p>Have you published a response to this? <label for="webmention-source">Let me know the <abbr title="Uniform Resource Locator">URL</abbr></label>:</p>
+<input type="url" name="source" id="webmention-source" />
+<input type="hidden" name="target" value="https://adactio.com/journal/6495" />
+<button type="submit">Ping!</button>
+</form>
+
+<section>
+<h2>Responses</h2>
+<article class="p-comment h-entry" id="comment469">
+
+<h3>
+<a class="p-name u-url" href="http://tantek.com/2013/258/t1/parsing-webmentions-explanation-how-to-receive">
+Tantek &Ccedil;elik
+</a>
+</h3>
+
+<div class="e-content">
+<p>&quot;Parsing Webmentions&quot; by @adactio: <a href="http://adactio.com/journal/6495/">http://adactio.com/journal/6495/</a> A step-by-step explanation of how to receive #webmentions and incremental steps you can take afterwards like: * displaying links to posts that mention yours * displaying such posts in their entirety with attribution Well done Jeremy.</p>
+
+</div>
+
+<footer>
+<p class="meta">
+<a href="#comment469" rel="bookmark">#</a>
+Posted by
+<cite class="h-card p-author">
+<a class="u-url p-name" href="http://tantek.com/2013/258/t1/parsing-webmentions-explanation-how-to-receive">
+Tantek &Ccedil;elik</a>
+</cite>
+on
+<abbr class="dt-published" title="2013-09-15T16:09:00">
+Sunday,
+September 15th, 2013
+at
+4:09pm
+</abbr>
+</p>
+</footer>
+
+</article>
+<article class="p-comment h-entry" id="comment470">
+
+<h3>
+<a class="p-name u-url" href="http://indiewebcamp.com/irc/2013-09-15/line/1379287306">
+aaronpk
+</a>
+</h3>
+
+<div class="e-content">
+<p>adactio: this is awesome! http://adactio.com/journal/6495/</p>
+
+</div>
+
+<footer>
+<p class="meta">
+<a href="#comment470" rel="bookmark">#</a>
+Posted by
+<cite class="h-card p-author">
+<a class="u-url p-name" href="http://indiewebcamp.com/irc/2013-09-15/line/1379287306">
+aaronpk</a>
+</cite>
+on
+<abbr class="dt-published" title="2013-09-15T16:21:46">
+Sunday,
+September 15th, 2013
+at
+4:21pm
+</abbr>
+</p>
+</footer>
+
+</article>
+<article class="p-comment h-entry" id="comment471">
+
+<h3>
+<a class="p-name u-url" href="http://thatemil.com/blog/2013/09/16/webmentioning-adactio/">
+Emil Bj&ouml;rklund
+</a>
+</h3>
+
+<div class="e-content">
+<p>Jeremy has recently <a href="http://adactio.com/journal/6495/">implemented Webmention on adactio.com</a>, and posted an explanation of the small piece of code involved. I I love the simplicity of <a href="http://webmention.org/">Webmention</a>, and I love the <a href="http://indiewebcamp.com/">Indieweb</a> idea of connecting our conversations in the simplest possible way whilst still publishing to our own sites, <a href="http://nomoresharecropping.org/">owning our data</a>. I intend to implement it on this site as soon as I can: both to test it out, and to offer a way of commenting without all the hassle of actually managing comments (sort of).</p> <p>I do have one teensy tiny criticism though: what&#8217;s that little bit of tech-specific junk doing in the Webmention URL, Jeremy? &#8220;Dot PHP&#8221;? Cool URI:s don&#8217;t change, but publishing platforms and script languages do, right? Excuse me sir, your CMS is showing! :-)</p>
+
+</div>
+
+<footer>
+<p class="meta">
+<a href="#comment471" rel="bookmark">#</a>
+Posted by
+<cite class="h-card p-author">
+<a class="u-url p-name" href="http://thatemil.com/blog/2013/09/16/webmentioning-adactio/">
+Emil Bj&ouml;rklund</a>
+</cite>
+on
+<abbr class="dt-published" title="2013-09-16T10:24:01">
+Monday,
+September 16th, 2013
+at
+10:24am
+</abbr>
+</p>
+</footer>
+
+</article>
+<article class="p-comment h-entry" id="comment472">
+
+<h3>
+<a class="p-name u-url" href="http://kevinbeynon.com/article/34/webmentions_and_the_real_social_web">
+Kevin Beynon
+</a>
+</h3>
+
+<div class="e-content">
+<p>In 2007 and 2011 I wrote a pair of articles where I tried to articulate my thoughts on what I saw as the dawning <em>social web</em>. The earliest article was <a href="http://kevinbeynon.com/article/20/googles_open_social_facebook_myspace_project">about Google&#8217;s OpenSocial API</a>, and the latter, about what I saw as <a href="http://kevinbeynon.com/article/28/have_google_just_demonstrated_the_worlds_biggest_social_network">Google&#8217;s new social network</a>, built around profiles, <em>rel=me</em> and Buzz.</p> <p>Neither came to pass. OpenSocial died a slow, painful death, while Buzz was kicked in the teeth, then taken out back and shot. But, what they demonstrated was Google&#8217;s attempts at socialising the web itself. Of course, this dream died when Google+ was released as a Facebook-clone and Google returned to only being an advertising company.</p> <p>But, others have been continued working on freeing the web for us.</p> <p>IndieWeb</p> <p>Individuals like <a href="http://tantek.com/">Tantek &Ccedil;elik</a>, <a href="http://waterpigs.co.uk/">Barnaby Walters</a>, <a href="http://adactio.com/">Jeremy Keith</a> and many others are tirelessly working on ensuring that the content <strong>we</strong> create is recognised as <strong>ours</strong>, controlled by <strong>us</strong> and, in the end, <strong>owned by us</strong>. This work is best articulated by the <a href="http://indiewebcamp.com/principles">principles of the IndieWeb</a>.</p> <p>One of the latest pieces of work developed by Jeremy Keith is <a href="http://adactio.com/journal/6495/"><strong>webmentions</strong></a>.</p> <p>Webmentions</p> <p>Webmentions allows <em>conversations</em>, that would usually occur in comments, to take place on your own website. Pinging back responses to the original article allows readers to follow the discussion of articles and comments, while the content itself continues to be hosted on the respondent&#8217;s website and <em>owned by them</em> - fulfilling the IndieWeb principles.</p> <p>Google Buzz performed this kind of aggregation and connecting. It allowed conversations to happen across the web and be followed in one place.</p> <p>Webmentions picks up where Buzz left off and adds the ability to host the conversation itself to the mix.</p> <p>A fantastic tool that I can&#8217;t wait to implement on this site.</p>
+
+</div>
+
+<footer>
+<p class="meta">
+<a href="#comment472" rel="bookmark">#</a>
+Posted by
+<cite class="h-card p-author">
+<a class="u-url p-name" href="http://kevinbeynon.com/article/34/webmentions_and_the_real_social_web">
+Kevin Beynon</a>
+</cite>
+on
+<abbr class="dt-published" title="2013-09-16T11:36:01">
+Monday,
+September 16th, 2013
+at
+11:36am
+</abbr>
+</p>
+</footer>
+
+</article>
+<article class="p-comment h-entry" id="comment473">
+
+<h3>
+<a class="p-name u-url" href="http://inkdroid.org/journal/2013/09/16/mentioning-webmention/">
+inkdroid.org</a>
+</h3>
+
+<div class="e-content">
+
+
+</div>
+
+<footer>
+<p class="meta">
+<a href="#comment473" rel="bookmark">#</a>
+<abbr class="dt-published" title="2013-09-16T19:03:42">
+Monday,
+September 16th, 2013
+at
+7:03pm
+</abbr>
+</p>
+</footer>
+
+</article>
+<article class="p-comment h-entry" id="comment476">
+
+<h3>
+<a class="p-name u-url" href="http://waterpigs.co.uk/notes/4SFH11/">
+Barnaby Walters
+</a>
+</h3>
+
+<div class="e-content">
+<p><a class="auto-link h-x-username" href="https://twitter.com/sandeepshetty">@sandeepshetty</a> <a class="auto-link h-x-username" href="https://twitter.com/pfefferle">@pfefferle</a> <a class="h-card" href="http://cweiske.de">cweiske</a> Something new to consider: <a class="h-card" data-at-name="adactio" href="http://http://adactio.com" rel="">Jeremy Keith</a> added a webmention sending form to his journal entries to help people who&rsquo;s websites don&rsquo;t support webmention already. Being able to test and use webmention through a human visible, interactable form is a huge benefit of using HTTP form encoded data.</p> <p>We can make this an even stronger case by encouraging success and error responses to be full HTML documents with helpful copy.</p> <p>See also
+* <a class="auto-link" href="http://tantek.com/2013/258/t2/web-protocols-should-use-http-params-no-xml">http://tantek.com/2013/258/t2/web-protocols-should-use-http-params-no-xml</a>
+* <a class="auto-link" href="http://adactio.com/journal/6469/">http://adactio.com/journal/6469/</a>
+* <a class="auto-link" href="http://adactio.com/journal/6495/">http://adactio.com/journal/6495/</a></p>
+
+</div>
+
+<footer>
+<p class="meta">
+<a href="#comment476" rel="bookmark">#</a>
+Posted by
+<cite class="h-card p-author">
+<a class="u-url p-name" href="http://waterpigs.co.uk/notes/4SFH11/">
+Barnaby Walters</a>
+</cite>
+on
+<abbr class="dt-published" title="2013-09-27T17:01:01">
+Friday,
+September 27th, 2013
+at
+5:01pm
+</abbr>
+</p>
+</footer>
+
+</article>
+<article class="p-comment h-entry" id="comment478">
+
+<h3>
+<a class="p-name u-url" href="http://yatil.net/webmentions-adactiocom">
+yatil.net</a>
+</h3>
+
+<div class="e-content">
+
+
+</div>
+
+<footer>
+<p class="meta">
+<a href="#comment478" rel="bookmark">#</a>
+<abbr class="dt-published" title="2013-10-07T14:42:56">
+Monday,
+October 7th, 2013
+at
+2:42pm
+</abbr>
+</p>
+</footer>
+
+</article>
+<article class="p-comment h-entry" id="comment480">
+
+<h3>
+<a class="p-name u-url" href="http://aaronparecki.com/replies/2013/11/04/3/indieweb-webmention">
+Aaron Parecki
+</a>
+</h3>
+
+<div class="e-content">
+<p><a href="http://werd.io/">@benwerd</a> Thanks! Credit for the inline webmention box goes to <a href="http://adactio.com/">@adactio</a>! <a href="http://adactio.com/journal/6495/">http://adactio.com/journal/6495/</a> </p>
+
+</div>
+
+<footer>
+<p class="meta">
+<a href="#comment480" rel="bookmark">#</a>
+Posted by
+<cite class="h-card p-author">
+<a class="u-url p-name" href="http://aaronparecki.com/replies/2013/11/04/3/indieweb-webmention">
+Aaron Parecki</a>
+</cite>
+on
+<abbr class="dt-published" title="2013-11-04T19:47:11">
+Monday,
+November 4th, 2013
+at
+7:47pm
+</abbr>
+</p>
+</footer>
+
+</article>
+<article class="p-comment h-entry" id="comment483">
+
+<h3>
+<a class="p-name u-url" href="http://kartikprabhu.com/article/no-comment">
+kartikprabhu.com</a>
+</h3>
+
+<div class="e-content">
+<p>This site does not have a way for readers to post comments under each article. And I plan not to implement a comment section. Instead, now Parallel Transport accepts <a href="http://webmention.org/">webmentions</a>, so you can write and publish responses on your own place on the web and link it back to the original article here. In fact this very article appears as <a href="http://adactio.com/journal/6495/#comment483">a response on Jeremy Keith&rsquo;s post</a>.</p> <p>Comments &amp; Feedback
+Most comments are useless. They do not contribute much to the original content. They&rsquo;re mostly one-line quips about liking or disliking the post. No context, no feedback, no thought. Having a comment form makes it very easy to post a random comment on some website. Combine that with the anonymity it affords, comment sections are breeding grounds for trolls, unconstructive arguments, flaming, name-calling, and shouting matches. No wonder <em>the bottom-half of the internet</em> is so despised.
+Second; why this expectation that every blog must be a discussion forum? Public discussions can be had on social platforms like Facebook, Twitter, Google+.
+If you really have some response to what I write, you can use email or catch me on one of the aforementioned social site places. Or better yet, write your <em>own</em> post about it on your <em>own</em> blog, site, journal, social-network-thingie!</p> <p>You write on your site; I write on mine. That&rsquo;s a response.</p> <p>&mdash;John Gruber on <a href="http://daringfireball.net/2010/06/whats_fair">I&rsquo;ll Tell You What&rsquo;s Fair</a>If your response, adds something of value to the original content, I&rsquo;ll post it here. I have transfered many such valued comments over from my old blog. Not all of them agreed with what I had to say, but they were considered responses, instead of just &lsquo;I like it!&rsquo; or &lsquo;This is shit!&rsquo;.
+Webmention
+So suppose you have published a response on your own site. Webmention is a way to notify me of your response. You send the URL of your response along with the URL of my original article as a POST request to my web server. My server verifies that the response post exists and that it links to the original article.
+Now, I can do something with your response. I could simply link to it below my article, or repost your entire response. I have chosen to take a middle-ground and display a little snippet with a nice link back to your original post. If all goes well, you would have responded to my article with one of <em>your own</em>, published on <em>your own</em> site, and still have a discussion that links back and forth.
+Since, most web-publishing platforms don&rsquo;t support sending mentions automatically, <a class="u-in-reply-to" href="http://adactio.com/journal/6495/">following Jeremy Keith</a>, I have a small form at the bottom of every article that you can use to send me the link to your response post.
+If you are interested in the details of how this works, take a look at <a href="http://webmention.org/">the webmention spec</a>, and the informative discussion at <a href="http://indiewebcamp.com/webmention">the IndieWeb</a>. If, like me, you use and love Python, <a href="http://vrypan.net/">Panayotis Vryonis</a> has written a <a href="https://github.com/vrypan/webmention-tools">good tool</a> to handle webmentions. You can also see <a href="https://github.com/kartikprabhu/webmention">my own webmention code</a>, which extends Vryonis&rsquo; webmentiontools to do a few more things. Feel free to make suggestions, test, extend and use it. And if you do, let me know. Or better yet, write about it and link it back here!</p> <p>Related reading:
+<a href="http://mattgemmell.com/2012/01/03/comments-still-off/">Comments still off</a> &mdash;Matt Gemmell
+<a href="http://sethgodin.typepad.com/seths_blog/2006/06/why_i_dont_have.html">Why I dont&rsquo;t have comments</a> &mdash;Seth Godin
+<a href="http://blog.vrypan.net/2013/11/11/why-you-cant-comment-here/">Why you can&rsquo;t comment here</a>&mdash;Panayotis Vryonis
+<a href="http://adactio.com/journal/6495/">Parsing webmentions</a> &mdash; Jeremy Keith. Also, read the wonderful webmention-ed articles at the end.
+<a href="http://indiewebcamp.com/principles">IndieWeb Principles</a>
+<a href="http://en.wikipedia.org/wiki/Linkback">Comparison table of linkback methods</a> on Wikipedia.</p>
+
+</div>
+
+<footer>
+<p class="meta">
+<a href="#comment483" rel="bookmark">#</a>
+<abbr class="dt-published" title="2013-11-20T00:00:00">
+Wednesday,
+November 20th, 2013
+at
+12:00am
+</abbr>
+</p>
+</footer>
+
+</article>
+<article class="p-comment h-entry" id="comment486">
+
+<h3>
+<a class="p-name u-url" href="http://colin.getbarley.com/6851/the-blog-isn-t-dead-it-is">
+colin.getbarley.com</a>
+</h3>
+
+<div class="e-content">
+
+
+</div>
+
+<footer>
+<p class="meta">
+<a href="#comment486" rel="bookmark">#</a>
+<abbr class="dt-published" title="2013-12-19T17:17:02">
+Thursday,
+December 19th, 2013
+at
+5:17pm
+</abbr>
+</p>
+</footer>
+
+</article>
+<article class="p-comment h-entry" id="comment515">
+
+<h3>
+<a class="p-name u-url" href="http://www.vanderwal.net/random/entrysel.php?blog=2030">
+www.vanderwal.net</a>
+</h3>
+
+<div class="e-content">
+
+
+</div>
+
+<footer>
+<p class="meta">
+<a href="#comment515" rel="bookmark">#</a>
+<abbr class="dt-published" title="2014-03-16T01:52:11">
+Sunday,
+March 16th, 2014
+at
+1:52am
+</abbr>
+</p>
+</footer>
+
+</article>
+<article class="p-comment h-entry" id="comment5010">
+
+<h3>
+<a class="p-name u-url" href="http://prettygoodhat.com/2014-08-24-tuning_up_my_piece_of_the_indieweb.html">
+prettygoodhat.com</a>
+</h3>
+
+<div class="e-content">
+<p>Tuning up my Little Piece of the Indieweb</p>
+
+</div>
+
+<footer>
+<p class="meta">
+<a href="#comment5010" rel="bookmark">#</a>
+<abbr class="dt-published" title="2014-08-24T21:46:25">
+Sunday,
+August 24th, 2014
+at
+9:46pm
+</abbr>
+</p>
+</footer>
+
+</article>
+<article class="p-comment h-entry" id="comment19517">
+
+<h3>
+<a class="p-name u-url" href="http://davidpea.ch/journal/739">
+davidpea.ch</a>
+</h3>
+
+<div class="e-content">
+<p>Thanks to Jeremy Keith for providing <a href="https://adactio.com/journal/6495">this URL</a> for testing h-entry markup.</p>
+
+</div>
+
+<footer>
+<p class="meta">
+<a href="#comment19517" rel="bookmark">#</a>
+<abbr class="dt-published" title="2015-06-16T11:48:24">
+Tuesday,
+June 16th, 2015
+at
+11:48am
+</abbr>
+</p>
+</footer>
+
+</article>
+<article class="p-comment h-entry" id="comment21498">
+
+<h3>
+<a class="p-name u-url" href="http://davidpea.ch/notes/1473">
+davidpea.ch</a>
+</h3>
+
+<div class="e-content">
+<p class="p-name">Testing my automated webmention sending to posts I reply to. Fingers crossed.</p>
+
+</div>
+
+<footer>
+<p class="meta">
+<a href="#comment21498" rel="bookmark">#</a>
+<abbr class="dt-published" title="2015-08-19T21:57:39">
+Wednesday,
+August 19th, 2015
+at
+9:57pm
+</abbr>
+</p>
+</footer>
+
+</article>
+<article class="p-comment h-entry" id="comment21630">
+
+<h3>
+<a class="p-name u-url" href="http://davidpea.ch/notes/1493">
+davidpea.ch</a>
+</h3>
+
+<div class="e-content">
+<p class="p-name">Testing my grabbing of reply context with sending a webmention.</p>
+
+</div>
+
+<footer>
+<p class="meta">
+<a href="#comment21630" rel="bookmark">#</a>
+<abbr class="dt-published" title="2015-08-24T19:32:28">
+Monday,
+August 24th, 2015
+at
+7:32pm
+</abbr>
+</p>
+</footer>
+
+</article>
+<article class="p-comment h-entry" id="comment21632">
+
+<h3>
+<a class="p-name u-url" href="http://davidpea.ch/notes/1494">
+davidpea.ch</a>
+</h3>
+
+<div class="e-content">
+<p class="p-name">Testing again. Apologies for the spamming.</p>
+
+</div>
+
+<footer>
+<p class="meta">
+<a href="#comment21632" rel="bookmark">#</a>
+<abbr class="dt-published" title="2015-08-24T19:41:27">
+Monday,
+August 24th, 2015
+at
+7:41pm
+</abbr>
+</p>
+</footer>
+
+</article>
+<article class="p-comment h-entry" id="comment21633">
+
+<h3>
+<a class="p-name u-url" href="http://davidpea.ch/notes/1495">
+davidpea.ch</a>
+</h3>
+
+<div class="e-content">
+<p class="p-name">Testing once more as a queued job. Auto-webmention sending.</p>
+
+</div>
+
+<footer>
+<p class="meta">
+<a href="#comment21633" rel="bookmark">#</a>
+<abbr class="dt-published" title="2015-08-24T19:58:13">
+Monday,
+August 24th, 2015
+at
+7:58pm
+</abbr>
+</p>
+</footer>
+
+</article>
+<article class="p-comment h-entry" id="comment21727">
+
+<h3>
+<a class="p-name u-url" href="http://davidpea.ch/notes/1508">
+davidpea.ch</a>
+</h3>
+
+<div class="e-content">
+<p class="p-name"><i class="fa fa-reply" style="color:#d56000"></i>&nbsp;Jeremy&#8217;s probably cursing me with my spamming of his page for my webmention testing.</p>
+
+</div>
+
+<footer>
+<p class="meta">
+<a href="#comment21727" rel="bookmark">#</a>
+<abbr class="dt-published" title="2015-08-27T18:19:44">
+Thursday,
+August 27th, 2015
+at
+6:19pm
+</abbr>
+</p>
+</footer>
+
+</article>
+<article class="p-comment h-entry" id="comment28026">
+
+<h3>
+<a class="p-name u-url" href="http://bupk.es/known/2016/hi-jeremy-just-testing-my-webmentions">
+Matt
+</a>
+</h3>
+
+<div class="e-content">
+<p class="p-name">Hi Jeremy, just testing my webmentions&#8230;</p>
+
+</div>
+
+<footer>
+<p class="meta">
+<a href="#comment28026" rel="bookmark">#</a>
+Posted by
+<cite class="h-card p-author">
+<a class="u-url p-name" href="http://bupk.es/known/2016/hi-jeremy-just-testing-my-webmentions">
+Matt</a>
+</cite>
+on
+<abbr class="dt-published" title="2016-02-01T21:02:12">
+Monday,
+February 1st, 2016
+at
+9:02pm
+</abbr>
+</p>
+</footer>
+
+</article>
+<article class="p-comment h-entry" id="comment33349">
+
+<h3>
+<a class="p-name u-url" href="https://twitter.com/Chris_Perry_61/status/736092168192811009">
+Chris Perry
+</a>
+</h3>
+
+<div class="e-content">
+<p><a href="https://twitter.com/adactio">@adactio</a> <a href="https://twitter.com/adactioJournal">@adactioJournal</a> Thanks Jeremy</p>
+
+</div>
+
+<footer>
+<p class="meta">
+<a href="#comment33349" rel="bookmark">#</a>
+Posted by
+<cite class="h-card p-author">
+<a class="u-url p-name" href="https://twitter.com/Chris_Perry_61/status/736092168192811009">
+Chris Perry</a>
+</cite>
+on
+<abbr class="dt-published" title="2016-05-27T08:10:23">
+Friday,
+May 27th, 2016
+at
+8:10am
+</abbr>
+</p>
+</footer>
+
+</article>
+<article class="p-comment h-entry" id="comment49317">
+
+<h3>
+<a class="p-name u-url" href="https://allinthehead.com/retro/378/implementing-webmentions">
+Drew McLellan
+</a>
+</h3>
+
+<div class="e-content">
+<p>In a world before social media, a lot of online communities existed around blog comments. The particular community I was part of &ndash; web standards &ndash; was all built up around the personal websites of those involved.</p> <p>As social media sites gained traction, those communities moved away from blog commenting systems. Instead of reacting to a post underneath the post, most people will now react with a URL someplace else. That might be a tweet, a Reddit post, a Facebook emission, basically anywhere that combines an audience with the ability to comment on a URL.</p> <p></p> <p lang="en" dir="ltr">Oh man, the memories of dynamic text replacement and the lengths we went to just to get some non-standard text. <a href="https://t.co/f0whYW6hh1">https://t.co/f0whYW6hh1</a></p>&mdash; One Bright Light &#9763;&#65039; (@onebrightlight) <a href="https://twitter.com/onebrightlight/status/885325418924056576">July 13, 2017</a> <p>Whether you think that&rsquo;s a good thing or not isn&rsquo;t really worth debating &ndash; it&rsquo;s just the way it is now, things change, no big deal. However, something valuable that has been lost is the ability to see others&rsquo; reactions when viewing a post. Comments from others can add so much to a post, and that overview is lost when the comments exist elsewhere.</p> This is what webmentions do <p>Webmention is a <a href="https://www.w3.org/TR/webmention/">W3C Recommendation</a> that solves a big part of this. It describes a system for one site to notify another when it links to it. It&rsquo;s similar in concept to <a href="https://en.wikipedia.org/wiki/Pingback">Pingback</a> for those who remember that, just with all the lessons learned from Pingback informing the design.</p> <p>The flow goes something like this.</p> <ol>
+<li>Frankie posts a blog entry.</li> <li>Alex has thoughts in response, so also posts a blog entry linking to Frankie&rsquo;s.</li> <li>Alex&rsquo;s publishing software finds the link and fetches Frankie&rsquo;s post, finding the URL of Frankie&rsquo;s Webmention endpoint in the document.</li> <li>Alex&rsquo;s software sends a notification to the endpoint.</li> <li>Frankie&rsquo;s software then fetches Alex&rsquo;s post to verify that it really does link back, and then chooses how to display the reaction alongside Frankie&rsquo;s post.</li>
+</ol>
+<p>The end result is that by being notified of the external reaction, the publisher is able to aggregate those reactions and collect them together with the original content.</p> <p>The reactions can be comments, but also likes or reposts, which is quite a nice touch. For the nuts and bolts of how that works, <a href="https://adactio.com/journal/6495">Jeremy explains it</a> better than I could.</p> Beyond blogs <p>Not two minutes ago was I talking about the reactions occurring in places <em>other</em> than blogs, so what about that, hotshot? It would be totally possible for services like Twitter and Facebook to implement Webmention themselves, in the meantime there are services like <a href="https://brid.gy">Bridgy</a> that can act as a proxy for you. They&rsquo;ll monitor your social feed and then send corresponding webmentions as required. Nice, right?</p> Challenges <p>I&rsquo;ve been implementing Webmention for the <a href="https://grabaperch.com/">Perch</a> Blog add-on, which has by and large been straightforward. For sending webmentions, I was able to make use of Aaron Parecki&rsquo;s <a href="https://github.com/indieweb/mention-client-php">PHP client</a>, but the process for receiving mentions is very much implementation-specific so you&rsquo;re on your own when it comes to how to actually deal with an incoming mention.</p> Keeping it asynchronous <p>In order for your mention endpoint not to be a vector for a DoS attack, the spec highly recommends that you make processing of incoming mentions asynchronous. I believe this was a lesson learned from Pingback.</p> <p>In practise that means doing as little work as possible when receiving the mention, just minimally validating it and adding it to a job queue. Then you&rsquo;d have another worker pick up and process those jobs at a rate you control.</p> <p>In Perch we have a central task scheduler, so that&rsquo;s fine for this purpose. My job queue is a basic MySQL database table, and I have a scheduled task to pick up the next job and process it once a minute.</p> I work in publishing, dhaaaling <p>Another issue that popped up for me in Perch was that we didn&rsquo;t have any sort of <em>post published</em> event I could hook into for sending webmentions out to any URLs we link to. Blog posts have a publish status (usually <em>draft</em> or <em>published</em> in 99% of cases) but they also have a publish date which is dynamically filtered to make posts visible when the date is reached.</p> <p>If we sent our outgoing webmentions as soon as a post was marked as published, it still might not be visible on the site due to the date filter, causing the process to fail.</p> <p>The solution was to go back to the task scheduler and again run a task to find newly published posts and fire off a publish event. This is an API event that any other add-on can listen for, so opens up options for us to do this like auto-tweeting of blog posts in the future.</p> Updating reactions <p>A massive improvement of webmentions over most commenting systems is the affordance in the spec for <em>updating</em> a reaction. If you change a post, your software will re-notify the URLs you link to, sending out more webmention notifications.</p> <p>A naive implementation would then pull in duplicate content, so it&rsquo;s important to understand this process and know how to deal with updating (or removing) a reaction when a duplicate notification comes along. For us, that meant also thinking carefully about the moderation logic to try to do the right thing around deciding which content should be re-moderated when it changes.</p> Finding the target <p>One interesting problem I hit in my endpoint code was trying to figure out which blog post was being reacted to when a mention was received. The mention includes a <em>source URL</em> (the thing linking to you) and a <em>target URL</em> (the URL on your site they link to) which in many cases should be enough.</p> <p>For Perch, we don&rsquo;t actually know what content you&rsquo;re displaying on any given URL. It&rsquo;s a completely flexible system where the CMS doesn&rsquo;t try to impose a structure on your site &ndash; you build the pages you want and pull out the content you want onto those pages. From the URL alone, we can&rsquo;t tell what content is being displayed.</p> <p>This required going back to the spec and confirming two things:</p> <ol>
+<li>The endpoint advertised with a post is scoped to that one URL. i.e. this is the endpoint that should be used for reacting to content on this page. If it&rsquo;s another page, you should check <em>that</em> page for its endpoint.</li> <li>If an endpoint URL has query string parameters, those must be preserved.</li>
+</ol>
+<p>The combination of those two factors means that I can provide an endpoint URL that has the ID of the post built into it. When a mention comes in, I don&rsquo;t need to look at the <em>target</em> but instead the endpoint URL itself.</p> <p>It&rsquo;s possible that Bridgy might not be compliant with the spec on this point, so it&rsquo;s something I&rsquo;m actively testing on this blog first.</p> Comments disabled <p>With that, after about fifteen years of having them enabled, I&rsquo;ve disabled comments on this blog. I&rsquo;m still displaying all the old comments, of course, but for the moment at least I&rsquo;m only accepting reactions via webmentions.</p>
+
+</div>
+
+<footer>
+<p class="meta">
+<a href="#comment49317" rel="bookmark">#</a>
+Posted by
+<cite class="h-card p-author">
+<a class="u-url p-name" href="https://allinthehead.com/retro/378/implementing-webmentions">
+Drew McLellan</a>
+</cite>
+on
+<abbr class="dt-published" title="2017-07-16T15:25:00">
+Sunday,
+July 16th, 2017
+at
+3:25pm
+</abbr>
+</p>
+</footer>
+
+</article>
+<article class="p-comment h-entry" id="comment53067">
+
+<h3>
+<a class="p-name u-url" href="https://depone.net/2017/09/15/webmention-reaktionen-sichtbar-machen/">
+depone.net</a>
+</h3>
+
+<div class="e-content">
+<p>Reaktionen sichtbar machen Der Austausch &uuml;ber Blogartikel steht f&uuml;r mich schon immer im Mittelpunkt. In den Artikeln werden Ideen, Gedanken und Erfahrungen beschrieben, diese stehen jedoch nicht nur f&uuml;r sich selbst, sondern werden von den Reaktionen der Leserinnen und Leser erg&auml;nzt. Anfangs wurde engagiert kommentiert. Durch Twitter und Facebook fand schlie&szlig;lich der Austausch meist auf den entsprechenden Plattformen statt, und beschr&auml;nkte sich in vielen F&auml;llen auf den Ausdruck des Gefallens. Viele Kommentarspalten blieben leer, und die Artikel wirkten leblos. Die Reaktionen darauf war im Blog selbst nicht sichtbar. Social-Buttons mit ihren Tracking-Skripten stellten f&uuml;r mich keine L&ouml;sung dieses Problems dar. Den Austausch &uuml;ber die Inhalte verwandeln sie in Zahlen, die Qualit&auml;t desselben bleibt jedoch weiterhin verborgen. Einen Mehrwert f&uuml;r das Blog und dessen Community stellen sie nicht dar, sondern dienen vor allem den Plattformen als Datenlieferanten. Bereits vor einigen Jahren erfuhr ich von der IndieWeb-Bewegung, die vernetzte Inhalte sichtbar machen wollte, den Zugriff auf die eigenen Daten betonte und an vielen Stellen interessante Projekte hervorbrachte. In diesem Zusammenhang las ich bei Jeremy Keith &uuml;ber Webmentions. Die Annahme &uuml;ber zu wenig Wissen und Zeit zu verf&uuml;gen um mich selbst an die Implementation von Webmentions zu machen, f&uuml;hrte dazu diesen Bereich ruhen zu lassen, und schlie&szlig;lich nichts dergleichen zu unternehmen. Erst als ich im Nachklang der Smashing Conference in Freiburg den Artikel &raquo;Implementing Webmentions&laquo; von Drew McLellan las, fasste ich den Entschluss die Reaktionen auf Inhalte in Blogs endlich wieder sichtbar zu machen. Da ich gerade an ein paar Projekten arbeite die auf WordPress basieren und ich meine eigenen Blogs ebenfalls damit betreibe, widme ich mich an dieser Stelle der Implemantation von Webmention in mit WordPress betriebene und selbst gehostete Blogs. Was ist zu tun? Um Webmention mit WordPress zu benutzen sind vier Schritte n&ouml;tig. Installation des Webmention-Plugins Installation des Plugins f&uuml;r Semantic-Linkbacks Social-Media-Profile via Bridgy mit dem Blog verbinden Das eigene Comment-Template anpassen Das Webmention-Plugin Das Webmention-Plugins von Matthias Pfefferle erweitert die Diskussion-Einstellung eines WordPress-Blogs, und legt die Grundlage daf&uuml;r, dass ein Blog Webmentions senden und empfangen kann. Nachdem das Plugin heruntergeladen, installiert und aktiviert ist stehen unter Einstellungen > Diskussion ein paar weitere Einstellungen zur Verf&uuml;gung. Achte auch darauf, dass die allererste Einstellung &raquo;Versuche, jedes in Beitr&auml;gen verlinkte Weblog zu benachrichtigen&laquo; ausgew&auml;hlt ist. Unter Webmention Settings befinden sich vier Checkboxen und eine Auswahl mit deren Hilfe sich das Verhalten der Webmentions einstellen lassen. Das Plugin f&uuml;r Semantic-Linkbacks Das Plugin f&uuml;r Semantic-Linkbacks bietet die M&ouml;glichkeit die empfangenen Webmentions je nach Typ unterschiedlich zu behandeln. Es weist den empfangenen Erw&auml;hnungen einen entsprechenden Typ &ndash; beispielsweise Like, Repost oder Mention &ndash; zu, der als Filter und f&uuml;r die Styles zur Verf&uuml;gung steht. Eine &Uuml;bersicht der Einstellungen bringt dieses Plugin nicht mit, es verrichtet seine Dienste sobald es aktiviert ist. Im IndieWeb-Wiki erf&auml;hrst Du etwas &uuml;ber die M&ouml;glichkeiten die zugewiesenen Typen in Deinem Theme zu verwenden. Wie ich die Typen verwende beschreibe ich etwas sp&auml;ter in diesem Artikel. Update 15.10.2017: Seit Version 3.5.0 unterst&uuml;tzt dieses Plugin die Darstellung von Likes, Mentions und Reposts in eigenen Listen. Dadurch wurde die Anpassung meines Comment-Template obsolet. Br&uuml;cken bauen Der Dienst Bridgy baut die Br&uuml;cken zwischen Deinen Social-Media-Profilen und Deinem Blog. Er &uuml;berwacht die verbundenen Social-Media-Profile und sendet Erw&auml;hnungen ans Blog. Deine Social-Media-Profile m&uuml;ssen &ouml;ffentlich sein und die URL Deines Blogs muss dort hinterlegt sein. Wichtig ist auch, dass die Post &ouml;ffentlich sind, nur so k&ouml;nnen sie von Bridgy ausgelesen werden. Auf brid.gy w&auml;hlst Du also die Social-Media-Kan&auml;le aus &uuml;ber die Du Erw&auml;hnungen empfangen m&ouml;chtest. Sobald Du Bridgy den Zugriff auf Deine Profile gestattet hast, beginnt es damit alle 30 Minuten nachzusehen ob es dort eine Erw&auml;hnung Deines Blogs gibt. Wird es f&uuml;ndig sendet es die Erw&auml;hnung als Kommentar an Dein Blog. Das Comments-Template Um die Erw&auml;hnungen zu B&uuml;ndeln habe ich mein Comments-Template und das Stylesheet etwas angepasst. Zur Anpassung meines Comment-Templates habe ich mich an diesem Code von Michael Bishop orientiert. Mein aktuelles Comments-Template kannst Du in diesem Gist ansehen. Likes und Reposts sammle ich in einer Liste und verlinke lediglich die Profilbilder mit den jeweiligen Accounts. Danach gebe ich eine Liste der Kommentare aus &ndash; in dieser Liste erscheinen bei mir Antworten von Twitter, Kommentare von Facebook und die klassischen Kommentare. In einer Liste unter den Kommentare gebe ich Erw&auml;hnungen des Artikels in anderen Blogs aus. Verbesserungen Bei meinen ersten Schritten mit Webmention sehe ich Verbesserungspotential in den folgenden Punkten: Links auf den Namen der Autor<em>inn</em>en korrigieren Baumstruktur der Kommentare darstellen Profilbilder optimieren und auf den eigenen Server speichern Den Callback der manuellen Webmention-Eingabe optimieren Ich freue mich von Euch zu h&ouml;ren wenn Ihr Ideen habt wie einer dieser Punkte gel&ouml;st werden kann, aber auch wenn Euch noch weitere Verbesserungen einfallen. Ver&ouml;ffentlicht am 15.09.2017 von Daniel in Blogs, IndieWeb, Internet, WordPress.</p>
+
+</div>
+
+<footer>
+<p class="meta">
+<a href="#comment53067" rel="bookmark">#</a>
+<abbr class="dt-published" title="2017-11-04T22:22:47">
+Saturday,
+November 4th, 2017
+at
+10:22pm
+</abbr>
+</p>
+</footer>
+
+</article>
+<article class="p-comment h-entry" id="comment55634">
+
+<h3>
+<a class="p-name u-url" href="https://blank.groundwork.rocks/blog/webmention-test/">
+Jake Rayson
+</a>
+</h3>
+
+<div class="e-content">
+<p>Nice photo of polytunnel in the last light of 2017<p>But, moreover, a test indeed to see if and how webmentions work over at <a href="https://adactio.com/journal/6495">Jeremy Keith&rsquo;s website</a>. As he says:</p> <p>Feel free to use this post as a test.</p> <p>Thank you for the facilities Jeremy &#128578;.</p></p>
+
+</div>
+
+<footer>
+<p class="meta">
+<a href="#comment55634" rel="bookmark">#</a>
+Posted by
+<cite class="h-card p-author">
+<a class="u-url p-name" href="https://blank.groundwork.rocks/blog/webmention-test/">
+Jake Rayson</a>
+</cite>
+on
+<abbr class="dt-published" title="2018-01-02T00:00:00">
+Tuesday,
+January 2nd, 2018
+at
+12:00am
+</abbr>
+</p>
+</footer>
+
+</article>
+<article class="p-comment h-entry" id="comment55942">
+
+<h3>
+<a class="p-name u-url" href="https://amitgawande.com/journal/exploring-webmention-attempt-1">
+amitgawande.com</a>
+</h3>
+
+<div class="e-content">
+
+
+</div>
+
+<footer>
+<p class="meta">
+<a href="#comment55942" rel="bookmark">#</a>
+<abbr class="dt-published" title="2018-01-25T19:59:36">
+Thursday,
+January 25th, 2018
+at
+7:59pm
+</abbr>
+</p>
+</footer>
+
+</article>
+<article class="p-comment h-entry" id="comment59761">
+
+<h3>
+<a class="p-name u-url" href="http://cdevroe.com/2013/12/19/the-blog-isn-t-dead-it-is/">
+cdevroe.com</a>
+</h3>
+
+<div class="e-content">
+<p>The blog isn&rsquo;t dead. It is just sleeping. December 19, 2013 Jason Kottke, writing for Nieman Journalism Lab: The design metaphor at the heart of the blog format is on the wane as well. Ina piece at The Atlantic, Alexis Madrigal says that the reverse-chronological stream (a.k.a. The Stream, a.k.a. The River of News) is on its way out. Snapchat, with its ephemeral media, is an obvious non-stream app; Madrigal calls it &ldquo;a passing fog.&rdquo; Facebook&rsquo;s News Feed is increasingly organized by importance, not chronology. Pinterest, Digg, and an increasing number of other sites use grid layouts to present information. Twitter is coming to resemble radio news as media outlets repost the same stories throughout the day, ICYMI (in case you missed it). Reddit orders stories by score. The design of BuzzFeed&rsquo;s front page barely matters because most of their traffic comes in from elsewhere. I suggest you read the entire post so that you can see how Kottke has reached the conclusion that the blog is dead. And of course, he&rsquo;s right. The blog of today looks dead. But don&rsquo;t bury it just yet because it may just be sleeping. Me, in late-2011: I believe the blog format is ready for disruption. Perhaps there doesn&rsquo;t need to be &ldquo;the next&rdquo; WordPress, Tumblr, or Blogger for this to happen. Maybe all we really need is a few pioneers to spearhead an effort to change the way blogs are laid-out on the screen. That, of course, is only one small problem facing the blog. As I see it there is another, more important, problem to solve; a way to connect the blogosphere. A set of protocols or standards will need to come along to help connect all publishing platforms together. The incredibly useful features we find inside of networks like Twitter will need to find their way out onto the world wide web. This means bringing actions like following or subscribing, mentioning, citing, link previewing, etc. to the independent web and have them be completely separate from any single service. By the way, &ldquo;independent web&rdquo; generally refers to the web at large regardless of how you choose to publish content on it. Whether you use Barley CMS, Tumblr, Squarespace, or your own hand-written content management system you&rsquo;re publishing onto the web and not into a silo like Facebook where content is generally not shared outside of its walls. Connecting the independent web together is what IndieWebCamp is aspiring to help facilitate. They believe people should own their own data and be allowed to publish content anywhere and it would then be able to be distributed anywhere. The advantages to using Facebook should be brought out onto the web. There should be no real disadvantage to using one platform or another. In fact, there should be an advantage to using your own platform rather than those of a startup that could go out of business at any moment. A good example of this in action are Web Mentions. Like Twitter&rsquo;s @replies a Web Mention allows one URL to notify another URL that it mentioned it. They are the 21st Century&rsquo;s Pingback. Jeremy Keith has a good explanation of how to implement them. Would having a better way to discover a blog&rsquo;s content from any of its pages, as well as a well-supported set of web protocols help bring the blog back from the dead? Maybe. View all posts</p>
+
+</div>
+
+<footer>
+<p class="meta">
+<a href="#comment59761" rel="bookmark">#</a>
+<abbr class="dt-published" title="2018-04-23T20:44:43">
+Monday,
+April 23rd, 2018
+at
+8:44pm
+</abbr>
+</p>
+</footer>
+
+</article>
+<article class="p-comment h-entry" id="comment59900">
+
+<h3>
+<a class="p-name u-url" href="https://chrisruppel.com/blog/receiving-webmentions/">
+Chris Ruppel
+</a>
+</h3>
+
+<div class="e-content">
+<p><a href="https://webmention.net">Webmentions</a> are the &#8220;commenting system&#8221; of the IndieWeb, a set of conventions and web standards that allow more structured independent publishing on the web.</p> <p>Although there&#8217;s an official <a href="https://www.w3.org/TR/webmention/">W3C Recommendation</a>, I followed this <a href="https://github.com/converspace/webmention/blob/master/README.md">guide on GitHub</a> to understand the requirements of the spec, and found some <a href="https://adactio.com/journal/6495">code from Jeremy</a> to be quite helpful in helping me decide how to implement it on my own site.</p> <p>My motivations for receiving Webmentions are to participate in <a href="https://indiewebify.me">IndieWeb</a> and also to reduce my third-party tracking. I&#8217;d been relying on <a href="https://webmention.io">webmention.io</a> to get started quickly, but they&#8217;re also a third-party. By removing Disqus and replacing with self-hosted Webmentions, I have officially eliminated all 3rd party requests. Huzzah!</p> My implementation <p>The nuts and bolts are often specific to your existing tech stack, but mine is a pretty common one for frontend developers: statically generated site, served by Express. I thought about <a href="https://lewisnyman.co.uk/blog/indie-web-camp-2015/">going with a Jekyll plugin like Lewis</a>, but in the end I decided to add a PostgreSQL DB to manage the Webmentions themselves, and manage them separately from my static site generator. I may want to switch generators in the future, and it&#8217;s one less piece that has to be rebuilt at the time of migration.</p> <p>Since I&#8217;m already using Express to serve my site, adding new endpoints is a snap. I added two routes: <code>webmentions/get</code> and <code>webmentions/post</code>. I suppose they could be combined into one but I&#8217;m a complete newbie to API design so maybe chime in below and tell me if my setup is completely daft &#128513;</p> Endpoint for Submissions <p>Perhaps in the future I can get more nuanced with my logic, but for now my server can determine the following outcomes when you <code>POST</code> to the endpoint:</p> <p><code>202</code> &mdash; when the proper Header (<code>application/x-www-form-urlencoded</code>), plus a <code>target</code> and <code>source</code> are present in the Body of the request. Per the guidelines, it immediately returns the status code and does the actual processing of the submission asynchronously, as opposed to waiting until URL fetch, HTML parsing, and DB writes are finished.</p> <p><code>400</code> &mdash; when the request was well-formed, but there was a problem with the data. Most often it&#8217;s because the target URL (my website) wasn&#8217;t found within the HTML response of the source URL.</p> <p><code>500</code> &mdash; obviously sometimes things just go wrong. If you&#8217;re <a href="https://chrisruppel.com/blog/receiving-webmentions/#webmentions">using the form</a> on my site, it will at least take responsibility for the error to avoid making visitors feel as if they&#8217;ve made a mistake.</p> <p>In the interest of shipping a first version and not introducing too much complexity or opportunities for XSS, I&#8217;m stripping HTML and only displaying plaintext versions of entries which link to my site. I relied on Glenn Jones&#8217; <a href="https://github.com/glennjones/microformat-node">microformat-node</a> to parse URLs whose HTML contains <code>h-entry</code>. The library provides both structured and plaintext results so it made things safer while I get started. My CSP <em>should</em> handle many attacks, but better safe than sorry.</p> <p>In the future I&#8217;d like to move to a richer format, preserving some markup or even allowing someone to choose what is displayed on my site (choose between: summary, trimmed <code>e-content</code>, or title).</p> <p>To test my endpoint I used the ever-useful <a href="https://www.getpostman.com/apps">Postman</a>, which let me quickly assemble, edit, and save various <code>POST</code> requests to help me test the robustness of my server-side code.</p> Listing my Webmentions <p>My <code>GET</code> endpoint simply returns an array of Webmentions for a given target. I use Jekyll to generate my site, and my include for webmentions contains the following data attribute:</p> <pre><code class="language-html" data-lang="html">&lt;div class="webmentions__list" data-webmention-target="{{ site.url }}{{ page.url }}"&gt;&lt;/div&gt;
+</code></pre> <p>From there I can just load the Webmentions via JS anytime that attribute is detected in the HTML, no matter the post type. You can see them below my navigation buttons at the end of each entry.</p> Try it out <p>I&#8217;d love to see what my code can or can&#8217;t handle so if you&#8217;re set up to send Webmentions, give this URL a ping <a href="https://chrisruppel.com/blog/receiving-webmentions/#webmentions">using the form below</a>.</p>
+
+</div>
+
+<footer>
+<p class="meta">
+<a href="#comment59900" rel="bookmark">#</a>
+Posted by
+<cite class="h-card p-author">
+<a class="u-url p-name" href="https://chrisruppel.com/blog/receiving-webmentions/">
+Chris Ruppel</a>
+</cite>
+on
+<abbr class="dt-published" title="2018-04-30T12:00:00">
+Monday,
+April 30th, 2018
+at
+12:00pm
+</abbr>
+</p>
+</footer>
+
+</article>
+<article class="p-comment h-entry">
+<h3 class="p-name">2 Likes</h3>
+<p class="meta" id="comment33327">
+<a href="#comment33327" rel="bookmark">#</a>
+Liked by
+<cite class="h-card p-author">
+<a class="u-url p-name" href="https://twitter.com/adactio/status/735871294592421888#favorited-by-3017786972">
+Chris Perry</a>
+</cite>
+on
+<abbr class="dt-published" title="2016-05-26T19:31:26">
+Thursday,
+May 26th, 2016
+at
+7:31pm
+</abbr>
+</p>
+<p class="meta" id="comment33468">
+<a href="#comment33468" rel="bookmark">#</a>
+Liked by
+<cite class="h-card p-author">
+<a class="u-url p-name" href="https://twitter.com/adactio/status/735871294592421888#favorited-by-30850773">
+Simon Knox</a>
+</cite>
+on
+<abbr class="dt-published" title="2016-05-30T15:03:48">
+Monday,
+May 30th, 2016
+at
+3:03pm
+</abbr>
+</p>
+</article>
+</section>
+
+</div>
+
+<script>
+<!--
+if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+    window.addEventListener('load', function() {
+        var data = {
+            "title": "Parsing webmentions",
+            "description": "Hell has frozen over &hellip;you can now comment on my site. But there&rsquo;s a catch.",
+            "published": "September 15th, 2013",
+            "timestamp": "1379288965"
+        };
+        localStorage.setItem(
+            window.location.href,
+            JSON.stringify(data)
+        );
+    });
+}
+//-->
+</script>
+</main>
+
+<aside role="complementary">
+
+<h2>More information</h2>
+
+<!-- Begin the extra content -->
+
+<div class="box">
+
+<h3>About this site</h3>
+
+<address class="vcard h-card">
+<a href="http://example.com/" class="url u-url" rel="me">Adactio</a> is the online home of <a href="mailto:jeremy@adactio.com" class="email fn p-name u-email">Jeremy Keith</a>, a <span class="role p-role">web developer</span> and <span class="title p-job-title">author</span> living and working in <span class="adr p-adr"><span class="locality p-locality">Brighton</span>, <span class="country-name p-country-name">England</span></span>.
+</address>
+<p><a href="/contact/">Get in touch</a></p>
+</div>
+
+<div class="box">
+
+<h3>Customise</h3>
+
+<form method="get" action="/journal/6495" id="skinselection">
+<p>
+<label for="skin">Choose a theme&hellip;</label><br />
+<select name="skin" id="skin">
+<option value="default" selected="selected">default</option>
+<option value="tatemodern">tatemodern</option>
+<option value="seaside">seaside</option>
+<option value="zeldman">zeldman</option>
+<option value="adactizilla">adactizilla</option>
+<option value="sci-fi">sci-fi</option>
+<option value="renaissance">renaissance</option>
+<option value="hirnlego">hirnlego</option>
+</select>
+<input type="submit" value="Go!" id="submitskin" />
+<a href="/about/site/" title="what is this?">?</a>
+</p>
+</form>
+<p>This is the plain vanilla look.</p>
+
+</div>
+
+<div class="box" role="search">
+
+<h3>Search</h3>
+
+<form action="/journal/search/" method="get">
+<p><label for="query">Search the journal:</label><br /><input type="search" name="query" id="query" value="" />
+<button type="submit">Go!</button></p>
+</form>
+
+<ul>
+<li>Peruse the <a rel="contents" href="/journal/archive/" title="chronologically ordered">archive</a></li>
+<li>Browse the <a href="/journal/tags/">tags</a></li>
+</ul>
+
+</div>
+
+<div class="box">
+
+<h3>Subscribe</h3>
+
+<p>You can subscribe to the <a href="/journal/rss" rel="alternate" type="application/rss+xml" title="Journal RSS">journal RSS feed</a> or you can follow <a href="https://twitter.com/adactioJournal">@adactioJournal</a> on Twitter.</p>
+
+</div>
+
+<div class="box">
+
+<h3>Recommended reading</h3>
+<p>Hand-picked highlights from the archive.</p>
+<ul>
+<li>
+<h4><a href="/journal/9016">Web! What is it good for?</a></h4>
+Not absolutely nothing, but not absolutely everything either.
+</li>
+<li>
+<h4><a href="/journal/6786">Seams</a></h4>
+There is a crack, a crack in everything. That’s how the light gets in.
+</li>
+<li>
+<h4><a href="/journal/1283">Hyperdrive</a></h4>
+Last night in San Francisco.
+</li>
+<li>
+<h4><a href="/journal/1376">Design doing</a></h4>
+The opposite of design thinking.
+</li>
+<li>
+<h4><a href="/journal/1530">Iron Man and me</a></h4>
+The story of how one of my Flickr pictures came to be used in a Hollywood movie.
+</li>
+</ul>
+
+</div>
+</aside>
+
+
+<!-- The large print giveth and the small print taketh away -->
+
+<footer role="contentinfo">
+<p>&copy; 1998 - 2018 <a href="mailto:jeremy@adactio.com">Jeremy Keith</a>.</p>
+</footer>
+
+<script src="/includes/javascript/global.js" defer="defer"></script>
+<script>
+<!--
+// Register our service-worker
+if (navigator.serviceWorker) {
+    navigator.serviceWorker.register('/serviceworker.js', {
+        scope: '/'
+    });
+    window.addEventListener('load', function() {
+        if (navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({'command': 'trimCaches'});
+        }
+    });
+}
+//-->
+</script>
+
+</body>
+</html>

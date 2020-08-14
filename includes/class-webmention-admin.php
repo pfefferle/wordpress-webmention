@@ -8,7 +8,7 @@ class Webmention_Admin {
 	/**
 	 * Register Webmention admin settings.
 	 */
-	public static function init() {
+	public static function admin_init() {
 		self::register_settings();
 
 		add_settings_field( 'discussion_settings', esc_html__( 'Webmention Settings', 'webmention' ), array( 'Webmention_Admin', 'discussion_settings' ), 'discussion', 'default' );

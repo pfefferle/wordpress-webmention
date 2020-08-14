@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<!--[if IE 6]>
+<html id="ie6" lang="de-DE" prefix="og: http://ogp.me/ns#">
+<![endif]-->
+<!--[if IE 7]>
+<html id="ie7" lang="de-DE" prefix="og: http://ogp.me/ns#">
+<![endif]-->
+<!--[if IE 8]>
+<html id="ie8" lang="de-DE" prefix="og: http://ogp.me/ns#">
+<![endif]-->
+<!--[if !(IE 6) | !(IE 7) | !(IE 8)  ]><!-->
+<html lang="de-DE" prefix="og: http://ogp.me/ns#">
+<!--<![endif]-->
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width" />
+<title>Bridgy &#8211; WebMentions für Twitter und Facebook | notizBlog</title>
+<link rel="profile" href="http://microformats.org/profile/specs" />
+<link rel="profile" href="http://microformats.org/profile/hatom" />
+<link rel="pingback" href="https://notizblog.org/xmlrpc.php" />
+
+<link rel="alternate" type="application/rss+xml" title="notizBlog &raquo; Feed" href="https://notizblog.org/feed/" />
+<link rel="alternate" type="application/rss+xml" title="notizBlog &raquo; Kommentar-Feed" href="https://notizblog.org/comments/feed/" />
+<link rel="alternate" type="application/rss+xml" title="notizBlog &raquo; Bridgy &#8211; WebMentions für Twitter und Facebook Kommentar-Feed" href="https://notizblog.org/2014/01/16/bridgy-webmentions-fuer-twitter-und-facebook/feed/" />
+<link rel="alternate" type="application/stream+json" title="notizBlog &raquo; Activity-Streams Feed" href="https://notizblog.org/feed/as1/" />
+<link rel="alternate" type="application/stream+json" title="notizBlog &raquo; Activity-Streams Comments Feed" href="https://notizblog.org/comments/feed/as1/" />
+<link rel="alternate" type="application/stream+json" title="notizBlog &raquo; Bridgy &#8211; WebMentions für Twitter und Facebook Activity-Streams Comments Feed" href="https://notizblog.org/2014/01/16/bridgy-webmentions-fuer-twitter-und-facebook/feed/as1/" />
+<link rel="meta" type="application/xml+apml" title="APML 0.6" href="http://notizblog.org/apml" />
+<link rel="http://oexchange.org/spec/0.8/rel/related-target" type="application/xrd+xml" href="https://notizblog.org/?oexchange=xrd" />
+<link rel='stylesheet' id='openid-css'  href='https://notizblog.org/wp-content/plugins/openid/f/openid.css?ver=519' type='text/css' media='all' />
+<link rel='stylesheet' id='jetpack-widgets-css'  href='https://notizblog.org/wp-content/plugins/jetpack/modules/widgets/widgets.css?ver=20121003' type='text/css' media='all' />
+<link rel='stylesheet' id='sempress-style-css'  href='https://notizblog.org/wp-content/themes/sempress/style.css?ver=3.8' type='text/css' media='all' />
+<script type='text/javascript' src='http://apis.google.com/js/plusone.js?ver=3.8'></script>
+<script type='text/javascript' src='http://api.flattr.com/js/0.6/load.js?mode=auto&#038;ver=3.8'></script>
+<script type='text/javascript' src='https://notizblog.org/wp-includes/js/jquery/jquery.js?ver=1.10.2'></script>
+<script type='text/javascript' src='https://notizblog.org/wp-includes/js/jquery/jquery-migrate.min.js?ver=1.2.1'></script>
+<script type='text/javascript' src='https://notizblog.org/wp-includes/js/comment-reply.min.js?ver=3.8'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://notizblog.org/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://notizblog.org/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='&#8220;Pfefferles Open Web&#8221; wird 20' href='https://notizblog.org/2013/12/21/pfefferles-open-web-wird-20/' />
+<meta name="generator" content="WordPress 3.8" />
+<link rel='canonical' href='https://notizblog.org/2014/01/16/bridgy-webmentions-fuer-twitter-und-facebook/' />
+<link rel='shortlink' href='https://notizblog.org/t/1wi' />
+  <link rel="apple-touch-icon" href="http://www.gravatar.com/avatar/dde87835cca4069dfae355ff6f29de6d?s=57" />
+  <link rel="apple-touch-icon" sizes="72x72" href="http://www.gravatar.com/avatar/dde87835cca4069dfae355ff6f29de6d?s=72" />
+  <link rel="apple-touch-icon" sizes="114x114" href="http://www.gravatar.com/avatar/dde87835cca4069dfae355ff6f29de6d?s=114" />
+  
+  <link rel="icon favicon shortcut" sizes="16x16" href="http://www.gravatar.com/avatar/dde87835cca4069dfae355ff6f29de6d?s=16" />
+<link rel="alternate" type="application/json+oembed" href="https://notizblog.org/?oembed=true&amp;format=json&amp;url=https%3A%2F%2Fnotizblog.org%2F2014%2F01%2F16%2Fbridgy-webmentions-fuer-twitter-und-facebook%2F" />
+<link rel="alternate" type="text/xml+oembed" href="https://notizblog.org/?oembed=true&amp;format=xml&amp;url=https%3A%2F%2Fnotizblog.org%2F2014%2F01%2F16%2Fbridgy-webmentions-fuer-twitter-und-facebook%2F" />
+<link rel="search" type="application/opensearchdescription+xml" title="notizBlog" href="https://notizblog.org/opensearch" />
+<meta property="og:title" content="Bridgy - WebMentions für Twitter und Facebook" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://notizblog.org/2014/01/16/bridgy-webmentions-fuer-twitter-und-facebook/" />
+<meta property="og:description" content="Bridgy ist ein WebMention Proxy für Twitter, Facebook und Google+. Es sammelt comments, shares, likes und re-tweets und leitet sie an die entsprechenden Links weiter. Bridgy sends webmentions for comments, likes, and reshares on Facebook, Twitter, Google+, and Instagram. Bridgy notices when you post links, watches for activity on those posts, and sends them back [...]" />
+<meta property="og:locale" content="de_DE" />
+<meta property="og:site_name" content="notizBlog" />
+<meta name="twitter:creator" content="@pfefferle" />
+<meta name="twitter:card" content="summary" />
+<link rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/" type="text/html" />
+<link rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/rdf" type="application/rdf+xml" />
+<meta http-equiv="X-XRDS-Location" content="https://notizblog.org/?xrds" />
+<meta http-equiv="X-Yadis-Location" content="https://notizblog.org/?xrds" />
+<style type='text/css'>img#wpstats{display:none}</style>  <style type="text/css" id="sempress-custom-colors">
+    body { text-shadow: 0 1px 0 #ffffff; }
+    body, a { color: #555555; }
+    .widget, #access {
+      border-bottom: 1px solid #cccccc;
+      -moz-box-shadow: #ffffff 0 1px 0 0;
+      -webkit-box-shadow: #ffffff 0 1px 0 0;
+      box-shadow: #ffffff 0 1px 0 0;
+    }
+    article.comment {
+      border-top: 1px solid #ffffff;
+      -moz-box-shadow: #cccccc 0 -1px 0 0;
+      -webkit-box-shadow: #cccccc 0 -1px 0 0;
+      box-shadow: #cccccc 0 -1px 0 0;
+    }
+  </style>
+<style type="text/css" id="custom-background-css">
+body.custom-background { background-color: #f0f0f0; background-image: url('https://notizblog.org/wp-content/themes/sempress/img/noise.png'); background-repeat: repeat; background-position: top left; background-attachment: scroll; }
+</style>
+<link rel="http://webmention.org/" href="https://notizblog.org/?webmention=endpoint" />
+<link rel="webmention" href="https://notizblog.org/?webmention=endpoint" />
+</head>
+
+<body class="single single-post postid-7003 single-format-link custom-background multi-column single-author h-entry hentry h-as-bookmark" itemscope="" itemtype="http://schema.org/BlogPosting">
+<div id="page">
+  <header id="branding" role="banner">
+    <h1 id="site-title"><a href="https://notizblog.org/" title="notizBlog" rel="home">notizBlog</a></h1>
+    <h2 id="site-description">a weblog about the open, portable, interoperable, social, synaptic, semantic, structured, distributed, decentralized, independent, microformatted and federated social web</h2>
+    
+        
+    <nav id="access" role="navigation">
+      <h1 class="assistive-text section-heading"><a href="#access" title="Hauptmen&uuml;">Hauptmen&uuml;</a></h1>
+      <div class="skip-link screen-reader-text"><a href="#content" title="Zum Inhalt wechseln">Zum Inhalt wechseln</a></div>
+
+      <div class="menu-main-menu-container"><ul id="menu-main-menu" class="menu"><li id="menu-item-3533" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-3533"><a href="http://notizblog.org/">Home</a></li>
+<li id="menu-item-3535" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3535"><a href="https://notizblog.org/about/">About</a></li>
+<li id="menu-item-3536" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3536"><a href="https://notizblog.org/projects/">Projekte</a></li>
+<li id="menu-item-3537" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3537"><a href="https://notizblog.org/publications/">Veröffentlichungen</a></li>
+<li id="menu-item-3538" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3538"><a href="https://notizblog.org/kontakt/">Kontakt</a></li>
+</ul></div>    </nav><!-- #access -->
+  </header><!-- #branding -->
+
+  <div id="main">
+    <section id="primary">
+      <main id="content" role="main">
+
+      
+          <nav id="nav-above">
+    <h1 class="assistive-text section-heading">Beitragsnavigation</h1>
+
+  
+    <div class="nav-previous"><a href="https://notizblog.org/2013/12/21/pfefferles-open-web-wird-20/" rel="prev"><span class="meta-nav">&larr;</span> &#8220;Pfefferles Open Web&#8221; wird 20</a></div>    
+  
+  </nav><!-- #nav-above -->
+  
+        
+<article id="post-7003" class="post-7003 post type-post status-publish format-link category-web">
+    <div class="entry-content e-content p-summary entry-title p-name" itemprop="name headline description articleBody">
+        <p><a href="http://example.com/webmention/target/placeholder" class="u-in-reply-to">Bridgy</a> ist ein WebMention Proxy für Twitter, Facebook und Google+. Es sammelt <a href="http://snarfed.org/2013-12-23_bridgy-now-with-likes-and-retweets" class="u-like" rel="like"><em>comments</em>, <em>shares</em>, <em>likes</em> und <em>re-tweets</em></a> und leitet sie an die entsprechenden Links weiter.</p>
+<blockquote><p>Bridgy sends webmentions for comments, likes, and reshares on Facebook, Twitter, Google+, and Instagram. Bridgy notices when you post links, watches for activity on those posts, and sends them back to your site as webmentions. It also serves them as microformats2 for webmention targets to read.</p></blockquote>
+<p>Großartige Idee!</p>
+<p>Wer sein eigenes Bridgy betreiben will&#8230; der <a href="https://github.com/snarfed/bridgy">Code ist Open Source</a>!</p>
+      </div><!-- .entry-content -->
+  
+  <footer class="entry-meta">
+  <span class="sep">Ver&ouml;ffentlicht am </span><a href="https://notizblog.org/2014/01/16/bridgy-webmentions-fuer-twitter-und-facebook/" title="10:11" rel="bookmark" class="url u-url"><time class="entry-date updated published dt-updated dt-published" datetime="2014-01-16T10:11:26+00:00" itemprop="dateModified">16. Januar 2014</time></a><address class="byline"> <span class="sep"> von </span> <span class="author p-author vcard hcard h-card" itemprop="author" itemscope itemtype="http://schema.org/Person"><img alt='' src='https://secure.gravatar.com/avatar/b36983a5651df2c413e264ad4d5cc1a1?s=40&amp;d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D40&amp;r=G' class='u-photo avatar avatar-40 photo' height='40' width='40' /> <a class="url uid u-url u-uid fn p-name" href="https://notizblog.org/author/matthias-pfefferle/" title="Alle Beitr&auml;ge von Matthias Pfefferle ansehen" rel="author" itemprop="url"><span itemprop="name">Matthias Pfefferle</span></a></span></address>    <span class="cat-links">
+    in <a href="https://notizblog.org/category/web/" title="Alle Beiträge in Open Web ansehen" rel="category tag">Open Web</a>  </span>
+  
+  
+    <span class="sep"> | </span>
+  <span class="comments-link"><a href="https://notizblog.org/2014/01/16/bridgy-webmentions-fuer-twitter-und-facebook/#comments" title="Kommentiere Bridgy &#8211; WebMentions für Twitter und Facebook">8 Meinungen</a></span>
+  
+  </footer><!-- #entry-meta --></article><!-- #post-7003 -->
+
+          <nav id="nav-below">
+    <h1 class="assistive-text section-heading">Beitragsnavigation</h1>
+
+  
+    <div class="nav-previous"><a href="https://notizblog.org/2013/12/21/pfefferles-open-web-wird-20/" rel="prev"><span class="meta-nav">&larr;</span> &#8220;Pfefferles Open Web&#8221; wird 20</a></div>    
+  
+  </nav><!-- #nav-below -->
+  
+          <div id="comments">
+  
+  
+      <h2 id="comments-title">
+      8 Gedanken zu &ldquo;<span>Bridgy &#8211; WebMentions für Twitter und Facebook</span>&rdquo;    </h2>
+
+    
+    <ol class="commentlist">
+        <li class="webmention even thread-even depth-1 h-as-comment p-comment h-entry comment" id="li-comment-346028">
+    <article id="comment-346028" class="comment " itemprop="comment" itemscope itemtype="http://schema.org/UserComments">
+      <footer>
+        <address class="comment-author p-author author vcard hcard h-card" itemprop="creator" itemscope itemtype="http://schema.org/Person">
+          <img alt='' src='https://pbs.twimg.com/profile_images/419417667704205312/OZ3sBz_o_normal.jpeg' class='avatar avatar-50 photo avatar-semantic-linkbacks' height='50' width='50' />          <cite class="fn p-name" itemprop="name"><a href='http://twitter.com/muhh' rel='external' class='u-url url'>Markus Heurung</a></cite> <span class="says">meant:</span>        </address><!-- .comment-author .vcard -->
+        
+        <div class="comment-meta commentmetadata">
+          <a href="https://brid-gy.appspot.com/repost/twitter/pfefferle/423744359297585152/423756080376995840"><time class="updated published u-updated u-published" datetime="2014-01-16T09:58:17+00:00" itemprop="commentTime">
+          16. Januar 2014 bei 09:58          </time></a>
+                  </div><!-- .comment-meta .commentmetadata -->
+      </footer>
+
+      <div class="comment-content e-content p-summary p-name" itemprop="commentText name description"><p><a href="http://twitter.com/muhh/status/423756080376995840">retweeted this.</a></p>
+</div>
+
+      <div class="reply">
+        <action do='post reply' with='https://notizblog.org/2014/01/16/bridgy-webmentions-fuer-twitter-und-facebook/'><a class='comment-reply-link' href='/2014/01/16/bridgy-webmentions-fuer-twitter-und-facebook/?replytocom=346028#respond' onclick='return addComment.moveForm("comment-346028", "346028", "respond", "7003")'>Antworten</a></action>      </div><!-- .reply -->
+    </article><!-- #comment-## -->
+
+  </li><!-- #comment-## -->
+  <li class="webmention odd alt thread-odd thread-alt depth-1 h-as-comment p-comment h-entry comment" id="li-comment-345164">
+    <article id="comment-345164" class="comment " itemprop="comment" itemscope itemtype="http://schema.org/UserComments">
+      <footer>
+        <address class="comment-author p-author author vcard hcard h-card" itemprop="creator" itemscope itemtype="http://schema.org/Person">
+          <img alt='' src='https://pbs.twimg.com/profile_images/2734902975/eae0c96e179771fff4fff205e55c0813_normal.png' class='avatar avatar-50 photo avatar-semantic-linkbacks' height='50' width='50' />          <cite class="fn p-name" itemprop="name"><a href='http://twitter.com/AmAbgrund' rel='external' class='u-url url'>Am Abgrund</a></cite> <span class="says">meant:</span>        </address><!-- .comment-author .vcard -->
+        
+        <div class="comment-meta commentmetadata">
+          <a href="https://brid-gy.appspot.com/like/twitter/pfefferle/423744359297585152/63096339"><time class="updated published u-updated u-published" datetime="2014-01-16T11:22:51+00:00" itemprop="commentTime">
+          16. Januar 2014 bei 11:22          </time></a>
+                  </div><!-- .comment-meta .commentmetadata -->
+      </footer>
+
+      <div class="comment-content e-content p-summary p-name" itemprop="commentText name description"><p>favorited this.</p>
+</div>
+
+      <div class="reply">
+        <action do='post reply' with='https://notizblog.org/2014/01/16/bridgy-webmentions-fuer-twitter-und-facebook/'><a class='comment-reply-link' href='/2014/01/16/bridgy-webmentions-fuer-twitter-und-facebook/?replytocom=345164#respond' onclick='return addComment.moveForm("comment-345164", "345164", "respond", "7003")'>Antworten</a></action>      </div><!-- .reply -->
+    </article><!-- #comment-## -->
+
+  </li><!-- #comment-## -->
+  <li class="webmention even thread-even depth-1 h-as-comment p-comment h-entry comment" id="li-comment-345236">
+    <article id="comment-345236" class="comment " itemprop="comment" itemscope itemtype="http://schema.org/UserComments">
+      <footer>
+        <address class="comment-author p-author author vcard hcard h-card" itemprop="creator" itemscope itemtype="http://schema.org/Person">
+          <img alt='' src='https://pbs.twimg.com/profile_images/2812992290/be21b6e4df4b499a98e87413b355c657_normal.jpeg' class='avatar avatar-50 photo avatar-semantic-linkbacks' height='50' width='50' />          <cite class="fn p-name" itemprop="name"><a href='http://twitter.com/snarfed_org' rel='external' class='u-url url'>Ryan Barrett</a></cite> <span class="says">meant:</span>        </address><!-- .comment-author .vcard -->
+        
+        <div class="comment-meta commentmetadata">
+          <a href="https://brid-gy.appspot.com/like/twitter/snarfed_org/423744359297585152/139199211"><time class="updated published u-updated u-published" datetime="2014-01-16T11:41:04+00:00" itemprop="commentTime">
+          16. Januar 2014 bei 11:41          </time></a>
+                  </div><!-- .comment-meta .commentmetadata -->
+      </footer>
+
+      <div class="comment-content e-content p-summary p-name" itemprop="commentText name description"><p>favorited this.</p>
+</div>
+
+      <div class="reply">
+        <action do='post reply' with='https://notizblog.org/2014/01/16/bridgy-webmentions-fuer-twitter-und-facebook/'><a class='comment-reply-link' href='/2014/01/16/bridgy-webmentions-fuer-twitter-und-facebook/?replytocom=345236#respond' onclick='return addComment.moveForm("comment-345236", "345236", "respond", "7003")'>Antworten</a></action>      </div><!-- .reply -->
+    </article><!-- #comment-## -->
+
+  </li><!-- #comment-## -->
+  <li class="webmention odd alt thread-odd thread-alt depth-1 h-as-comment p-comment h-entry comment" id="li-comment-345627">
+    <article id="comment-345627" class="comment " itemprop="comment" itemscope itemtype="http://schema.org/UserComments">
+      <footer>
+        <address class="comment-author p-author author vcard hcard h-card" itemprop="creator" itemscope itemtype="http://schema.org/Person">
+          <img alt='' src='https://pbs.twimg.com/profile_images/2864521273/e102f54b8a4cc936a5a52db0751f55e4_normal.png' class='avatar avatar-50 photo avatar-semantic-linkbacks' height='50' width='50' />          <cite class="fn p-name" itemprop="name"><a href='http://twitter.com/carstenpoetter' rel='external' class='u-url url'>Carsten Pötter</a></cite> <span class="says">meant:</span>        </address><!-- .comment-author .vcard -->
+        
+        <div class="comment-meta commentmetadata">
+          <a href="https://brid-gy.appspot.com/repost/twitter/pfefferle/423744359297585152/423812282687442944"><time class="updated published u-updated u-published" datetime="2014-01-16T13:41:37+00:00" itemprop="commentTime">
+          16. Januar 2014 bei 13:41          </time></a>
+                  </div><!-- .comment-meta .commentmetadata -->
+      </footer>
+
+      <div class="comment-content e-content p-summary p-name" itemprop="commentText name description"><p><a href="http://twitter.com/carstenpoetter/status/423812282687442944">retweeted this.</a></p>
+</div>
+
+      <div class="reply">
+        <action do='post reply' with='https://notizblog.org/2014/01/16/bridgy-webmentions-fuer-twitter-und-facebook/'><a class='comment-reply-link' href='/2014/01/16/bridgy-webmentions-fuer-twitter-und-facebook/?replytocom=345627#respond' onclick='return addComment.moveForm("comment-345627", "345627", "respond", "7003")'>Antworten</a></action>      </div><!-- .reply -->
+    </article><!-- #comment-## -->
+
+  </li><!-- #comment-## -->
+  <li class="webmention even thread-even depth-1 h-as-comment p-comment h-entry comment" id="li-comment-348594">
+    <article id="comment-348594" class="comment " itemprop="comment" itemscope itemtype="http://schema.org/UserComments">
+      <footer>
+        <address class="comment-author p-author author vcard hcard h-card" itemprop="creator" itemscope itemtype="http://schema.org/Person">
+          <img alt='' src='https://pbs.twimg.com/profile_images/378800000617717266/a11df900fb6c1821982f8051f47de762_normal.jpeg' class='avatar avatar-50 photo avatar-semantic-linkbacks' height='50' width='50' />          <cite class="fn p-name" itemprop="name"><a href='http://twitter.com/boerge30' rel='external' class='u-url url'>Bjoern Koblow</a></cite> <span class="says">meant:</span>        </address><!-- .comment-author .vcard -->
+        
+        <div class="comment-meta commentmetadata">
+          <a href="https://brid-gy.appspot.com/repost/twitter/pfefferle/423744359297585152/424064345774260224"><time class="updated published u-updated u-published" datetime="2014-01-17T06:23:13+00:00" itemprop="commentTime">
+          17. Januar 2014 bei 06:23          </time></a>
+                  </div><!-- .comment-meta .commentmetadata -->
+      </footer>
+
+      <div class="comment-content e-content p-summary p-name" itemprop="commentText name description"><p><a href="http://twitter.com/boerge30/status/424064345774260224">retweeted this.</a></p>
+</div>
+
+      <div class="reply">
+        <action do='post reply' with='https://notizblog.org/2014/01/16/bridgy-webmentions-fuer-twitter-und-facebook/'><a class='comment-reply-link' href='/2014/01/16/bridgy-webmentions-fuer-twitter-und-facebook/?replytocom=348594#respond' onclick='return addComment.moveForm("comment-348594", "348594", "respond", "7003")'>Antworten</a></action>      </div><!-- .reply -->
+    </article><!-- #comment-## -->
+
+  </li><!-- #comment-## -->
+  <li class="webmention odd alt thread-odd thread-alt depth-1 h-as-comment p-comment h-entry comment" id="li-comment-348595">
+    <article id="comment-348595" class="comment " itemprop="comment" itemscope itemtype="http://schema.org/UserComments">
+      <footer>
+        <address class="comment-author p-author author vcard hcard h-card" itemprop="creator" itemscope itemtype="http://schema.org/Person">
+          <img alt='' src='https://pbs.twimg.com/profile_images/378800000617717266/a11df900fb6c1821982f8051f47de762_normal.jpeg' class='avatar avatar-50 photo avatar-semantic-linkbacks' height='50' width='50' />          <cite class="fn p-name" itemprop="name"><a href='http://twitter.com/boerge30' rel='external' class='u-url url'>Bjoern Koblow</a></cite> <span class="says">meant:</span>        </address><!-- .comment-author .vcard -->
+        
+        <div class="comment-meta commentmetadata">
+          <a href="https://brid-gy.appspot.com/like/twitter/pfefferle/423744359297585152/6642112"><time class="updated published u-updated u-published" datetime="2014-01-17T06:23:13+00:00" itemprop="commentTime">
+          17. Januar 2014 bei 06:23          </time></a>
+                  </div><!-- .comment-meta .commentmetadata -->
+      </footer>
+
+      <div class="comment-content e-content p-summary p-name" itemprop="commentText name description"><p>favorited this.</p>
+</div>
+
+      <div class="reply">
+        <action do='post reply' with='https://notizblog.org/2014/01/16/bridgy-webmentions-fuer-twitter-und-facebook/'><a class='comment-reply-link' href='/2014/01/16/bridgy-webmentions-fuer-twitter-und-facebook/?replytocom=348595#respond' onclick='return addComment.moveForm("comment-348595", "348595", "respond", "7003")'>Antworten</a></action>      </div><!-- .reply -->
+    </article><!-- #comment-## -->
+
+  </li><!-- #comment-## -->
+  <li class="webmention even thread-even depth-1 h-as-comment p-comment h-entry comment" id="li-comment-348610">
+    <article id="comment-348610" class="comment " itemprop="comment" itemscope itemtype="http://schema.org/UserComments">
+      <footer>
+        <address class="comment-author p-author author vcard hcard h-card" itemprop="creator" itemscope itemtype="http://schema.org/Person">
+          <img alt='' src='https://pbs.twimg.com/profile_images/1785602945/76d6ee04-8200-46c2-a543-a8356f494943_normal.jpg' class='avatar avatar-50 photo avatar-semantic-linkbacks' height='50' width='50' />          <cite class="fn p-name" itemprop="name"><a href='http://twitter.com/mattsches' rel='external' class='u-url url'>Matthias Gutjahr</a></cite> <span class="says">meant:</span>        </address><!-- .comment-author .vcard -->
+        
+        <div class="comment-meta commentmetadata">
+          <a href="https://brid-gy.appspot.com/repost/twitter/pfefferle/423744359297585152/424066279319027712"><time class="updated published u-updated u-published" datetime="2014-01-17T06:30:54+00:00" itemprop="commentTime">
+          17. Januar 2014 bei 06:30          </time></a>
+                  </div><!-- .comment-meta .commentmetadata -->
+      </footer>
+
+      <div class="comment-content e-content p-summary p-name" itemprop="commentText name description"><p><a href="http://twitter.com/mattsches/status/424066279319027712">retweeted this.</a></p>
+</div>
+
+      <div class="reply">
+        <action do='post reply' with='https://notizblog.org/2014/01/16/bridgy-webmentions-fuer-twitter-und-facebook/'><a class='comment-reply-link' href='/2014/01/16/bridgy-webmentions-fuer-twitter-und-facebook/?replytocom=348610#respond' onclick='return addComment.moveForm("comment-348610", "348610", "respond", "7003")'>Antworten</a></action>      </div><!-- .reply -->
+    </article><!-- #comment-## -->
+
+  </li><!-- #comment-## -->
+  <li class="webmention odd alt thread-odd thread-alt depth-1 h-as-comment p-comment h-entry comment" id="li-comment-349129">
+    <article id="comment-349129" class="comment " itemprop="comment" itemscope itemtype="http://schema.org/UserComments">
+      <footer>
+        <address class="comment-author p-author author vcard hcard h-card" itemprop="creator" itemscope itemtype="http://schema.org/Person">
+          <img alt='' src='https://pbs.twimg.com/profile_images/56185382/hackr-logo-140_normal.jpg' class='avatar avatar-50 photo avatar-semantic-linkbacks' height='50' width='50' />          <cite class="fn p-name" itemprop="name"><a href='http://twitter.com/hackr' rel='external' class='u-url url'>Markus Spath</a></cite> <span class="says">meant:</span>        </address><!-- .comment-author .vcard -->
+        
+        <div class="comment-meta commentmetadata">
+          <a href="https://brid-gy.appspot.com/repost/twitter/pfefferle/423744359297585152/424113389758324737"><time class="updated published u-updated u-published" datetime="2014-01-17T09:38:06+00:00" itemprop="commentTime">
+          17. Januar 2014 bei 09:38          </time></a>
+                  </div><!-- .comment-meta .commentmetadata -->
+      </footer>
+
+      <div class="comment-content e-content p-summary p-name" itemprop="commentText name description"><p><a href="http://twitter.com/hackr/status/424113389758324737">retweeted this.</a></p>
+</div>
+
+      <div class="reply">
+        <action do='post reply' with='https://notizblog.org/2014/01/16/bridgy-webmentions-fuer-twitter-und-facebook/'><a class='comment-reply-link' href='/2014/01/16/bridgy-webmentions-fuer-twitter-und-facebook/?replytocom=349129#respond' onclick='return addComment.moveForm("comment-349129", "349129", "respond", "7003")'>Antworten</a></action>      </div><!-- .reply -->
+    </article><!-- #comment-## -->
+
+  </li><!-- #comment-## -->
+    </ol>
+
+    
+  
+  
+  								<div id="respond" class="comment-respond">
+				<h3 id="reply-title" class="comment-reply-title">Hinterlasse eine Antwort <small><a rel="nofollow" id="cancel-comment-reply-link" href="/2014/01/16/bridgy-webmentions-fuer-twitter-und-facebook/#respond" style="display:none;">Antworten abbrechen</a></small></h3>
+									<form action="https://notizblog.org/wp-comments-post.php" method="post" id="commentform" class="comment-form" novalidate>
+																			<p class="comment-notes">Deine E-Mail-Adresse wird nicht veröffentlicht. Erforderliche Felder sind markiert <span class="required">*</span></p>							<p class="comment-form-author"><label for="author">Name <span class="required">*</span></label> <input autocomplete="nickname name"  id="author" name="author" type="text" value="" size="30" aria-required='true' /></p>
+<p class="comment-form-email"><label for="email">E-Mail-Adresse <span class="required">*</span></label> <input autocomplete="email"  id="email" name="email" type="email" value="" size="30" aria-required='true' /></p>
+<p class="comment-form-url"><label for="url">Website</label> <input autocomplete="url"  id="url" name="url" type="url" value="" size="30" /></p>
+												<p class="comment-form-comment"><label for="comment">Kommentar</label> <textarea id="comment" name="comment" cols="45" rows="8" aria-required="true"></textarea></p>						<p class="form-allowed-tags">Du kannst folgende <abbr title="HyperText Markup Language">HTML</abbr>-Tags benutzen:  <code>&lt;a href=&quot;&quot; title=&quot;&quot;&gt; &lt;abbr title=&quot;&quot;&gt; &lt;acronym title=&quot;&quot;&gt; &lt;b&gt; &lt;blockquote cite=&quot;&quot;&gt; &lt;cite&gt; &lt;code&gt; &lt;del datetime=&quot;&quot;&gt; &lt;em&gt; &lt;i&gt; &lt;q cite=&quot;&quot;&gt; &lt;strike&gt; &lt;strong&gt; </code></p>						<p class="form-submit">
+							<input name="submit" type="submit" id="submit" value="Kommentar abschicken" />
+							<input type='hidden' name='comment_post_ID' value='7003' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+						</p>
+						<p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="8ebadcdbf5" /></p><p class="comment-subscription-form"><input type="checkbox" name="subscribe_comments" id="subscribe_comments" value="subscribe" style="width: auto; -moz-appearance: checkbox; -webkit-appearance: checkbox;" /> <label class="subscribe-label" id="subscribe-label" for="subscribe_comments" style="display: inline;">Benachrichtige mich über nachfolgende Kommentare via E-Mail.</label></p><p class="comment-subscription-form"><input type="checkbox" name="subscribe_blog" id="subscribe_blog" value="subscribe" style="width: auto; -moz-appearance: checkbox; -webkit-appearance: checkbox;" /> <label class="subscribe-label" id="subscribe-blog-label" for="subscribe_blog" style="display: inline;">Benachrichtige mich über neue Beiträge via E-Mail.</label></p>					</form>
+							</div><!-- #respond -->
+			
+</div><!-- #comments -->
+
+      
+      </main><!-- #content -->
+    </section><!-- #primary -->
+
+  <aside id="sidebar">
+    <div id="secondary" class="widget-area" role="complementary">
+            <section id="search-2" class="widget widget_search"><form role="search" method="get" class="search-form" action="https://notizblog.org/">
+				<label>
+					<span class="screen-reader-text">Suche nach:</span>
+					<input type="search" class="search-field" placeholder="Suche &hellip;" value="" name="s" title="Suche nach:" />
+				</label>
+				<input type="submit" class="search-submit" value="Suche" />
+			</form></section><section id="subtome-3" class="widget widget_subtome"><h3 class="widget-title">SubToMe</h3>
+    <p class="subtome"><span class="subtome-description">Liked this posts? Follow this blog to get more.</span>&nbsp;<input type="button" onclick="(function(){var z=document.createElement('script');z.src='https://www.subtome.com/load.js';document.body.appendChild(z);})()" value="Follow" /></p> </section><section id="text-3" class="widget widget_text"><h3 class="widget-title">OpenWeb Podcast</h3>			<div class="textwidget"><p>Der Podcast über offene Standards im Internet!</p>
+
+<ul><li><a href="http://openwebpodcast.de/" rel="me">Seite besuchen</a></li>
+<li><a href="http://feeds.feedburner.com/openwebcast" rel="alternate">Den RSS-Feed abonnieren</a></li>
+<li><a href="http://notizblog.org/projects/#podcast">Mehr Infos</a></li></ul></div>
+		</section><section id="rss-2" class="widget widget_rss"><h3 class="widget-title"><a class='rsswidget' href='http://openwebpodcast.de/feed/' title='Den Inhalt auslesen'><img style='border:0' width='14' height='14' src='https://notizblog.org/wp-includes/images/rss.png' alt='RSS' /></a> <a class='rsswidget' href='http://openwebpodcast.de/' title='Der Podcast über offene Standards im Internet'>Der Open Web Podcast</a></h3><ul><li><a class='rsswidget' href='http://feedproxy.google.com/~r/openwebcast/~3/9UGegHdZKwE/' title='Im Juni sind Christian und ich zufällig mit David Maciejewski von Technikwürze ins Gespräch gekommen: Da beide Podcasts über die Zeit etwas eingeschlafen sind, haben wir uns (virtuell) zusammen gesetzt und uns entschieden, beide Projekte zusammen zu legen und zukünftig nur noch einen Podcast zu betreiben, diesen dafür aber wieder etwas häufiger. Da die Technikwürze […]'>…lang lebe der OpenWeb-Podcast!</a></li><li><a class='rsswidget' href='http://feedproxy.google.com/~r/openwebcast/~3/RXnxKq-UVck/' title='Sebastian ist jetzt im Apps-Geschäft und Christian macht Politik und beide haben nicht mehr sehr viel Zeit für diesen Podcast. Da es sehr mühsam und langweilig ist alleine einen Podcast zu bestreiten, bleibt uns nur noch eines zu sagen: Es hat ne Menge Spaß gemacht mit den zweien rumzugeeken und ich hoffe ihr hattet auch […]'>Der OpenWeb-Podcast ist tot…</a></li><li><a class='rsswidget' href='http://feedproxy.google.com/~r/openwebcast/~3/FD-eBr8CDzQ/' title='…und weiter geht’s! Heute mal als ClosedWebPodcast zu den neuen Features von Facebook und Google… Viel Spaß beim hören Länge: 56m, Download MP3 Facebook Smart Lists Live Ticker Subscribe-Button f8 Timeline OpenGraph V2 Neue und eigene “Things”/”Verbs” erstellen “App Scrobling” -&gt; Neue Buttons Strategie? Wegen G+? Semantic Web? Motivation Ontologien Google+ für alle offen Neue […]'>Folge 33: Das neue Facebook und ein bisschen Google+</a></li><li><a class='rsswidget' href='http://feedproxy.google.com/~r/openwebcast/~3/KlUuYiTC-7Q/' title='Nun geht es wieder los mit dem Open Web Podcast: Neues Logo, ein bisschen neue Technik, neuer Livestream und nicht mehr so technisch! Los geht’s! Länge: 59m, Download MP3 Termine FrOSCon 6: 20./21.8. 2011 in St. Augustin Der Aufstieg und Fall von sozialen Netzwerken netzwertig.com: Die Tage der VZ Netzwerke sind gezählt Google Plus Start: […]'>OWP32: Eingekreist</a></li><li><a class='rsswidget' href='http://feedproxy.google.com/~r/openwebcast/~3/402lAIH49cc/' title='Nun ist der Sommer rum und wir können endlich wieder podcasten! Und was liegt näher, als einmal Diaspora anzuschauen? Richtig: Nichts! Also los geht’s! Länge: 43m, Download MP3 Google vs. Facebook – Christian Ogait http://christianogait.posterous.com/google-vs-facebook Subscribe to your favorite things! at Flattr Blog Flattr kann jetzt Abos! Google Wave Comes Back From the Dead in […]'>Episode 31 – Diaspora</a></li></ul></section><section id="text-5" class="widget widget_text"><h3 class="widget-title">transformr</h3>			<div class="textwidget"><img src="//notizblog.org/wp-content/uploads/2010/06/microformat-logo.jpg" alt="" title="microformat-logo" width="150" height="33" class="alignnone size-full wp-image-2788" />
+
+<p>visit <a href="http://microform.at" rel="me bookmark">microform.at</a> <strong>THE</strong> microformats transformr!</p></div>
+		</section><section id="linkcat-922" class="widget widget_links"><h3 class="widget-title">12things</h3>
+	<ul class='xoxo blogroll'>
+<li><a href="http://12sites.de/" rel="friend co-worker colleague" title="Deine Homepage in Minuten">12Sites</a></li>
+<li><a href="http://12things.de/" rel="me" title="12Things">12Things</a></li>
+<li><a href="http://ichmagrot.de/" rel="me">ich mag rot</a></li>
+<li><a href="http://sortitout.de" rel="friend co-worker colleague">sortitout</a></li>
+
+	</ul>
+</section>
+<section id="linkcat-618" class="widget widget_links"><h3 class="widget-title">Blogroll (english)</h3>
+	<ul class='xoxo blogroll'>
+<li><a href="http://suda.co.uk/" rel="contact">Brian Suda</a></li>
+<li><a href="http://notsorelevant.com/" rel="contact">Carsten Pötter</a></li>
+<li><a href="http://adactio.com/journal/" rel="contact">Jeremy Keith</a></li>
+<li><a href="http://weborganics.co.uk/" rel="contact colleague">Martin McEvoy</a></li>
+<li><a href="http://www.microformats.dk/" rel="contact" title="Ein dänisches Microformats Weblog">Microformats DK</a></li>
+<li><a href="http://thomashuhn.com/" rel="contact met co-worker colleague">Thomas Huhn</a></li>
+
+	</ul>
+</section>
+<section id="linkcat-51" class="widget widget_links"><h3 class="widget-title">Blogrolle (deutsch)</h3>
+	<ul class='xoxo blogroll'>
+<li><a href="http://cordobo.com/" rel="contact met co-worker colleague">Artis Cordobo</a></li>
+<li><a href="http://www.webzeugkoffer.de/" rel="contact met colleague co-resident">Björn Seibert</a></li>
+<li><a href="http://carstenpoetter.de" rel="friend met">Carsten Pötter</a></li>
+<li><a href="http://mrtopf.de/blog/" rel="contact met colleague">Christian Scholz</a></li>
+<li><a href="http://weyands.net/" rel="contact met co-worker colleague" title="Symfony-Ninja">Christian Weyand</a></li>
+<li><a href="http://screengui.de/" rel="acquaintance co-worker colleague">Das Screenguide Magazin</a></li>
+<li><a href="http://standart-tolleranz-maschiene.de/" rel="contact met co-worker colleague">Dirk Müller</a></li>
+<li><a href="http://hackr.de" rel="contact">hackr</a></li>
+<li><a href="http://kennstdu.de/" rel="friend met colleague">Karina und Hannes</a></li>
+<li><a href="http://www.schoen-stoll.de" rel="contact met neighbor" title="Meine überaus talentierte Vermieterin&#8230;">Malerin und Lyrikerin</a></li>
+<li><a href="http://blog.ripanti.de/" rel="contact met co-worker colleague" title="Mein Chef">Marco Ripanti</a></li>
+<li><a href="http://www.snirgel.de" rel="friend met co-resident">Snirgel</a></li>
+<li><a href="http://webstandard.kulando.de" rel="contact">Webstandard-Blog</a></li>
+
+	</ul>
+</section>
+<section id="linkcat-938" class="widget widget_links"><h3 class="widget-title">me on...</h3>
+	<ul class='xoxo blogroll'>
+<li><a href="https://plus.google.com/+MatthiasPfefferle?rel=author" rel="me">+Matthias Pfefferle</a></li>
+<li><a href="https://alpha.app.net/pfefferle" rel="me">App.net</a></li>
+<li><a href="https://github.com/pfefferle" rel="me">github</a></li>
+<li><a href="http://indiewebcamp.com/User:Notizblog.org" rel="me">indiewebcamp.com</a></li>
+<li><a href="http://microformats.org/wiki/User:Pfefferle" rel="me">microformats.org</a></li>
+<li><a href="http://www.slideshare.net/pfefferle" rel="me">slideshare</a></li>
+<li><a href="http://twitter.com/pfefferle" rel="me">twitter</a></li>
+<li><a href="https://www.xing.com/profile/Matthias_Pfefferle" rel="me">xing</a></li>
+
+	</ul>
+</section>
+    </div><!-- #secondary .widget-area -->
+
+        <div id="tertiary" class="widget-area" role="complementary">
+      <section id="categories-2" class="widget widget_categories"><h3 class="widget-title">Kategorien</h3><select name='cat' id='cat' class='postform' >
+	<option value='-1'>Kategorie auswählen</option>
+	<option class="level-0" value="1">Journal&nbsp;&nbsp;(73)</option>
+	<option class="level-0" value="4">Kult &amp; Nostalgie&nbsp;&nbsp;(37)</option>
+	<option class="level-0" value="3">Linkdump&nbsp;&nbsp;(3)</option>
+	<option class="level-0" value="13">Noteworthy&nbsp;&nbsp;(9)</option>
+	<option class="level-0" value="5">nur mal kurz&nbsp;&nbsp;(110)</option>
+	<option class="level-0" value="2">Open Web&nbsp;&nbsp;(401)</option>
+	<option class="level-0" value="876">OpenWeb Notizen&nbsp;&nbsp;(39)</option>
+	<option class="level-0" value="52">Was mit Medien&nbsp;&nbsp;(11)</option>
+	<option class="level-0" value="54">Webkultur&nbsp;&nbsp;(36)</option>
+	<option class="level-0" value="946">WordPress&nbsp;&nbsp;(3)</option>
+	<option class="level-0" value="53">X-Box&nbsp;&nbsp;(15)</option>
+</select>
+
+<script type='text/javascript'>
+/* <![CDATA[ */
+	var dropdown = document.getElementById("cat");
+	function onCatChange() {
+		if ( dropdown.options[dropdown.selectedIndex].value > 0 ) {
+			location.href = "https://notizblog.org/?cat="+dropdown.options[dropdown.selectedIndex].value;
+		}
+	}
+	dropdown.onchange = onCatChange;
+/* ]]> */
+</script>
+
+</section><section id="tag_cloud-2" class="widget widget_tag_cloud"><h3 class="widget-title">Schlagwörter</h3><div class="tagcloud"><a href='https://notizblog.org/tag/a-team/' class='tag-link-93' title='10 Themen' style='font-size: 8pt;'>A-Team</a>
+<a href='https://notizblog.org/tag/addon/' class='tag-link-176' title='13 Themen' style='font-size: 9.1846153846154pt;'>Addon</a>
+<a href='https://notizblog.org/tag/apml/' class='tag-link-449' title='16 Themen' style='font-size: 10.046153846154pt;'>apml</a>
+<a href='https://notizblog.org/tag/atom/' class='tag-link-105' title='12 Themen' style='font-size: 8.7538461538462pt;'>ATOM</a>
+<a href='https://notizblog.org/tag/bud-spencer/' class='tag-link-77' title='13 Themen' style='font-size: 9.1846153846154pt;'>Bud-Spencer</a>
+<a href='https://notizblog.org/tag/comic/' class='tag-link-64' title='12 Themen' style='font-size: 8.7538461538462pt;'>Comic</a>
+<a href='https://notizblog.org/tag/dataportability/' class='tag-link-478' title='48 Themen' style='font-size: 15pt;'>DataPortability</a>
+<a href='https://notizblog.org/tag/diso/' class='tag-link-470' title='19 Themen' style='font-size: 10.8pt;'>DiSo</a>
+<a href='https://notizblog.org/tag/facebook/' class='tag-link-480' title='26 Themen' style='font-size: 12.2pt;'>Facebook</a>
+<a href='https://notizblog.org/tag/federated-social-web/' class='tag-link-892' title='16 Themen' style='font-size: 10.046153846154pt;'>federated social web</a>
+<a href='https://notizblog.org/tag/firefox/' class='tag-link-130' title='28 Themen' style='font-size: 12.523076923077pt;'>firefox</a>
+<a href='https://notizblog.org/tag/furtwangen/' class='tag-link-67' title='10 Themen' style='font-size: 8pt;'>Furtwangen</a>
+<a href='https://notizblog.org/tag/google/' class='tag-link-123' title='40 Themen' style='font-size: 14.138461538462pt;'>Google</a>
+<a href='https://notizblog.org/tag/hcalendar/' class='tag-link-167' title='14 Themen' style='font-size: 9.5076923076923pt;'>hCalendar</a>
+<a href='https://notizblog.org/tag/hcard/' class='tag-link-166' title='54 Themen' style='font-size: 15.538461538462pt;'>hCard</a>
+<a href='https://notizblog.org/tag/html5/' class='tag-link-700' title='15 Themen' style='font-size: 9.7230769230769pt;'>HTML5</a>
+<a href='https://notizblog.org/tag/kolumne/' class='tag-link-828' title='12 Themen' style='font-size: 8.7538461538462pt;'>Kolumne</a>
+<a href='https://notizblog.org/tag/mac/' class='tag-link-70' title='11 Themen' style='font-size: 8.4307692307692pt;'>Mac</a>
+<a href='https://notizblog.org/tag/microdata/' class='tag-link-815' title='16 Themen' style='font-size: 10.046153846154pt;'>Microdata</a>
+<a href='https://notizblog.org/tag/microformats/' class='tag-link-164' title='216 Themen' style='font-size: 22pt;'>Microformats</a>
+<a href='https://notizblog.org/tag/microsoft/' class='tag-link-216' title='15 Themen' style='font-size: 9.7230769230769pt;'>Microsoft</a>
+<a href='https://notizblog.org/tag/mikroformate/' class='tag-link-183' title='73 Themen' style='font-size: 16.938461538462pt;'>Mikroformate</a>
+<a href='https://notizblog.org/tag/mr-t/' class='tag-link-92' title='12 Themen' style='font-size: 8.7538461538462pt;'>Mr.-T</a>
+<a href='https://notizblog.org/tag/oauth/' class='tag-link-422' title='34 Themen' style='font-size: 13.384615384615pt;'>OAuth</a>
+<a href='https://notizblog.org/tag/openid/' class='tag-link-423' title='83 Themen' style='font-size: 17.476923076923pt;'>OpenID</a>
+<a href='https://notizblog.org/tag/open-web/' class='tag-link-737' title='16 Themen' style='font-size: 10.046153846154pt;'>Open Web</a>
+<a href='https://notizblog.org/tag/open-web-podcast/' class='tag-link-751' title='14 Themen' style='font-size: 9.5076923076923pt;'>Open Web Podcast</a>
+<a href='https://notizblog.org/tag/operator/' class='tag-link-195' title='14 Themen' style='font-size: 9.5076923076923pt;'>Operator</a>
+<a href='https://notizblog.org/tag/plugin/' class='tag-link-181' title='24 Themen' style='font-size: 11.876923076923pt;'>Plugin</a>
+<a href='https://notizblog.org/tag/podcast/' class='tag-link-213' title='16 Themen' style='font-size: 10.046153846154pt;'>Podcast</a>
+<a href='https://notizblog.org/tag/portable-contacts/' class='tag-link-669' title='12 Themen' style='font-size: 8.7538461538462pt;'>Portable Contacts</a>
+<a href='https://notizblog.org/tag/pubsubhubbub/' class='tag-link-840' title='16 Themen' style='font-size: 10.046153846154pt;'>pubsubhubbub</a>
+<a href='https://notizblog.org/tag/rdf/' class='tag-link-104' title='13 Themen' style='font-size: 9.1846153846154pt;'>RDF</a>
+<a href='https://notizblog.org/tag/rdfa/' class='tag-link-527' title='36 Themen' style='font-size: 13.707692307692pt;'>RDFa</a>
+<a href='https://notizblog.org/tag/rss/' class='tag-link-103' title='11 Themen' style='font-size: 8.4307692307692pt;'>RSS</a>
+<a href='https://notizblog.org/tag/theme/' class='tag-link-58' title='11 Themen' style='font-size: 8.4307692307692pt;'>theme</a>
+<a href='https://notizblog.org/tag/twitter/' class='tag-link-285' title='24 Themen' style='font-size: 11.876923076923pt;'>Twitter</a>
+<a href='https://notizblog.org/tag/w3c/' class='tag-link-533' title='13 Themen' style='font-size: 9.1846153846154pt;'>W3C</a>
+<a href='https://notizblog.org/tag/webfinger/' class='tag-link-843' title='12 Themen' style='font-size: 8.7538461538462pt;'>Webfinger</a>
+<a href='https://notizblog.org/tag/wordpress/' class='tag-link-57' title='49 Themen' style='font-size: 15.107692307692pt;'>wordpress</a>
+<a href='https://notizblog.org/tag/x-box/' class='tag-link-115' title='11 Themen' style='font-size: 8.4307692307692pt;'>X-Box</a>
+<a href='https://notizblog.org/tag/xbmc/' class='tag-link-114' title='15 Themen' style='font-size: 9.7230769230769pt;'>XBMC</a>
+<a href='https://notizblog.org/tag/xfn/' class='tag-link-165' title='18 Themen' style='font-size: 10.584615384615pt;'>XFN</a>
+<a href='https://notizblog.org/tag/xhtml/' class='tag-link-112' title='11 Themen' style='font-size: 8.4307692307692pt;'>XHTML</a>
+<a href='https://notizblog.org/tag/yahoo/' class='tag-link-487' title='22 Themen' style='font-size: 11.446153846154pt;'>Yahoo</a></div>
+</section><section id="meta-2" class="widget widget_meta"><h3 class="widget-title">Meta</h3>			<ul>
+						<li><a href="https://notizblog.org/wp-login.php">Anmelden</a></li>
+			<li><a href="https://notizblog.org/feed/" title="Abonniere diese Website mit RSS 2.0">Beitrags-Feed (<abbr title="Really Simple Syndication">RSS</abbr>)</a></li>
+			<li><a href="https://notizblog.org/comments/feed/" title="Die neuesten Kommentare zu allen Beiträgen als RSS">Kommentare als <abbr title="Really Simple Syndication">RSS</abbr></a></li>
+			<li><a href="http://wordpress.org/" title="Powered by WordPress, state-of-the-art semantic personal publishing platform.">WordPress.org</a></li>						</ul>
+</section>    </div><!-- #tertiary .widget-area -->
+      </aside>
+  </div><!-- #main -->
+
+  <footer id="colophon" role="contentinfo">
+    <div id="site-generator">
+            Powered by <a href="http://wordpress.org/" rel="generator">WordPress</a>. Design: <a href="http://notizblog.org/projects/sempress/">SemPress</a>    </div>
+  </footer><!-- #colophon -->
+</div><!-- #page -->
+
+<script type='text/javascript' src='https://s0.wp.com/wp-content/js/devicepx-jetpack.js?ver=201403'></script>
+
+	<script src="https://stats.wordpress.com/e-201403.js" type="text/javascript"></script>
+	<script type="text/javascript">
+	st_go({v:'ext',j:'1:2.7',blog:'1066584',post:'7003',tz:'1'});
+	var load_cmc = function(){linktracker_init(1066584,7003,2);};
+	if ( typeof addLoadEvent != 'undefined' ) addLoadEvent(load_cmc);
+	else load_cmc();
+	</script>
+</body>
+</html>

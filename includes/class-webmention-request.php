@@ -18,6 +18,12 @@ class Webmention_Request {
 	 */
 	protected $body;
 
+	/**
+	 * DOMDocument.
+	 *
+	 * @var DOMDocument
+	 */
+	protected $domdocument;
 
 	/**
 	 * Content Type.
@@ -41,13 +47,13 @@ class Webmention_Request {
 	 * @return void
 	 */
 	public function __call( $method, $params ) {
-		$var = \strtolower( \substr( $method, 4 ) );
+		$var = strtolower( substr( $method, 4 ) );
 
-		if ( \strncasecmp( $method, 'get', 3 ) === 0 ) {
+		if ( strncasecmp( $method, 'get', 3 ) === 0 ) {
 			return $this->$var;
 		}
 
-		if ( \strncasecmp( $method, 'set', 3 ) === 0 ) {
+		if ( strncasecmp( $method, 'set', 3 ) === 0 ) {
 			$this->$var = $params[0];
 		}
 	}
@@ -66,11 +72,11 @@ class Webmention_Request {
 		if ( is_wp_error( $response ) ) {
 			return $response;
 		}
+
 		$response = $this->remote_get( $url, $safe );
 		if ( is_wp_error( $response ) ) {
 			return $response;
 		}
-		return true;
 	}
 
 	/**
@@ -97,7 +103,7 @@ class Webmention_Request {
 				return $check;
 		}
 
-		$this->content_type = wp_remote_retrieve_header( $response, 'content-type' );
+		$this->content_type = $this->get_content_type( $response );
 		$check              = $this->check_content_type( $this->content_type );
 		if ( is_wp_error( $check ) ) {
 			return $check;
@@ -123,14 +129,17 @@ class Webmention_Request {
 		} else {
 			$response = wp_remote_head( $url, $args );
 		}
+
 		if ( is_wp_error( $response ) ) {
 			return $response;
 		}
+
 		$this->response_code = wp_remote_retrieve_response_code( $response );
 		$check               = $this->check_response_code( $this->response_code );
 		if ( is_wp_error( $check ) ) {
 			return $check;
 		}
+
 		$check = $this->check_content_type( wp_remote_retrieve_header( $response, 'content-type' ) );
 		if ( is_wp_error( $check ) ) {
 			return $check;
@@ -144,7 +153,6 @@ class Webmention_Request {
 	 * @return array
 	 */
 	protected function get_remote_arguments() {
-
 		$wp_version = get_bloginfo( 'version' );
 		$user_agent = apply_filters( 'http_headers_useragent', 'WordPress/' . $wp_version . '; ' . get_bloginfo( 'url' ) );
 		$args       = array(
@@ -244,10 +252,31 @@ class Webmention_Request {
 	protected function get_content_type( $response ) {
 		$content_type = wp_remote_retrieve_header( $response, 'Content-Type' );
 		// Strip any character set off the content type
-		$ct = explode( ';', $content_type );
-		if ( is_array( $ct ) ) {
-			$content_type = array_shift( $ct );
+		$content_type = explode( ';', $content_type );
+
+		if ( is_array( $content_type ) ) {
+			$content_type = array_shift( $content_type );
 		}
+
 		return trim( $content_type );
+	}
+
+	/**
+	 *  Takes the body and generates a DOMDocument.
+	 *
+	 * @return WP_Error|true An Error object or true.
+	 */
+	public function get_domdocument() {
+		if ( $this->domdocument instanceof DOMDocument ) {
+			return $this->domdocument;
+		}
+
+		if ( ! in_array( $this->content_type, array( 'text/html', 'text/xml' ), true ) ) {
+			return new WP_Error( 'wrong_content_type', __( 'Cannot Generate DOMDocument', 'webmention' ), array( $this->content_type ) );
+		}
+
+		$this->domdocument = webmention_load_domdocument( $this->body );
+
+		return $this->domdocument;
 	}
 }

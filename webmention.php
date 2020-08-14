@@ -25,9 +25,12 @@ defined( 'WEBMENTION_PROCESS_TYPE' ) || define( 'WEBMENTION_PROCESS_TYPE', WEBME
 
 defined( 'WEBMENTION_VOUCH' ) || define( 'WEBMENTION_VOUCH', false );
 
+// Mentions with content less than this length will be rendered in full.
+defined( 'MAX_INLINE_MENTION_LENGTH' ) || define( 'MAX_INLINE_MENTION_LENGTH', 300 );
+
 // initialize admin settings.
 require_once dirname( __FILE__ ) . '/includes/class-webmention-admin.php';
-add_action( 'admin_init', array( 'Webmention_Admin', 'init' ) );
+add_action( 'admin_init', array( 'Webmention_Admin', 'admin_init' ) );
 add_action( 'admin_menu', array( 'Webmention_Admin', 'admin_menu' ) );
 
 /**
@@ -44,11 +47,24 @@ function webmention_init() {
 		require_once dirname( __FILE__ ) . '/includes/debug.php';
 	}
 
+	require_once dirname( __FILE__ ) . '/includes/class-webmention-tools.php';
+	add_action( 'admin_menu', array( 'Webmention_Tools', 'admin_menu' ) );
+	add_action( 'init', array( 'Webmention_Tools', 'init' ) );
+
 	// Request Handler.
 	require_once dirname( __FILE__ ) . '/includes/class-webmention-request.php';
 
 	// Comment Type Class
 	require_once dirname( __FILE__ ) . '/includes/class-webmention-comment-type.php';
+
+	// Handler Control Class.
+	require_once dirname( __FILE__ ) . '/includes/handlers/class-webmention-handler.php';
+
+	// Handler Base Class
+	require_once dirname( __FILE__ ) . '/includes/handlers/class-webmention-handler-base.php';
+
+	// Webmention Item Class
+	require_once dirname( __FILE__ ) . '/includes/entities/class-webmention-item.php';
 
 	// list of various public helper functions.
 	require_once dirname( __FILE__ ) . '/includes/functions.php';
