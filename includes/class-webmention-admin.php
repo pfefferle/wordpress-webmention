@@ -15,6 +15,7 @@ class Webmention_Admin {
 
 		/* Add meta boxes on the 'add_meta_boxes' hook. */
 		add_action( 'add_meta_boxes', array( 'Webmention_Admin', 'add_meta_boxes' ) );
+		add_action( 'edit_comment', array( 'Webmention_Admin', 'save_comment_meta' ) );
 
 		add_filter( 'plugin_action_links', array( 'Webmention_Admin', 'plugin_action_links' ), 10, 2 );
 		add_filter( 'plugin_row_meta', array( 'Webmention_Admin', 'plugin_row_meta' ), 10, 2 );
@@ -50,6 +51,30 @@ class Webmention_Admin {
 			return;
 		}
 		load_template( dirname( __FILE__ ) . '/../templates/webmention-edit-comment-form.php' );
+	}
+
+
+	/**
+	 * Saves Comment Meta Options
+	 *
+	 * @param int $comment_id
+	 *
+	 */
+	public static function save_comment_meta( $comment_id ) {
+		// If this is an autosave, our form has not been submitted, so we don't want to do anything.
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+			return;
+		}
+
+		// Check the user's permissions.
+		if ( ! current_user_can( 'edit_comment', $comment_id ) ) {
+					return;
+		}
+		if ( ! empty( $_POST['avatar'] ) ) {
+			update_comment_meta( $comment_id, 'avatar', $_POST['avatar'] );
+		} else {
+				delete_comment_meta( $comment_id, 'avatar' );
+		}
 	}
 
 	/**

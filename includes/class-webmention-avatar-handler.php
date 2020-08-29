@@ -192,6 +192,70 @@ class Webmention_Avatar_Handler {
 	}
 
 	/**
+	 * Store Avatar
+	 *
+	 * @param string $url URL.
+	 * @param string $host Host.
+	 * @param string $user_name User Name.
+	 * @return string URL to Downloaded Image.
+	 *
+	 */
+	public static function store_avatar( $url, $host, $user_name ) {
+		$upload_dir = wp_upload_dir( null, false );
+
+		// Load dependencies.
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		require_once ABSPATH . WPINC . '/media.php';
+
+		$filehandle = '/webmention/avatars/' . $host . '/' . $user_name . '.jpg';
+		$filepath   = $upload_dir['basedir'] . $filehandle;
+
+		// Download Profile Picture and add as attachment
+		$file = wp_get_image_editor( download_url( $url, 300 ) );
+
+		if ( is_wp_error( $file ) ) {
+			$file = wp_get_image_editor( download_url( plugin_dir_url( dirname( __FILE__ ) ) . 'img/mm.jpg', 300 ) );
+		}
+
+		$file->resize( null, WEBMENTION_AVATAR_SIZE, true );
+		$file->set_quality( WEBMENTION_AVATAR_QUALITY );
+		$file->save( $filepath, 'image/jpg' );
+		return ( $upload_dir['baseurl'] . '/' . ltrim( $filehandle, '/' ) );
+	}
+
+
+	 /**
+	  * Given an Avatar URL return the filepath.
+	  *
+	  * @param string $url URL.
+	  * @return string Filepath.
+	  */
+	public static function avatar_url_to_filepath( $url ) {
+		$upload_dir = wp_upload_dir( null, false );
+		$path       = str_replace( $upload_dir['baseurl'], '', $url );
+		return ( $upload_dir['basedir'] . ltrim( $path, '/' ) );
+	}
+
+	  /**
+	   * Delete Avatar.
+	   *
+	   * @param string $url Avatar to Delete.
+	   * @return boolean True if successful. False if not.
+	   *
+	   */
+	public static function delete_avatar( $url ) {
+		$filepath = self::avatar_url_to_filepath( $url );
+		if ( empty( $filepath ) ) {
+			return false;
+		}
+		if ( file_exists( $filepath ) ) {
+			wp_delete_file( $filepath );
+			return true;
+		}
+		return false;
+	}
+
+	/**
 	 * Store Avatars locally
 	 *
 	 * @param int $comment_ID
@@ -215,27 +279,11 @@ class Webmention_Avatar_Handler {
 			return false;
 		}
 
-		require_once ABSPATH . 'wp-admin/includes/file.php';
-		require_once ABSPATH . WPINC . '/media.php';
-
-		$user_name  = sanitize_title( $comment->comment_author );
-		$url        = webmention_get_user_domain( $comment );
-		$host       = wp_parse_url( $url, PHP_URL_HOST );
-		$filehandle = '/uploads/webmention/avatars/' . $host . '/' . $user_name . '.jpg';
-		$filepath   = WP_CONTENT_DIR . $filehandle;
-
-		// Download Profile Picture and add as attachment
-		$file = wp_get_image_editor( download_url( $avatar, 300 ) );
-
-		if ( is_wp_error( $file ) ) {
-			$file = wp_get_image_editor( download_url( plugin_dir_url( dirname( __FILE__ ) ) . 'img/mm.jpg', 300 ) );
-		}
-
-		$file->resize( null, WEBMENTION_AVATAR_SIZE, true );
-		$file->set_quality( WEBMENTION_AVATAR_QUALITY );
-		$file->save( $filepath, 'image/jpg' );
+		$user_name = sanitize_title( $comment->comment_author );
+		$host      = webmention_get_user_domain( $comment );
+		$avatar    = self::store_avatar( $avatar, $host, $user_name );
 
 		delete_comment_meta( $comment->comment_ID, 'semantic_linkbacks_avatar' );
-		update_comment_meta( $comment->comment_ID, 'avatar', content_url( $filehandle ) );
+		update_comment_meta( $comment->comment_ID, 'avatar', $avatar );
 	}
 }
