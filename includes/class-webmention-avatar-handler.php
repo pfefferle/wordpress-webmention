@@ -17,8 +17,8 @@ class Webmention_Avatar_Handler {
 		// All the default gravatars come from Gravatar instead of being generated locally so add a local default
 		add_filter( 'avatar_defaults', array( $cls, 'anonymous_avatar' ) );
 
-		add_action( 'comment_post', array( $cls, 'cache_avatar' ) );
-		add_action( 'edit_comment', array( $cls, 'cache_avatar' ) );
+		add_action( 'comment_post', array( $cls, 'cache_avatar' ), 20 );
+		add_action( 'edit_comment', array( $cls, 'cache_avatar' ), 20 );
 	}
 
 	public static function anonymous_avatar( $avatar_defaults ) {
@@ -203,6 +203,10 @@ class Webmention_Avatar_Handler {
 	public static function store_avatar( $url, $host, $user_name ) {
 		$upload_dir = wp_upload_dir( null, false );
 
+		if ( wp_parse_url( $url, PHP_URL_HOST ) === wp_parse_url( home_url(), PHP_URL_HOST ) ) {
+			return false;
+		}
+
 		// Load dependencies.
 		require_once ABSPATH . 'wp-admin/includes/file.php';
 		require_once ABSPATH . WPINC . '/media.php';
@@ -232,18 +236,21 @@ class Webmention_Avatar_Handler {
 	  */
 	public static function avatar_url_to_filepath( $url ) {
 		$upload_dir = wp_upload_dir( null, false );
-		$path       = str_replace( $upload_dir['baseurl'], '', $url );
+		if ( false !== strpos( $url, $upload_dir['baseurl'] ) ) {
+			return false;
+		}
+		$path = str_replace( $upload_dir['baseurl'], '', $url );
 		return ( $upload_dir['basedir'] . ltrim( $path, '/' ) );
 	}
 
 	  /**
-	   * Delete Avatar.
+	   * Delete Avatar File.
 	   *
 	   * @param string $url Avatar to Delete.
 	   * @return boolean True if successful. False if not.
 	   *
 	   */
-	public static function delete_avatar( $url ) {
+	public static function delete_avatar_file( $url ) {
 		$filepath = self::avatar_url_to_filepath( $url );
 		if ( empty( $filepath ) ) {
 			return false;
@@ -256,16 +263,34 @@ class Webmention_Avatar_Handler {
 	}
 
 	/**
+	 * Delete Avatar.
+	 *
+	 * @param int $comment_ID
+	 */
+	public static function delete_avatar( $comment_id ) {
+		$comment = get_comment( $comment_id );
+
+		if ( ! $comment ) {
+			return false;
+		}
+		$url = get_comment_meta( $comment_id, 'avatar', true );
+		self::delete_avatar_file( $url );
+	}
+
+	/**
 	 * Store Avatars locally
 	 *
 	 * @param int $comment_ID
-	 *
-	 * @return string|WP_error
 	 */
 	public static function cache_avatar( $comment_id ) {
 		$comment = get_comment( $comment_id );
 
 		if ( ! $comment ) {
+			return false;
+		}
+
+		// Do not try to store the avatar if there is a User ID. Let something else handle that.
+		if ( $comment->user_id ) {
 			return false;
 		}
 
@@ -275,11 +300,7 @@ class Webmention_Avatar_Handler {
 			return false;
 		}
 
-		if ( wp_parse_url( $avatar, PHP_URL_HOST ) === wp_parse_url( home_url(), PHP_URL_HOST ) ) {
-			return false;
-		}
-
-		$user_name = sanitize_title( $comment->comment_author );
+		$user_name = sanitize_title( get_comment_author( $comment ) );
 		$host      = webmention_get_user_domain( $comment );
 		$avatar    = self::store_avatar( $avatar, $host, $user_name );
 
