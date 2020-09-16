@@ -400,7 +400,7 @@ class Webmention_Notifications {
 		 * @param string $subject    Subject of the comment moderation email.
 		 * @param int    $comment_id Comment ID.
 		 */
-		$subject = apply_filters( 'comment_moderation_subject', $subject, $comment_id );
+		$subject = apply_filters( 'comment_moderation_subject', $subject, $comment->comment_ID );
 
 		/**
 		 * Filters the comment moderation email headers.
