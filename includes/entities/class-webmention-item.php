@@ -235,7 +235,7 @@ class Webmention_Item {
 		}
 
 		// If this is a reply it needs a summary. Summary should be generated from content if no summary.
-		if ( 'reply' === $type && ! array_key_exists( 'summary', $vars ) ) {
+		if ( 'reply' === $this->response_type && ! array_key_exists( 'summary', $vars ) ) {
 			return false;
 		}
 
@@ -269,10 +269,10 @@ class Webmention_Item {
 	 */
 	public function to_commentdata_array() {
 		$published_gmt = clone $this->published;
-		$published_gmt->setTimeZone( 'GMT' );
+		$published_gmt->setTimeZone( new DateTimeZone( 'GMT' ) );
 
-		if ( ! is_array( $meta ) ) {
-			$meta = array();
+		if ( ! is_array( $this->meta ) ) {
+			$this->meta = array();
 		}
 
 		$this->meta['avatar']   = ifset( $this->author['photo'] );
