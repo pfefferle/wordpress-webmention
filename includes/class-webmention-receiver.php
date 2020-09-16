@@ -147,13 +147,15 @@ class Webmention_Receiver {
 			'/endpoint',
 			array(
 				array(
-					'methods'  => WP_REST_Server::CREATABLE,
-					'callback' => array( 'Webmention_Receiver', 'post' ),
-					'args'     => self::request_parameters(),
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => array( 'Webmention_Receiver', 'post' ),
+					'args'                => self::request_parameters(),
+					'permission_callback' => '__return_true',
 				),
 				array(
-					'methods'  => WP_REST_Server::READABLE,
-					'callback' => array( 'Webmention_Receiver', 'get' ),
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array( 'Webmention_Receiver', 'get' ),
+					'permission_callback' => '__return_true',
 				),
 			)
 		);
