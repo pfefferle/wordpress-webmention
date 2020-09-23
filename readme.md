@@ -6,7 +6,7 @@
 **Tags:** webmention, pingback, trackback, linkback, indieweb, comment, response  
 **Requires at least:** 4.9  
 **Tested up to:** 5.5  
-**Stable tag:** 4.0.4  
+**Stable tag:** 4.0.5  
 **Requires PHP:** 5.6  
 **License:** MIT  
 **License URI:** https://opensource.org/licenses/MIT  
@@ -92,6 +92,10 @@ Webmention headers are only shown if webmentions are available for that particul
 ## Changelog ##
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
+
+### 4.0.5 ###
+
+* Remov `Webmention_Notification` class until proper tested/used
 
 ### 4.0.4 ###
 
