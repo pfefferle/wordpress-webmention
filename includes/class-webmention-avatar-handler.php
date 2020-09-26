@@ -133,7 +133,7 @@ class Webmention_Avatar_Handler {
 
 		$user_name = sanitize_title( get_comment_author( $comment ) );
 		$host      = webmention_get_user_domain( $comment );
-		$avatar    = self::store_avatar( $avatar, $host, $user_name );
+		$avatar    = self::sideload_avatar( $avatar, $host, $user_name );
 
 		delete_comment_meta( $comment->comment_ID, 'semantic_linkbacks_avatar' );
 		update_comment_meta( $comment->comment_ID, 'avatar', $avatar );
