@@ -302,6 +302,11 @@ class Webmention_Avatar_Handler {
 			}
 
 			if ( wp_http_validate_url( $avatar ) ) {
+				$path = 	self::avatar_url_to_filepath( $avatar );
+				// Check to see if filepath exists.
+				if ( $path && ! file_exists( $path ) ) {
+					return $args;
+				}
 				$args['url'] = $avatar;
 			}
 
