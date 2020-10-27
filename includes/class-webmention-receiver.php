@@ -355,7 +355,8 @@ class Webmention_Receiver {
 
 		// disable flood control
 		remove_action( 'check_comment_flood', 'check_comment_flood_db', 10 );
-
+		// Remove unneeded data
+		unset($commentdata["remote_source_original"]);
 		// update or save webmention
 		if ( empty( $commentdata['comment_ID'] ) ) {
 			// save comment
