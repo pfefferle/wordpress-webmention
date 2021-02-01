@@ -20,7 +20,6 @@ class Webmention_Avatar_Handler {
 		// Store Avatars Locally
 		add_action( 'comment_post', array( $cls, 'store_avatar' ), 20 );
 		add_action( 'edit_comment', array( $cls, 'store_avatar' ), 20 );
-
 	}
 
 	/**
@@ -69,10 +68,13 @@ class Webmention_Avatar_Handler {
 	 */
 	public static function avatar_url_to_filepath( $url ) {
 		$upload_dir = wp_upload_dir( null, false );
+
 		if ( false !== strpos( $url, $upload_dir['baseurl'] ) ) {
 			return false;
 		}
+
 		$path = str_replace( $upload_dir['baseurl'], '', $url );
+
 		return ( $upload_dir['basedir'] . ltrim( $path, '/' ) );
 	}
 
@@ -85,13 +87,16 @@ class Webmention_Avatar_Handler {
 	 */
 	public static function delete_avatar_file( $url ) {
 		$filepath = self::avatar_url_to_filepath( $url );
+
 		if ( empty( $filepath ) ) {
 			return false;
 		}
+
 		if ( file_exists( $filepath ) ) {
 			wp_delete_file( $filepath );
 			return true;
 		}
+
 		return false;
 	}
 
@@ -102,10 +107,13 @@ class Webmention_Avatar_Handler {
 	 */
 	public static function delete_avatar( $comment_id ) {
 		$comment = get_comment( $comment_id );
+
 		if ( ! $comment ) {
 			return false;
 		}
+
 		$url = get_comment_meta( $comment_id, 'avatar', true );
+
 		self::delete_avatar_file( $url );
 	}
 
@@ -116,6 +124,7 @@ class Webmention_Avatar_Handler {
 	 */
 	public static function store_avatar( $comment_id ) {
 		$comment = get_comment( $comment_id );
+
 		if ( ! $comment ) {
 			return false;
 		}
@@ -302,7 +311,8 @@ class Webmention_Avatar_Handler {
 			}
 
 			if ( wp_http_validate_url( $avatar ) ) {
-				$path = 	self::avatar_url_to_filepath( $avatar );
+				$path = self::avatar_url_to_filepath( $avatar );
+
 				// Check to see if filepath exists.
 				if ( $path && ! file_exists( $path ) ) {
 					return $args;
