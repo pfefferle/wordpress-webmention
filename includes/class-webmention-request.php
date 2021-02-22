@@ -98,7 +98,9 @@ class Webmention_Request {
 			return $response;
 		}
 
-		$check = $this->check_response_code( wp_remote_retrieve_response_code( $response ) );
+		$this->response_code = wp_remote_retrieve_response_code( $response );
+		$check = $this->check_response_code( $this->response_code, $response );
+
 		if ( is_wp_error( $check ) ) {
 				return $check;
 		}
@@ -135,7 +137,7 @@ class Webmention_Request {
 		}
 
 		$this->response_code = wp_remote_retrieve_response_code( $response );
-		$check               = $this->check_response_code( $this->response_code );
+		$check               = $this->check_response_code( $this->response_code, $response );
 		if ( is_wp_error( $check ) ) {
 			return $check;
 		}
@@ -191,10 +193,11 @@ class Webmention_Request {
 	 * Check if response is a supported content type
 	 *
 	 * @param int $code Status Code.
+	 * @param array $response Response if Present.
 	 *
 	 * @return WP_Error|true return an error or that something is supported
 	 */
-	protected function check_response_code( $code ) {
+	protected function check_response_code( $code, $response = null ) {
 		switch ( $code ) {
 			case 200:
 				return true;
