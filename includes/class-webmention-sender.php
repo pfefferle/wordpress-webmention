@@ -77,7 +77,7 @@ class Webmention_Sender {
 	 * @param string $target target url.
 	 * @param int    $post_id the post_ID (optional).
 	 *
-	 * @return array of results including HTTP headers.
+	 * @return array|WP_Error array of results including HTTP headers or WP_Error object if failed.
 	 */
 	public static function send_webmention( $source, $target, $post_id = null ) {
 		// stop selfpings on the same URL
@@ -160,7 +160,11 @@ class Webmention_Sender {
 		$targets = apply_filters( 'webmention_links', $urls, $post_id );
 		$targets = array_unique( $targets );
 		$pung    = get_pung( $post );
-		$ping    = array();
+
+		// Find previously sent webmentions and send them one last time.
+		$deletes = array_diff( $pung, $targets );
+
+		$ping = array();
 
 		foreach ( $targets as $target ) {
 			// send webmention
@@ -169,11 +173,7 @@ class Webmention_Sender {
 			// check response
 			if ( ! is_wp_error( $response ) &&
 				wp_remote_retrieve_response_code( $response ) < 400 ) {
-				// if not already added to punged urls
-				if ( ! in_array( $target, $pung, true ) ) {
-					// tell the pingback function not to ping these links again
 					$ping[] = $target;
-				}
 			}
 
 			// reschedule if server responds with a http error 5xx
@@ -182,9 +182,44 @@ class Webmention_Sender {
 			}
 		}
 
-		if ( ! empty( $ping ) ) {
-			add_ping( $post, $ping );
+		foreach ( $deletes as $deleted ) {
+			// send delete webmention
+			$response = self::send_webmention( $source, $deleted, $post_id );
+
+			// reschedule if server responds with a http error 5xx
+			if ( wp_remote_retrieve_response_code( $response ) >= 500 ) {
+				self::reschedule( $post_id );
+				$ping[] = $deleted;
+			}
 		}
+
+		if ( ! empty( $ping ) ) {
+			update_ping( $post, $ping );
+		}
+	}
+
+	/*
+	 * Update the Pinged List as Opposed to Adding to It.
+	 *
+	 * @param int|WP_Post $post_id Post.
+	 * @param array $pinged Array of URLs
+	*/
+	public static function update_ping( $post_id, $pinged ) {
+		global $wpdb;
+		$post = get_post( $post_id );
+		if ( ! $post ) {
+			return false;
+		}
+
+		if ( ! is_array( $pinged ) ) {
+			return false;
+		}
+
+		$new = implode( "\n", $pinged );
+
+		$return = $wpdb->update( $wpdb->posts, array( 'pinged' => $new ), array( 'ID' => $post->ID ) );
+		clean_post_cache( $post->ID );
+		return $return;
 	}
 
 	/**
