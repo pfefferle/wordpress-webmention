@@ -5,7 +5,7 @@
   "devDependencies": {
     "grunt": "^1.1.0",
     "grunt-checktextdomain": "^1.0.1",
-    "grunt-replace": "^1.0.1",
+    "grunt-replace": "^2.0.1",
     "grunt-wp-i18n": "^1.0.3",
     "grunt-wp-readme-to-markdown": "^2.0.1"
   },
