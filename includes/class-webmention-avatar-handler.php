@@ -43,9 +43,29 @@ class Webmention_Avatar_Handler {
 
 		// If this is a gravatar URL, automatically use gravatar to get the right size and file type.
 		if ( strpos( $url, 'gravatar.com' ) ) {
-			$hash = wp_parse_url( $url, PHP_URL_PATH );
-			$hash = str_replace( '/avatar/', '', $hash );
-			$url  = 'https://www.gravatar.com/avatar/' . $hash . '.jpg?s=' . WEBMENTION_AVATAR_SIZE;
+			$hash    = wp_parse_url( $url, PHP_URL_PATH );
+			$default = get_option( 'avatar_default', 'mystery' );
+			$rating  = strtolower( get_option( 'avatar_rating' ) );
+			$hash    = str_replace( '/avatar/', '', $hash );
+			switch ( $default ) {
+				case 'mm':
+				case 'mystery':
+				case 'mysteryman':
+					$default = 'mp';
+					break;
+				case 'gravatar_default':
+					$default = false;
+					break;
+			}
+			$url  = 'https://www.gravatar.com/avatar/' . $hash . '.jpg';
+			$url  = add_query_arg(
+				array(
+					's' => WEBMENTION_AVATAR_SIZE,
+					'd' => $default,
+					'r' => $rating,
+				),
+				$url
+			);
 			$file = download_url( $url, 300 );
 			if ( is_wp_error( $file ) ) {
 				return false;
@@ -140,7 +160,7 @@ class Webmention_Avatar_Handler {
 		$author = get_comment_author_url( $comment );
 		$host   = webmention_get_user_domain( $comment );
 		$avatar = self::sideload_avatar( $avatar, $host, $author );
-			
+
 		delete_comment_meta( $comment->comment_ID, 'semantic_linkbacks_avatar' );
 		update_comment_meta( $comment->comment_ID, 'avatar', $avatar );
 	}
