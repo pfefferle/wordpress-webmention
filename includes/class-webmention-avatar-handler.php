@@ -47,7 +47,7 @@ class Webmention_Avatar_Handler {
 			$hash = str_replace( '/avatar/', '', $hash );
 			$url  = 'https://www.gravatar.com/avatar/' . $hash . '.jpg?s=' . WEBMENTION_AVATAR_SIZE;
 			$file = download_url( $url, 300 );
-			if ( is_wp_error( $file ) {
+			if ( is_wp_error( $file ) ) {
 				return false;
 			}
 			copy( $file, $filepath );
