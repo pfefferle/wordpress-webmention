@@ -636,13 +636,13 @@ if ( ! function_exists( 'ifset' ) ) {
 }
 
 /**
- * Returns the Author URL
- *
- * @param mixed $comment
- *
- * @return string
- */
-function webmention_get_author_url( $comment ) {
+ * Returns the Avatar URL
+  *
+   * @param mixed $comment
+	*
+	 * @return string
+	  */
+function webmention_get_avatar_url( $comment ) {
 	if ( is_numeric( $comment ) ) {
 		$comment = get_comment( $comment );
 	}
@@ -651,12 +651,7 @@ function webmention_get_author_url( $comment ) {
 
 	// Backward Compatibility for Semantic Linkbacks
 	if ( ! $avatar ) {
-		$avatar = get_comment_meta( $comment->comment_ID, 'semantic_linkbacks_author_url', true );
-		// If this is found move it to the new location for next time.
-		if ( $avatar ) {
-			update_comment_meta( $comment->comment_ID, 'avatar' );
-			delete_comment_meta( $comment->comment_ID, 'semantic_linkbacks_author_url' );
-		}
+		$avatar = get_comment_meta( $comment->comment_ID, 'semantic_linkbacks_avatar', true );
 	}
 
 	if ( ! $avatar ) {
@@ -665,3 +660,4 @@ function webmention_get_author_url( $comment ) {
 
 	return $avatar;
 }
+
