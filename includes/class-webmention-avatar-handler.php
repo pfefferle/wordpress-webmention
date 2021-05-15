@@ -46,7 +46,6 @@ class Webmention_Avatar_Handler {
 		$filehandle = '/webmention/avatars/' . $host . '/' . md5( $author ) . '.jpg';
 		$filepath   = $upload_dir['basedir'] . $filehandle;
 
-
 		// Download Profile Picture and add as attachment
 		$file = wp_get_image_editor( download_url( $url, 300 ) );
 
@@ -57,7 +56,6 @@ class Webmention_Avatar_Handler {
 		$file->resize( null, WEBMENTION_AVATAR_SIZE, true );
 		$file->set_quality( WEBMENTION_AVATAR_QUALITY );
 		$file->save( $filepath, 'image/jpg' );
-		
 
 		return ( $upload_dir['baseurl'] . '/' . ltrim( $filehandle, '/' ) );
 	}
@@ -134,8 +132,8 @@ class Webmention_Avatar_Handler {
 		}
 
 		$author = get_comment_author_url( $comment );
-		$host      = webmention_get_user_domain( $comment );
-		$avatar    = self::sideload_avatar( $avatar, $host, $author );
+		$host   = webmention_get_user_domain( $comment );
+		$avatar = self::sideload_avatar( $avatar, $host, $author );
 
 		delete_comment_meta( $comment->comment_ID, 'semantic_linkbacks_avatar' );
 		update_comment_meta( $comment->comment_ID, 'avatar', $avatar );
@@ -304,7 +302,7 @@ class Webmention_Avatar_Handler {
 			}
 
 			if ( wp_http_validate_url( $avatar ) ) {
-				$path = 	self::avatar_url_to_filepath( $avatar );
+				$path = self::avatar_url_to_filepath( $avatar );
 				// Check to see if filepath exists.
 				if ( $path && ! file_exists( $path ) ) {
 					return $args;
