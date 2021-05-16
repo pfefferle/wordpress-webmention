@@ -130,12 +130,11 @@ class Webmention_Avatar_Handler {
 	 * @return string Filepath.
 	 */
 	public static function avatar_url_to_filepath( $url ) {
-		$upload_dir = wp_upload_dir( null, false );
-		if ( false !== strpos( $url, $upload_dir['baseurl'] ) ) {
+		if ( ! str_contains( self::upload_directory_url(), $url ) {
 			return false;
 		}
-		$path = str_replace( $upload_dir['baseurl'], '', $url );
-		return ( $upload_dir['basedir'] . ltrim( $path, '/' ) );
+		$path = str_replace( self::upload_directory_url(), '', $url );
+		return self::upload_directory( $path );
 	}
 
 	/**
@@ -199,12 +198,6 @@ class Webmention_Avatar_Handler {
 
 		delete_comment_meta( $comment->comment_ID, 'semantic_linkbacks_avatar' );
 		update_comment_meta( $comment->comment_ID, 'avatar', $avatar );
-	}
-
-	public static function anonymous_avatar( $avatar_defaults ) {
-		$avatar_defaults['mystery'] = __( 'Mystery Person (hosted locally)', 'webmention' );
-
-		return $avatar_defaults;
 	}
 
 	/**
