@@ -61,7 +61,7 @@ class Webmention_Avatar_Handler {
 			$url  = add_query_arg(
 				array(
 					's' => WEBMENTION_AVATAR_SIZE,
-					'd' => $default,
+					'd' => $default, // Replace with our site default.
 					'r' => $rating,
 				),
 				$url
@@ -73,6 +73,13 @@ class Webmention_Avatar_Handler {
 			copy( $file, $filepath );
 			@unlink( $tmp_file );
 		} else {
+			// Allow for other s= queries.
+			$query = wp_parse_url( $url, PHP_URL_QUERY );
+			$query = explode( '=', $query );
+			if ( array_key_exists( 's', $query ) ) {
+				$url = str_replace( 's=' . $query['s'], 's=' . WEBMENTION_AVATAR_SIZE, $url );
+			}
+
 			// Download Profile Picture and add as attachment
 			$file = wp_get_image_editor( download_url( $url, 300 ) );
 			if ( is_wp_error( $file ) ) {
