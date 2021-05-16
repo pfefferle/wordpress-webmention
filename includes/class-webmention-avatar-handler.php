@@ -99,11 +99,15 @@ class Webmention_Avatar_Handler {
 			return self::upload_directory_url( $filehandle );
 		}
 
-		// Allow for other s= queries.
+		// Allow for common query parameters in image APIs to get a better quality image.
 		$query = array();
 		wp_parse_str( wp_parse_url( $url, PHP_URL_QUERY ), $query );
-		if ( array_key_exists( 's', $query ) ) {
+		if ( array_key_exists( 's', $query ) && is_numeric( $query['s'] ) ) {
 			$url = str_replace( 's=' . $query['s'], 's=' . WEBMENTION_AVATAR_SIZE, $url );
+		}
+		if ( array_key_exists( 'width', $query ) && array_key_exists( 'height', $query ) ) {
+			$url = str_replace( 'width=' . $query['width'], 'width=' . WEBMENTION_AVATAR_SIZE, $url );
+			$url = str_replace( 'height=' . $query['height'], 'height=' . WEBMENTION_AVATAR_SIZE, $url );
 		}
 
 		// Download Profile Picture and add as attachment
