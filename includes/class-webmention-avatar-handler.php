@@ -130,7 +130,7 @@ class Webmention_Avatar_Handler {
 	 * @return string Filepath.
 	 */
 	public static function avatar_url_to_filepath( $url ) {
-		if ( ! str_contains( self::upload_directory_url(), $url ) {
+		if ( ! str_contains( self::upload_directory_url(), $url ) ) {
 			return false;
 		}
 		$path = str_replace( self::upload_directory_url(), '', $url );
