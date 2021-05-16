@@ -193,6 +193,11 @@ class Webmention_Avatar_Handler {
 		}
 
 		$author = get_comment_author_url( $comment );
+
+		// Do not try to store if no author URL.
+		if ( empty( $author ) ) {
+			return false;
+		}
 		$host   = webmention_get_user_domain( $comment );
 		$avatar = self::sideload_avatar( $avatar, $host, $author );
 
