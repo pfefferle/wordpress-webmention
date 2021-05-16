@@ -19,6 +19,32 @@ class Webmention_Avatar_Handler {
 	}
 
 	/**
+	 * Return upload directory.
+	 *
+	 * @param string $filepath File Path. Optional
+	 * @return string URL of upload directory.
+	 */
+	public static function upload_directory( $filepath = '' ) {
+		$upload_dir = wp_get_upload_dir();
+		$upload_dir = $upload_dir['basedir'] . '/webmention/avatars/';
+		$upload_dir = apply_filters( 'webmention_avatar_directory', $upload_dir );
+		return $upload_dir . $filepath;
+	}
+
+	/**
+	 * Return upload directory url.
+	 *
+	 * @param string $filepath File Path. Optional.
+	 * @return string URL of upload directory.
+	 */
+	public static function upload_directory_url( $filepath = '' ) {
+		$upload_dir = wp_get_upload_dir();
+		$upload_dir = $upload_dir['baseurl'] . '/webmention/avatars/';
+		$upload_dir = apply_filters( 'webmention_avatar_directory', $upload_dir );
+		return $upload_dir . $filepath;
+	}
+
+	/**
 	 * Sideload Avatar
 	 *
 	 * @param string $url URL.
@@ -28,9 +54,8 @@ class Webmention_Avatar_Handler {
 	 *
 	 */
 	public static function sideload_avatar( $url, $host, $author ) {
-		$upload_dir = wp_upload_dir( null, false );
-
-		if ( wp_parse_url( $url, PHP_URL_HOST ) === wp_parse_url( home_url(), PHP_URL_HOST ) ) {
+		// If the URL is inside the upload directory.
+		if ( str_contains( self::upload_directory_url(), $url ) ) {
 			return $url;
 		}
 
@@ -38,11 +63,11 @@ class Webmention_Avatar_Handler {
 		require_once ABSPATH . 'wp-admin/includes/file.php';
 		require_once ABSPATH . WPINC . '/media.php';
 
-		$filehandle = '/webmention/avatars/' . $host . '/' . md5( $author ) . '.jpg';
-		$filepath   = $upload_dir['basedir'] . $filehandle;
+		$filehandle = $host . '/' . md5( $author ) . '.jpg';
+		$filepath   = self::upload_directory( $filehandle );
 
 		// If this is a gravatar URL, automatically use gravatar to get the right size and file type.
-		if ( strpos( $url, 'gravatar.com' ) ) {
+		if ( str_contains( 'gravatar.com', $url ) ) {
 			$hash    = wp_parse_url( $url, PHP_URL_PATH );
 			$default = get_option( 'avatar_default', 'mystery' );
 			$rating  = strtolower( get_option( 'avatar_rating' ) );
@@ -70,27 +95,27 @@ class Webmention_Avatar_Handler {
 			if ( is_wp_error( $file ) ) {
 				return false;
 			}
-			copy( $file, $filepath );
-			@unlink( $tmp_file );
-		} else {
-			// Allow for other s= queries.
-			$query = wp_parse_url( $url, PHP_URL_QUERY );
-			$query = explode( '=', $query );
-			if ( array_key_exists( 's', $query ) ) {
-				$url = str_replace( 's=' . $query['s'], 's=' . WEBMENTION_AVATAR_SIZE, $url );
-			}
-
-			// Download Profile Picture and add as attachment
-			$file = wp_get_image_editor( download_url( $url, 300 ) );
-			if ( is_wp_error( $file ) ) {
-				return false;
-			}
-			$file->resize( null, WEBMENTION_AVATAR_SIZE, true );
-			$file->set_quality( WEBMENTION_AVATAR_QUALITY );
-			$file->save( $filepath, 'image/jpg' );
+			@move_uploaded_file( $file, $filepath );
+			return self::upload_directory_url( $filehandle );
 		}
 
-		return ( $upload_dir['baseurl'] . '/' . ltrim( $filehandle, '/' ) );
+		// Allow for other s= queries.
+		$query = array();
+		wp_parse_str( wp_parse_url( $url, PHP_URL_QUERY ), $query );
+		if ( array_key_exists( 's', $query ) ) {
+			$url = str_replace( 's=' . $query['s'], 's=' . WEBMENTION_AVATAR_SIZE, $url );
+		}
+
+		// Download Profile Picture and add as attachment
+		$file = wp_get_image_editor( download_url( $url, 300 ) );
+		if ( is_wp_error( $file ) ) {
+			return false;
+		}
+		$file->resize( null, WEBMENTION_AVATAR_SIZE, true );
+		$file->set_quality( WEBMENTION_AVATAR_QUALITY );
+		$file->save( $filepath, 'image/jpg' );
+
+		return self::upload_directory_url( $filehandle );
 	}
 
 

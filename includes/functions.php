@@ -637,11 +637,11 @@ if ( ! function_exists( 'ifset' ) ) {
 
 /**
  * Returns the Avatar URL
-  *
-   * @param mixed $comment
-	*
-	 * @return string
-	  */
+ *
+ * @param mixed $comment
+ *
+ * @return string
+ */
 function webmention_get_avatar_url( $comment ) {
 	if ( is_numeric( $comment ) ) {
 		$comment = get_comment( $comment );
@@ -661,3 +661,16 @@ function webmention_get_avatar_url( $comment ) {
 	return $avatar;
 }
 
+if ( ! function_exists( 'str_contains' ) ) {
+	/*
+	 * Determine if a string contains a given substring. Case sensitive.
+	 * Polyfill for pre PHP8.
+	 *
+	 * @param string $haystack String.
+	 * @param string $needle String that should be contained within $haystack.
+	 * @return boolean If needle is within haystack.
+	 */
+	function str_contains( $haystack, $needle ) {
+		return '' !== $needle && false !== mb_strpos( $haystack, $needle );
+	}
+}
