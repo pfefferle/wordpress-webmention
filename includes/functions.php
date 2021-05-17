@@ -212,6 +212,9 @@ function webmention_get_user_domain( $comment ) {
 	if ( ! $url ) {
 		return null;
 	}
+
+	$url = normalize_url( $url );
+
 	return webmention_extract_domain( $url );
 }
 

@@ -192,7 +192,7 @@ class Webmention_Avatar_Handler {
 			return false;
 		}
 
-		$author = get_comment_author_url( $comment );
+		$author = normalize_url( get_comment_author_url( $comment ) );
 
 		// Do not try to store if no author URL.
 		if ( empty( $author ) ) {
