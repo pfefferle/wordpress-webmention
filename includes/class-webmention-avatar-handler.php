@@ -22,25 +22,14 @@ class Webmention_Avatar_Handler {
 	 * Return upload directory.
 	 *
 	 * @param string $filepath File Path. Optional
+	 * @param boolean $url Return a URL if true, otherwise the directory.
 	 * @return string URL of upload directory.
 	 */
-	public static function upload_directory( $filepath = '' ) {
-		$upload_dir = wp_get_upload_dir();
-		$upload_dir = $upload_dir['basedir'] . '/webmention/avatars/';
-		$upload_dir = apply_filters( 'webmention_avatar_directory', $upload_dir );
-		return $upload_dir . $filepath;
-	}
-
-	/**
-	 * Return upload directory url.
-	 *
-	 * @param string $filepath File Path. Optional.
-	 * @return string URL of upload directory.
-	 */
-	public static function upload_directory_url( $filepath = '' ) {
-		$upload_dir = wp_get_upload_dir();
-		$upload_dir = $upload_dir['baseurl'] . '/webmention/avatars/';
-		$upload_dir = apply_filters( 'webmention_avatar_directory', $upload_dir );
+	public static function upload_directory( $filepath = '', $url = false ) {
+		$upload_dir  = wp_get_upload_dir();
+		$upload_dir  = $url ? $upload_dir['baseurl'] : $upload_dir['basedir'];
+		$upload_dir .= '/webmention/avatars/';
+		$upload_dir  = apply_filters( 'webmention_avatar_directory', $upload_dir, $url );
 		return $upload_dir . $filepath;
 	}
 
@@ -55,7 +44,7 @@ class Webmention_Avatar_Handler {
 	 */
 	public static function sideload_avatar( $url, $host, $author ) {
 		// If the URL is inside the upload directory.
-		if ( str_contains( self::upload_directory_url(), $url ) ) {
+		if ( str_contains( self::upload_directory( '', true ), $url ) ) {
 			return $url;
 		}
 
@@ -96,7 +85,7 @@ class Webmention_Avatar_Handler {
 				return false;
 			}
 			@move_uploaded_file( $file, $filepath );
-			return self::upload_directory_url( $filehandle );
+			return self::upload_directory( $filehandle, true );
 		}
 
 		// Allow for common query parameters in image APIs to get a better quality image.
@@ -119,7 +108,7 @@ class Webmention_Avatar_Handler {
 		$file->set_quality( WEBMENTION_AVATAR_QUALITY );
 		$file->save( $filepath, 'image/jpg' );
 
-		return self::upload_directory_url( $filehandle );
+		return self::upload_directory( $filehandle, true );
 	}
 
 
@@ -130,10 +119,10 @@ class Webmention_Avatar_Handler {
 	 * @return string Filepath.
 	 */
 	public static function avatar_url_to_filepath( $url ) {
-		if ( ! str_contains( self::upload_directory_url(), $url ) ) {
+		if ( ! str_contains( self::upload_directory( $url, true ) ) ) {
 			return false;
 		}
-		$path = str_replace( self::upload_directory_url(), '', $url );
+		$path = str_replace( self::upload_directory( '', true ), '', $url );
 		return self::upload_directory( $path );
 	}
 
