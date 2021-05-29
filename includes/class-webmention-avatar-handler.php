@@ -12,16 +12,186 @@ class Webmention_Avatar_Handler {
 		$cls = get_called_class();
 
 		add_filter( 'pre_get_avatar_data', array( $cls, 'avatar_stored_in_comment' ), 30, 2 );
-		add_filter( 'get_avatar_data', array( $cls, 'anonymous_avatar_data' ), 30, 2 );
 
-		// All the default gravatars come from Gravatar instead of being generated locally so add a local default
-		add_filter( 'avatar_defaults', array( $cls, 'anonymous_avatar' ) );
+		// Store Avatars Locally
+		add_action( 'comment_post', array( $cls, 'store_avatar' ), 20 );
+		add_action( 'edit_comment', array( $cls, 'store_avatar' ), 20 );
 	}
 
-	public static function anonymous_avatar( $avatar_defaults ) {
-		$avatar_defaults['mystery'] = __( 'Mystery Person (hosted locally)', 'webmention' );
+	/**
+	 * Return upload directory.
+	 *
+	 * @param string $filepath File Path. Optional
+	 * @param boolean $url Return a URL if true, otherwise the directory.
+	 * @return string URL of upload directory.
+	 */
+	public static function upload_directory( $filepath = '', $url = false ) {
+		$upload_dir  = wp_get_upload_dir();
+		$upload_dir  = $url ? $upload_dir['baseurl'] : $upload_dir['basedir'];
+		$upload_dir .= '/webmention/avatars/';
+		$upload_dir  = apply_filters( 'webmention_avatar_directory', $upload_dir, $url );
+		return $upload_dir . $filepath;
+	}
 
-		return $avatar_defaults;
+	/**
+	 * Sideload Avatar
+	 *
+	 * @param string $url URL.
+	 * @param string $host Host.
+	 * @param string $author Author
+	 * @return string URL to Downloaded Image.
+	 *
+	 */
+	public static function sideload_avatar( $url, $host, $author ) {
+		// If the URL is inside the upload directory.
+		if ( str_contains( self::upload_directory( '', true ), $url ) ) {
+			return $url;
+		}
+
+		// Load dependencies.
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		require_once ABSPATH . WPINC . '/media.php';
+
+		$filehandle = $host . '/' . md5( $author ) . '.jpg';
+		$filepath   = self::upload_directory( $filehandle );
+
+		// If this is a gravatar URL, automatically use gravatar to get the right size and file type.
+		if ( str_contains( 'gravatar.com', $url ) ) {
+			$hash    = wp_parse_url( $url, PHP_URL_PATH );
+			$default = get_option( 'avatar_default', 'mystery' );
+			$rating  = strtolower( get_option( 'avatar_rating' ) );
+			$hash    = str_replace( '/avatar/', '', $hash );
+			switch ( $default ) {
+				case 'mm':
+				case 'mystery':
+				case 'mysteryman':
+					$default = 'mp';
+					break;
+				case 'gravatar_default':
+					$default = false;
+					break;
+			}
+			$url  = 'https://www.gravatar.com/avatar/' . $hash . '.jpg';
+			$url  = add_query_arg(
+				array(
+					's' => WEBMENTION_AVATAR_SIZE,
+					'd' => $default, // Replace with our site default.
+					'r' => $rating,
+				),
+				$url
+			);
+			$file = download_url( $url, 300 );
+			if ( is_wp_error( $file ) ) {
+				return false;
+			}
+			@move_uploaded_file( $file, $filepath );
+			return self::upload_directory( $filehandle, true );
+		}
+
+		// Allow for common query parameters in image APIs to get a better quality image.
+		$query = array();
+		wp_parse_str( wp_parse_url( $url, PHP_URL_QUERY ), $query );
+		if ( array_key_exists( 's', $query ) && is_numeric( $query['s'] ) ) {
+			$url = str_replace( 's=' . $query['s'], 's=' . WEBMENTION_AVATAR_SIZE, $url );
+		}
+		if ( array_key_exists( 'width', $query ) && array_key_exists( 'height', $query ) ) {
+			$url = str_replace( 'width=' . $query['width'], 'width=' . WEBMENTION_AVATAR_SIZE, $url );
+			$url = str_replace( 'height=' . $query['height'], 'height=' . WEBMENTION_AVATAR_SIZE, $url );
+		}
+
+		// Download Profile Picture and add as attachment
+		$file = wp_get_image_editor( download_url( $url, 300 ) );
+		if ( is_wp_error( $file ) ) {
+			return false;
+		}
+		$file->resize( null, WEBMENTION_AVATAR_SIZE, true );
+		$file->set_quality( WEBMENTION_AVATAR_QUALITY );
+		$file->save( $filepath, 'image/jpg' );
+
+		return self::upload_directory( $filehandle, true );
+	}
+
+
+	/**
+	 * Given an Avatar URL return the filepath.
+	 *
+	 * @param string $url URL.
+	 * @return string Filepath.
+	 */
+	public static function avatar_url_to_filepath( $url ) {
+		if ( ! str_contains( self::upload_directory( '', true ), $url ) ) {
+			return false;
+		}
+		$path = str_replace( self::upload_directory( '', true ), '', $url );
+		return self::upload_directory( $path );
+	}
+
+	/**
+	 * Delete Avatar File.
+	 *
+	 * @param string $url Avatar to Delete.
+	 * @return boolean True if successful. False if not.
+	 *
+	 */
+	public static function delete_avatar_file( $url ) {
+		$filepath = self::avatar_url_to_filepath( $url );
+		if ( empty( $filepath ) ) {
+			return false;
+		}
+		if ( file_exists( $filepath ) ) {
+			wp_delete_file( $filepath );
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Delete Avatar.
+	 *
+	 * @param int $comment_ID
+	 */
+	public static function delete_avatar( $comment_id ) {
+		$comment = get_comment( $comment_id );
+		if ( ! $comment ) {
+			return false;
+		}
+		$url = get_comment_meta( $comment_id, 'avatar', true );
+		self::delete_avatar_file( $url );
+	}
+
+	/**
+	 * Store Avatars locally
+	 *
+	 * @param int $comment_ID
+	 */
+	public static function store_avatar( $comment_id ) {
+		$comment = get_comment( $comment_id );
+		if ( ! $comment ) {
+			return false;
+		}
+
+		// Do not try to store the avatar if there is a User ID. Let something else handle that.
+		if ( $comment->user_id ) {
+			return false;
+		}
+
+		$avatar = webmention_get_avatar_url( $comment );
+
+		if ( ! $avatar ) {
+			return false;
+		}
+
+		$author = normalize_url( get_comment_author_url( $comment ) );
+
+		// Do not try to store if no author URL.
+		if ( empty( $author ) ) {
+			return false;
+		}
+		$host   = webmention_get_user_domain( $comment );
+		$avatar = self::sideload_avatar( $avatar, $host, $author );
+
+		delete_comment_meta( $comment->comment_ID, 'semantic_linkbacks_avatar' );
+		update_comment_meta( $comment->comment_ID, 'avatar', $avatar );
 	}
 
 	/**
@@ -49,103 +219,6 @@ class Webmention_Avatar_Handler {
 		}
 
 		return $avatar;
-	}
-
-
-	/**
-	 * Function to retrieve default avatar URL
-	 *
-	 *
-	 * @param string $type Default Avatar URL
-	 *
-	 * @return string|boolean $url
-	 */
-	public static function get_default_avatar( $type = null ) {
-		if ( ! $type ) {
-			$type = get_option( 'avatar_default', 'mystery' );
-		}
-
-		switch ( $type ) {
-			case 'mm':
-			case 'mystery':
-			case 'mysteryman':
-				return plugin_dir_url( dirname( __FILE__ ) ) . 'img/mm.jpg';
-		}
-
-		return apply_filters( 'webmention_default_avatar', $type );
-	}
-
-	/**
-	 * Function to check if there is a gravatar
-	 *
-	 *
-	 * @param WP_Comment $comment
-	 *
-	 * @return boolean
-	 */
-	public static function check_gravatar( $comment, $args = null ) {
-		if ( ! empty( $comment->comment_author_email ) ) {
-			$hash = md5( strtolower( trim( $comment->comment_author_email ) ) );
-		} elseif ( is_array( $args ) && array_key_exists( 'url', $args ) ) {
-			if ( ! strpos( $args['url'], 'gravatar.com' ) ) {
-				return false;
-			}
-			$hash = wp_parse_url( $args['url'], PHP_URL_PATH );
-			$hash = str_replace( '/avatar/', '', $hash );
-		} else {
-			return false;
-		}
-
-		$found = get_transient( 'webmention_gravatar_' . $hash );
-
-		if ( false !== $found ) {
-			return $found;
-		} else {
-			$url      = 'https://www.gravatar.com/avatar/' . $hash . '?d=404';
-			$response = wp_remote_head( $url );
-			$found    = ( is_wp_error( $response ) || 404 === wp_remote_retrieve_response_code( $response ) ) ? 0 : 1;
-			set_transient( 'webmention_gravatar_' . $hash, $found, WEBMENTION_GRAVATAR_CACHE_TIME );
-		}
-
-		return $found;
-	}
-
-	/**
-	 * Replaces the default avatar with a locally stored default
-	 *
-	 * @param array      $args    Arguments passed to get_avatar_data(), after processing.
-	 * @param WP_Comment $comment A comment object
-	 *
-	 * @return array $args
-	 */
-	public static function anonymous_avatar_data( $args, $comment ) {
-		if ( ! $comment instanceof WP_Comment ) {
-			return $args;
-		}
-
-		$local = apply_filters( 'webmention_local_avatars', array( 'mm', 'mystery', 'mysteryman' ) );
-
-		if ( ! in_array( $args['default'], $local, true ) ) {
-			return $args;
-		}
-
-		// Always override if default forced
-		if ( $args['force_default'] ) {
-			$args['url'] = self::get_default_avatar( $args['default'] );
-			return $args;
-		}
-
-		if ( ! strpos( $args['url'], 'gravatar.com' ) ) {
-			return $args;
-		}
-
-		if ( self::check_gravatar( $comment, $args ) ) {
-			return $args;
-		}
-
-		$args['url'] = self::get_default_avatar();
-
-		return $args;
 	}
 
 	/**
@@ -181,6 +254,11 @@ class Webmention_Avatar_Handler {
 			}
 
 			if ( wp_http_validate_url( $avatar ) ) {
+				$path = self::avatar_url_to_filepath( $avatar );
+				// Check to see if filepath exists.
+				if ( $path && ! file_exists( $path ) ) {
+					return $args;
+				}
 				$args['url'] = $avatar;
 			}
 

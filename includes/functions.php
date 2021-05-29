@@ -181,6 +181,44 @@ function webmention_extract_domain( $url ) {
 }
 
 /**
+ * Returns the Host / Domain of the source - plattform
+ *
+ * @param mixed $comment
+ *
+ * @return string
+ */
+function webmention_get_user_domain( $comment ) {
+	if ( is_numeric( $comment ) ) {
+		$comment = get_comment( $comment );
+	}
+
+	// get canonical url...
+	$url = get_comment_meta( $comment->comment_ID, 'semantic_linkbacks_canonical', true );
+
+	if ( ! $url ) {
+		$url = webmention_get_avatar_url( $comment );
+	}
+
+	// ...or fall back to source
+	if ( ! $url ) {
+		$url = get_comment_meta( $comment->comment_ID, 'semantic_linkbacks_source', true );
+	}
+
+	// ...or author url
+	if ( ! $url ) {
+		$url = $comment->comment_author_url;
+	}
+
+	if ( ! $url ) {
+		return null;
+	}
+
+	$url = normalize_url( $url );
+
+	return webmention_extract_domain( $url );
+}
+
+/**
  * Retrieve list of approved domains.
  *
  * @return array|mixed|string|void
@@ -597,5 +635,45 @@ if ( ! function_exists( 'ifset' ) ) {
 	function ifset( &$var, $return = false ) {
 
 			return isset( $var ) ? $var : $return;
+	}
+}
+
+/**
+ * Returns the Avatar URL
+ *
+ * @param mixed $comment
+ *
+ * @return string
+ */
+function webmention_get_avatar_url( $comment ) {
+	if ( is_numeric( $comment ) ) {
+		$comment = get_comment( $comment );
+	}
+
+	$avatar = get_comment_meta( $comment->comment_ID, 'avatar', true );
+
+	// Backward Compatibility for Semantic Linkbacks
+	if ( ! $avatar ) {
+		$avatar = get_comment_meta( $comment->comment_ID, 'semantic_linkbacks_avatar', true );
+	}
+
+	if ( ! $avatar ) {
+		return false;
+	}
+
+	return $avatar;
+}
+
+if ( ! function_exists( 'str_contains' ) ) {
+	/*
+	 * Determine if a string contains a given substring. Case sensitive.
+	 * Polyfill for pre PHP8.
+	 *
+	 * @param string $haystack String.
+	 * @param string $needle String that should be contained within $haystack.
+	 * @return boolean If needle is within haystack.
+	 */
+	function str_contains( $haystack, $needle ) {
+		return '' !== $needle && false !== mb_strpos( $haystack, $needle );
 	}
 }
