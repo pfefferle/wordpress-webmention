@@ -19,7 +19,7 @@
   },
   "require-dev": {
     "phpunit/phpunit": "^5.7.21 || ^6.5 || ^7.5 || ^8.0",
-    "humbug/php-scoper": "^0.12.0 || ^0.15.0",
+    "humbug/php-scoper": "^0.1.0 || ^0.12.0 || ^0.15.0",
     "mf2/mf2": "^0.4.6",
     "phpcompatibility/php-compatibility": "*",
     "phpcompatibility/phpcompatibility-wp": "*",
