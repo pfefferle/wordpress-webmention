@@ -62,8 +62,8 @@ class Webmention_Tools {
 	 * @return void
 	 */
 	public static function read( $request ) {
-		$source     = $request->get_param( 'source' );
-		$target     = $request->get_param( 'target' );
+		$source = $request->get_param( 'source' );
+		$target = $request->get_param( 'target' );
 
 		$request = new Webmention_Request();
 		$return  = $request->fetch( $source, false );

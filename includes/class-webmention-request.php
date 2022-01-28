@@ -99,7 +99,7 @@ class Webmention_Request {
 		}
 
 		$this->response_code = wp_remote_retrieve_response_code( $response );
-		$check = $this->check_response_code( $this->response_code, $response );
+		$check               = $this->check_response_code( $this->response_code, $response );
 
 		if ( is_wp_error( $check ) ) {
 				return $check;
