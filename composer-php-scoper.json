@@ -2,7 +2,7 @@
   "name": "pfefferle/wordpress-webmention",
   "description": "A Webmention plugin for WordPress https://wordpress.org/plugins/webmention/",
   "require": {
-    "php": ">=7.4"
+    "php": ">=5.6"
   },
   "type": "wordpress-plugin",
   "license": "MIT",
@@ -17,7 +17,8 @@
   },
   "require-dev": {
     "mf2/mf2": "^0.4.6",
-    "humbug/php-scoper": "^0.15.0"
+    "humbug/php-scoper": "^0.15.0",
+    "p3k/emoji-detector": "^0.3.1"
   },
   "scripts": {
     "prefix": [
