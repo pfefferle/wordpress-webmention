@@ -27,9 +27,7 @@ jobs:
           tools: composer, phpunit-polyfills
           extensions: mysql
       - name: Install Composer dependencies for PHP
-        uses: "ramsey/composer-install@v1"
-        with:
-          php-version: "7.4"
+        run: composer install --prefer-dist --no-progress --no-scripts --ignore-platform-reqs
       - name: Setup Test Environment
         run: bash ./bin/install-wp-tests.sh wordpress_test root root 127.0.0.1 latest
       - name: Unit Testing
