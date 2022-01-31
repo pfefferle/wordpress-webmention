@@ -162,6 +162,9 @@ class Webmention_Avatar_Handler {
 			return $args;
 		}
 
+		// Simple method to prevent broken images
+		$args['extra_attr'] .= sprintf( ' onerror="this.onerror=null;this.src=\'%s\';"', self::get_default_avatar() );
+
 		// If another filter has already provided a url
 		if ( isset( $args['url'] ) && wp_http_validate_url( $args['url'] ) ) {
 			return $args;
