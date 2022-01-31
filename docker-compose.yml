@@ -16,7 +16,7 @@ services:
     links:
       - db
     ports:
-      - "80:80"
+      - "8080:80"
     volumes:
       - .:/var/www/html/wp-content/plugins/webmention
     restart: always
