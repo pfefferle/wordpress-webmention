@@ -623,7 +623,7 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 		 */
 		$class_mapper['follow-of'] = 'follow';
 
-		return apply_filters( 'semantic_linkbacks_microformats_class_mapper', $class_mapper );
+		return apply_filters( 'webmention_microformats_class_mapper', $class_mapper );
 	}
 
 	/**
@@ -653,7 +653,7 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 		 */
 		$rel_mapper['tag'] = 'tag';
 
-		return apply_filters( 'semantic_linkbacks_microformats_rel_mapper', $rel_mapper );
+		return apply_filters( 'webmention_microformats_rel_mapper', $rel_mapper );
 	}
 
 	/**
