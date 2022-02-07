@@ -40,6 +40,10 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 
 		$author = $this->get_representative_author( $item, $data );
 
+		// add response type
+		$response_type = $this->get_response_type( $item, $data, $target_url );
+		$this->webmention_item->set_response_type( wp_slash( $response_type ) );
+
 		$this->set_properties( $item );
 		$this->set_property_author( $author );
 
@@ -528,5 +532,201 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 	 */
 	protected function urls_match( $url1, $url2 ) {
 		return ( normalize_url( $url1 ) === normalize_url( $url2 ) );
+	}
+
+	/**
+	 * All supported url types
+	 *
+	 * @return array
+	 */
+	protected function get_class_mapper() {
+		$class_mapper = array();
+
+		/*
+		 * replies
+		 * @link http://indieweb.org/replies
+		 */
+		$class_mapper['in-reply-to'] = 'reply';
+		$class_mapper['reply']       = 'reply';
+		$class_mapper['reply-of']    = 'reply';
+
+		/*
+		 * repost
+		 * @link http://indieweb.org/repost
+		 */
+		$class_mapper['repost']    = 'repost';
+		$class_mapper['repost-of'] = 'repost';
+
+		/*
+		 * likes
+		 * @link http://indieweb.org/likes
+		 */
+		$class_mapper['like']    = 'like';
+		$class_mapper['like-of'] = 'like';
+
+		/*
+		 * favorite
+		 * @link http://indieweb.org/favorite
+		 */
+		$class_mapper['favorite']    = 'favorite';
+		$class_mapper['favorite-of'] = 'favorite';
+
+		/*
+		 * bookmark
+		 * @link http://indieweb.org/bookmark
+		 */
+		$class_mapper['bookmark']    = 'bookmark';
+		$class_mapper['bookmark-of'] = 'bookmark';
+
+		/*
+		 * rsvp
+		 * @link http://indieweb.org/rsvp
+		 */
+		$class_mapper['rsvp'] = 'rsvp';
+		/*
+		 * invite
+		 * @link https://indieweb.org/invitation
+		 */
+		$class_mapper['invitee'] = 'invite';
+
+		/*
+		 * tag
+		 * @link http://indieweb.org/tag
+		 */
+		$class_mapper['tag-of']   = 'tag';
+		$class_mapper['category'] = 'tag';
+
+		/*
+		 * read
+		 * @link http://indieweb.org/read
+		 */
+		$class_mapper['read-of'] = 'read';
+		$class_mapper['read']    = 'read';
+
+		/*
+		 * listen
+		 * @link http://indieweb.org/listen
+		 */
+		$class_mapper['listen-of'] = 'listen';
+		$class_mapper['listen']    = 'listen';
+
+		/*
+		 * watch
+		 * @link http://indieweb.org/watch
+		 */
+		$class_mapper['watch-of'] = 'watch';
+		$class_mapper['watch']    = 'watch';
+
+		/*
+		 * follow
+		 * @link http://indieweb.org/follow
+		 */
+		$class_mapper['follow-of'] = 'follow';
+
+		return apply_filters( 'semantic_linkbacks_microformats_class_mapper', $class_mapper );
+	}
+
+	/**
+	 * All supported url types
+	 *
+	 * @return array
+	 */
+	protected function get_rel_mapper() {
+		$rel_mapper = array();
+
+		/*
+		 * replies
+		 * @link http://indieweb.org/in-reply-to
+		 */
+		$rel_mapper['in-reply-to'] = 'reply';
+		$rel_mapper['reply-of']    = 'reply';
+
+		/*
+		 * bookmarks
+		 * @link http://microformats.org/wiki/rel-design-pattern#rel.3D.22bookmark.22
+		 */
+		$rel_mapper['bookmark'] = 'bookmark';
+
+		/*
+		 * tags
+		 * @link http://microformats.org/wiki/rel-tag
+		 */
+		$rel_mapper['tag'] = 'tag';
+
+		return apply_filters( 'semantic_linkbacks_microformats_rel_mapper', $rel_mapper );
+	}
+
+	/**
+	 * check entry classes or document rels for post-type
+	 *
+	 * @param string $target the target url
+	 * @param array $entry the represantative entry
+	 * @param array $mf_array the document
+	 *
+	 * @return string the post-type
+	 */
+	protected function get_response_type( $entry, $mf_array, $target ) {
+		$classes = $this->get_class_mapper();
+
+		// check properties for target-url
+		foreach ( $entry['properties'] as $key => $values ) {
+			// check u-* params
+			if ( in_array( $key, array_keys( $classes ), true ) ) {
+				// check RSVP if available
+				if ( 'rsvp' === $key ) {
+					return 'rsvp:' . $this->get_first_array_item( $values );
+				}
+
+				// check "normal" links
+				if ( $this->compare_urls( $target, $values ) ) {
+					return $classes[ $key ];
+				}
+
+				// iterate in-reply-tos
+				foreach ( $values as $obj ) {
+					// check if reply is a "cite" or "entry"
+					if ( isset( $obj['type'] ) && array_intersect( array( 'h-cite', 'h-entry' ), $obj['type'] ) ) {
+						// check url
+						if ( isset( $obj['properties'] ) && isset( $obj['properties']['url'] ) ) {
+							// check target
+							if ( $this->compare_urls( $target, $obj['properties']['url'] ) ) {
+								return $classes[ $key ];
+							}
+						}
+					}
+				}
+			}
+		}
+
+		// check if site has any rels
+		if ( ! isset( $mf_array['rels'] ) ) {
+			return 'mention';
+		}
+
+		$rels = $this->get_rel_mapper();
+
+		// check rels for target-url
+		foreach ( $mf_array['rels'] as $key => $values ) {
+			// check rel params
+			if ( in_array( $key, array_keys( $rels ), true ) ) {
+				foreach ( $values as $value ) {
+					if ( $value === $target ) {
+						return $rels[ $key ];
+					}
+				}
+			}
+		}
+
+		return 'mention';
+	}
+
+	/**
+	 * Returns the first item in $val if it's a non-empty array, otherwise $val itself.
+	 */
+	protected function get_first_array_item( $val ) {
+		if ( $val && is_array( $val ) ) {
+			return $val[0];
+		}
+		return $val;
 	}
 }

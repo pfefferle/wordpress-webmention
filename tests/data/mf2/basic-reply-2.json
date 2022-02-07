@@ -2,5 +2,6 @@
   "author": {
     "name": "basic-reply",
     "url": "http://example.com/webmention/target/placeholder"
-  }
+  },
+  "response_type": "reply"
 }

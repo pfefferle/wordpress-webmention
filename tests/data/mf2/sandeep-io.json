@@ -2,5 +2,6 @@
   "author": {
     "name": "Sandeep Shetty",
     "url": "http://example.com/author/"
-  }
+  },
+  "response_type": "like"
 }

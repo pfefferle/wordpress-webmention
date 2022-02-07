@@ -1,0 +1,16 @@
+version: '2'
+services:
+  test-db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: webmention-test
+
+  test-php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    links:
+      - test-db
+    volumes:
+      - .:/app
+    command: ["composer", "run-script", "test"]
