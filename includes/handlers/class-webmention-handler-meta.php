@@ -73,14 +73,14 @@ class Webmention_Handler_Meta extends Webmention_Handler_Base {
 	protected function add_properties( $meta ) {
 		$mapping = array(
 			'url'       => array( 'url', 'og:url' ),
-			'name'      => array( 'og:title', 'dc:title', 'DC.Title' ),
-			'content'   => array( 'og:description', 'dc:desciption', 'DC.Desciption', 'description' ),
-			'summary'   => array( 'og:description', 'dc:desciption', 'DC.Desciption', 'description' ),
+			'name'      => array( 'og:title', 'twitter:title', 'dc:title', 'DC.Title' ),
+			'content'   => array( 'og:description', 'twitter:description', 'dc:desciption', 'DC.Desciption', 'description' ),
+			'summary'   => array( 'og:description', 'twitter:description', 'dc:desciption', 'DC.Desciption', 'description' ),
 			'published' => array( 'article:published_time', 'article:published', 'DC.Date', 'dc:date', 'citation_date', 'datePublished' ),
 			'updated'   => array( 'article:modified_time', 'article:modified' ),
 			'site_name' => array( 'og:site_name' ),
-			'author'    => array( 'DC.creator' ),
-			'photo'     => array( 'og:image' ),
+			'author'    => array( 'DC.creator', 'author' ),
+			'photo'     => array( 'og:image', 'twitter:image' ),
 		);
 
 		foreach ( $mapping as $key => $values ) {
