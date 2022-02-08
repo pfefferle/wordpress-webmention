@@ -623,7 +623,7 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 		 */
 		$class_mapper['follow-of'] = 'follow';
 
-		return apply_filters( 'webmention_microformats_class_mapper', $class_mapper );
+		return apply_filters( 'webmention_mf2_class_mapper', $class_mapper );
 	}
 
 	/**
@@ -653,15 +653,15 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 		 */
 		$rel_mapper['tag'] = 'tag';
 
-		return apply_filters( 'webmention_microformats_rel_mapper', $rel_mapper );
+		return apply_filters( 'webmention_mf2_rel_mapper', $rel_mapper );
 	}
 
 	/**
-	 * check entry classes or document rels for post-type
+	 * Check entry classes or document rels for post-type
 	 *
-	 * @param string $target the target url
-	 * @param array $entry the represantative entry
-	 * @param array $mf_array the document
+	 * @param array  $entry    the represantative entry
+	 * @param array  $mf_array the document
+	 * @param string $target   the target url
 	 *
 	 * @return string the post-type
 	 */
@@ -722,6 +722,10 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 
 	/**
 	 * Returns the first item in $val if it's a non-empty array, otherwise $val itself.
+	 *
+	 * @param array|null $val
+	 *
+	 * @return string
 	 */
 	protected function get_first_array_item( $val ) {
 		if ( $val && is_array( $val ) ) {
