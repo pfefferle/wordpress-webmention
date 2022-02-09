@@ -543,12 +543,16 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 		$class_mapper = array();
 
 		/*
-		 * replies
-		 * @link http://indieweb.org/replies
+		 * rsvp
+		 * @link http://indieweb.org/rsvp
 		 */
-		$class_mapper['in-reply-to'] = 'reply';
-		$class_mapper['reply']       = 'reply';
-		$class_mapper['reply-of']    = 'reply';
+		$class_mapper['rsvp'] = 'rsvp';
+
+		/*
+		 * invite
+		 * @link https://indieweb.org/invitation
+		 */
+		$class_mapper['invitee'] = 'invite';
 
 		/*
 		 * repost
@@ -577,17 +581,6 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 		 */
 		$class_mapper['bookmark']    = 'bookmark';
 		$class_mapper['bookmark-of'] = 'bookmark';
-
-		/*
-		 * rsvp
-		 * @link http://indieweb.org/rsvp
-		 */
-		$class_mapper['rsvp'] = 'rsvp';
-		/*
-		 * invite
-		 * @link https://indieweb.org/invitation
-		 */
-		$class_mapper['invitee'] = 'invite';
 
 		/*
 		 * tag
@@ -622,6 +615,15 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 		 * @link http://indieweb.org/follow
 		 */
 		$class_mapper['follow-of'] = 'follow';
+
+		/*
+		 * replies
+		 * @link http://indieweb.org/replies
+		 */
+		$class_mapper['in-reply-to'] = 'reply';
+		$class_mapper['reply']       = 'reply';
+		$class_mapper['reply-of']    = 'reply';
+
 
 		return apply_filters( 'webmention_mf2_class_mapper', $class_mapper );
 	}
