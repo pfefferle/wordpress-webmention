@@ -144,7 +144,7 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 	 * @param array       $mf_array Microformats Array.
 	 * @return string|null Return value.
 	 */
-	protected function get_type( array $mf_array ) {
+	protected function get_type( $mf_array ) {
 		if ( ! $this->is_microformat( $mf_array ) ) {
 			return null;
 		}
@@ -687,7 +687,7 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 				// iterate in-reply-tos
 				foreach ( $values as $obj ) {
 					// check if reply is a "cite" or "entry"
-					if ( isset( $obj['type'] ) && array_intersect( array( 'h-cite', 'h-entry' ), $obj['type'] ) ) {
+					if ( in_array( $this->get_type( $obj ), array( 'cite', 'entry' ), true ) ) {
 						// check url
 						if ( isset( $obj['properties'] ) && isset( $obj['properties']['url'] ) ) {
 							// check target
