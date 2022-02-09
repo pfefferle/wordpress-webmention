@@ -689,7 +689,7 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 					// check if reply is a "cite" or "entry"
 					if ( in_array( $this->get_type( $obj ), array( 'cite', 'entry' ), true ) ) {
 						// check url
-						if ( isset( $obj['properties'] ) && isset( $obj['properties']['url'] ) ) {
+						if ( $this->has_property( $obj, 'url' ) ) {
 							// check target
 							if ( $this->compare_urls( $target, $obj['properties']['url'] ) ) {
 								return $classes[ $key ];
