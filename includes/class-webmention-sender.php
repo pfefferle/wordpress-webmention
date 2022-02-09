@@ -185,6 +185,8 @@ class Webmention_Sender {
 		if ( ! empty( $ping ) ) {
 			add_ping( $post, $ping );
 		}
+
+		return $ping;
 	}
 
 	/**
