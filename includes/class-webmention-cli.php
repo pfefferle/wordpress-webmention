@@ -107,7 +107,7 @@ class Webmention_Cli extends WP_CLI_Command {
 				$post_id = url_to_postid( $post_id );
 			}
 
-			$post = get_post( $post_id );
+			$post = get_post( intval( $post_id ) );
 
 			if ( $post ) {
 				$pungs = Webmention_Sender::send_webmentions( $post_id );
@@ -125,8 +125,8 @@ class Webmention_Cli extends WP_CLI_Command {
 				WP_CLI::error( __( 'Invalid post ID or permalink', 'webmention' ) );
 			}
 		} elseif ( ! $args && $assoc_args ) {
-			$source = isset( $assoc_args['source'] ) ? $assoc_args['source'] : null;
-			$target = isset( $assoc_args['target'] ) ? $assoc_args['target'] : null;
+			$source = isset( $assoc_args['source'] ) ? esc_url_raw( $assoc_args['source'] ) : null;
+			$target = isset( $assoc_args['target'] ) ? esc_url_raw( $assoc_args['target'] ) : null;
 
 			if ( ! $source || ! $target ) {
 				WP_CLI::error( __( 'Please provide a post-id/permalink or a source and a target', 'webmention' ) );
