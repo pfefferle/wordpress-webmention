@@ -624,7 +624,6 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 		$class_mapper['reply']       = 'reply';
 		$class_mapper['reply-of']    = 'reply';
 
-
 		return apply_filters( 'webmention_mf2_class_mapper', $class_mapper );
 	}
 
