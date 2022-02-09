@@ -16,16 +16,12 @@ services:
     links:
       - db
     ports:
-      - "80:80"
+      - "8099:80"
     volumes:
       - .:/var/www/html/wp-content/plugins/webmention
     restart: always
     environment:
       WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
       WORDPRESS_DB_PASSWORD: wordpress
       WORDPRESS_DEBUG: 1
-
-  testpinger:
-    image: pfefferle/webmention-testpinger
-    ports:
-      - "9247:9247"
