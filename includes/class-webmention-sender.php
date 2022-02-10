@@ -194,7 +194,7 @@ class Webmention_Sender {
 		}
 
 		if ( ! empty( $ping ) ) {
-			update_ping( $post, $ping );
+			self::update_ping( $post, $ping );
 		}
 	}
 
