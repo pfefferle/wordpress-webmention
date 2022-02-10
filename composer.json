@@ -3,8 +3,7 @@
   "description": "A Webmention plugin for WordPress https://wordpress.org/plugins/webmention/",
   "require": {
     "php": ">=5.6.0",
-    "composer/installers": "~1.0",
-    "p3k/emoji-detector": "^0.2.1"
+    "composer/installers": "~1.0"
   },
   "type": "wordpress-plugin",
   "license": "MIT",
@@ -18,31 +17,20 @@
     "installer-name": "webmention"
   },
   "require-dev": {
-    "phpunit/phpunit": "5.5.*",
-    "dealerdirect/phpcodesniffer-composer-installer": "^0.7.0",
-    "squizlabs/php_codesniffer": "^3.4",
-    "phpcompatibility/php-compatibility": "^9.2",
-    "wp-coding-standards/wpcs": "^2.0",
-    "phpcompatibility/phpcompatibility-wp": "^2.0.0",
-    "humbug/php-scoper": "^0.12.0",
-    "mf2/mf2": "^0.4.6"
+    "phpunit/phpunit": "^5.7.21 || ^6.5 || ^7.5 || ^8.0",
+    "mf2/mf2": "^0.4.6",
+    "phpcompatibility/php-compatibility": "*",
+    "phpcompatibility/phpcompatibility-wp": "*",
+    "squizlabs/php_codesniffer": "3.*",
+    "wp-coding-standards/wpcs": "*",
+    "yoast/phpunit-polyfills": "^1.0",
+    "dealerdirect/phpcodesniffer-composer-installer": "^0.7.1"
   },
   "scripts": {
     "test": [
       "composer install",
       "bin/install-wp-tests.sh wordpress wordpress wordpress",
       "vendor/bin/phpunit"
-    ],
-    "lint": "phpcs",
-    "install-codestandards": [
-      "Dealerdirect\\Composer\\Plugin\\Installers\\PHPCodeSniffer\\Plugin::run"
-    ],
-    "prefix": [
-		  "@php ./vendor/humbug/php-scoper/bin/php-scoper add-prefix --prefix=Webmention --output-dir=./libraries/mf2 --config=config/php-scoper/mf2.inc.php --force --quiet",
-		  "@php ./vendor/humbug/php-scoper/bin/php-scoper add-prefix --prefix=Webmention --output-dir=./libraries/emoji-detector --config=config/php-scoper/emoji-detector.inc.php --force --quiet"
-    ],
-    "post-update-cmd": [
-    	"@prefix"
     ]
   }
 }

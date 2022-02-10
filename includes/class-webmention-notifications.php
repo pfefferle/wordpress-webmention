@@ -380,7 +380,7 @@ class Webmention_Notifications {
 		 * @param array $emails     List of email addresses to notify for comment moderation.
 		 * @param int   $comment_id Comment ID.
 		 */
-		$emails = apply_filters( 'comment_moderation_recipients', $emails, $comment_id );
+		$emails = apply_filters( 'comment_moderation_recipients', $emails, $comment->comment_ID );
 
 		/**
 		 * Filters the comment moderation email text.
@@ -390,7 +390,7 @@ class Webmention_Notifications {
 		 * @param string $notify_message Text of the comment moderation email.
 		 * @param int    $comment_id     Comment ID.
 		 */
-		$notify_message = apply_filters( 'comment_moderation_text', $notify_message, $comment_id );
+		$notify_message = apply_filters( 'comment_moderation_text', $notify_message, $comment->comment_ID );
 
 		/**
 		 * Filters the comment moderation email subject.
@@ -400,7 +400,7 @@ class Webmention_Notifications {
 		 * @param string $subject    Subject of the comment moderation email.
 		 * @param int    $comment_id Comment ID.
 		 */
-		$subject = apply_filters( 'comment_moderation_subject', $subject, $comment_id );
+		$subject = apply_filters( 'comment_moderation_subject', $subject, $comment->comment_ID );
 
 		/**
 		 * Filters the comment moderation email headers.
@@ -410,7 +410,7 @@ class Webmention_Notifications {
 		 * @param string $message_headers Headers for the comment moderation email.
 		 * @param int    $comment_id      Comment ID.
 		 */
-		$message_headers = apply_filters( 'comment_moderation_headers', $message_headers, $comment_id );
+		$message_headers = apply_filters( 'comment_moderation_headers', $message_headers, $comment->comment_ID );
 
 		foreach ( $emails as $email ) {
 			wp_mail( $email, wp_specialchars_decode( $subject ), $notify_message, $message_headers );

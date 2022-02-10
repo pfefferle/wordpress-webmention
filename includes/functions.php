@@ -30,7 +30,7 @@ function register_webmention_comment_type( $comment_type, $args = array() ) {
 	 * @param string       $comment_type        Comment type.
 	 * @param Webmention_Comment_Type $comment_type_object Arguments used to register the comment type.
 	 */
-	 do_action( 'registered_webmention_comment_type', $comment_type, $comment_type_object );
+	do_action( 'registered_webmention_comment_type', $comment_type, $comment_type_object );
 
 	return $comment_type_object;
 }

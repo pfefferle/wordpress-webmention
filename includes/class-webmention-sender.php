@@ -219,7 +219,8 @@ class Webmention_Sender {
 
 		$return = $wpdb->update( $wpdb->posts, array( 'pinged' => $new ), array( 'ID' => $post->ID ) );
 		clean_post_cache( $post->ID );
-		return $return;
+
+		return $new;
 	}
 
 	/**

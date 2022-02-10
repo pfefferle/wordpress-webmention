@@ -42,7 +42,7 @@ use stdClass;
  */
 function parse($input, $url = null, $convertClassic = \true)
 {
-    $parser = new \Webmention\Mf2\Parser($input, $url);
+    $parser = new Parser($input, $url);
     return $parser->parse($convertClassic);
 }
 /**
@@ -268,7 +268,7 @@ function normalizeTimezoneOffset(&$dtValue)
 function applySrcsetUrlTransformation($srcset, $transformation)
 {
     return \implode(', ', \array_filter(\array_map(function ($srcsetPart) use($transformation) {
-        $parts = \explode(" \t\n\r\0\v", \trim($srcsetPart), 2);
+        $parts = \explode(" \t\n\r\x00\v", \trim($srcsetPart), 2);
         $parts[0] = \rtrim($parts[0]);
         if (empty($parts[0])) {
             return \false;
@@ -331,16 +331,16 @@ class Parser
                 $doc = new \Webmention\Masterminds\HTML5(array('disable_html_ns' => \true));
                 $doc = $doc->loadHTML($input);
             } else {
-                $doc = new \DOMDocument();
+                $doc = new DOMDocument();
                 @$doc->loadHTML(unicodeToHtmlEntities($input));
             }
         } elseif (\is_a($input, 'DOMDocument')) {
             $doc = clone $input;
         } else {
-            $doc = new \DOMDocument();
+            $doc = new DOMDocument();
             @$doc->loadHTML('');
         }
-        $this->xpath = new \DOMXPath($doc);
+        $this->xpath = new DOMXPath($doc);
         $baseurl = $url;
         foreach ($this->xpath->query('//base[@href]') as $base) {
             $baseElementUrl = $base->getAttribute('href');
@@ -362,8 +362,8 @@ class Parser
         }
         $this->baseurl = $baseurl;
         $this->doc = $doc;
-        $this->parsed = new \SplObjectStorage();
-        $this->upgraded = new \SplObjectStorage();
+        $this->parsed = new SplObjectStorage();
+        $this->upgraded = new SplObjectStorage();
         $this->jsonMode = $jsonMode;
     }
     private function elementPrefixParsed(\DOMElement $e, $prefix)
@@ -407,7 +407,7 @@ class Parser
         }
         return \false;
     }
-    private function resolveChildUrls(\DOMElement $el)
+    private function resolveChildUrls(DOMElement $el)
     {
         $hyperlinkChildren = $this->xpath->query('.//*[@src or @href or @data]', $el);
         foreach ($hyperlinkChildren as $child) {
@@ -431,11 +431,11 @@ class Parser
      * @param bool $implied
      * @see https://wiki.zegnat.net/media/textparsing.html
      **/
-    public function textContent(\DOMElement $element, $implied = \false)
+    public function textContent(DOMElement $element, $implied = \false)
     {
         return \preg_replace('/(^[\\t\\n\\f\\r ]+| +(?=\\n)|(?<=\\n) +| +(?= )|[\\t\\n\\f\\r ]+$)/', '', $this->elementToString($element, $implied));
     }
-    private function elementToString(\DOMElement $input, $implied = \false)
+    private function elementToString(DOMElement $input, $implied = \false)
     {
         $output = '';
         foreach ($input->childNodes as $child) {
@@ -478,7 +478,7 @@ class Parser
      * @access public
      * @return string
      */
-    public function language(\DOMElement $el)
+    public function language(DOMElement $el)
     {
         // element has a lang attribute; use it
         if ($el->hasAttribute('lang')) {
@@ -491,7 +491,7 @@ class Parser
                     return unicodeTrim($node->getAttribute('content'));
                 }
             }
-        } elseif ($el->parentNode instanceof \DOMElement) {
+        } elseif ($el->parentNode instanceof DOMElement) {
             // check the parent node
             return $this->language($el->parentNode);
         }
@@ -1031,7 +1031,7 @@ class Parser
         \sort($mfTypes);
         // Properties should be an object when JSON serialised
         if (empty($return) and $this->jsonMode) {
-            $return = new \stdClass();
+            $return = new stdClass();
         }
         // Phew. Return the final result.
         $parsed = array('type' => $mfTypes, 'properties' => $return);
@@ -1158,10 +1158,10 @@ class Parser
             \sort($rel_urls[$href]['rels']);
         }
         if (empty($rels) and $this->jsonMode) {
-            $rels = new \stdClass();
+            $rels = new stdClass();
         }
         if (empty($rel_urls) and $this->jsonMode) {
-            $rel_urls = new \stdClass();
+            $rel_urls = new stdClass();
         }
         return array($rels, $rel_urls, $alternates);
     }
@@ -1172,7 +1172,7 @@ class Parser
      * which will then be upgraded to p-category during backcompat.
      * @param DOMElement $el
      */
-    public function upgradeRelTagToCategory(\DOMElement $el)
+    public function upgradeRelTagToCategory(DOMElement $el)
     {
         $rel_tag = $this->xpath->query('.//a[contains(concat(" ",normalize-space(@rel)," ")," tag ") and not(contains(concat(" ", normalize-space(@class), " "), " category ")) and @href]', $el);
         if ($rel_tag->length) {
@@ -1195,7 +1195,7 @@ class Parser
      * @param DOMElement $context optionally specify an element from which to parse microformats
      * @return array An array containing all the microformats found in the current document
      */
-    public function parse($convertClassic = \true, \DOMElement $context = null)
+    public function parse($convertClassic = \true, DOMElement $context = null)
     {
         $this->convertClassic = $convertClassic;
         $mfs = $this->parse_recursive($context);
@@ -1214,7 +1214,7 @@ class Parser
      * @param int $depth: recursion depth
      * @return array
      */
-    public function parse_recursive(\DOMElement $context = null, $depth = 0)
+    public function parse_recursive(DOMElement $context = null, $depth = 0)
     {
         $mfs = array();
         $mfElements = $this->getRootMF($context);
@@ -1302,7 +1302,7 @@ class Parser
      * @param DOMElement $context
      * @return DOMNodeList
      */
-    public function getRootMF(\DOMElement $context = null)
+    public function getRootMF(DOMElement $context = null)
     {
         // start with mf2 root class name xpath
         $xpaths = array('contains(concat(" ",normalize-space(@class)), " h-")');
@@ -1323,7 +1323,7 @@ class Parser
      * @param bool $isParentMf2
      * @see http://microformats.org/wiki/microformats2-parsing#algorithm
      */
-    public function backcompat(\DOMElement $el, $context = '', $isParentMf2 = \false)
+    public function backcompat(DOMElement $el, $context = '', $isParentMf2 = \false)
     {
         if ($context) {
             $mf1Classes = array($context);
@@ -1420,7 +1420,7 @@ class Parser
      * @param DOMElement $el
      * @param string|array $property
      */
-    public function addUpgraded(\DOMElement $el, $property)
+    public function addUpgraded(DOMElement $el, $property)
     {
         if (!\is_array($property)) {
             $property = array($property);
@@ -1438,7 +1438,7 @@ class Parser
      * @param DOMElement $el
      * @param string $classes
      */
-    public function addMfClasses(\DOMElement $el, $classes)
+    public function addMfClasses(DOMElement $el, $classes)
     {
         $existingClasses = \str_replace(array("\t", "\n"), ' ', $el->getAttribute('class'));
         $existingClasses = \array_filter(\explode(' ', $existingClasses));
@@ -1473,7 +1473,7 @@ class Parser
     public function convertLegacy()
     {
         $doc = $this->doc;
-        $xp = new \DOMXPath($doc);
+        $xp = new DOMXPath($doc);
         // replace all roots
         foreach ($this->classicRootMap as $old => $new) {
             foreach ($xp->query('//*[contains(concat(" ", @class, " "), " ' . $old . ' ") and not(contains(concat(" ", @class, " "), " ' . $new . ' "))]') as $el) {

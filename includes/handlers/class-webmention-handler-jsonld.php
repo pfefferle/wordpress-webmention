@@ -20,7 +20,7 @@ class Webmention_Handler_JSONLD extends Webmention_Handler_Base {
 	 * @return WP_Error|true Return error or true if successful.
 	 */
 	public function parse( Webmention_Request $request, $target_url ) {
-		$dom   = clone $request->get_domdocument();
+		$dom = clone $request->get_domdocument();
 		if ( is_wp_error( $dom ) ) {
 			return $dom;
 		}

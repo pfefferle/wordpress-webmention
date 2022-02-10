@@ -17,10 +17,18 @@ function detect_emoji($string)
     if (!isset($regexp)) {
         $regexp = _load_regexp();
     }
-    if (\preg_match_all($regexp, $string, $matches)) {
-        foreach ($matches[0] as $ch) {
+    if (\preg_match_all($regexp, $string, $matches, \PREG_OFFSET_CAPTURE)) {
+        $emojisLength = 0;
+        $lastMbOffset = 0;
+        foreach ($matches[0] as $match) {
+            $ch = $match[0];
+            $offset = $match[1] - $emojisLength;
+            $mbOffset = \mb_strpos($string, $ch, $lastMbOffset);
+            $mbLength = \mb_strlen($ch);
+            $lastMbOffset = $offset + $mbLength;
+            $emojisLength += \strlen($ch) - 1;
             $points = array();
-            for ($i = 0; $i < \mb_strlen($ch); $i++) {
+            for ($i = 0; $i < $mbLength; $i++) {
                 $points[] = \strtoupper(\dechex(uniord(\mb_substr($ch, $i, 1))));
             }
             $hexstr = \implode('-', $points);
@@ -36,13 +44,22 @@ function detect_emoji($string)
                     $skin_tone = $skin_tones[$pt];
                 }
             }
-            $data[] = array('emoji' => $ch, 'short_name' => $short_name, 'num_points' => \mb_strlen($ch), 'points_hex' => $points, 'hex_str' => $hexstr, 'skin_tone' => $skin_tone);
+            $data[] = array('emoji' => $ch, 'short_name' => $short_name, 'num_points' => \mb_strlen($ch), 'points_hex' => $points, 'hex_str' => $hexstr, 'skin_tone' => $skin_tone, 'offset' => $offset, 'mb_offset' => $mbOffset, 'mb_length' => $mbLength);
         }
     }
     if ($prevencoding) {
         \mb_internal_encoding($prevencoding);
     }
     return $data;
+}
+function get_first_emoji($string)
+{
+    $emojis = detect_emoji($string);
+    if (\count($emojis)) {
+        return $emojis[0];
+    } else {
+        return null;
+    }
 }
 function is_single_emoji($string)
 {
@@ -69,6 +86,18 @@ function is_single_emoji($string)
         \mb_internal_encoding($prevencoding);
     }
     return $emoji;
+}
+function replace_emoji($string, $prefix = '', $suffix = '')
+{
+    while ($emoji = get_first_emoji($string)) {
+        $offset = $emoji['mb_offset'];
+        $length = $emoji['mb_length'];
+        $strlen = \mb_strlen($string, 'UTF-8');
+        $start = \mb_substr($string, 0, $offset, 'UTF-8');
+        $end = \mb_substr($string, $offset + $length, $strlen - ($offset + $length), 'UTF-8');
+        $string = $start . $prefix . $emoji['short_name'] . $suffix . $end;
+    }
+    return $string;
 }
 function _load_map()
 {

@@ -1,12 +1,10 @@
-[![Build Status](https://travis-ci.org/pfefferle/wordpress-webmention.svg?branch=master)](https://travis-ci.org/pfefferle/wordpress-webmention) [![Issue Count](https://codeclimate.com/github/pfefferle/wordpress-webmention/badges/issue_count.svg)](https://codeclimate.com/github/pfefferle/wordpress-webmention) 
-
 # Webmention #
 **Contributors:** [pfefferle](https://profiles.wordpress.org/pfefferle), [dshanske](https://profiles.wordpress.org/dshanske)  
 **Donate link:** https://notiz.blog/donate/  
 **Tags:** webmention, pingback, trackback, linkback, indieweb, comment, response  
 **Requires at least:** 4.9  
-**Tested up to:** 5.4  
-**Stable tag:** 4.0.3  
+**Tested up to:** 5.5  
+**Stable tag:** 4.0.4  
 **Requires PHP:** 5.6  
 **License:** MIT  
 **License URI:** https://opensource.org/licenses/MIT  
@@ -93,7 +91,13 @@ Webmention headers are only shown if webmentions are available for that particul
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
 
+### 4.0.4 ###
+
+* Update dependencies
+* Fix WordPress warnings
+
 ### 4.0.3 ###
+
 * Move comment approve list and auto approve to the `wp_allow_comment` function called by the `wp_new_comment` function.
 * Minor fix to avatar function to account for the fact comments have an empty comment type
 
@@ -103,8 +107,8 @@ Project and support maintained on github at [pfefferle/wordpress-webmention](htt
 
 ### 4.0.1 ###
 
-* show webmention form only if `pings_open`
-* show webmention form also if comments are disabled
+* Show webmention form only if `pings_open`
+* Show webmention form also if comments are disabled
 
 ### 4.0.0 ###
 

@@ -5,3 +5,6 @@ npm-debug.log
 package-lock.json
 composer.lock
 vendor
+.vscode/settings.json
+composer-php-scoper.lock
+libraries/emoji-detector/example.php

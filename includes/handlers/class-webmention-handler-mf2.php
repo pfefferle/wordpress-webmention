@@ -461,7 +461,7 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 
 		// Some URLs have a separate h-card. While this is not in the authorship specification assume a top level h-card on a page is the author.
 		$items = $this->get_items( $mf_array );
-		foreach( $items as $item ) {
+		foreach ( $items as $item ) {
 			if ( $this->is_type( $item, 'h-card' ) ) {
 				return $item;
 			}
