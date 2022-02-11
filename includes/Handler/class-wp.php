@@ -27,17 +27,6 @@ class WP extends Base {
 	 * @return WP_Error|true Return error or true if successful.
 	 */
 	public function parse( Request $request, $target_url ) {
-		$dom = clone $request->get_domdocument();
-		if ( is_wp_error( $dom ) ) {
-			return $dom;
-		}
-		$xpath = new DOMXPath( $dom );
 
-		$meta = array();
-
-		// Look for OGP properties
-		foreach ( $xpath->query( '//link[@rel="https://api.w.org/"]' ) as $link ) {
-
-		}
 	}
 }
