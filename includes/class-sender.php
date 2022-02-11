@@ -202,6 +202,8 @@ class Sender {
 		if ( ! empty( $ping ) ) {
 			self::update_ping( $post, $ping );
 		}
+
+		return $ping;
 	}
 
 	/*
