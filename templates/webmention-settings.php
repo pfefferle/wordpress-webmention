@@ -56,8 +56,10 @@
 						<ul>
 						<?php foreach ( $post_types as $post_type ) { ?>
 							<li>
-								<input type="checkbox" id="webmention_support_post_types" name="webmention_support_post_types[]" value="<?php echo esc_attr( $post_type->name ); ?>" <?php echo checked( true, in_array( $post_type->name, $support_post_types, true ) ); ?> />
-								<label for="<?php echo esc_attr( $post_type->name ); ?>"><?php echo esc_html( $post_type->label ); ?></label>
+								<label for="webmention_support_post_types_<?php echo esc_attr( $post_type->name ); ?>">
+									<input type="checkbox" id="webmention_support_post_types_<?php echo esc_attr( $post_type->name ); ?>" name="webmention_support_post_types[]" value="<?php echo esc_attr( $post_type->name ); ?>" <?php echo checked( true, in_array( $post_type->name, $support_post_types, true ) ); ?> />
+									<?php echo esc_html( $post_type->label ); ?>
+								</label>
 							</li>
 						<?php } ?>
 						</ul>
