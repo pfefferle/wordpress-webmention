@@ -1,8 +1,17 @@
 <?php
+
+namespace Webmention\Handler;
+
+use WP_Error;
+use Exception;
+use DateTimeImmutable;
+use Webmention\Request;
+use Webmention\Mf2\Parser;
+
 /**
  * Class for webmention parsing using Microformats 2.
  */
-class Webmention_Handler_MF2 extends Webmention_Handler_Base {
+class MF2 extends Base {
 
 	/**
 	 * Handler Slug to Uniquely Identify it.
@@ -14,12 +23,12 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 	/**
 	 * Takes a request object and parses it.
 	 *
-	 * @param Webmention_Request $request Request Object.
+	 * @param Webmention\Request $request Request Object.
 	 * @param string $target_url The target URL
 	 *
 	 * @return WP_Error|true Return error or true if successful.
 	 */
-	public function parse( Webmention_Request $request, $target_url ) {
+	public function parse( Request $request, $target_url ) {
 		$dom = clone $request->get_domdocument();
 		if ( is_wp_error( $dom ) ) {
 			return $dom;
@@ -29,7 +38,7 @@ class Webmention_Handler_MF2 extends Webmention_Handler_Base {
 		}
 
 		$source_url = $request->get_url();
-		$parser     = new Webmention\Mf2\Parser( $dom, $source_url );
+		$parser     = new Parser( $dom, $source_url );
 		$data       = $parser->parse();
 
 		// Attempts to remove everything but the representative item.

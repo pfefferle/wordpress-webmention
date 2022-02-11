@@ -1,8 +1,14 @@
 <?php
+
+namespace Webmention;
+
+use WP_Error;
+use DOMDocument;
+
 /**
  * Encapsulates all Webmention HTTP requests
  */
-class Webmention_Request {
+class Request {
 
 	/**
 	 * URL.

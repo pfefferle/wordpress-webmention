@@ -1,8 +1,13 @@
 <?php
+
+namespace Webmention\Entity;
+
+use DateTimeImmutable;
+
 /**
  * Represents a Remote Webmention
  */
-class Webmention_Item {
+class Item {
 
 	/**
 	 * The entity type.

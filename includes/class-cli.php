@@ -1,8 +1,15 @@
 <?php
+
+namespace Webmention;
+
+use WP_CLI;
+use WP_CLI_Command;
+use Webmention\Sender;
+
 /**
  * The Webmention CLI
  */
-class Webmention_Cli extends WP_CLI_Command {
+class Cli extends WP_CLI_Command {
 	/**
 	 * See the Plugin Meta-Informations
 	 *
@@ -110,7 +117,7 @@ class Webmention_Cli extends WP_CLI_Command {
 			$post = get_post( intval( $post_id ) );
 
 			if ( $post ) {
-				$pungs = Webmention_Sender::send_webmentions( $post_id );
+				$pungs = Sender::send_webmentions( $post_id );
 
 				if ( ! $pungs ) {
 					WP_CLI::error( __( 'Nothing to ping.', 'webmention' ) );
@@ -132,7 +139,7 @@ class Webmention_Cli extends WP_CLI_Command {
 				WP_CLI::error( __( 'Please provide a post-id/permalink or a source and a target', 'webmention' ) );
 			}
 
-			$response = Webmention_Sender::send_webmention( $source, $target );
+			$response = Sender::send_webmention( $source, $target );
 
 			if ( ! $response || is_wp_error( $response ) ) {
 				WP_CLI::error( __( 'Nothing to ping.', 'webmention' ) );

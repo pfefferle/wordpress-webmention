@@ -1,21 +1,23 @@
 <?php
 
+namespace Webmention;
+
+use WP_Comment;
+
 /**
  * Avatar Handler Class
  *
  */
-class Webmention_Avatar_Handler {
+class Avatar {
 	/**
 	 * Initialize the plugin, registering WordPress hooks.
 	 */
 	public static function init() {
-		$cls = get_called_class();
-
-		add_filter( 'pre_get_avatar_data', array( $cls, 'avatar_stored_in_comment' ), 30, 2 );
-		add_filter( 'get_avatar_data', array( $cls, 'anonymous_avatar_data' ), 30, 2 );
+		add_filter( 'pre_get_avatar_data', array( static::class, 'avatar_stored_in_comment' ), 30, 2 );
+		add_filter( 'get_avatar_data', array( static::class, 'anonymous_avatar_data' ), 30, 2 );
 
 		// All the default gravatars come from Gravatar instead of being generated locally so add a local default
-		add_filter( 'avatar_defaults', array( $cls, 'anonymous_avatar' ) );
+		add_filter( 'avatar_defaults', array( static::class, 'anonymous_avatar' ) );
 	}
 
 	public static function anonymous_avatar( $avatar_defaults ) {

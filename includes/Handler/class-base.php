@@ -1,13 +1,20 @@
 <?php
+
+namespace Webmention\Handler;
+
+use WP_Error;
+use Webmention\Request;
+use Webmention\Entity\Item;
+
 /**
  * Base class for webmention parsing and post processing.
  */
-abstract class Webmention_Handler_Base {
+abstract class Base {
 
 	/**
-	 * Parsed Data as Webmention_Item.
+	 * Parsed Data as Item.
 	 *
-	 * @var Webmention_Item
+	 * @var Webmention\Entity\Item
 	 */
 	protected $webmention_item;
 
@@ -22,20 +29,20 @@ abstract class Webmention_Handler_Base {
 	/**
 	 * Constructor.
 	 *
-	 * @param Webmention_Item $webmention_item The Webmention item.
+	 * @param Webmention\Entity\Item $webmention_item The Webmention item.
 	 */
 	public function __construct( $webmention_item = null ) {
-		if ( $webmention_item instanceof Webmention_Item ) {
+		if ( $webmention_item instanceof Item ) {
 			$this->webmention_item = $webmention_item;
 		} else {
-			$this->webmention_item = new Webmention_Item();
+			$this->webmention_item = new Item();
 		}
 	}
 
 	/**
-	 * Get Webmention_Item
+	 * Get Item
 	 *
-	 * @return Webmention_Item
+	 * @return Webmention\Entity\Item
 	 */
 	public function get_webmention_item() {
 		return $this->webmention_item;
@@ -51,14 +58,14 @@ abstract class Webmention_Handler_Base {
 	}
 
 	/**
-	 * Set Webmention_Item
+	 * Set Item
 	 *
-	 * @param Webmention_Item $webmention_item the Webmention Item
+	 * @param Webmention\Entity\Item $webmention_item the Webmention Item
 	 * @return WP_Error|true
 	 */
 	public function set_webmention_item( $webmention_item ) {
-		if ( ! ( $webmention_item instanceof Webmention_Item ) ) {
-			return new WP_Error( 'wrong_data_format', __( '$webmention_item is not an instance of Webmention_Item', 'webmention' ), $webmention_item );
+		if ( ! ( $webmention_item instanceof Item ) ) {
+			return new WP_Error( 'wrong_data_format', __( '$webmention_item is not an instance of Webmention\Entity\Item', 'webmention' ), $webmention_item );
 		}
 
 		$this->webmention_item = $webmention_item;
@@ -79,10 +86,10 @@ abstract class Webmention_Handler_Base {
 	/**
 	 * Takes a request object and parses it.
 	 *
-	 * @param Webmention_Request $request Request Object.
+	 * @param Webmention\Request $request Request Object.
 	 * @param string $target_url The target URL
 	 *
 	 * @return WP_Error|true Return error or true if successful.
 	 */
-	abstract public function parse( Webmention_Request $request, $target_url );
+	abstract public function parse( Request $request, $target_url );
 }

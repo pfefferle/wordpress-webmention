@@ -1,8 +1,18 @@
 <?php
+
+namespace Webmention;
+
+use Webmention\Request;
+use Webmention\Entity\Item;
+use Webmention\Handler\WP;
+use Webmention\Handler\Mf2;
+use Webmention\Handler\Meta;
+use Webmention\Handler\Jsonld;
+
 /**
  * Class for handling webmention handlers
 */
-class Webmention_Handler {
+class Handler {
 
 	protected $handlers = array();
 
@@ -10,24 +20,27 @@ class Webmention_Handler {
 	 * Must be instantiated with at least one handler.
 	 */
 	public function __construct() {
-		// Meta Handler Class
-		require_once dirname( __FILE__ ) . '/class-webmention-handler-meta.php';
-		$this->handlers[] = new Webmention_Handler_Meta();
-
 		// MF2 Handler  Class
-		require_once dirname( __FILE__ ) . '/class-webmention-handler-mf2.php';
-		$this->handlers[] = new Webmention_Handler_Mf2();
+		require_once dirname( __FILE__ ) . '/Handler/class-mf2.php';
+		$this->handlers[] = new MF2();
+
+		// WordPress Handler Class
+		require_once dirname( __FILE__ ) . '/Handler/class-wp.php';
+		$this->handlers[] = new WP();
+
+		// Meta Handler Class
+		require_once dirname( __FILE__ ) . '/Handler/class-meta.php';
+		$this->handlers[] = new Meta();
 
 		// JSON-LD Handler  Class
-		require_once dirname( __FILE__ ) . '/class-webmention-handler-jsonld.php';
-		$this->handlers[] = new Webmention_Handler_Jsonld();
+		require_once dirname( __FILE__ ) . '/Handler/class-jsonld.php';
+		$this->handlers[] = new Jsonld();
 	}
 
 	/**
 	 * Appends a Handler to the List.
 	 *
-	 * @param Webmention_Handler_Base $handler
-	 *
+	 * @param Webmention\Handler\Base $handler
 	 */
 	public function push( $handler ) {
 		array_push( $this->handlers, $handler );
@@ -36,10 +49,9 @@ class Webmention_Handler {
 	/**
 	 * Insert a Handler at the front of the list
 	 *
-	 * @param Webmention_Request $request Request Object.
+	 * @param Webmention\Request $request Request Object.
 	 *
-	 * @param Webmention_Handler_Base $handler
-	 *
+	 * @param Webmention\Handler\Base $handler
 	 */
 	public function unshift( $handler ) {
 		array_unshift( $this->handlers[], $handler );
@@ -49,12 +61,12 @@ class Webmention_Handler {
 	/**
 	 * Iterate through a list of handlers and return an item.
 	 *
-	 * @param Webmention_Request $request Request Object.
+	 * @param Webmention\Request $request Request Object.
 	 * @param string $target_url The target URL
 	 *
-	 * @return Webmention_Handler_Item
+	 * @return Webmention\Entity\Item
 	 */
-	public function parse( Webmention_Request $request, $target_url ) {
+	public function parse( Request $request, $target_url ) {
 		foreach ( $this->handlers as $handler ) {
 			$handler->parse( $request, $target_url );
 			$item = $handler->get_webmention_item();
@@ -68,13 +80,13 @@ class Webmention_Handler {
 	/**
 	 * Iterate through a list of handlers and return an aggregated item.
 	 *
-	 * @param Webmention_Request $request Request Object.
+	 * @param Webmention\Request $request Request Object.
 	 * @param string $target_url The target URL
 	 *
-	 * @return Webmention_Handler_Item
+	 * @return Webmention\Entity\Item
 	 */
-	public function parse_aggregated( Webmention_Request $request, $target_url ) {
-		$item = new Webmention_Item();
+	public function parse_aggregated( Request $request, $target_url ) {
+		$item = new Item();
 
 		foreach ( $this->handlers as $handler ) {
 			$handler->set_webmention_item( $item );
@@ -91,12 +103,12 @@ class Webmention_Handler {
 	/**
 	 * Iterate through a list of handlers and return an array of items.
 	 *
-	 * @param Webmention_Request $request Request Object.
+	 * @param Webmention\Request $request Request Object.
 	 * @param string $target_url The target URL
 	 *
-	 * @return Webmention_Handler_Item
+	 * @return Webmention\Entity\Item
 	 */
-	public function parse_grouped( Webmention_Request $request, $target_url ) {
+	public function parse_grouped( Request $request, $target_url ) {
 		$result = array();
 
 		foreach ( $this->handlers as $handler ) {
@@ -114,5 +126,3 @@ class Webmention_Handler {
 		return $result;
 	}
 }
-
-

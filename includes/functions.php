@@ -7,7 +7,7 @@
  * @param string $comment_type Key for comment type.
  * @param array $args Arguments.
  *
- * @return Webmention_Comment_Type The registered webmention comment type.
+ * @return Webmention\Comment_Type The registered webmention comment type.
  */
 function register_webmention_comment_type( $comment_type, $args = array() ) {
 	global $webmention_comment_types;
@@ -19,7 +19,7 @@ function register_webmention_comment_type( $comment_type, $args = array() ) {
 	// Sanitize comment type name.
 	$comment_type = sanitize_key( $comment_type );
 
-	$comment_type_object = new Webmention_Comment_Type( $comment_type, $args );
+	$comment_type_object = new \Webmention\Comment_Type( $comment_type, $args );
 
 	$webmention_comment_types[ $comment_type ] = $comment_type_object;
 
@@ -27,8 +27,8 @@ function register_webmention_comment_type( $comment_type, $args = array() ) {
 	 * Fires after a webmention comment type is registered.
 	 *
 	 *
-	 * @param string       $comment_type        Comment type.
-	 * @param Webmention_Comment_Type $comment_type_object Arguments used to register the comment type.
+	 * @param string                   $comment_type        Comment type.
+	 * @param \Webmention\Comment_Type $comment_type_object Arguments used to register the comment type.
 	 */
 	do_action( 'registered_webmention_comment_type', $comment_type, $comment_type_object );
 
@@ -36,7 +36,7 @@ function register_webmention_comment_type( $comment_type, $args = array() ) {
 }
 
 /**
- * A wrapper for Webmention_Sender::send_webmention.
+ * A wrapper for Webmention\Sender::send_webmention.
  *
  * @since 2.4.0
  *
@@ -45,7 +45,7 @@ function register_webmention_comment_type( $comment_type, $args = array() ) {
  * @return array of results including HTTP headers
  */
 function send_webmention( $source, $target ) {
-	return Webmention_Sender::send_webmention( $source, $target );
+	return \Webmention\Sender::send_webmention( $source, $target );
 }
 
 /**
@@ -78,7 +78,7 @@ function get_default_webmention_form_text() {
  * @return boolean
  */
 function is_webmention_source_allowed( $url ) {
-	return Webmention_Receiver::is_source_allowed( $url );
+	return \Webmention\Receiver::is_source_allowed( $url );
 }
 
 /**

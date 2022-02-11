@@ -1,8 +1,15 @@
 <?php
+
+namespace Webmention\Handler;
+
+use DOMXPath;
+use WP_Error;
+use Webmention\Request;
+
 /**
  * Class for webmention parsing using META tags.
  */
-class Webmention_Handler_Meta extends Webmention_Handler_Base {
+class Meta extends Base {
 
 	/**
 	 * Handler Slug to Uniquely Identify it.
@@ -14,12 +21,12 @@ class Webmention_Handler_Meta extends Webmention_Handler_Base {
 	/**
 	 * Takes a request object and parses it.
 	 *
-	 * @param Webmention_Request $request Request Object.
+	 * @param Webmention\Request $request Request Object.
 	 * @param string $target_url The target URL
 	 *
 	 * @return WP_Error|true Return error or true if successful.
 	 */
-	public function parse( Webmention_Request $request, $target_url ) {
+	public function parse( Request $request, $target_url ) {
 		$dom = clone $request->get_domdocument();
 		if ( is_wp_error( $dom ) ) {
 			return $dom;
@@ -64,7 +71,7 @@ class Webmention_Handler_Meta extends Webmention_Handler_Base {
 	}
 
 	/**
-	 * Set meta-properties to Webmention_Item
+	 * Set meta-properties to Webmention\Entity\Item
 	 *
 	 * @param string $key   The meta-key.
 	 *

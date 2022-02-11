@@ -1,10 +1,17 @@
 <?php
+
+namespace Webmention;
+
+use WP_REST_Server;
+use Webmention\Request;
+use Webmention\Handler;
+
 /**
  * Webmention Tools Class
  *
  * @author David Shanske
  */
-class Webmention_Tools {
+class Tools {
 	/**
 	 * Register Webmention tools settings.
 	 */
@@ -65,14 +72,14 @@ class Webmention_Tools {
 		$source = $request->get_param( 'source' );
 		$target = $request->get_param( 'target' );
 
-		$request = new Webmention_Request();
+		$request = new Request();
 		$return  = $request->fetch( $source, false );
 
 		if ( is_wp_error( $return ) ) {
 			return $return;
 		}
 
-		$handler = new Webmention_Handler();
+		$handler = new Handler();
 
 		return $handler->parse_grouped( $request, $target );
 	}

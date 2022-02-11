@@ -1,16 +1,22 @@
 <?php
+
+namespace Webmention;
+
+use WP_Error;
+use Webmention\Receiver;
+
 /**
  * Webmention Vouch Class
  *
  * @author Matthias Pfefferle
  */
-class Webmention_Vouch {
+class Vouch {
 	/**
 	 * Initialize, registering WordPress hooks
 	 */
 	public static function init() {
 		// Webmention helper
-		add_filter( 'webmention_comment_data', array( 'Webmention_Vouch', 'verify_vouch' ), 10, 1 );
+		add_filter( 'webmention_comment_data', array( static::class, 'verify_vouch' ), 10, 1 );
 
 		self::register_meta();
 	}
@@ -121,7 +127,7 @@ class Webmention_Vouch {
 		}
 
 		// If this is not
-		if ( ! Webmention_Receiver::is_source_allowed( $data['vouch'] ) ) {
+		if ( ! Receiver::is_source_allowed( $data['vouch'] ) ) {
 			$data['comment_meta']['webmention_vouched'] = '0';
 			return $data;
 		}

@@ -4,12 +4,14 @@
  *
  */
 
+namespace Webmention;
+
 /**
  * Class used for interacting with comment types.
  *
  * @see register_webmention_comment_type()
  */
-final class Webmention_Comment_Type {
+final class Comment_Type {
 	/**
 	 * Comment type key.
 	 *

@@ -1,30 +1,35 @@
 <?php
+
+namespace Webmention;
+
+use WP_Comment;
+
 /**
  * Webmention Admin Class
  *
  * @author Matthias Pfefferle
  */
-class Webmention_Admin {
+class Admin {
 	/**
 	 * Register Webmention admin settings.
 	 */
 	public static function admin_init() {
 		self::register_settings();
 
-		add_settings_field( 'discussion_settings', esc_html__( 'Webmention Settings', 'webmention' ), array( 'Webmention_Admin', 'discussion_settings' ), 'discussion', 'default' );
+		add_settings_field( 'discussion_settings', esc_html__( 'Webmention Settings', 'webmention' ), array( static::class, 'discussion_settings' ), 'discussion', 'default' );
 
 		/* Add meta boxes on the 'add_meta_boxes' hook. */
-		add_action( 'add_meta_boxes', array( 'Webmention_Admin', 'add_meta_boxes' ) );
+		add_action( 'add_meta_boxes', array( static::class, 'add_meta_boxes' ) );
 
-		add_filter( 'plugin_action_links', array( 'Webmention_Admin', 'plugin_action_links' ), 10, 2 );
-		add_filter( 'plugin_row_meta', array( 'Webmention_Admin', 'plugin_row_meta' ), 10, 2 );
+		add_filter( 'plugin_action_links', array( static::class, 'plugin_action_links' ), 10, 2 );
+		add_filter( 'plugin_row_meta', array( static::class, 'plugin_row_meta' ), 10, 2 );
 
-		add_action( 'admin_comment_types_dropdown', array( 'Webmention_Admin', 'comment_types_dropdown' ) );
-		add_filter( 'manage_edit-comments_columns', array( 'Webmention_Admin', 'comment_columns' ) );
-		add_filter( 'manage_comments_custom_column', array( 'Webmention_Admin', 'manage_comments_custom_column' ), 10, 2 );
+		add_action( 'admin_comment_types_dropdown', array( static::class, 'comment_types_dropdown' ) );
+		add_filter( 'manage_edit-comments_columns', array( static::class, 'comment_columns' ) );
+		add_filter( 'manage_comments_custom_column', array( static::class, 'manage_comments_custom_column' ), 10, 2 );
 
-		add_filter( 'comment_row_actions', array( 'Webmention_Admin', 'comment_row_actions' ), 13, 2 );
-		add_filter( 'comment_unapproved_to_approved', array( 'Webmention_Admin', 'transition_to_approvelist' ), 10 );
+		add_filter( 'comment_row_actions', array( static::class, 'comment_row_actions' ), 13, 2 );
+		add_filter( 'comment_unapproved_to_approved', array( static::class, 'transition_to_approvelist' ), 10 );
 
 		self::add_privacy_policy_content();
 	}
@@ -116,7 +121,7 @@ class Webmention_Admin {
 		add_meta_box(
 			'webmention-meta',
 			esc_html__( 'Webmention Data', 'webmention' ),
-			array( 'Webmention_Admin', 'meta_boxes' ),
+			array( static::class, 'meta_boxes' ),
 			'comment',
 			'normal',
 			'default'
@@ -206,7 +211,7 @@ class Webmention_Admin {
 				$title,
 				'manage_options',
 				'webmention',
-				array( 'Webmention_Admin', 'settings_page' )
+				array( static::class, 'settings_page' )
 			);
 		} else {
 			$options_page = add_options_page(
@@ -214,11 +219,11 @@ class Webmention_Admin {
 				$title,
 				'manage_options',
 				'webmention',
-				array( 'Webmention_Admin', 'settings_page' )
+				array( static::class, 'settings_page' )
 			);
 		}
 
-		add_action( 'load-' . $options_page, array( 'Webmention_Admin', 'add_help_tab' ) );
+		add_action( 'load-' . $options_page, array( static::class, 'add_help_tab' ) );
 	}
 
 	/**
