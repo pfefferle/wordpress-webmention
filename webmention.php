@@ -101,7 +101,7 @@ function init() {
 	add_filter( 'pings_open', 'webmention_pings_open', 10, 2 );
 
 	// Load language files.
-	\Webmention\plugin_textdomain();
+	load_plugin_textdomain( 'webmention', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 
 	add_action( 'comment_form_after', 'webmention_comment_form', 11 );
 	add_action( 'comment_form_comments_closed', 'webmention_comment_form' );
@@ -112,15 +112,6 @@ function init() {
 
 }
 add_action( 'plugins_loaded', '\Webmention\init' );
-
-/**
- * Load language files.
- *
- * @since 3.8.9
- */
-function plugin_textdomain() {
-	load_plugin_textdomain( 'webmention', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
-}
 
 /**
  * `get_plugin_data` wrapper
