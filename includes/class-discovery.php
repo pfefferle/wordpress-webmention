@@ -10,7 +10,7 @@ class Discovery {
 	/**
 	 * Initialize the plugin, registering WordPress hooks
 	 */
-	public static function int() {
+	public static function init() {
 		// endpoint discovery
 		add_action( 'wp_head', array( static::class, 'html_header' ), 99 );
 		add_action( 'template_redirect', array( static::class, 'http_header' ) );
