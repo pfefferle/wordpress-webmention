@@ -10,3 +10,7 @@
 <label><?php esc_html_e( 'Webmention Creation Time', 'webmention' ); ?></label>
 <input type="url" class="widefat" disabled value="<?php echo get_comment_meta( $comment->comment_ID, 'webmention_created_at', true ); ?>" />
 <br />
+
+<label><?php esc_html_e( 'Webmention Response Type', 'webmention' ); ?></label>
+<input type="url" class="widefat" disabled value="<?php echo $comment->comment_type; ?>" />
+<br />

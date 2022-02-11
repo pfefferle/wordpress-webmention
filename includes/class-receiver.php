@@ -455,8 +455,8 @@ class Receiver {
 			return new WP_Error( 'invalid_data', esc_html__( 'Invalid data passed', 'webmention' ), array( 'status' => 500 ) );
 		}
 
-		$request = new Request();
-		$return  = $request->fetch( $data['source'] );
+		$request = new Request( $data['source'] );
+		$return  = $request->fetch();
 
 		if ( is_wp_error( $return ) ) {
 			return $return;
@@ -628,11 +628,15 @@ class Receiver {
 			return $commentdata;
 		}
 
-		$request = new Request();
-		$request->fetch( $commentdata['source'] );
+		$request = new Request( $commentdata['source'] );
+		$request->fetch();
 
 		$handler = new Handler();
 		$item    = $handler->parse( $request, $commentdata['target'] );
+
+		if ( ! $item->verify() ) {
+			return new WP_Error( 'incomplete_item', __( 'Not enough data available', 'webmention' ) );
+		}
 
 		$commentdata_array = $item->to_commentdata_array();
 

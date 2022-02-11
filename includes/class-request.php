@@ -39,6 +39,13 @@ class Request {
 	protected $content_type;
 
 	/**
+	 * HTTP Response.
+	 *
+	 * @var HTTP_Response
+	 */
+	protected $response;
+
+	/**
 	 * URL.
 	 *
 	 * @var int
@@ -64,55 +71,61 @@ class Request {
 		}
 	}
 
-	/**
-	 *  Retrieve a URL.
-	 *
-	 * @param string $url The URL to retrieve.
-	 * @param boolean $safe Whether to use the safe or unfiltered version of HTTP API.
-	 *
-	 * @return WP_Error|true WP_Error or true if successful.
-	 */
-	public function fetch( $url, $safe = true ) {
+	public function __construct( $url ) {
 		$this->url = $url;
-		$response  = $this->head( $url, $safe );
-		if ( is_wp_error( $response ) ) {
-			return $response;
-		}
-
-		$response = $this->remote_get( $url, $safe );
-		if ( is_wp_error( $response ) ) {
-			return $response;
-		}
 	}
 
 	/**
 	 *  Retrieve a URL.
 	 *
-	 * @param string $url The URL to retrieve.
+	 * @param string  $url  The URL to retrieve.
+	 * @param boolean $safe Whether to use the safe or unfiltered version of HTTP API.
+	 *
+	 * @return WP_Error|true WP_Error or true if successful.
+	 */
+	public function fetch( $safe = true, $validate_header = false ) {
+		if ( $validate_header ) {
+			$response = $this->head( $this->url, $safe );
+			if ( is_wp_error( $response ) ) {
+				return $response;
+			}
+		}
+
+		return $this->get( $safe );
+	}
+
+	/**
+	 *  Retrieve a URL.
+	 *
+	 * @param string  $url  The URL to retrieve.
 	 * @param boolean $safe Whether to use the safe or unfiltered version of HTTP API.
 	 *
 	 * @return WP_Error|array Either an error or the complete return object
 	 */
-	public function remote_get( $url, $safe = true ) {
-		$args = $this->get_remote_arguments();
+	public function get( $safe = true ) {
+		$args = $this->get_arguments();
+
 		if ( $safe ) {
-			$response = wp_safe_remote_get( $url, $args );
+			$response = wp_safe_remote_get( $this->url, $args );
 		} else {
-			$response = wp_remote_get( $url, $args );
+			$response = wp_remote_get( $this->url, $args );
 		}
+
+		$this->response = $response;
+
 		if ( is_wp_error( $response ) ) {
 			return $response;
 		}
 
 		$this->response_code = wp_remote_retrieve_response_code( $response );
-		$check               = $this->check_response_code( $this->response_code, $response );
+		$check               = $this->check_response_code();
 
 		if ( is_wp_error( $check ) ) {
-				return $check;
+			return $check;
 		}
 
-		$this->content_type = $this->get_content_type( $response );
-		$check              = $this->check_content_type( $this->content_type );
+		$this->content_type = $this->get_content_type();
+		$check              = $this->check_content_type();
 		if ( is_wp_error( $check ) ) {
 			return $check;
 		}
@@ -130,13 +143,15 @@ class Request {
 	 *
 	 * @return WP_Error|array Return error or HTTP API response array.
 	 */
-	public function head( $url, $safe = true ) {
-		$args = $this->get_remote_arguments();
+	public function head( $safe = true ) {
+		$args = $this->get_arguments();
 		if ( $safe ) {
-			$response = wp_safe_remote_head( $url, $args );
+			$response = wp_safe_remote_head( $this->url, $args );
 		} else {
-			$response = wp_remote_head( $url, $args );
+			$response = wp_remote_head( $this->url, $args );
 		}
+
+		$this->response = $response;
 
 		if ( is_wp_error( $response ) ) {
 			return $response;
@@ -160,18 +175,16 @@ class Request {
 	 *
 	 * @return array
 	 */
-	protected function get_remote_arguments() {
+	protected function get_arguments() {
 		$wp_version = get_bloginfo( 'version' );
 		$user_agent = apply_filters( 'http_headers_useragent', 'WordPress/' . $wp_version . '; ' . get_bloginfo( 'url' ) );
 		$args       = array(
 			'timeout'             => 100,
-			'limit_response_size' => 153600,
+			'limit_response_size' => 1048576,
 			'redirection'         => 20,
-			'headers'             => array(
-				'Accept' => 'text/html, text/plain',
-			),
+			'user-agent'          => "$user_agent; Webmention",
 		);
-		return apply_filters( 'webmention_remote_get_args', $args );
+		return apply_filters( 'webmention_request_get_args', $args );
 	}
 
 	/**
@@ -181,9 +194,9 @@ class Request {
 	 *
 	 * @return WP_Error|true return an error or that something is supported
 	 */
-	protected function check_content_type( $content_type ) {
+	protected function check_content_type() {
 		// not an (x)html, sgml, or xml page, no use going further
-		if ( preg_match( '#(image|audio|video|model)/#is', $content_type ) ) {
+		if ( preg_match( '#(image|audio|video|model)/#is', $this->content_type ) ) {
 			return new WP_Error(
 				'unsupported_content_type',
 				__( 'Content Type is not supported', 'webmention' ),
@@ -203,8 +216,8 @@ class Request {
 	 *
 	 * @return WP_Error|true return an error or that something is supported
 	 */
-	protected function check_response_code( $code, $response = null ) {
-		switch ( $code ) {
+	protected function check_response_code() {
+		switch ( $this->response_code ) {
 			case 200:
 				return true;
 			case 404:
@@ -221,7 +234,7 @@ class Request {
 					__( 'Method not allowed', 'webmention' ),
 					array(
 						'status' => 400,
-						'allow'  => wp_remote_retrieve_header( $response, 'allow' ),
+						'allow'  => wp_remote_retrieve_header( $this->response, 'allow' ),
 					)
 				);
 			case 410:
@@ -243,7 +256,7 @@ class Request {
 			default:
 				return new WP_Error(
 					'source_error',
-					wp_remote_retrieve_response_message( $response ),
+					wp_remote_retrieve_response_message( $this->response ),
 					array(
 						'status' => 400,
 					)
@@ -258,8 +271,8 @@ class Request {
 	 * @return string|false return either false or the stripped string
 	 *
 	 */
-	protected function get_content_type( $response ) {
-		$content_type = wp_remote_retrieve_header( $response, 'Content-Type' );
+	protected function get_content_type() {
+		$content_type = wp_remote_retrieve_header( $this->response, 'Content-Type' );
 		// Strip any character set off the content type
 		$content_type = explode( ';', $content_type );
 

@@ -72,8 +72,8 @@ class Tools {
 		$source = $request->get_param( 'source' );
 		$target = $request->get_param( 'target' );
 
-		$request = new Request();
-		$return  = $request->fetch( $source, false );
+		$request = new Request( $source );
+		$return  = $request->fetch( false );
 
 		if ( is_wp_error( $return ) ) {
 			return $return;

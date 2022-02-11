@@ -6,7 +6,7 @@ class Webmention_Handler_Meta_Test extends WP_UnitTestCase {
 		require_once( dirname( __FILE__ ) . '/../includes/Entity/class-item.php' );
 		require_once( dirname( __FILE__ ) . '/../includes/class-request.php' );
 
-		$request = new \Webmention\Request();
+		$request = new \Webmention\Request( 'http://example.com/webmention/target/placeholder' );
 		$request->set_content_type( 'text/html' );
 		$request->set_body( file_get_contents( dirname( __FILE__ ) . '/data/open-graph-test.html' ) );
 
