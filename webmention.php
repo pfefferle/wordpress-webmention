@@ -216,7 +216,7 @@ function nodeinfo2( $nodeinfo ) {
  *
  * @return array the plugin metadata array
  */
-function get_plugin_data( $markup = true, $translate = true ) {
+function get_plugin_meta( $markup = true, $translate = true ) {
 	return get_plugin_data( __FILE__, $markup, $translate );
 }
 

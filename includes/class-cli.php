@@ -5,6 +5,7 @@ namespace Webmention;
 use WP_CLI;
 use WP_CLI_Command;
 use Webmention\Sender;
+use function Webmention\get_plugin_meta;
 
 /**
  * The Webmention CLI
@@ -66,7 +67,7 @@ class Cli extends WP_CLI_Command {
 	 * @return void
 	 */
 	public function meta( $args, $assoc_args ) {
-		$plugin_data = webmention_get_plugin_data( false );
+		$plugin_data = get_plugin_meta( false );
 
 		if ( $assoc_args ) {
 			$plugin_data = array_intersect_key( $plugin_data, $assoc_args );
