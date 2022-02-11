@@ -29,13 +29,6 @@ class Receiver {
 
 		add_filter( 'duplicate_comment_id', array( static::class, 'disable_wp_check_dupes' ), 20, 2 );
 
-		// endpoint discovery
-		add_action( 'wp_head', array( static::class, 'html_header' ), 99 );
-		add_action( 'template_redirect', array( static::class, 'http_header' ) );
-		add_filter( 'host_meta', array( static::class, 'jrd_links' ) );
-		add_filter( 'webfinger_user_data', array( static::class, 'jrd_links' ) );
-		add_filter( 'webfinger_post_data', array( static::class, 'jrd_links' ) );
-
 		// Webmention helper
 		add_filter( 'webmention_comment_data', array( static::class, 'webmention_verify' ), 11, 1 );
 		add_filter( 'webmention_comment_data', array( static::class, 'check_dupes' ), 12, 1 );
@@ -748,89 +741,5 @@ class Receiver {
 		}
 
 		return $template;
-	}
-
-	/**
-	 * Webmention headers to be added
-	 *
-	 * @return boolean
-	 */
-	public static function should_show_headers() {
-		if ( WEBMENTION_ALWAYS_SHOW_HEADERS ) {
-			return true;
-		}
-
-		return self::should_receive_mentions();
-	}
-
-	/**
-	 *
-	 *
-	 * @return boolean
-	 */
-	public static function should_receive_mentions() {
-		if ( is_singular() ) {
-			return pings_open();
-		} else {
-			$post_id = webmention_url_to_postid( get_self_link() );
-		}
-
-		if ( ! $post_id ) {
-			return false;
-		}
-
-		// If the post type does not support webmentions do not even check if pings_open is set
-		if ( ! post_type_supports( get_post_type( $post_id ), 'webmentions' ) ) {
-			return false;
-		}
-
-		if ( pings_open( $post_id ) ) {
-			return true;
-		}
-
-		return false;
-	}
-
-	/**
-	 * The Webmention autodicovery meta-tags
-	 */
-	public static function html_header() {
-		if ( ! self::should_show_headers() ) {
-			return;
-		}
-
-		printf( '<link rel="webmention" href="%s" />' . PHP_EOL, get_webmention_endpoint() );
-		// backwards compatibility with v0.1
-		printf( '<link rel="http://webmention.org/" href="%s" />' . PHP_EOL, get_webmention_endpoint() );
-	}
-
-	/**
-	 * The Webmention autodicovery http-header
-	 */
-	public static function http_header() {
-		if ( ! self::should_show_headers() ) {
-			return;
-		}
-
-		header( sprintf( 'Link: <%s>; rel="webmention"', get_webmention_endpoint() ), false );
-		// backwards compatibility with v0.1
-		header( sprintf( 'Link: <%s>; rel="http://webmention.org/"', get_webmention_endpoint() ), false );
-	}
-
-	/**
-	 * Generates webfinger/host-meta links
-	 */
-	public static function jrd_links( $array ) {
-		$array['links'][] = array(
-			'rel'  => 'webmention',
-			'href' => get_webmention_endpoint(),
-		);
-		// backwards compatibility with v0.1
-		$array['links'][] = array(
-			'rel'  => 'http://webmention.org/',
-			'href' => get_webmention_endpoint(),
-		);
-
-		return $array;
 	}
 }

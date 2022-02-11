@@ -599,3 +599,59 @@ if ( ! function_exists( 'ifset' ) ) {
 			return isset( $var ) ? $var : $return;
 	}
 }
+
+/**
+ * Return enabled status of Homepage Webmentions.
+ *
+ * @since 3.8.9
+ *
+ * @param bool $open    Whether the current post is open for pings.
+ * @param int  $post_id The post ID.
+ * @return boolean if pings are open
+ */
+function webmention_pings_open( $open, $post_id ) {
+	if ( get_option( 'webmention_home_mentions' ) === $post_id ) {
+		return true;
+	}
+
+	return $open;
+}
+
+/**
+ * Retrieve the default comment status for a given post type.
+ *
+ * @since 3.8.9
+ *
+ * @param string $status       Default status for the given post type,
+ *                             either 'open' or 'closed'.
+ * @param string $post_type    Post type to check.
+ * @param string $comment_type Type of comment. Default is `comment`.
+ *
+ * @return string
+ */
+function webmention_get_default_comment_status( $status, $post_type, $comment_type ) {
+	if ( 'webmention' === $comment_type ) {
+		return post_type_supports( $post_type, 'webmentions' ) ? 'open' : 'closed';
+	}
+	// Since support for the pingback comment type is used to keep pings open...
+	if ( ( 'pingback' === $comment_type ) ) {
+		return ( post_type_supports( $post_type, 'webmentions' ) ? 'open' : $status );
+	}
+
+	return $status;
+}
+
+/**
+ * Render the webmention comment form.
+ *
+ * Can be filtered to load a custom template of your choosing.
+ *
+ * @since 3.8.9
+ */
+function webmention_comment_form() {
+	$template = apply_filters( 'webmention_comment_form', plugin_dir_path( __FILE__ ) . 'templates/webmention-comment-form.php' );
+
+	if ( ( 1 === (int) get_option( 'webmention_show_comment_form', 1 ) ) && pings_open() ) {
+		load_template( $template );
+	}
+}

@@ -86,6 +86,10 @@ function init() {
 	require_once dirname( __FILE__ ) . '/includes/class-receiver.php';
 	add_action( 'init', array( '\Webmention\Receiver', 'init' ) );
 
+	// initialize Webmention Discovery.
+	require_once dirname( __FILE__ ) . '/includes/class-discovery.php';
+	add_action( 'init', array( '\Webmention\Discovery', 'init' ) );
+
 	// initialize Webmention Vouch
 	if ( WEBMENTION_VOUCH ) {
 		require_once dirname( __FILE__ ) . '/includes/class-vouch.php';
@@ -93,17 +97,14 @@ function init() {
 	}
 
 	// Default Comment Status.
-	add_filter( 'get_default_comment_status', '\Webmention\get_default_comment_status', 11, 3 );
-	add_filter( 'pings_open', '\Webmention\are_pings_open', 10, 2 );
+	add_filter( 'get_default_comment_status', 'webmention_get_default_comment_status', 11, 3 );
+	add_filter( 'pings_open', 'webmention_pings_open', 10, 2 );
 
 	// Load language files.
 	\Webmention\plugin_textdomain();
 
-	add_action( 'comment_form_after', '\Webmention\comment_form', 11 );
-	add_action( 'comment_form_comments_closed', '\Webmention\comment_form' );
-
-	add_filter( 'nodeinfo_data', '\Webmention\nodeinfo', 10, 2 );
-	add_filter( 'nodeinfo2_data', '\Webmention\nodeinfo2', 10 );
+	add_action( 'comment_form_after', 'webmention_comment_form', 11 );
+	add_action( 'comment_form_comments_closed', 'webmention_comment_form' );
 
 	// remove old Webmention code.
 	remove_action( 'init', array( '\WebMentionFormPlugin', 'init' ) );
@@ -113,102 +114,12 @@ function init() {
 add_action( 'plugins_loaded', '\Webmention\init' );
 
 /**
- * Retrieve the default comment status for a given post type.
- *
- * @since 3.8.9
- *
- * @param string $status       Default status for the given post type,
- *                             either 'open' or 'closed'.
- * @param string $post_type    Post type to check.
- * @param string $comment_type Type of comment. Default is `comment`.
- *
- * @return string
- */
-function get_default_comment_status( $status, $post_type, $comment_type ) {
-	if ( 'webmention' === $comment_type ) {
-		return post_type_supports( $post_type, 'webmentions' ) ? 'open' : 'closed';
-	}
-	// Since support for the pingback comment type is used to keep pings open...
-	if ( ( 'pingback' === $comment_type ) ) {
-		return ( post_type_supports( $post_type, 'webmentions' ) ? 'open' : $status );
-	}
-
-	return $status;
-}
-
-/**
- * Render the webmention comment form.
- *
- * Can be filtered to load a custom template of your choosing.
- *
- * @since 3.8.9
- */
-function comment_form() {
-	$template = apply_filters( 'webmention_comment_form', plugin_dir_path( __FILE__ ) . 'templates/webmention-comment-form.php' );
-
-	if ( ( 1 === (int) get_option( 'webmention_show_comment_form', 1 ) ) && \pings_open() ) {
-		load_template( $template );
-	}
-}
-
-/**
- * Return enabled status of Homepage Webmentions.
- *
- * @since 3.8.9
- *
- * @param bool $open    Whether the current post is open for pings.
- * @param int  $post_id The post ID.
- * @return boolean if pings are open
- */
-function are_pings_open( $open, $post_id ) {
-	if ( get_option( 'webmention_home_mentions' ) === $post_id ) {
-		return true;
-	}
-
-	return $open;
-}
-
-/**
  * Load language files.
  *
  * @since 3.8.9
  */
 function plugin_textdomain() {
 	load_plugin_textdomain( 'webmention', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
-}
-
-/**
- * Extend NodeInfo data.
- *
- * @since 3.8.9
- *
- * @param array $nodeinfo NodeInfo data.
- * @param array $version  Updated data.
- * @return array
- */
-function nodeinfo( $nodeinfo, $version ) {
-	if ( '2.0' === $version ) {
-		$nodeinfo['protocols'][] = 'webmention';
-	} else {
-		$nodeinfo['protocols']['inbound'][]  = 'webmention';
-		$nodeinfo['protocols']['outbound'][] = 'webmention';
-	}
-
-	return $nodeinfo;
-}
-
-/**
- * Extend NodeInfo2 data.
- *
- * @since 3.8.9
- *
- * @param array $nodeinfo NodeInfo2 data.
- * @return array
- */
-function nodeinfo2( $nodeinfo ) {
-	$nodeinfo['protocols'][] = 'webmention';
-
-	return $nodeinfo;
 }
 
 /**
