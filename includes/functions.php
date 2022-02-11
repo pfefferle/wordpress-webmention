@@ -574,7 +574,7 @@ function webmention_get_default_comment_status( $status, $post_type, $comment_ty
  * @since 3.8.9
  */
 function webmention_comment_form() {
-	$template = apply_filters( 'webmention_comment_form', plugin_dir_path( __FILE__ ) . 'templates/webmention-comment-form.php' );
+	$template = apply_filters( 'webmention_comment_form', plugin_dir_path( __FILE__ ) . '../templates/webmention-comment-form.php' );
 
 	if ( ( 1 === (int) get_option( 'webmention_show_comment_form', 1 ) ) && pings_open() ) {
 		load_template( $template );
