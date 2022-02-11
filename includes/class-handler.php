@@ -25,8 +25,8 @@ class Handler {
 		$this->handlers[] = new MF2();
 
 		// WordPress Handler Class
-		require_once dirname( __FILE__ ) . '/Handler/class-wp.php';
-		$this->handlers[] = new WP();
+		//require_once dirname( __FILE__ ) . '/Handler/class-wp.php';
+		//$this->handlers[] = new WP();
 
 		// Meta Handler Class
 		require_once dirname( __FILE__ ) . '/Handler/class-meta.php';
