@@ -29,8 +29,14 @@
   "scripts": {
     "test": [
       "composer install",
-      "bin/install-wp-tests.sh wordpress wordpress wordpress",
+      "bin/install-wp-tests.sh webmention-test root webmention-test test-db latest true",
       "vendor/bin/phpunit"
     ]
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true,
+      "composer/installers": true
+    }
   }
 }

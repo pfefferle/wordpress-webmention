@@ -1,5 +1,6 @@
 {
   "author": {
     "name": "Does clicking me alert?"
-  }
+  },
+  "response_type": "reply"
 }

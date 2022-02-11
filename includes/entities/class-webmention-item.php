@@ -80,7 +80,7 @@ class Webmention_Item {
 	 *
 	 * @var string
 	 */
-	protected $response_type;
+	protected $response_type = 'mention';
 
 	/**
 	 * The raw document as JSON, HTML, XML, ...
@@ -288,7 +288,7 @@ class Webmention_Item {
 			'comment_date_gmt'     => $published_gmt->format( 'Y-m-d H:i:s' ),
 			'comment_type'         => $this->response_type,
 			'comment_meta'         => array_filter( $this->meta ),
-			'remote_source_mf2'    => $this->get_raw(),
+			'remote_source_raw'    => $this->get_raw(),
 		);
 
 		return apply_filters( 'webmention_item_commentdata_array', array_filter( $comment ), $this );
