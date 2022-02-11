@@ -434,7 +434,7 @@ class MF2 extends Base {
 	 * @param array $item Item to find an author on.
 	 * @param array $mf_array The parsed microformats array.
 	 * @param string $source The source url.
-	 * @see http://indieweb.org/authorship
+	 * @see https://indieweb.org/authorship
 	 *
 	 * @return array|null the h-card node or null.
 	 */
@@ -553,7 +553,7 @@ class MF2 extends Base {
 
 		/*
 		 * rsvp
-		 * @link http://indieweb.org/rsvp
+		 * @link https://indieweb.org/rsvp
 		 */
 		$class_mapper['rsvp'] = 'rsvp';
 
@@ -565,69 +565,69 @@ class MF2 extends Base {
 
 		/*
 		 * repost
-		 * @link http://indieweb.org/repost
+		 * @link https://indieweb.org/repost
 		 */
 		$class_mapper['repost']    = 'repost';
 		$class_mapper['repost-of'] = 'repost';
 
 		/*
 		 * likes
-		 * @link http://indieweb.org/likes
+		 * @link https://indieweb.org/likes
 		 */
 		$class_mapper['like']    = 'like';
 		$class_mapper['like-of'] = 'like';
 
 		/*
 		 * favorite
-		 * @link http://indieweb.org/favorite
+		 * @link https://indieweb.org/favorite
 		 */
 		$class_mapper['favorite']    = 'favorite';
 		$class_mapper['favorite-of'] = 'favorite';
 
 		/*
 		 * bookmark
-		 * @link http://indieweb.org/bookmark
+		 * @link https://indieweb.org/bookmark
 		 */
 		$class_mapper['bookmark']    = 'bookmark';
 		$class_mapper['bookmark-of'] = 'bookmark';
 
 		/*
 		 * tag
-		 * @link http://indieweb.org/tag
+		 * @link https://indieweb.org/tag
 		 */
 		$class_mapper['tag-of']   = 'tag';
 		$class_mapper['category'] = 'tag';
 
 		/*
 		 * read
-		 * @link http://indieweb.org/read
+		 * @link https://indieweb.org/read
 		 */
 		$class_mapper['read-of'] = 'read';
 		$class_mapper['read']    = 'read';
 
 		/*
 		 * listen
-		 * @link http://indieweb.org/listen
+		 * @link https://indieweb.org/listen
 		 */
 		$class_mapper['listen-of'] = 'listen';
 		$class_mapper['listen']    = 'listen';
 
 		/*
 		 * watch
-		 * @link http://indieweb.org/watch
+		 * @link https://indieweb.org/watch
 		 */
 		$class_mapper['watch-of'] = 'watch';
 		$class_mapper['watch']    = 'watch';
 
 		/*
 		 * follow
-		 * @link http://indieweb.org/follow
+		 * @link https://indieweb.org/follow
 		 */
 		$class_mapper['follow-of'] = 'follow';
 
 		/*
 		 * replies
-		 * @link http://indieweb.org/replies
+		 * @link https://indieweb.org/replies
 		 */
 		$class_mapper['in-reply-to'] = 'reply';
 		$class_mapper['reply']       = 'reply';
@@ -646,20 +646,20 @@ class MF2 extends Base {
 
 		/*
 		 * replies
-		 * @link http://indieweb.org/in-reply-to
+		 * @link https://indieweb.org/in-reply-to
 		 */
 		$rel_mapper['in-reply-to'] = 'reply';
 		$rel_mapper['reply-of']    = 'reply';
 
 		/*
 		 * bookmarks
-		 * @link http://microformats.org/wiki/rel-design-pattern#rel.3D.22bookmark.22
+		 * @link https://microformats.org/wiki/rel-design-pattern#rel.3D.22bookmark.22
 		 */
 		$rel_mapper['bookmark'] = 'bookmark';
 
 		/*
 		 * tags
-		 * @link http://microformats.org/wiki/rel-tag
+		 * @link https://microformats.org/wiki/rel-tag
 		 */
 		$rel_mapper['tag'] = 'tag';
 
