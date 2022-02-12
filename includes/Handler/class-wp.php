@@ -53,7 +53,7 @@ class WP extends Base {
 		$site_json = json_decode( $request->get_body(), true );
 		$site_json = wp_array_slice_assoc( $site_json, array( 'name', 'description', 'url', 'timezone_string', 'gmt_offset' ) );
 		$timezone  = new DateTimeZone( $site_json['timezone_string'] );
-		$this->webmention_item->set( 'site_name', $site_json['name'] );
+		$this->webmention_item->set__site_name( $site_json['name'] );
 
 		$request = new Request( $alternate );
 		$return  = $request->fetch();
