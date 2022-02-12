@@ -1,15 +1,16 @@
 <?php
 class Webmention_Handler_Meta_Test extends WP_UnitTestCase {
 	public function test_ogp() {
-		require_once( dirname( __FILE__ ) . '/../includes/handlers/class-webmention-handler-base.php' );
-		require_once( dirname( __FILE__ ) . '/../includes/handlers/class-webmention-handler-meta.php' );
-		require_once( dirname( __FILE__ ) . '/../includes/entities/class-webmention-item.php' );
+		require_once( dirname( __FILE__ ) . '/../includes/Handler/class-base.php' );
+		require_once( dirname( __FILE__ ) . '/../includes/Handler/class-meta.php' );
+		require_once( dirname( __FILE__ ) . '/../includes/Entity/class-item.php' );
+		require_once( dirname( __FILE__ ) . '/../includes/class-request.php' );
 
-		$request = new Webmention_Request();
+		$request = new \Webmention\Request( 'http://example.com/webmention/target/placeholder' );
 		$request->set_content_type( 'text/html' );
 		$request->set_body( file_get_contents( dirname( __FILE__ ) . '/data/open-graph-test.html' ) );
 
-		$handler = new Webmention_Handler_Meta();
+		$handler = new \Webmention\Handler\Meta();
 
 		$handler->parse( $request, 'http://example.com/webmention/target/placeholder' );
 

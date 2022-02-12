@@ -1,16 +1,14 @@
 <?php
+
+namespace Webmention\Entity;
+
+use DateTimeZone;
+use DateTimeImmutable;
+
 /**
  * Represents a Remote Webmention
  */
-class Webmention_Item {
-
-	/**
-	 * The entity type.
-	 *
-	 * @var string
-	 */
-	protected $type;
-
+class Item {
 	/**
 	 * The publish time.
 	 *
@@ -80,7 +78,7 @@ class Webmention_Item {
 	 *
 	 * @var string
 	 */
-	protected $response_type = 'mention';
+	protected $response_type;
 
 	/**
 	 * The raw document as JSON, HTML, XML, ...
@@ -213,6 +211,25 @@ class Webmention_Item {
 	}
 
 	/**
+	 * Getter for author
+	 *
+	 * @param string $propery the author property to return
+	 *
+	 * @return array|string
+	 */
+	public function get_author( $property = null ) {
+		if ( ! $property ) {
+			return $this->author;
+		}
+
+		if ( isset( $this->author[ $property ] ) ) {
+			return $this->author[ $property ];
+		} else {
+			return '';
+		}
+	}
+
+	/**
 	 * Getter for content with fallback to summary
 	 *
 	 * @return string
@@ -222,20 +239,75 @@ class Webmention_Item {
 	}
 
 	/**
+	 * Getter for response type with fallback to 'mention'
+	 *
+	 * @return string
+	 */
+	public function get_response_type() {
+		return $this->response_type ? $this->response_type : 'mention';
+	}
+
+	/**
+	 * Getter for published
+	 *
+	 * @return DateTimeImmutable
+	 */
+	public function get_published() {
+		if ( ! $this->published && ! $this->published instanceof DateTimeImmutable ) {
+			return new DateTimeImmutable();
+		}
+
+		return $this->published;
+	}
+
+	/**
+	 * Getter for published as GMT
+	 *
+	 * @return DateTimeImmutable
+	 */
+	public function get_published_gmt() {
+		$published = $this->get_published();
+		$published->setTimeZone( new DateTimeZone( 'GMT' ) );
+
+		return $published;
+	}
+
+	/**
+	 * Getter for meta
+	 *
+	 * @return array
+	 */
+	public function get_meta() {
+		if ( ! is_array( $this->meta ) ) {
+			return array();
+		}
+
+		return $this->meta;
+	}
+
+	/**
 	 * Check if all fields are set
 	 *
 	 * @return boolean
 	 */
 	public function is_complete() {
-		$vars = $this->to_array();
+		$properties = get_object_vars( $this );
+		return (bool) in_array( null, array_values( $properties ), true );
+	}
 
+	/**
+	 * Check if all fields for a valid comment are available
+	 *
+	 * @return boolean
+	 */
+	public function verify() {
 		// If there is no author information then try something else.
-		if ( ! array_key_exists( 'author', $vars ) ) {
+		if ( ! empty( $this->get_author( 'name' ) ) ) {
 			return false;
 		}
 
 		// If this is a reply it needs a summary. Summary should be generated from content if no summary.
-		if ( 'reply' === $this->response_type && ! array_key_exists( 'summary', $vars ) ) {
+		if ( 'reply' === $this->get_response_type() && ! empty( $this->get_content() ) ) {
 			return false;
 		}
 
@@ -268,26 +340,19 @@ class Webmention_Item {
 	 * return array;
 	 */
 	public function to_commentdata_array() {
-		$published_gmt = clone $this->published;
-		$published_gmt->setTimeZone( new DateTimeZone( 'GMT' ) );
-
-		if ( ! is_array( $this->meta ) ) {
-			$this->meta = array();
-		}
-
-		$this->meta['avatar']   = ifset( $this->author['photo'] );
+		$this->meta['avatar']   = $this->get_author( 'photo' );
 		$this->meta['protocol'] = 'webmention'; // Since this is the webmention plugin it should always be a webmention.
-		$this->meta['url']      = $this->url; // This is the parsed URL, which may or may not be the same as the source URL, which will be added as source_url.
+		$this->meta['url']      = $this->get_url(); // This is the parsed URL, which may or may not be the same as the source URL, which will be added as source_url.
 
 		$comment = array(
-			'comment_author'       => ifset( $this->author['name'] ),
-			'comment_author_email' => ifset( $this->author['email'] ),
-			'comment_author_url'   => ifset( $this->author['url'] ),
+			'comment_author'       => $this->get_author( 'name' ),
+			'comment_author_email' => $this->get_author( 'email' ),
+			'comment_author_url'   => $this->get_author( 'url' ),
 			'comment_content'      => $this->get_content(),
-			'comment_date'         => $this->published->format( 'Y-m-d H:i:s' ),
-			'comment_date_gmt'     => $published_gmt->format( 'Y-m-d H:i:s' ),
-			'comment_type'         => $this->response_type,
-			'comment_meta'         => array_filter( $this->meta ),
+			'comment_date'         => $this->get_published()->format( 'Y-m-d H:i:s' ),
+			'comment_date_gmt'     => $this->get_published( true )->format( 'Y-m-d H:i:s' ),
+			'comment_type'         => $this->get_response_type(),
+			'comment_meta'         => array_filter( $this->get_meta() ),
 			'remote_source_raw'    => $this->get_raw(),
 		);
 

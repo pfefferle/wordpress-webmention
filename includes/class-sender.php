@@ -1,32 +1,38 @@
 <?php
+
+namespace Webmention;
+
+use WP_Error;
+use WP_Post;
+
 /**
  * Webmention Plugin Class
  *
  * @author Matthias Pfefferle
  */
-class Webmention_Sender {
+class Sender {
 	/**
 	 * Initialize the plugin, registering WordPress hooks
 	 */
 	public static function init() {
 		// a pseudo hook so you can run a do_action('send_webmention')
-		// instead of calling Webmention_Sender::send_webmention
-		add_action( 'send_webmention', array( 'Webmention_Sender', 'send_webmention' ), 10, 2 );
+		// instead of calling \Webmention\Sender::send_webmention
+		add_action( 'send_webmention', array( static::class, 'send_webmention' ), 10, 2 );
 
 		// run webmentions before the other pinging stuff
-		add_action( 'do_pings', array( 'Webmention_Sender', 'do_webmentions' ), 5, 1 );
+		add_action( 'do_pings', array( static::class, 'do_webmentions' ), 5, 1 );
 
 		// Send Webmentions from Every Type that Declared Webmention Support
 		$post_types = get_post_types_by_support( 'webmentions' );
 		foreach ( $post_types as $post_type ) {
-			add_action( 'publish_' . $post_type, array( 'Webmention_Sender', 'publish_hook' ), 3 );
+			add_action( 'publish_' . $post_type, array( static::class, 'publish_hook' ), 3 );
 		}
 
-		add_action( 'comment_post', array( 'Webmention_Sender', 'comment_post' ) );
+		add_action( 'comment_post', array( static::class, 'comment_post' ) );
 
 		// remote delete posts
-		add_action( 'trashed_post', array( 'Webmention_Sender', 'trash_hook' ) );
-		add_action( 'webmention_delete', array( 'Webmention_Sender', 'send_webmentions' ) );
+		add_action( 'trashed_post', array( static::class, 'trash_hook' ) );
+		add_action( 'webmention_delete', array( static::class, 'send_webmentions' ) );
 	}
 
 	/**
@@ -136,7 +142,7 @@ class Webmention_Sender {
 	 * You can still hook this function directly into the `publish_post` action:
 	 *
 	 * <code>
-	 *   add_action('publish_post', array('Webmention_Sender', 'send_webmentions'));
+	 *   add_action( 'publish_post', array( \Webmention\Sender, 'send_webmentions' ) );
 	 * </code>
 	 *
 	 * @param int $post_id the post_ID.
@@ -196,6 +202,8 @@ class Webmention_Sender {
 		if ( ! empty( $ping ) ) {
 			self::update_ping( $post, $ping );
 		}
+
+		return $ping;
 	}
 
 	/*

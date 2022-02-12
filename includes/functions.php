@@ -7,7 +7,7 @@
  * @param string $comment_type Key for comment type.
  * @param array $args Arguments.
  *
- * @return Webmention_Comment_Type The registered webmention comment type.
+ * @return Webmention\Comment_Type The registered webmention comment type.
  */
 function register_webmention_comment_type( $comment_type, $args = array() ) {
 	global $webmention_comment_types;
@@ -19,7 +19,7 @@ function register_webmention_comment_type( $comment_type, $args = array() ) {
 	// Sanitize comment type name.
 	$comment_type = sanitize_key( $comment_type );
 
-	$comment_type_object = new Webmention_Comment_Type( $comment_type, $args );
+	$comment_type_object = new \Webmention\Comment_Type( $comment_type, $args );
 
 	$webmention_comment_types[ $comment_type ] = $comment_type_object;
 
@@ -27,8 +27,8 @@ function register_webmention_comment_type( $comment_type, $args = array() ) {
 	 * Fires after a webmention comment type is registered.
 	 *
 	 *
-	 * @param string       $comment_type        Comment type.
-	 * @param Webmention_Comment_Type $comment_type_object Arguments used to register the comment type.
+	 * @param string                   $comment_type        Comment type.
+	 * @param \Webmention\Comment_Type $comment_type_object Arguments used to register the comment type.
 	 */
 	do_action( 'registered_webmention_comment_type', $comment_type, $comment_type_object );
 
@@ -36,7 +36,7 @@ function register_webmention_comment_type( $comment_type, $args = array() ) {
 }
 
 /**
- * A wrapper for Webmention_Sender::send_webmention.
+ * A wrapper for Webmention\Sender::send_webmention.
  *
  * @since 2.4.0
  *
@@ -45,7 +45,7 @@ function register_webmention_comment_type( $comment_type, $args = array() ) {
  * @return array of results including HTTP headers
  */
 function send_webmention( $source, $target ) {
-	return Webmention_Sender::send_webmention( $source, $target );
+	return \Webmention\Sender::send_webmention( $source, $target );
 }
 
 /**
@@ -68,7 +68,7 @@ function get_webmention_form_text( $post_id ) {
  * @return string
  */
 function get_default_webmention_form_text() {
-	return __( 'To respond on your own website, enter the URL of your response which should contain a link to this post\'s permalink URL. Your response will then appear (possibly after moderation) on this page. Want to update or remove your response? Update or delete your post and re-enter your post\'s URL again. (<a href="http://indieweb.org/webmention">Learn More</a>)', 'webmention' );
+	return __( 'To respond on your own website, enter the URL of your response which should contain a link to this post\'s permalink URL. Your response will then appear (possibly after moderation) on this page. Want to update or remove your response? Update or delete your post and re-enter your post\'s URL again. (<a href="https://indieweb.org/webmention">Learn More</a>)', 'webmention' );
 }
 
 /**
@@ -78,7 +78,7 @@ function get_default_webmention_form_text() {
  * @return boolean
  */
 function is_webmention_source_allowed( $url ) {
-	return Webmention_Receiver::is_source_allowed( $url );
+	return \Webmention\Receiver::is_source_allowed( $url );
 }
 
 /**
@@ -208,82 +208,7 @@ function get_webmention_approve_domains() {
  * @return bool|string False on failure, string containing URI on success
  */
 function webmention_discover_endpoint( $url ) {
-	/** @todo Should use Filter Extension or custom preg_match instead. */
-	$parsed_url = wp_parse_url( $url );
-
-	if ( ! isset( $parsed_url['host'] ) ) { // Not an URL. This should never happen.
-		return false;
-	}
-
-	// do not search for a Webmention server on our own uploads
-	$uploads_dir = wp_upload_dir();
-	if ( 0 === strpos( $url, $uploads_dir['baseurl'] ) ) {
-		return false;
-	}
-
-	$wp_version = get_bloginfo( 'version' );
-
-	$user_agent = apply_filters( 'http_headers_useragent', 'WordPress/' . $wp_version . '; ' . get_bloginfo( 'url' ) );
-	$args       = array(
-		'timeout'             => 100,
-		'limit_response_size' => 1048576,
-		'redirection'         => 20,
-		'user-agent'          => "$user_agent; finding Webmention endpoint",
-	);
-
-	$response = wp_safe_remote_head( $url, $args );
-
-	if ( is_wp_error( $response ) ) {
-		return false;
-	}
-
-	// check link header
-	$links = wp_remote_retrieve_header( $response, 'link' );
-	if ( $links ) {
-		if ( is_array( $links ) ) {
-			foreach ( $links as $link ) {
-				if ( preg_match( '/<(.[^>]+)>;\s+rel\s?=\s?[\"\']?(http:\/\/)?webmention(\.org)?\/?[\"\']?/i', $link, $result ) ) {
-					return WP_Http::make_absolute_url( $result[1], $url );
-				}
-			}
-		} else {
-			if ( preg_match( '/<(.[^>]+)>;\s+rel\s?=\s?[\"\']?(http:\/\/)?webmention(\.org)?\/?[\"\']?/i', $links, $result ) ) {
-				return WP_Http::make_absolute_url( $result[1], $url );
-			}
-		}
-	}
-
-	// not an (x)html, sgml, or xml page, no use going further
-	if ( preg_match( '#(image|audio|video|model)/#is', wp_remote_retrieve_header( $response, 'content-type' ) ) ) {
-		return false;
-	}
-
-	// now do a GET since we're going to look in the html headers (and we're sure its not a binary file)
-	$response = wp_safe_remote_get( $url, $args );
-
-	if ( is_wp_error( $response ) ) {
-		return false;
-	}
-
-	$contents = wp_remote_retrieve_body( $response );
-
-	// unicode to HTML entities
-	$contents = mb_convert_encoding( $contents, 'HTML-ENTITIES', mb_detect_encoding( $contents ) );
-
-	libxml_use_internal_errors( true );
-
-	$doc = new DOMDocument();
-	$doc->loadHTML( $contents );
-
-	$xpath = new DOMXPath( $doc );
-
-	// check <link> and <a> elements
-	// checks only body>a-links
-	foreach ( $xpath->query( '(//link|//a)[contains(concat(" ", @rel, " "), " webmention ") or contains(@rel, "webmention.org")]/@href' ) as $result ) {
-		return WP_Http::make_absolute_url( $result->value, $url );
-	}
-
-	return false;
+	return \Webmention\Discovery::discover_endpoint( $url );
 }
 
 if ( ! function_exists( 'wp_get_meta_tags' ) ) :
@@ -597,5 +522,61 @@ if ( ! function_exists( 'ifset' ) ) {
 	function ifset( &$var, $return = false ) {
 
 			return isset( $var ) ? $var : $return;
+	}
+}
+
+/**
+ * Return enabled status of Homepage Webmentions.
+ *
+ * @since 3.8.9
+ *
+ * @param bool $open    Whether the current post is open for pings.
+ * @param int  $post_id The post ID.
+ * @return boolean if pings are open
+ */
+function webmention_pings_open( $open, $post_id ) {
+	if ( get_option( 'webmention_home_mentions' ) === $post_id ) {
+		return true;
+	}
+
+	return $open;
+}
+
+/**
+ * Retrieve the default comment status for a given post type.
+ *
+ * @since 3.8.9
+ *
+ * @param string $status       Default status for the given post type,
+ *                             either 'open' or 'closed'.
+ * @param string $post_type    Post type to check.
+ * @param string $comment_type Type of comment. Default is `comment`.
+ *
+ * @return string
+ */
+function webmention_get_default_comment_status( $status, $post_type, $comment_type ) {
+	if ( 'webmention' === $comment_type ) {
+		return post_type_supports( $post_type, 'webmentions' ) ? 'open' : 'closed';
+	}
+	// Since support for the pingback comment type is used to keep pings open...
+	if ( ( 'pingback' === $comment_type ) ) {
+		return ( post_type_supports( $post_type, 'webmentions' ) ? 'open' : $status );
+	}
+
+	return $status;
+}
+
+/**
+ * Render the webmention comment form.
+ *
+ * Can be filtered to load a custom template of your choosing.
+ *
+ * @since 3.8.9
+ */
+function webmention_comment_form() {
+	$template = apply_filters( 'webmention_comment_form', plugin_dir_path( __FILE__ ) . '../templates/webmention-comment-form.php' );
+
+	if ( ( 1 === (int) get_option( 'webmention_show_comment_form', 1 ) ) && pings_open() ) {
+		load_template( $template );
 	}
 }

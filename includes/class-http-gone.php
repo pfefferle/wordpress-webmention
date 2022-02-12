@@ -1,15 +1,20 @@
 <?php
+
+namespace Webmention;
+
+use WP_Query;
+
 /**
  * Send HTTP 410 for deleted posts
  *
  * @author Matthias Pfefferle
  */
-class Webmention_410 {
+class HTTP_Gone {
 	/**
 	 * Initialize Deleted Posts Plugin
 	 */
 	public static function init() {
-		add_action( 'template_redirect', array( 'Webmention_410', 'handle_410' ), 99 );
+		add_action( 'template_redirect', array( static::class, 'handle_410' ), 99 );
 	}
 
 	public static function handle_410() {

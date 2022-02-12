@@ -6,12 +6,6 @@
 
 		<h2 class="title"><?php _e( 'Sender', 'webmention' ); ?></h2>
 
-		<?php if ( ! class_exists( 'Semantic_Linkbacks_Plugin' ) ) : ?>
-		<div class="notice notice-warning">
-			<p><?php printf ( __( 'The Webmention plugin primarily handles sending/receiving notifications of mentions from other websites, so the format of the comments can look odd on one\'s site. We highly recommend also installing and activating the <a class="thickbox open-plugin-details-modal" href="%1$s" target_"blank">Semantic Linkbacks Plugin</a> which has better parsing and display capabilities to allow richer looking comments as well as options for displaying many reply types as facepiles for improved user interface.', 'webmention' ), admin_url( '/plugin-install.php?tab=plugin-information&plugin=semantic-linkbacks&TB_iframe=true' ) ); ?></p>
-		</div>
-		<?php endif; ?>
-
 		<p><?php esc_html_e( 'A Webmention Sender is an implementation that sends Webmentions.', 'webmention' ); ?></p>
 
 		<table class="form-table">
@@ -62,8 +56,10 @@
 						<ul>
 						<?php foreach ( $post_types as $post_type ) { ?>
 							<li>
-								<input type="checkbox" id="webmention_support_post_types" name="webmention_support_post_types[]" value="<?php echo esc_attr( $post_type->name ); ?>" <?php echo checked( true, in_array( $post_type->name, $support_post_types, true ) ); ?> />
-								<label for="<?php echo esc_attr( $post_type->name ); ?>"><?php echo esc_html( $post_type->label ); ?></label>
+								<label for="webmention_support_post_types_<?php echo esc_attr( $post_type->name ); ?>">
+									<input type="checkbox" id="webmention_support_post_types_<?php echo esc_attr( $post_type->name ); ?>" name="webmention_support_post_types[]" value="<?php echo esc_attr( $post_type->name ); ?>" <?php echo checked( true, in_array( $post_type->name, $support_post_types, true ) ); ?> />
+									<?php echo esc_html( $post_type->label ); ?>
+								</label>
 							</li>
 						<?php } ?>
 						</ul>

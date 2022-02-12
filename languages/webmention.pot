@@ -2,10 +2,10 @@
 # This file is distributed under the MIT.
 msgid ""
 msgstr ""
-"Project-Id-Version: Webmention 4.0.4\n"
+"Project-Id-Version: Webmention 5.X\n"
 "Report-Msgid-Bugs-To: "
 "https://wordpress.org/support/plugin/wordpress-webmention\n"
-"POT-Creation-Date: 2022-01-28 09:19:03+00:00\n"
+"POT-Creation-Date: 2022-02-11 08:30:15+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -14,34 +14,38 @@ msgstr ""
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "X-Generator: grunt-wp-i18n 1.0.3\n"
 
-#: includes/class-webmention-admin.php:14 templates/webmention-settings.php:2
+#: includes/Handler/class-base.php:68
+msgid "$webmention_item is not an instance of Webmention\\Entity\\Item"
+msgstr ""
+
+#: includes/class-admin.php:19 templates/webmention-settings.php:2
 msgid "Webmention Settings"
 msgstr ""
 
-#: includes/class-webmention-admin.php:43
+#: includes/class-admin.php:48
 #. translators: 1. settings page URL
 msgid ""
 "Based on your feedback and to improve the user experience, we decided to "
 "move the settings to a separate <a href=\"%1$s\">settings-page</a>."
 msgstr ""
 
-#: includes/class-webmention-admin.php:85
+#: includes/class-admin.php:90
 msgid "Settings"
 msgstr ""
 
-#: includes/class-webmention-admin.php:106
+#: includes/class-admin.php:111
 msgid "Homepage Webmentions"
 msgstr ""
 
-#: includes/class-webmention-admin.php:118
+#: includes/class-admin.php:123
 msgid "Webmention Data"
 msgstr ""
 
-#: includes/class-webmention-admin.php:151
+#: includes/class-admin.php:156
 msgid "Comment-Type"
 msgstr ""
 
-#: includes/class-webmention-admin.php:169
+#: includes/class-admin.php:174
 msgid "Approve & Always Allow"
 msgstr ""
 
@@ -49,18 +53,18 @@ msgstr ""
 msgid "Webmention"
 msgstr ""
 
-#: includes/class-webmention-admin.php:237
+#: includes/class-admin.php:242
 msgid "Overview"
 msgstr ""
 
-#: includes/class-webmention-admin.php:239
+#: includes/class-admin.php:244
 msgid ""
 "Webmention is a simple way to notify any URL when you mention it on your "
 "site. From the receiver's perspective, it's a way to request notifications "
 "when other sites mention it."
 msgstr ""
 
-#: includes/class-webmention-admin.php:240
+#: includes/class-admin.php:245
 msgid ""
 "A Webmention is a notification that one URL links to another. For example, "
 "Alice writes an interesting post on her blog. Bob then writes a response to "
@@ -70,7 +74,7 @@ msgid ""
 "the original post."
 msgstr ""
 
-#: includes/class-webmention-admin.php:241
+#: includes/class-admin.php:246
 msgid ""
 "Sending a Webmention is not limited to blog posts, and can be used for "
 "additional kinds of content and responses as well. For example, a response "
@@ -80,23 +84,23 @@ msgid ""
 "distributed social web."
 msgstr ""
 
-#: includes/class-webmention-admin.php:248
+#: includes/class-admin.php:253
 msgid "Screencast"
 msgstr ""
 
-#: includes/class-webmention-admin.php:257
+#: includes/class-admin.php:262
 msgid "The IndieWeb"
 msgstr ""
 
-#: includes/class-webmention-admin.php:259
+#: includes/class-admin.php:264
 msgid "The IndieWeb is a people-focused alternative to the \"corporate web\"."
 msgstr ""
 
-#: includes/class-webmention-admin.php:261
+#: includes/class-admin.php:266
 msgid "Your content is yours"
 msgstr ""
 
-#: includes/class-webmention-admin.php:262
+#: includes/class-admin.php:267
 msgid ""
 "When you post something on the web, it should belong to you, not a "
 "corporation. Too many companies have gone out of business and lost all of "
@@ -104,81 +108,81 @@ msgid ""
 "your control."
 msgstr ""
 
-#: includes/class-webmention-admin.php:265
+#: includes/class-admin.php:270
 msgid "You are better connected"
 msgstr ""
 
-#: includes/class-webmention-admin.php:266
+#: includes/class-admin.php:271
 msgid ""
 "Your articles and status messages can go to all services, not just one, "
 "allowing you to engage with everyone. Even replies and likes on other "
 "services can come back to your site so they’re all in one place."
 msgstr ""
 
-#: includes/class-webmention-admin.php:269
+#: includes/class-admin.php:274
 msgid "You are in control"
 msgstr ""
 
-#: includes/class-webmention-admin.php:270
+#: includes/class-admin.php:275
 msgid ""
 "You can post anything you want, in any format you want, with no one "
 "monitoring you. In addition, you share simple readable links such as "
 "example.com/ideas. These links are permanent and will always work."
 msgstr ""
 
-#: includes/class-webmention-admin.php:276
+#: includes/class-admin.php:281
 msgid "For more information:"
 msgstr ""
 
-#: includes/class-webmention-admin.php:277
+#: includes/class-admin.php:282
 msgid "<a href=\"https://indieweb.org/Webmention\">IndieWeb Wiki page</a>"
 msgstr ""
 
-#: includes/class-webmention-admin.php:278
+#: includes/class-admin.php:283
 msgid "<a href=\"https://webmention.rocks/\">Test suite</a>"
 msgstr ""
 
-#: includes/class-webmention-admin.php:279
+#: includes/class-admin.php:284
 msgid "<a href=\"https://www.w3.org/TR/webmention/\">W3C Spec</a>"
 msgstr ""
 
-#: includes/class-webmention-admin.php:289
+#: includes/class-admin.php:294
 msgid "Disable self Webmentions on the same URL"
 msgstr ""
 
-#: includes/class-webmention-admin.php:299
+#: includes/class-admin.php:304
 msgid "Disable self Webmentions on the same domain"
 msgstr ""
 
-#: includes/class-webmention-admin.php:309
+#: includes/class-admin.php:314
 msgid "Disable sending webmentions for media links (image, video, and audio tags)"
 msgstr ""
 
-#: includes/class-webmention-admin.php:319
+#: includes/class-admin.php:324
 msgid "Enable Webmention support for post types"
 msgstr ""
 
-#: includes/class-webmention-admin.php:329
+#: includes/class-admin.php:334
 msgid "Show Webmention comment-form"
 msgstr ""
 
-#: includes/class-webmention-admin.php:339
+#: includes/class-admin.php:344
 msgid "Change the text of the Webmention comment-form"
 msgstr ""
 
-#: includes/class-webmention-admin.php:349
+#: includes/class-admin.php:354
 msgid "Where to direct Mentions of the home page"
 msgstr ""
 
-#: includes/class-webmention-admin.php:359
+#: includes/class-admin.php:364
 msgid "Automatically approve Webmentions from these domains"
 msgstr ""
 
-#: includes/class-webmention-admin.php:369
+#: includes/class-admin.php:374
 msgid "Show Avatars on Webmentions"
 msgstr ""
 
-#: includes/class-webmention-admin.php:381
+#: includes/class-admin.php:386
 msgid ""
 "Webmentions are an explicit feature of your content management system: by "
 "sending a webmention to the webmention endpoint of this website, you "
@@ -188,248 +192,176 @@ msgid ""
 "you are aware of it being published."
 msgstr ""
 
-#: includes/class-webmention-admin.php:382
+#: includes/class-admin.php:387
 msgid ""
 "You can at any time request the removal of one or all webmentions "
 "originating from your website."
 msgstr ""
 
-#: includes/class-webmention-admin.php:384
+#: includes/class-admin.php:389
 msgid "Processing"
 msgstr ""
 
-#: includes/class-webmention-admin.php:385
+#: includes/class-admin.php:390
 msgid ""
 "Incoming Webmentions are handled as a request to process personal data that "
 "you make available by explicitly providing metadata in your website's "
 "markup."
 msgstr ""
 
-#: includes/class-webmention-admin.php:387
+#: includes/class-admin.php:392
 msgid "Publishing"
 msgstr ""
 
-#: includes/class-webmention-admin.php:388
+#: includes/class-admin.php:393
 msgid ""
 "An incoming Webmention request is by design a request for publishing a "
 "comment from elsewhere on the web; this is what the protocol was designed "
 "for and why it is active on your website."
 msgstr ""
 
-#: includes/class-webmention-admin.php:390
+#: includes/class-admin.php:395
 msgid "Personal data"
 msgstr ""
 
-#: includes/class-webmention-admin.php:391
+#: includes/class-admin.php:396
 msgid "The Webmention plugin processes the following data (if available):"
 msgstr ""
 
-#: includes/class-webmention-admin.php:394
+#: includes/class-admin.php:399
 msgid "Your name"
 msgstr ""
 
-#: includes/class-webmention-admin.php:395
+#: includes/class-admin.php:400
 msgid "The profile picture from your website"
 msgstr ""
 
-#: includes/class-webmention-admin.php:396
+#: includes/class-admin.php:401
 msgid "The URL of your website"
 msgstr ""
 
-#: includes/class-webmention-admin.php:397
+#: includes/class-admin.php:402
 msgid "Personal information you include in your post"
 msgstr ""
 
-#: includes/class-webmention-avatar-handler.php:22
+#: includes/class-avatar.php:24
 msgid "Mystery Person (hosted locally)"
 msgstr ""
 
-#: includes/class-webmention-notifications.php:31
-msgid "Resend Comment Email"
+#: includes/class-cli.php:74
+msgid "Webmention Plugin Meta:\n"
 msgstr ""
 
-#: includes/class-webmention-notifications.php:32
-msgid "Resend Moderation Email"
+#: includes/class-cli.php:123 includes/class-cli.php:145
+msgid "Nothing to ping."
 msgstr ""
 
-#: includes/class-webmention-notifications.php:65
-#. translators: %s: Comment Type
-msgid "Comment Type: %s"
+#: includes/class-cli.php:126
+msgid "Webmentions sent:"
 msgstr ""
 
-#: includes/class-webmention-notifications.php:67
-#. translators: %s: Post Permalink
-msgid "Permalink: %s"
+#: includes/class-cli.php:132
+msgid "Invalid post ID or permalink"
 msgstr ""
 
-#: includes/class-webmention-notifications.php:69
-#. translators: %s: Comment Date
-msgid "Date: %s"
+#: includes/class-cli.php:139 includes/class-cli.php:150
+msgid "Please provide a post-id/permalink or a source and a target"
 msgstr ""
 
-#: includes/class-webmention-notifications.php:74
-#. translators: %s: comment author's name
-msgid "Author: %s "
+#: includes/class-cli.php:147
+msgid "Webmention sent!"
 msgstr ""
 
-#: includes/class-webmention-notifications.php:77
-#. translators: %s: comment author email
-msgid "Email: %s"
-msgstr ""
-
-#: includes/class-webmention-notifications.php:80
-#. translators: %s: trackback/pingback/comment author URL
-msgid "URL: %s"
-msgstr ""
-
-#: includes/class-webmention-notifications.php:82
-#. translators: %s: comment text
-msgid "Comment: %s"
-msgstr ""
-
-#: includes/class-webmention-notifications.php:225
-#. translators: %s: post title
-msgid "New response to your post \"%s\""
-msgstr ""
-
-#: includes/class-webmention-notifications.php:232
-#: includes/class-webmention-notifications.php:350
-#. translators: Comment moderation. %s: Comment action URL
-msgid "Trash it: %s"
-msgstr ""
-
-#: includes/class-webmention-notifications.php:235
-#: includes/class-webmention-notifications.php:353
-#. translators: Comment moderation. %s: Comment action URL
-msgid "Delete it: %s"
-msgstr ""
-
-#: includes/class-webmention-notifications.php:238
-#: includes/class-webmention-notifications.php:357
-#. translators: Comment moderation. %s: Comment action URL
-msgid "Spam it: %s"
-msgstr ""
-
-#: includes/class-webmention-notifications.php:341
-#. translators: %s: post title
-msgid "A new response to the post \"%s\" is waiting for your approval"
-msgstr ""
-
-#: includes/class-webmention-notifications.php:346
-#. translators: Comment moderation. %s: Comment action URL
-msgid "Approve it: %s"
-msgstr ""
-
-#: includes/class-webmention-notifications.php:361
-#. translators: Comment moderation. %s: Number of comments awaiting approval
-msgid ""
-"Currently %s response is waiting for approval. Please visit the moderation "
-"panel:"
-msgid_plural ""
-"Currently %s responses are waiting for approval. Please visit the "
-"moderation panel:"
-msgstr[0] ""
-msgstr[1] ""
-
-#: includes/class-webmention-notifications.php:372
-#. translators: Comment moderation notification email subject. 1: Site name, 2:
-#. Post title
-msgid "[%1$s] Please moderate: \"%2$s\""
-msgstr ""
-
-#: includes/class-webmention-receiver.php:57
+#: includes/class-receiver.php:68
 msgid "Protocol Used to Receive"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:65
+#: includes/class-receiver.php:76
 msgid "Target URL for the Webmention"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:74
+#: includes/class-receiver.php:85
 msgid "Source URL for the Webmention"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:82
+#: includes/class-receiver.php:93
 msgid "Target URL Fragment for the Webmention"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:91
+#: includes/class-receiver.php:102
 msgid "Original Creation Time for the Webmention (GMT)"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:100
+#: includes/class-receiver.php:111
 msgid "Response Code Returned During Webmention Verification"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:109
+#: includes/class-receiver.php:120
 msgid "Webmention Vouch URL"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:242
+#: includes/class-receiver.php:253
 msgid "Target is not on this domain"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:249
-#: includes/class-webmention-receiver.php:263
+#: includes/class-receiver.php:260 includes/class-receiver.php:274
 msgid "Target is not a valid post"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:253
+#: includes/class-receiver.php:264
 msgid "Target and source cannot direct to the same resource"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:258
+#: includes/class-receiver.php:269
 msgid "Pings are disabled for this post"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:326
+#: includes/class-receiver.php:337
 msgid "Webmention is scheduled"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:400
+#: includes/class-receiver.php:411
 msgid "Webmention was successful"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:451
-#: includes/class-webmention-vouch.php:58
+#: includes/class-receiver.php:462 includes/class-vouch.php:64
 msgid "Invalid data passed"
 msgstr ""
 
-#: includes/class-webmention-receiver.php:477
+#: includes/class-receiver.php:488
 msgid "Cannot find target link"
 msgstr ""
 
-#: includes/class-webmention-request.php:183
+#: includes/class-request.php:189
 msgid "Content Type is not supported"
 msgstr ""
 
-#: includes/class-webmention-request.php:207
+#: includes/class-request.php:213
 msgid "Resource not found"
 msgstr ""
 
-#: includes/class-webmention-request.php:215
+#: includes/class-request.php:221
 msgid "Method not allowed"
 msgstr ""
 
-#: includes/class-webmention-request.php:224
+#: includes/class-request.php:230
 msgid "Resource has been deleted"
 msgstr ""
 
-#: includes/class-webmention-request.php:232
+#: includes/class-request.php:238
 msgid "Resource removed for legal reasons"
 msgstr ""
 
-#: includes/class-webmention-request.php:278
+#: includes/class-request.php:284
 msgid "Cannot Generate DOMDocument"
 msgstr ""
 
-#: includes/class-webmention-vouch.php:25
+#: includes/class-vouch.php:31
 msgid "Has this Webmention Been Vouched for"
 msgstr ""
 
-#: includes/class-webmention-vouch.php:91
-#: includes/class-webmention-vouch.php:105
-#: includes/class-webmention-vouch.php:141
+#: includes/class-vouch.php:97 includes/class-vouch.php:111
+#: includes/class-vouch.php:147
 msgid "Vouch Not Found"
 msgstr ""
 
@@ -452,10 +384,6 @@ msgstr ""
 
 #: includes/functions.php:467
 msgid "Response"
-msgstr ""
-
-#: includes/handlers/class-webmention-handler-base.php:61
-msgid "$webmention_item is not an instance of Webmention_Item"
 msgstr ""
 
 #: templates/webmention-api-message.php:11
