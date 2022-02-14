@@ -18,6 +18,20 @@ class Request {
 	protected $url;
 
 	/**
+	 * Header.
+	 *
+	 * @var array
+	 */
+	protected $header;
+
+	/**
+	 * Parsed Link Header.
+	 *
+	 * @var array
+	 */
+	protected $link_header;
+
+	/**
 	 * Body.
 	 *
 	 * @var string
@@ -46,7 +60,7 @@ class Request {
 	protected $response;
 
 	/**
-	 * URL.
+	 * Response Code.
 	 *
 	 * @var int
 	 */
@@ -118,11 +132,6 @@ class Request {
 		}
 
 		$this->response_code = wp_remote_retrieve_response_code( $response );
-		$check               = $this->check_response_code();
-
-		if ( is_wp_error( $check ) ) {
-			return $check;
-		}
 
 		$this->content_type = $this->get_content_type();
 		$check              = $this->check_content_type();
@@ -130,7 +139,8 @@ class Request {
 			return $check;
 		}
 
-		$this->body = wp_remote_retrieve_body( $response );
+		$this->body   = wp_remote_retrieve_body( $response );
+		$this->header = wp_remote_retrieve_headers( $response );
 
 		return $response;
 	}
@@ -151,22 +161,19 @@ class Request {
 			$response = wp_remote_head( $this->url, $args );
 		}
 
-		$this->response = $response;
-
 		if ( is_wp_error( $response ) ) {
 			return $response;
 		}
 
+		$this->response      = $response;
+		$this->header        = wp_remote_retrieve_header( $response );
 		$this->response_code = wp_remote_retrieve_response_code( $response );
-		$check               = $this->check_response_code( $this->response_code, $response );
-		if ( is_wp_error( $check ) ) {
-			return $check;
-		}
 
 		$check = $this->check_content_type( wp_remote_retrieve_header( $response, 'content-type' ) );
 		if ( is_wp_error( $check ) ) {
 			return $check;
 		}
+
 		return $response;
 	}
 
@@ -196,7 +203,7 @@ class Request {
 	 */
 	protected function check_content_type() {
 		// not an (x)html, sgml, or xml page, no use going further
-		if ( preg_match( '#(image|audio|video|model)/#is', $this->content_type ) ) {
+		if ( preg_match( '#(image|audio|video|model)/#is', $this->get_content_type() ) ) {
 			return new WP_Error(
 				'unsupported_content_type',
 				__( 'Content Type is not supported', 'webmention' ),
@@ -209,62 +216,6 @@ class Request {
 	}
 
 	/**
-	 * Check if response is a supported content type
-	 *
-	 * @param int $code Status Code.
-	 * @param array $response Response if Present.
-	 *
-	 * @return WP_Error|true return an error or that something is supported
-	 */
-	protected function check_response_code() {
-		switch ( $this->response_code ) {
-			case 200:
-				return true;
-			case 404:
-				return new WP_Error(
-					'resource_not_found',
-					__( 'Resource not found', 'webmention' ),
-					array(
-						'status' => 400,
-					)
-				);
-			case 405:
-				return new WP_Error(
-					'method_not_allowed',
-					__( 'Method not allowed', 'webmention' ),
-					array(
-						'status' => 400,
-						'allow'  => wp_remote_retrieve_header( $this->response, 'allow' ),
-					)
-				);
-			case 410:
-				return new WP_Error(
-					'resource_deleted',
-					__( 'Resource has been deleted', 'webmention' ),
-					array(
-						'status' => 400,
-					)
-				);
-			case 452:
-				return new WP_Error(
-					'resource_removed',
-					__( 'Resource removed for legal reasons', 'webmention' ),
-					array(
-						'status' => 400,
-					)
-				);
-			default:
-				return new WP_Error(
-					'source_error',
-					wp_remote_retrieve_response_message( $this->response ),
-					array(
-						'status' => 400,
-					)
-				);
-		}
-	}
-
-	/**
 	 * Strip charset off content type for matching purposes
 	 * @param array $response HTTP_Response array
 	 *
@@ -272,7 +223,12 @@ class Request {
 	 *
 	 */
 	protected function get_content_type() {
-		$content_type = wp_remote_retrieve_header( $this->response, 'Content-Type' );
+		if ( $this->content_type ) {
+			$content_type = $this->content_type;
+		} else {
+			$content_type = wp_remote_retrieve_header( $this->response, 'content-type' );
+		}
+
 		// Strip any character set off the content type
 		$content_type = explode( ';', $content_type );
 
@@ -289,16 +245,109 @@ class Request {
 	 * @return WP_Error|true An Error object or true.
 	 */
 	public function get_domdocument() {
+		// if request is not set yet
+		if ( ! $this->body ) {
+			$this->get();
+		}
+
 		if ( $this->domdocument instanceof DOMDocument ) {
-			return $this->domdocument;
+			return clone $this->domdocument;
 		}
 
-		if ( ! in_array( $this->content_type, array( 'text/html', 'text/xml' ), true ) ) {
-			return new WP_Error( 'wrong_content_type', __( 'Cannot Generate DOMDocument', 'webmention' ), array( $this->content_type ) );
+		if ( ! in_array( $this->get_content_type(), array( 'text/html', 'text/xml' ), true ) ) {
+			return new WP_Error( 'wrong_content_type', __( 'Cannot Generate DOMDocument', 'webmention' ), array( $this->get_content_type() ) );
 		}
 
-		$this->domdocument = webmention_load_domdocument( $this->body );
+		$body = $this->get_body();
 
-		return $this->domdocument;
+		if ( ! $body ) {
+			return new WP_Error( 'empty_body', __( 'Request body has no data', 'webmention' ) );
+		}
+
+		libxml_use_internal_errors( true );
+		if ( function_exists( 'mb_convert_encoding' ) ) {
+			$body = mb_convert_encoding( $body, 'HTML-ENTITIES', mb_detect_encoding( $body ) );
+		}
+
+		$domdocument = new DOMDocument();
+		$domdocument->loadHTML( $body );
+
+		libxml_use_internal_errors( false );
+
+		$this->domdocument = $domdocument;
+
+		return $domdocument;
+	}
+
+	/**
+	 * Parses the Link Header
+	 *
+	 * @return array
+	 */
+	public function get_link_header() {
+		// if request is not set yet
+		if ( ! $this->response ) {
+			$this->get();
+		}
+
+		if ( $this->link_header ) {
+			return $this->link_header;
+		}
+
+		$links = wp_remote_retrieve_header( $this->response, 'link' );
+
+		if ( ! $links ) {
+			return new WP_Error( 'no_link_header', __( 'No link header available', 'webmention' ) );
+		}
+
+		$links = explode( ',', $links );
+		$items = array();
+
+		if ( is_array( $links ) && 1 <= count( $links ) ) {
+			foreach ( $links as $link ) {
+				$item   = array();
+				$pieces = explode( ';', $link );
+				$uri    = array_shift( $pieces );
+				foreach ( $pieces as $p ) {
+					$elements = explode( '=', $p );
+
+					$item[ trim( $elements[0] ) ] = trim( $elements[1], '"\'' );
+				}
+
+				$item['uri'] = trim( trim( $uri ), '<>' );
+
+				if ( isset( $item['rel'] ) ) {
+					$rels = explode( ' ', $item['rel'] );
+					foreach ( $rels as $rel ) {
+						$item['rel'] = $rel;
+						$items[]     = $item;
+					}
+				} else {
+					$items[] = $item;
+				}
+			}
+		}
+
+		$this->link_header = $items;
+
+		return $items;
+	}
+
+	/**
+	 * Undocumented function
+	 *
+	 * @return void
+	 */
+	public function get_link_header_by( $filter ) {
+		$links = $this->get_link_header();
+		$items = array();
+
+		foreach ( $links as $link ) {
+			if ( array_intersect_uassoc( $link, $filter, 'strcasecmp' ) ) {
+				$items[] = $link;
+			}
+		}
+
+		return $items;
 	}
 }

@@ -27,10 +27,12 @@ class Meta extends Base {
 	 * @return WP_Error|true Return error or true if successful.
 	 */
 	public function parse( Request $request, $target_url ) {
-		$dom = clone $request->get_domdocument();
+		$dom = $request->get_domdocument();
+
 		if ( is_wp_error( $dom ) ) {
 			return $dom;
 		}
+
 		$xpath = new DOMXPath( $dom );
 
 		$meta = array();
@@ -58,8 +60,6 @@ class Meta extends Base {
 
 		$this->add_properties( $meta );
 
-		// OGP has no concept of anything but mention so it is always a mention.
-		$this->webmention_item->set_response_type( 'mention' );
 		if ( ! $this->webmention_item->get_name() ) {
 			$this->webmention_item->set_name( trim( $xpath->query( '//title' )->item( 0 )->textContent ) );
 		}
