@@ -8,6 +8,7 @@ use WP_REST_Request;
 use WP_REST_Response;
 use WP_HTTP_ResponseInterface;
 use Webmention\Request;
+use Webmention\Response;
 use Webmention\Handler;
 
 /**
@@ -455,16 +456,15 @@ class Receiver {
 			return new WP_Error( 'invalid_data', esc_html__( 'Invalid data passed', 'webmention' ), array( 'status' => 500 ) );
 		}
 
-		$request = new Request( $data['source'] );
-		$return  = $request->fetch();
+		$response = Request::get( $data['source'] );
 
-		if ( is_wp_error( $return ) ) {
-			return $return;
+		if ( is_wp_error( $response ) ) {
+			return $response;
 		}
 
 		// check if source really links to target
 		if ( ! strpos(
-			htmlspecialchars_decode( $request->get_body() ),
+			htmlspecialchars_decode( $response->get_body() ),
 			str_replace(
 				array(
 					'http://www.',
@@ -491,9 +491,9 @@ class Receiver {
 		}
 
 		$commentdata = array(
-			'content_type'           => $request->get_content_type(),
-			'remote_source_original' => $request->get_body(),
-			'remote_source'          => webmention_sanitize_html( $request->get_body() ),
+			'content_type'           => $response->get_content_type(),
+			'remote_source_original' => $response->get_body(),
+			'remote_source'          => webmention_sanitize_html( $response->get_body() ),
 		);
 
 		return array_merge( $commentdata, $data );

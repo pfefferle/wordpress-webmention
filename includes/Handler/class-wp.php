@@ -4,7 +4,7 @@ namespace Webmention\Handler;
 
 use DOMXPath;
 use WP_Error;
-use Webmention\Request;
+use Webmention\Response;
 use Webmention\Handler\Base;
 use DateTimeZone;
 use DateTimeImmutable;
@@ -22,16 +22,16 @@ class WP extends Base {
 	protected $slug = 'wp';
 
 	/**
-	 * Takes a request object and parses it.
+	 * Takes a response object and parses it.
 	 *
-	 * @param Webmention\Request $request Request Object.
+	 * @param Webmention\Response $response Response Object.
 	 * @param string $target_url The target URL
 	 *
 	 * @return WP_Error|true Return error or true if successful.
 	 */
-	public function parse( Request $request, $target_url ) {
-		$root_api_links = $request->get_link_header_by( array( 'rel' => 'https://api.w.org/' ) );
-		$post_api_links = $request->get_link_header_by(
+	public function parse( Response $response, $target_url ) {
+		$root_api_links = $response->get_header_links_by( array( 'rel' => 'https://api.w.org/' ) );
+		$post_api_links = $response->get_header_links_by(
 			array(
 				'rel'  => 'alternate',
 				'type' => 'application/json',
@@ -49,31 +49,31 @@ class WP extends Base {
 			}
 		}
 
-		$request = new Request( $links['api'] );
-		$return  = $request->fetch();
+		$response = new Response( $links['api'] );
+		$return  = $response->fetch();
 		if ( is_wp_error( $return ) ) {
 			return $return;
 		}
 
 		// Decode the site json to get the site name, description, base URL, and timezone string.
-		$site_json = $this->parse_site( $request );
+		$site_json = $this->parse_site( $response );
 		$this->webmention_item->set__site_name( $site_json['name'] );
 
-		$request = new Request( $links['url'] );
-		$return  = $request->fetch();
+		$response = new Response( $links['url'] );
+		$return  = $response->fetch();
 		if ( is_wp_error( $return ) ) {
 			return $return;
 		}
 
-		$results = $this->parse_page( $request, $site_json['timezone'] );
+		$results = $this->parse_page( $response, $site_json['timezone'] );
 
-		$request = new Request( $results['author'] );
-		$return  = $request->fetch();
+		$response = new Response( $results['author'] );
+		$return  = $response->fetch();
 		if ( is_wp_error( $return ) ) {
 			return $return;
 		}
 
-		$results = array_merge( $results, $this->parse_author( $request ) );
+		$results = array_merge( $results, $this->parse_author( $response ) );
 
 		$raw = array();
 
@@ -91,11 +91,11 @@ class WP extends Base {
 
 	}
 
-	public function parse_page( $request, $timezone = null ) {
+	public function parse_page( $response, $timezone = null ) {
 		if ( ! $timezone ) {
 			$timezone = wp_timezone();
 		}
-		$page_json = json_decode( $request->get_body(), true );
+		$page_json = json_decode( $response->get_body(), true );
 		return array_filter(
 			array(
 				'name'      => $page_json['title']['rendered'],
@@ -110,8 +110,8 @@ class WP extends Base {
 		);
 	}
 
-	public function parse_author( $request ) {
-		$author_json = json_decode( $request->get_body(), true );
+	public function parse_author( $response ) {
+		$author_json = json_decode( $response->get_body(), true );
 		return array(
 			'author'      => array(
 				'name'  => $author_json['name'],
@@ -122,9 +122,9 @@ class WP extends Base {
 		);
 	}
 
-	public function parse_site( $request ) {
+	public function parse_site( $response ) {
 		// Decode the site json to get the site name, description, base URL, and timezone string.
-		$site_json = json_decode( $request->get_body(), true );
+		$site_json = json_decode( $response->get_body(), true );
 		unset( $site_json['namespaces'] );
 		unset( $site_json['authentication'] );
 		unset( $site_json['routes'] );

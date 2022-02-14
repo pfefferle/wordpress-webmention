@@ -56,6 +56,7 @@ function init() {
 
 	// Request Handler.
 	require_once dirname( __FILE__ ) . '/includes/class-request.php';
+	require_once dirname( __FILE__ ) . '/includes/class-response.php';
 
 	// Comment Type Class
 	require_once dirname( __FILE__ ) . '/includes/class-comment-type.php';

@@ -6,6 +6,7 @@ use WP_Http;
 use DOMXPath;
 use DOMDocument;
 use Webmention\Request;
+use Webmention\Response;
 
 class Discovery {
 	/**
@@ -171,24 +172,23 @@ class Discovery {
 			return false;
 		}
 
-		$request  = new Request( $url );
-		$response = $request->get();
+		$response = Request::get( $url );
 
 		if ( is_wp_error( $response ) ) {
 			return false;
 		}
 
-		$links = $request->get_link_header_by( array( 'rel' => 'webmention' ) );
+		$links = $response->get_header_links_by( array( 'rel' => 'webmention' ) );
 
 		if ( ! $links ) {
-			$links = $request->get_link_header_by( array( 'rel' => 'http://webmention.org' ) );
+			$links = $response->get_header_links_by( array( 'rel' => 'http://webmention.org' ) );
 		}
 
 		if ( $links ) {
 			return WP_Http::make_absolute_url( $links[0]['uri'], $url );
 		}
 
-		$dom = $request->get_domdocument();
+		$dom = $response->get_dom_document();
 
 		if ( is_wp_error( $dom ) ) {
 			return false;

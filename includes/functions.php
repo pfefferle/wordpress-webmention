@@ -260,9 +260,9 @@ function webmention_extract_urls( $content, $support_media_urls = false ) {
 		return array();
 	}
 
-	$request = new \Webmention\Request();
-	$request->set_body( $content );
-	$doc = $request->get_domdocument( false );
+	$response = new \Webmention\Response();
+	$response->set_body( $content );
+	$doc = $response->get_dom_document( false );
 
 	$xpath = new DOMXPath( $doc );
 
