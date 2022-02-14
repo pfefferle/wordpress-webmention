@@ -350,7 +350,7 @@ class Item {
 			'comment_author_url'   => $this->get_author( 'url' ),
 			'comment_content'      => $this->get_content(),
 			'comment_date'         => $this->get_published()->format( 'Y-m-d H:i:s' ),
-			'comment_date_gmt'     => $this->get_published( true )->format( 'Y-m-d H:i:s' ),
+			'comment_date_gmt'     => $this->get_published_gmt()->format( 'Y-m-d H:i:s' ),
 			'comment_type'         => $this->get_response_type(),
 			'comment_meta'         => array_filter( $this->get_meta() ),
 			'remote_source_raw'    => $this->get_raw(),
