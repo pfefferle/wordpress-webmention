@@ -121,7 +121,7 @@ class Discovery_Test extends WP_UnitTestCase {
 	}
 
 	public function discover_absolute_htmllink() {
-		$headers = $this->headers( "array()" );
+		$headers = $this->headers( '' );
 		$response = $this->response( 200, 'OK' );
 		$body = '<!DOCTYPE html><html lang="en"><head><link rel="webmention" href="http://www.example.com/test/4/webmention"></head><body>This is a test</body></html>';
 		return $this->httpreturn( $headers, $response, $body );
