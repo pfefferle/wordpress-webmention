@@ -141,6 +141,7 @@ function get_webmention_process_type() {
  * @return int $id Return 0 if no post ID found or a post ID.
  */
 function webmention_url_to_postid( $url ) {
+	// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
 	$id = wp_cache_get( base64_encode( $url ), 'webmention_url_to_postid' );
 
 	if ( false !== $id ) {
@@ -161,6 +162,7 @@ function webmention_url_to_postid( $url ) {
 		}
 	}
 
+	// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
 	wp_cache_set( base64_encode( $url ), $id, 'webmention_url_to_postid', 300 );
 
 	return apply_filters( 'webmention_post_id', $id, $url );
