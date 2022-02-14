@@ -4,6 +4,7 @@ namespace Webmention\Handler;
 
 use DOMXPath;
 use WP_Error;
+use Webmention\Request;
 use Webmention\Response;
 use Webmention\Handler\Base;
 use DateTimeZone;
@@ -46,31 +47,29 @@ class WP extends Base {
 		foreach ( $post_api_links as $post_api_link ) {
 			if ( false !== strstr( $post_api_link['uri'], $root_api_links[0]['uri'] ) ) {
 				$api_link = $post_api_link['uri'];
+				break;
 			}
 		}
 
-		$response = new Response( $links['api'] );
-		$return  = $response->fetch();
-		if ( is_wp_error( $return ) ) {
-			return $return;
+		$response = Request::get( $api_link );
+		if ( is_wp_error( response ) ) {
+			return response;
 		}
 
 		// Decode the site json to get the site name, description, base URL, and timezone string.
 		$site_json = $this->parse_site( $response );
 		$this->webmention_item->set__site_name( $site_json['name'] );
 
-		$response = new Response( $links['url'] );
-		$return  = $response->fetch();
-		if ( is_wp_error( $return ) ) {
-			return $return;
+		$response = Request::get( $links['url'] );
+		if ( is_wp_error( response ) ) {
+			return response;
 		}
 
 		$results = $this->parse_page( $response, $site_json['timezone'] );
 
-		$response = new Response( $results['author'] );
-		$return  = $response->fetch();
-		if ( is_wp_error( $return ) ) {
-			return $return;
+		$response = Request::get( $results['author'] );
+		if ( is_wp_error( response ) ) {
+			return response;
 		}
 
 		$results = array_merge( $results, $this->parse_author( $response ) );
