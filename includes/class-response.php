@@ -59,12 +59,20 @@ class Response {
 	 */
 	protected $response_code;
 
+	/**
+	 * Content Type.
+	 *
+	 * @var string
+	 */
+	protected $content_type;
+
 	public function __construct( $url = null, $response = array() ) {
 		$this->url           = $url;
 		$this->response      = $response;
 		$this->body          = wp_remote_retrieve_body( $response );
 		$this->header        = wp_remote_retrieve_headers( $response );
 		$this->response_code = wp_remote_retrieve_response_code( $response );
+		$this->content_type  = wp_remote_retrieve_header( $response, 'content-type' );
 	}
 
 	/**
@@ -113,7 +121,7 @@ class Response {
 	 * @return string|false return either false or the stripped string
 	 */
 	protected function get_content_type() {
-		$content_type = wp_remote_retrieve_header( $this->response, 'content-type' );
+		$content_type = $this->content_type;
 
 		// Strip any character set off the content type
 		$content_type = explode( ';', $content_type );
@@ -137,9 +145,9 @@ class Response {
 			return $this->dom_document;
 		}
 
-		//if ( $validate_content_type && ( ! in_array( $this->get_content_type(), array( 'text/html', 'text/xml' ), true ) ) ) {
-		//	return new WP_Error( 'wrong_content_type', __( 'Cannot Generate DOMDocument', 'webmention' ), array( $this->get_content_type() ) );
-		//}
+		if ( $validate_content_type && ( ! in_array( $this->get_content_type(), array( 'text/html', 'text/xml' ), true ) ) ) {
+			return new WP_Error( 'wrong_content_type', __( 'Cannot Generate DOMDocument', 'webmention' ), array( $this->get_content_type() ) );
+		}
 
 		$body = $this->body;
 
