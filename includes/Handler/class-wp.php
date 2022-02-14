@@ -3,6 +3,7 @@
 namespace Webmention\Handler;
 
 use DOMXPath;
+use WP_Error;
 use Webmention\Request;
 use Webmention\Handler\Base;
 use DateTimeZone;
@@ -29,7 +30,24 @@ class WP extends Base {
 	 * @return WP_Error|true Return error or true if successful.
 	 */
 	public function parse( Request $request, $target_url ) {
-		$links = $this->parse_link( $request );
+		$root_api_links = $request->get_link_header_by( array( 'rel' => 'https://api.w.org/' ) );
+		$post_api_links = $request->get_link_header_by(
+			array(
+				'rel'  => 'alternate',
+				'type' => 'application/json',
+			)
+		);
+
+		if ( ! $root_api_links && ! is_array( $root_api_links ) ) {
+			return new WP_Error( 'no_api_link', __( 'No API link found in the source code', 'webmention' ) );
+		}
+
+		// check if link is API link and skip JSON-Feed links for example
+		foreach ( $post_api_links as $post_api_link ) {
+			if ( false !== strstr( $post_api_link['uri'], $root_api_links[0]['uri'] ) ) {
+				$api_link = $post_api_link['uri'];
+			}
+		}
 
 		$request = new Request( $links['api'] );
 		$return  = $request->fetch();
@@ -112,43 +130,5 @@ class WP extends Base {
 		unset( $site_json['routes'] );
 		$site_json['timezone'] = new DateTimeZone( $site_json['timezone_string'] );
 		return $site_json;
-	}
-
-	/**
-	 * Parses the Link Header
-	 */
-	public function parse_link( $request ) {
-		$links = wp_remote_retrieve_header( $request->get_response(), 'link' );
-		$links = explode( ',', $links );
-		$urls  = array();
-		if ( is_array( $links ) && 1 <= count( $links ) ) {
-			foreach ( $links as $link ) {
-				$pieces = explode( '; ', $link );
-				$uri    = trim( array_shift( $pieces ), '<> ' );
-				foreach ( $pieces as $p ) {
-					$elements                     = explode( '=', $p );
-					$urls[ $uri ][ $elements[0] ] = trim( $elements[1], '"' );
-				}
-			}
-			ksort( $urls );
-		}
-
-		$rels = wp_list_pluck( $urls, 'rel' );
-
-		$api = array_search( 'https://api.w.org/', $rels, true );
-
-		if ( ! $api ) {
-			return false;
-		}
-
-		$alternate = array_search( 'alternate', $rels, true );
-		if ( ! isset( $urls[ $alternate ]['type'] ) && 'application/json' !== $urls[ $alternate ]['type'] ) {
-			return false;
-		}
-
-		return array(
-			'api' => $api,
-			'url' => $alternate,
-		);
 	}
 }
