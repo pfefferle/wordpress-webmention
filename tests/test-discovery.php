@@ -254,4 +254,16 @@ class Discovery_Test extends WP_UnitTestCase {
 		$endpoint = webmention_discover_endpoint( $url );
 		$this->assertSame( 'http://www.example.com/test/11/webmention', $endpoint );
 	}
+
+	public function test_webmention_extract_urls() {
+		$urls = webmention_extract_urls( '<main><div><a href="https://example.org">Test</a></div><a href="https://example.com">Test</a></main>' );
+
+		$this->assertEquals(
+			$urls,
+			array(
+				'https://example.org',
+				'https://example.com'
+			)
+		);
+	}
 }
