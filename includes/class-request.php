@@ -85,7 +85,7 @@ class Request {
 		}
 	}
 
-	public function __construct( $url ) {
+	public function __construct( $url = null ) {
 		$this->url = $url;
 	}
 
@@ -242,19 +242,21 @@ class Request {
 	/**
 	 *  Takes the body and generates a DOMDocument.
 	 *
+	 * @param bool $validate_content_type Validate content type header
+	 *
 	 * @return WP_Error|true An Error object or true.
 	 */
-	public function get_domdocument() {
-		// if request is not set yet
-		if ( ! $this->body ) {
-			$this->get();
-		}
-
+	public function get_domdocument( $validate_content_type = true ) {
 		if ( $this->domdocument instanceof DOMDocument ) {
 			return $this->domdocument;
 		}
 
-		if ( ! in_array( $this->get_content_type(), array( 'text/html', 'text/xml' ), true ) ) {
+		// if request is not set yet
+		if ( ! $this->get_body() ) {
+			$this->get();
+		}
+
+		if ( $validate_content_type && ( ! in_array( $this->get_content_type(), array( 'text/html', 'text/xml' ), true ) ) ) {
 			return new WP_Error( 'wrong_content_type', __( 'Cannot Generate DOMDocument', 'webmention' ), array( $this->get_content_type() ) );
 		}
 
@@ -286,8 +288,8 @@ class Request {
 	 */
 	public function get_link_header() {
 		// if request is not set yet
-		if ( ! $this->response ) {
-			$this->get();
+		if ( ! $this->get_header() ) {
+			$this->head();
 		}
 
 		if ( $this->link_header ) {
@@ -334,9 +336,13 @@ class Request {
 	}
 
 	/**
-	 * Undocumented function
+	 * Get link headers by a filter
 	 *
-	 * @return void
+	 * @param array $filter Filter link headers
+	 *
+	 * @example array( 'rel' => 'alternate', 'type' => 'application/json' )
+	 *
+	 * @return array
 	 */
 	public function get_link_header_by( $filter ) {
 		$links = $this->get_link_header();

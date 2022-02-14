@@ -258,13 +258,9 @@ function webmention_extract_urls( $content, $support_media_urls = false ) {
 		return array();
 	}
 
-	$doc = new DOMDocument();
-	libxml_use_internal_errors( true );
-	if ( function_exists( 'mb_convert_encoding' ) ) {
-		$content = mb_convert_encoding( $content, 'HTML-ENTITIES', mb_detect_encoding( $content ) );
-	}
-	$doc->loadHTML( $content );
-	libxml_use_internal_errors( false );
+	$request = new \Webmention\Request();
+	$request->set_body( $content );
+	$doc = $request->get_domdocument( false );
 
 	$xpath = new DOMXPath( $doc );
 
