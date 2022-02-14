@@ -251,7 +251,7 @@ class Request {
 		}
 
 		if ( $this->domdocument instanceof DOMDocument ) {
-			return clone $this->domdocument;
+			return $this->domdocument;
 		}
 
 		if ( ! in_array( $this->get_content_type(), array( 'text/html', 'text/xml' ), true ) ) {

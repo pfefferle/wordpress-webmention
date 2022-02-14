@@ -27,7 +27,7 @@ class JSONLD extends Base {
 	 * @return WP_Error|true Return error or true if successful.
 	 */
 	public function parse( Request $request, $target_url ) {
-		$dom = clone $request->get_domdocument();
+		$dom = $request->get_domdocument();
 		if ( is_wp_error( $dom ) ) {
 			return $dom;
 		}
