@@ -180,10 +180,6 @@ class Discovery {
 
 		$links = $response->get_header_links_by( array( 'rel' => 'webmention' ) );
 
-		if ( ! $links ) {
-			$links = $response->get_header_links_by( array( 'rel' => 'http://webmention.org' ) );
-		}
-
 		if ( $links ) {
 			return WP_Http::make_absolute_url( $links[0]['uri'], $url );
 		}
