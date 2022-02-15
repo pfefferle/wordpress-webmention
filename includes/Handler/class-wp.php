@@ -3,7 +3,9 @@
 namespace Webmention\Handler;
 
 use DOMXPath;
+use WP_Error;
 use Webmention\Request;
+use Webmention\Response;
 use Webmention\Handler\Base;
 use DateTimeZone;
 use DateTimeImmutable;
@@ -21,41 +23,56 @@ class WP extends Base {
 	protected $slug = 'wp';
 
 	/**
-	 * Takes a request object and parses it.
+	 * Takes a response object and parses it.
 	 *
-	 * @param Webmention\Request $request Request Object.
+	 * @param Webmention\Response $response Response Object.
 	 * @param string $target_url The target URL
 	 *
 	 * @return WP_Error|true Return error or true if successful.
 	 */
-	public function parse( Request $request, $target_url ) {
-		$links = $this->parse_link( $request );
+	public function parse( Response $response, $target_url ) {
+		$root_api_links = $response->get_header_links_by( array( 'rel' => 'https://api.w.org/' ) );
+		$post_api_links = $response->get_header_links_by(
+			array(
+				'rel'  => 'alternate',
+				'type' => 'application/json',
+			)
+		);
 
-		$request = new Request( $links['api'] );
-		$return  = $request->fetch();
-		if ( is_wp_error( $return ) ) {
-			return $return;
+		if ( ! $root_api_links && ! is_array( $root_api_links ) ) {
+			return new WP_Error( 'no_api_link', __( 'No API link found in the source code', 'webmention' ) );
+		}
+
+		// check if link is API link and skip JSON-Feed links for example
+		foreach ( $post_api_links as $post_api_link ) {
+			if ( false !== strstr( $post_api_link['uri'], $root_api_links[0]['uri'] ) ) {
+				$api_link = $post_api_link['uri'];
+				break;
+			}
+		}
+
+		$response = Request::get( $root_api_links[0]['uri'] );
+		if ( is_wp_error( response ) ) {
+			return response;
 		}
 
 		// Decode the site json to get the site name, description, base URL, and timezone string.
-		$site_json = $this->parse_site( $request );
+		$site_json = $this->parse_site( $response );
 		$this->webmention_item->set__site_name( $site_json['name'] );
 
-		$request = new Request( $links['url'] );
-		$return  = $request->fetch();
-		if ( is_wp_error( $return ) ) {
-			return $return;
+		$response = Request::get( $api_link );
+		if ( is_wp_error( response ) ) {
+			return response;
 		}
 
-		$results = $this->parse_page( $request, $site_json['timezone'] );
+		$results = $this->parse_page( $response, $site_json['timezone'] );
 
-		$request = new Request( $results['author'] );
-		$return  = $request->fetch();
-		if ( is_wp_error( $return ) ) {
-			return $return;
+		$response = Request::get( $results['author'] );
+		if ( is_wp_error( response ) ) {
+			return response;
 		}
 
-		$results = array_merge( $results, $this->parse_author( $request ) );
+		$results = array_merge( $results, $this->parse_author( $response ) );
 
 		$raw = array();
 
@@ -73,11 +90,11 @@ class WP extends Base {
 
 	}
 
-	public function parse_page( $request, $timezone = null ) {
+	public function parse_page( $response, $timezone = null ) {
 		if ( ! $timezone ) {
 			$timezone = wp_timezone();
 		}
-		$page_json = json_decode( $request->get_body(), true );
+		$page_json = json_decode( $response->get_body(), true );
 		return array_filter(
 			array(
 				'name'      => $page_json['title']['rendered'],
@@ -92,8 +109,8 @@ class WP extends Base {
 		);
 	}
 
-	public function parse_author( $request ) {
-		$author_json = json_decode( $request->get_body(), true );
+	public function parse_author( $response ) {
+		$author_json = json_decode( $response->get_body(), true );
 		return array(
 			'author'      => array(
 				'name'  => $author_json['name'],
@@ -104,51 +121,13 @@ class WP extends Base {
 		);
 	}
 
-	public function parse_site( $request ) {
+	public function parse_site( $response ) {
 		// Decode the site json to get the site name, description, base URL, and timezone string.
-		$site_json = json_decode( $request->get_body(), true );
+		$site_json = json_decode( $response->get_body(), true );
 		unset( $site_json['namespaces'] );
 		unset( $site_json['authentication'] );
 		unset( $site_json['routes'] );
 		$site_json['timezone'] = new DateTimeZone( $site_json['timezone_string'] );
 		return $site_json;
-	}
-
-	/**
-	 * Parses the Link Header
-	 */
-	public function parse_link( $request ) {
-		$links = wp_remote_retrieve_header( $request->get_response(), 'link' );
-		$links = explode( ',', $links );
-		$urls  = array();
-		if ( is_array( $links ) && 1 <= count( $links ) ) {
-			foreach ( $links as $link ) {
-				$pieces = explode( '; ', $link );
-				$uri    = trim( array_shift( $pieces ), '<> ' );
-				foreach ( $pieces as $p ) {
-					$elements                     = explode( '=', $p );
-					$urls[ $uri ][ $elements[0] ] = trim( $elements[1], '"' );
-				}
-			}
-			ksort( $urls );
-		}
-
-		$rels = wp_list_pluck( $urls, 'rel' );
-
-		$api = array_search( 'https://api.w.org/', $rels, true );
-
-		if ( ! $api ) {
-			return false;
-		}
-
-		$alternate = array_search( 'alternate', $rels, true );
-		if ( ! isset( $urls[ $alternate ]['type'] ) && 'application/json' !== $urls[ $alternate ]['type'] ) {
-			return false;
-		}
-
-		return array(
-			'api' => $api,
-			'url' => $alternate,
-		);
 	}
 }

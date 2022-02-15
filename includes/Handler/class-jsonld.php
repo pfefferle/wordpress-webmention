@@ -4,7 +4,7 @@ namespace Webmention\Handler;
 
 use DOMXPath;
 use WP_Error;
-use Webmention\Request;
+use Webmention\Response;
 
 /**
  * Class for webmention parsing using JSON-LD.
@@ -19,15 +19,15 @@ class JSONLD extends Base {
 	protected $slug = 'jsonld';
 
 	/**
-	 * Takes a request object and parses it.
+	 * Takes a response object and parses it.
 	 *
-	 * @param Webmention\Request $request Request Object.
+	 * @param Webmention\Response $response Response Object.
 	 * @param string $target_url The target URL
 	 *
 	 * @return WP_Error|true Return error or true if successful.
 	 */
-	public function parse( Request $request, $target_url ) {
-		$dom = clone $request->get_domdocument();
+	public function parse( Response $response, $target_url ) {
+		$dom = $response->get_dom_document();
 		if ( is_wp_error( $dom ) ) {
 			return $dom;
 		}

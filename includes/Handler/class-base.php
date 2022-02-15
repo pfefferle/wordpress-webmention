@@ -3,7 +3,7 @@
 namespace Webmention\Handler;
 
 use WP_Error;
-use Webmention\Request;
+use Webmention\Response;
 use Webmention\Entity\Item;
 
 /**
@@ -84,12 +84,12 @@ abstract class Base {
 	}
 
 	/**
-	 * Takes a request object and parses it.
+	 * Takes a response object and parses it.
 	 *
-	 * @param Webmention\Request $request Request Object.
+	 * @param Webmention\Response $response Response Object.
 	 * @param string $target_url The target URL
 	 *
 	 * @return WP_Error|true Return error or true if successful.
 	 */
-	abstract public function parse( Request $request, $target_url );
+	abstract public function parse( Response $response, $target_url );
 }

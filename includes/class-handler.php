@@ -2,7 +2,7 @@
 
 namespace Webmention;
 
-use Webmention\Request;
+use Webmention\Response;
 use Webmention\Entity\Item;
 use Webmention\Handler\WP;
 use Webmention\Handler\Mf2;
@@ -49,8 +49,6 @@ class Handler {
 	/**
 	 * Insert a Handler at the front of the list
 	 *
-	 * @param Webmention\Request $request Request Object.
-	 *
 	 * @param Webmention\Handler\Base $handler
 	 */
 	public function unshift( $handler ) {
@@ -61,14 +59,14 @@ class Handler {
 	/**
 	 * Iterate through a list of handlers and return an item.
 	 *
-	 * @param Webmention\Request $request Request Object.
+	 * @param Webmention\Response $response Response Object.
 	 * @param string $target_url The target URL
 	 *
 	 * @return Webmention\Entity\Item
 	 */
-	public function parse( Request $request, $target_url ) {
+	public function parse( Response $response, $target_url ) {
 		foreach ( $this->handlers as $handler ) {
-			$handler->parse( $request, $target_url );
+			$handler->parse( $response, $target_url );
 			$item = $handler->get_webmention_item();
 			if ( $item->is_complete() ) {
 				break;
@@ -80,17 +78,17 @@ class Handler {
 	/**
 	 * Iterate through a list of handlers and return an aggregated item.
 	 *
-	 * @param Webmention\Request $request Request Object.
+	 * @param Webmention\Response $response Response Object.
 	 * @param string $target_url The target URL
 	 *
 	 * @return Webmention\Entity\Item
 	 */
-	public function parse_aggregated( Request $request, $target_url ) {
+	public function parse_aggregated( Response $response, $target_url ) {
 		$item = new Item();
 
 		foreach ( $this->handlers as $handler ) {
 			$handler->set_webmention_item( $item );
-			$handler->parse( $request, $target_url );
+			$handler->parse( $response, $target_url );
 			$item = $handler->get_webmention_item();
 
 			if ( $item->is_complete() ) {
@@ -103,16 +101,16 @@ class Handler {
 	/**
 	 * Iterate through a list of handlers and return an array of items.
 	 *
-	 * @param Webmention\Request $request Request Object.
+	 * @param Webmention\Response $response Respone Object.
 	 * @param string $target_url The target URL
 	 *
 	 * @return Webmention\Entity\Item
 	 */
-	public function parse_grouped( Request $request, $target_url ) {
+	public function parse_grouped( Response $response, $target_url ) {
 		$result = array();
 
 		foreach ( $this->handlers as $handler ) {
-			$return = $handler->parse( $request, $target_url );
+			$return = $handler->parse( $response, $target_url );
 			if ( is_wp_error( $return ) ) {
 				return $return;
 			}

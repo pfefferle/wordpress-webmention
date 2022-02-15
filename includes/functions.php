@@ -141,6 +141,7 @@ function get_webmention_process_type() {
  * @return int $id Return 0 if no post ID found or a post ID.
  */
 function webmention_url_to_postid( $url ) {
+	// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
 	$id = wp_cache_get( base64_encode( $url ), 'webmention_url_to_postid' );
 
 	if ( false !== $id ) {
@@ -161,6 +162,7 @@ function webmention_url_to_postid( $url ) {
 		}
 	}
 
+	// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
 	wp_cache_set( base64_encode( $url ), $id, 'webmention_url_to_postid', 300 );
 
 	return apply_filters( 'webmention_post_id', $id, $url );
@@ -211,43 +213,6 @@ function webmention_discover_endpoint( $url ) {
 	return \Webmention\Discovery::discover_endpoint( $url );
 }
 
-if ( ! function_exists( 'wp_get_meta_tags' ) ) :
-	/**
-	 * Parse meta tags from source content.
-	 *
-	 * Based on the Press This Meta Parsing Code.
-	 *
-	 * @param string $source_content Source Content.
-	 *
-	 * @return array meta tags.
-	 */
-	function wp_get_meta_tags( $source_content ) {
-		$meta_tags = array();
-
-		if ( ! $source_content ) {
-			return $meta_tags;
-		}
-
-		if ( preg_match_all( '/<meta [^>]+>/', $source_content, $matches ) ) {
-			$items = $matches[0];
-			foreach ( $items as $value ) {
-				if ( preg_match( '/(property|name)="([^"]+)"[^>]+content="([^"]+)"/', $value, $matches ) ) {
-					$meta_name  = $matches[2];
-					$meta_value = $matches[3];
-					// Sanity check. $key is usually things like 'title', 'description', 'keywords', etc.
-					if ( strlen( $meta_name ) > 100 ) {
-						continue;
-					}
-					$meta_tags[ $meta_name ] = $meta_value;
-				}
-			}
-		}
-
-		return $meta_tags;
-	}
-endif;
-
-
 /* Backward compatibility for function available in version 5.1 and above */
 if ( ! function_exists( 'is_avatar_comment_type' ) ) :
 	function is_avatar_comment_type( $comment_type ) {
@@ -279,20 +244,6 @@ if ( ! function_exists( 'get_self_link' ) ) :
 	}
 endif;
 
-if ( ! function_exists( 'webmention_load_domdocument' ) ) :
-	function webmention_load_domdocument( $content ) {
-		$doc = new DOMDocument();
-		libxml_use_internal_errors( true );
-		if ( function_exists( 'mb_convert_encoding' ) ) {
-			$content = mb_convert_encoding( $content, 'HTML-ENTITIES', mb_detect_encoding( $content ) );
-		}
-		$doc->loadHTML( $content );
-		libxml_use_internal_errors( false );
-
-		return $doc;
-	}
-endif;
-
 
 /**
  * Use DOMDocument to extract URLs from HTML content
@@ -309,7 +260,10 @@ function webmention_extract_urls( $content, $support_media_urls = false ) {
 		return array();
 	}
 
-	$doc   = webmention_load_domdocument( $content );
+	$response = new \Webmention\Response();
+	$response->set_body( $content );
+	$doc = $response->get_dom_document( false );
+
 	$xpath = new DOMXPath( $doc );
 
 	$attributes = array(

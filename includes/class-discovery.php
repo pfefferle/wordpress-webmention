@@ -5,6 +5,8 @@ namespace Webmention;
 use WP_Http;
 use DOMXPath;
 use DOMDocument;
+use Webmention\Request;
+use Webmention\Response;
 
 class Discovery {
 	/**
@@ -170,61 +172,25 @@ class Discovery {
 			return false;
 		}
 
-		$wp_version = get_bloginfo( 'version' );
-
-		$user_agent = apply_filters( 'http_headers_useragent', 'WordPress/' . $wp_version . '; ' . get_bloginfo( 'url' ) );
-		$args       = array(
-			'timeout'             => 100,
-			'limit_response_size' => 1048576,
-			'redirection'         => 20,
-			'user-agent'          => "$user_agent; finding Webmention endpoint",
-		);
-
-		$response = wp_safe_remote_head( $url, $args );
+		$response = Request::get( $url );
 
 		if ( is_wp_error( $response ) ) {
 			return false;
 		}
 
-		// check link header
-		$links = wp_remote_retrieve_header( $response, 'link' );
+		$links = $response->get_header_links_by( array( 'rel' => 'webmention' ) );
+
 		if ( $links ) {
-			if ( is_array( $links ) ) {
-				foreach ( $links as $link ) {
-					if ( preg_match( '/<(.[^>]+)>;\s+rel\s?=\s?[\"\']?(http:\/\/)?webmention(\.org)?\/?[\"\']?/i', $link, $result ) ) {
-						return WP_Http::make_absolute_url( $result[1], $url );
-					}
-				}
-			} else {
-				if ( preg_match( '/<(.[^>]+)>;\s+rel\s?=\s?[\"\']?(http:\/\/)?webmention(\.org)?\/?[\"\']?/i', $links, $result ) ) {
-					return WP_Http::make_absolute_url( $result[1], $url );
-				}
-			}
+			return WP_Http::make_absolute_url( $links[0]['uri'], $url );
 		}
 
-		// not an (x)html, sgml, or xml page, no use going further
-		if ( preg_match( '#(image|audio|video|model)/#is', wp_remote_retrieve_header( $response, 'content-type' ) ) ) {
+		$dom = $response->get_dom_document();
+
+		if ( is_wp_error( $dom ) ) {
 			return false;
 		}
 
-		// now do a GET since we're going to look in the html headers (and we're sure its not a binary file)
-		$response = wp_safe_remote_get( $url, $args );
-
-		if ( is_wp_error( $response ) ) {
-			return false;
-		}
-
-		$contents = wp_remote_retrieve_body( $response );
-
-		// unicode to HTML entities
-		$contents = mb_convert_encoding( $contents, 'HTML-ENTITIES', mb_detect_encoding( $contents ) );
-
-		libxml_use_internal_errors( true );
-
-		$doc = new DOMDocument();
-		$doc->loadHTML( $contents );
-
-		$xpath = new DOMXPath( $doc );
+		$xpath = new DOMXPath( $dom );
 
 		// check <link> and <a> elements
 		// checks only body>a-links

@@ -5,7 +5,7 @@ namespace Webmention\Handler;
 use WP_Error;
 use Exception;
 use DateTimeImmutable;
-use Webmention\Request;
+use Webmention\Response;
 use Webmention\Mf2\Parser;
 
 /**
@@ -21,15 +21,15 @@ class MF2 extends Base {
 	protected $slug = 'mf2';
 
 	/**
-	 * Takes a request object and parses it.
+	 * Takes a response object and parses it.
 	 *
-	 * @param Webmention\Request $request Request Object.
+	 * @param Webmention\Response $response Response Object.
 	 * @param string $target_url The target URL
 	 *
 	 * @return WP_Error|true Return error or true if successful.
 	 */
-	public function parse( Request $request, $target_url ) {
-		$dom = clone $request->get_domdocument();
+	public function parse( Response $response, $target_url ) {
+		$dom = $response->get_dom_document();
 		if ( is_wp_error( $dom ) ) {
 			return $dom;
 		}
@@ -37,7 +37,7 @@ class MF2 extends Base {
 			require_once plugin_dir_path( __FILE__ ) . '../../libraries/mf2/Mf2/Parser.php';
 		}
 
-		$source_url = $request->get_url();
+		$source_url = $response->get_url();
 		$parser     = new Parser( $dom, $source_url );
 		$data       = $parser->parse();
 
