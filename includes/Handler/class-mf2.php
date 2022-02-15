@@ -29,16 +29,16 @@ class MF2 extends Base {
 	 * @return WP_Error|true Return error or true if successful.
 	 */
 	public function parse( Response $response, $target_url ) {
-		$body = $response->get_body();
-		if ( is_wp_error( $body ) ) {
-			return $body;
+		$dom = $response->get_dom_document();
+		if ( is_wp_error( $dom ) ) {
+			return $dom;
 		}
 		if ( ! class_exists( '\Webmention\Mf2\Parser' ) ) {
 			require_once plugin_dir_path( __FILE__ ) . '../../libraries/mf2/Mf2/Parser.php';
 		}
 
 		$source_url = $response->get_url();
-		$parser     = new Parser( $body, $source_url );
+		$parser     = new Parser( $dom, $source_url );
 		$data       = $parser->parse();
 
 		// Attempts to remove everything but the representative item.
