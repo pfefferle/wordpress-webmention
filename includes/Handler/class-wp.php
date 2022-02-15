@@ -51,7 +51,7 @@ class WP extends Base {
 			}
 		}
 
-		$response = Request::get( $api_link );
+		$response = Request::get( $root_api_links[0]['uri'] );
 		if ( is_wp_error( response ) ) {
 			return response;
 		}
@@ -60,7 +60,7 @@ class WP extends Base {
 		$site_json = $this->parse_site( $response );
 		$this->webmention_item->set__site_name( $site_json['name'] );
 
-		$response = Request::get( $links['url'] );
+		$response = Request::get( $api_link );
 		if ( is_wp_error( response ) ) {
 			return response;
 		}

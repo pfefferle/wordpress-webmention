@@ -72,8 +72,7 @@ class Tools {
 		$source = $request->get_param( 'source' );
 		$target = $request->get_param( 'target' );
 
-		$request = new Request( $source );
-		$return  = $request->fetch( false );
+		$return  = Request::get( $source, false );
 
 		if ( is_wp_error( $return ) ) {
 			return $return;
@@ -81,7 +80,7 @@ class Tools {
 
 		$handler = new Handler();
 
-		return $handler->parse_grouped( $request, $target );
+		return $handler->parse_grouped( $return, $target );
 	}
 
 	/**

@@ -101,12 +101,12 @@ class Handler {
 	/**
 	 * Iterate through a list of handlers and return an array of items.
 	 *
-	 * @param Webmention\Request $response Request Object.
+	 * @param Webmention\Response $response Respone Object.
 	 * @param string $target_url The target URL
 	 *
 	 * @return Webmention\Entity\Item
 	 */
-	public function parse_grouped( Request $response, $target_url ) {
+	public function parse_grouped( Response $response, $target_url ) {
 		$result = array();
 
 		foreach ( $this->handlers as $handler ) {
