@@ -240,4 +240,33 @@ class Response {
 
 		return $items;
 	}
+
+	/**
+	 * Check if request returns an HTTP Error Code
+	 *
+	 * @return boolean
+	 */
+	public function is_error() {
+		$code = $this->get_response_code();
+		return $code >= 400 && $code < 600;
+	}
+
+	/**
+	 * Get the HTTP Error if there is one
+	 *
+	 * @return WP_Error
+	 */
+	public function get_error() {
+		if ( ! $this->is_error() ) {
+			return false;
+		}
+
+		return new WP_Error(
+			'http_error',
+			wp_remote_retrieve_response_message( $this->get_response() ),
+			array(
+				'status' => $this->get_response_code(),
+			)
+		);
+	}
 }

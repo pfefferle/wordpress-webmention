@@ -29,7 +29,13 @@ class Request {
 			return $response;
 		}
 
-		return new Response( $url, $response );
+		$response = new Response( $url, $response );
+
+		if ( $response->is_error() ) {
+			return $response->get_error();
+		}
+
+		return $response;
 	}
 
 	/**
@@ -53,7 +59,13 @@ class Request {
 			return $response;
 		}
 
-		return new Response( $url, $response );
+		$response = new Response( $url, $response );
+
+		if ( $response->is_error() ) {
+			return $response->get_error();
+		}
+
+		return $response;
 	}
 
 	/**
@@ -70,6 +82,7 @@ class Request {
 			'redirection'         => 20,
 			'user-agent'          => "$user_agent; Webmention",
 		);
+
 		return apply_filters( 'webmention_request_get_args', $args );
 	}
 }
