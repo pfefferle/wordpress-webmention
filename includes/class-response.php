@@ -186,7 +186,10 @@ class Response {
 			return new WP_Error( 'no_link_header', __( 'No link header available', 'webmention' ) );
 		}
 
-		$links = explode( ',', $links );
+		if ( ! is_array( $links ) ) {
+			$links = explode( ',', $links );
+		}
+
 		$items = array();
 
 		if ( is_array( $links ) && 1 <= count( $links ) ) {

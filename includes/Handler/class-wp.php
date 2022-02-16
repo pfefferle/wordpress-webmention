@@ -39,7 +39,7 @@ class WP extends Base {
 			)
 		);
 
-		if ( ! $root_api_links && ! is_array( $root_api_links ) ) {
+		if ( ! $root_api_links || ! is_array( $root_api_links ) ) {
 			return new WP_Error( 'no_api_link', __( 'No API link found in the source code', 'webmention' ) );
 		}
 
@@ -52,7 +52,7 @@ class WP extends Base {
 		}
 
 		$response = Request::get( $root_api_links[0]['uri'] );
-		if ( is_wp_error( response ) ) {
+		if ( is_wp_error( $response ) ) {
 			return response;
 		}
 
@@ -61,22 +61,22 @@ class WP extends Base {
 		$this->webmention_item->set__site_name( $site_json['name'] );
 
 		$response = Request::get( $api_link );
-		if ( is_wp_error( response ) ) {
+		if ( is_wp_error( $response ) ) {
 			return response;
 		}
 
-		$results = $this->parse_page( $response, $site_json['timezone'] );
+		$page = $this->parse_page( $response, $site_json['timezone'] );
 
-		$response = Request::get( $results['author'] );
-		if ( is_wp_error( response ) ) {
+		$response = Request::get( $page['author'] );
+		if ( is_wp_error( $response ) ) {
 			return response;
 		}
 
-		$results = array_merge( $results, $this->parse_author( $response ) );
+		$result = array_merge( $page, $this->parse_author( $response ) );
 
 		$raw = array();
 
-		foreach ( $results as $key => $value ) {
+		foreach ( $result as $key => $value ) {
 			if ( '_' !== substr( $key, 0, 1 ) ) {
 				$this->webmention_item->set( $key, $value );
 			} else {
