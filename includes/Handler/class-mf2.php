@@ -629,9 +629,9 @@ class MF2 extends Base {
 		 * replies
 		 * @link https://indieweb.org/replies
 		 */
-		$class_mapper['in-reply-to'] = 'reply';
-		$class_mapper['reply']       = 'reply';
-		$class_mapper['reply-of']    = 'reply';
+		$class_mapper['in-reply-to'] = 'comment';
+		$class_mapper['reply']       = 'comment';
+		$class_mapper['reply-of']    = 'comment';
 
 		return apply_filters( 'webmention_mf2_class_mapper', $class_mapper );
 	}
