@@ -58,8 +58,10 @@ function init() {
 	require_once dirname( __FILE__ ) . '/includes/class-request.php';
 	require_once dirname( __FILE__ ) . '/includes/class-response.php';
 
-	// Comment Type Class
+	// Comment Handler Classes.
 	require_once dirname( __FILE__ ) . '/includes/class-comment-type.php';
+	require_once dirname( __FILE__ ) . '/includes/class-comment.php';
+	add_action( 'init', array( '\Webmention\Comment', 'init' ) );
 
 	// Handler Control Class.
 	require_once dirname( __FILE__ ) . '/includes/class-handler.php';

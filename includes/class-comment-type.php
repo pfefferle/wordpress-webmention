@@ -1,7 +1,6 @@
 <?php
 /**
  * Comment Type Class
- *
  */
 
 namespace Webmention;
@@ -44,6 +43,13 @@ final class Comment_Type {
 	public $description = '';
 
 	/**
+	 * An excerpt to show instead of the "real" content.
+	 *
+	 * @var string $excerpt
+	 */
+	public $excerpt = '';
+
+	/**
 	 * Constructor.
 	 *
 	 * Will populate object properties from the provided arguments and assign other
@@ -73,7 +79,7 @@ final class Comment_Type {
 		/**
 		 * Filters the arguments for registering a comment type.
 		 *
-		 * @param array  $args      Array of arguments for registering a comment type.
+		 * @param array  $args         Array of arguments for registering a comment type.
 		 * @param string $comment_type Comment type key.
 		 */
 		$args = apply_filters( 'register_webmention_comment_type_args', $args, $this->name );

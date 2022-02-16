@@ -5,7 +5,7 @@
  *
  *
  * @param string $comment_type Key for comment type.
- * @param array $args Arguments.
+ * @param array  $args         Arguments.
  *
  * @return Webmention\Comment_Type The registered webmention comment type.
  */
@@ -33,6 +33,17 @@ function register_webmention_comment_type( $comment_type, $args = array() ) {
 	do_action( 'registered_webmention_comment_type', $comment_type, $comment_type_object );
 
 	return $comment_type_object;
+}
+
+/**
+ * Return the registered custom comment types.
+ *
+ * @return array The registered custom comment types
+ */
+function get_webmention_comment_types() {
+	global $webmention_comment_types;
+
+	return $webmention_comment_types;
 }
 
 /**
