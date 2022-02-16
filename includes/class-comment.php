@@ -7,7 +7,7 @@ namespace Webmention;
  */
 class Comment {
 	/**
-	 * Undocumented function
+	 * Initialize the plugin, registering WordPress hooks
 	 *
 	 * @return void
 	 */
@@ -16,7 +16,7 @@ class Comment {
 	}
 
 	/**
-	 * Undocumented function
+	 * Register the comment types used by the Webmention plugin
 	 *
 	 * @return void
 	 */
