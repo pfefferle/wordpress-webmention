@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: Webmention 5.X\n"
 "Report-Msgid-Bugs-To: "
 "https://wordpress.org/support/plugin/wordpress-webmention\n"
-"POT-Creation-Date: 2022-02-11 08:30:15+00:00\n"
+"POT-Creation-Date: 2022-02-16 08:55:34+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -16,6 +16,10 @@ msgstr ""
 
 #: includes/Handler/class-base.php:68
 msgid "$webmention_item is not an instance of Webmention\\Entity\\Item"
+msgstr ""
+
+#: includes/Handler/class-wp.php:43
+msgid "No API link found in the source code"
 msgstr ""
 
 #: includes/class-admin.php:19 templates/webmention-settings.php:2
@@ -248,112 +252,108 @@ msgstr ""
 msgid "Mystery Person (hosted locally)"
 msgstr ""
 
-#: includes/class-cli.php:74
+#: includes/class-cli.php:75
 msgid "Webmention Plugin Meta:\n"
 msgstr ""
 
-#: includes/class-cli.php:123 includes/class-cli.php:145
+#: includes/class-cli.php:124 includes/class-cli.php:146
 msgid "Nothing to ping."
 msgstr ""
 
-#: includes/class-cli.php:126
+#: includes/class-cli.php:127
 msgid "Webmentions sent:"
 msgstr ""
 
-#: includes/class-cli.php:132
+#: includes/class-cli.php:133
 msgid "Invalid post ID or permalink"
 msgstr ""
 
-#: includes/class-cli.php:139 includes/class-cli.php:150
+#: includes/class-cli.php:140 includes/class-cli.php:151
 msgid "Please provide a post-id/permalink or a source and a target"
 msgstr ""
 
-#: includes/class-cli.php:147
+#: includes/class-cli.php:148
 msgid "Webmention sent!"
 msgstr ""
 
-#: includes/class-receiver.php:68
+#: includes/class-receiver.php:62
 msgid "Protocol Used to Receive"
 msgstr ""
 
-#: includes/class-receiver.php:76
+#: includes/class-receiver.php:70
 msgid "Target URL for the Webmention"
 msgstr ""
 
-#: includes/class-receiver.php:85
+#: includes/class-receiver.php:79
 msgid "Source URL for the Webmention"
 msgstr ""
 
-#: includes/class-receiver.php:93
+#: includes/class-receiver.php:87
 msgid "Target URL Fragment for the Webmention"
 msgstr ""
 
-#: includes/class-receiver.php:102
+#: includes/class-receiver.php:96
 msgid "Original Creation Time for the Webmention (GMT)"
 msgstr ""
 
-#: includes/class-receiver.php:111
+#: includes/class-receiver.php:105
 msgid "Response Code Returned During Webmention Verification"
 msgstr ""
 
-#: includes/class-receiver.php:120
+#: includes/class-receiver.php:114
 msgid "Webmention Vouch URL"
 msgstr ""
 
-#: includes/class-receiver.php:253
+#: includes/class-receiver.php:247
 msgid "Target is not on this domain"
 msgstr ""
 
-#: includes/class-receiver.php:260 includes/class-receiver.php:274
+#: includes/class-receiver.php:254 includes/class-receiver.php:268
 msgid "Target is not a valid post"
 msgstr ""
 
-#: includes/class-receiver.php:264
+#: includes/class-receiver.php:258
 msgid "Target and source cannot direct to the same resource"
 msgstr ""
 
-#: includes/class-receiver.php:269
+#: includes/class-receiver.php:263
 msgid "Pings are disabled for this post"
 msgstr ""
 
-#: includes/class-receiver.php:337
+#: includes/class-receiver.php:331
 msgid "Webmention is scheduled"
 msgstr ""
 
-#: includes/class-receiver.php:411
+#: includes/class-receiver.php:405
 msgid "Webmention was successful"
 msgstr ""
 
-#: includes/class-receiver.php:462 includes/class-vouch.php:64
+#: includes/class-receiver.php:456 includes/class-vouch.php:64
 msgid "Invalid data passed"
 msgstr ""
 
-#: includes/class-receiver.php:488
+#: includes/class-receiver.php:481
 msgid "Cannot find target link"
 msgstr ""
 
-#: includes/class-request.php:189
+#: includes/class-receiver.php:638
+msgid "Not enough data available"
+msgstr ""
+
+#: includes/class-response.php:109
 msgid "Content Type is not supported"
 msgstr ""
 
-#: includes/class-request.php:213
-msgid "Resource not found"
+#: includes/class-response.php:149
+msgid "Cannot generate DOMDocument"
 msgstr ""
 
-#: includes/class-request.php:221
-msgid "Method not allowed"
+#: includes/class-response.php:155
+msgid "Request body has no data"
 msgstr ""
 
-#: includes/class-request.php:230
-msgid "Resource has been deleted"
-msgstr ""
-
-#: includes/class-request.php:238
-msgid "Resource removed for legal reasons"
-msgstr ""
-
-#: includes/class-request.php:284
-msgid "Cannot Generate DOMDocument"
+#: includes/class-response.php:186
+msgid "No link header available"
 msgstr ""
 
 #: includes/class-vouch.php:31
@@ -371,18 +371,18 @@ msgid ""
 "contain a link to this post's permalink URL. Your response will then appear "
 "(possibly after moderation) on this page. Want to update or remove your "
 "response? Update or delete your post and re-enter your post's URL again. "
-"(<a href=\"http://indieweb.org/webmention\">Learn More</a>)"
+"(<a href=\"https://indieweb.org/webmention\">Learn More</a>)"
 msgstr ""
 
-#: includes/functions.php:458
+#: includes/functions.php:337
 msgid "Pingback"
 msgstr ""
 
-#: includes/functions.php:461
+#: includes/functions.php:340
 msgid "Trackback"
 msgstr ""
 
-#: includes/functions.php:467
+#: includes/functions.php:346
 msgid "Response"
 msgstr ""
 
@@ -418,6 +418,10 @@ msgstr ""
 msgid "Webmention Creation Time"
 msgstr ""
 
+#: templates/webmention-edit-comment-form.php:14
+msgid "Webmention Response Type"
+msgstr ""
+
 #: templates/webmention-endpoint-form.php:119
 msgid "Send a Webmention"
 msgstr ""
@@ -449,105 +453,94 @@ msgstr ""
 msgid "Sender"
 msgstr ""
 
-#: templates/webmention-settings.php:11
-msgid ""
-"The Webmention plugin primarily handles sending/receiving notifications of "
-"mentions from other websites, so the format of the comments can look odd on "
-"one's site. We highly recommend also installing and activating the <a "
-"class=\"thickbox open-plugin-details-modal\" href=\"%1$s\" "
-"target_\"blank\">Semantic Linkbacks Plugin</a> which has better parsing and "
-"display capabilities to allow richer looking comments as well as options "
-"for displaying many reply types as facepiles for improved user interface."
-msgstr ""
-
-#: templates/webmention-settings.php:15
+#: templates/webmention-settings.php:9
 msgid "A Webmention Sender is an implementation that sends Webmentions."
 msgstr ""
 
-#: templates/webmention-settings.php:19
+#: templates/webmention-settings.php:13
 msgid "Self-Ping settings"
 msgstr ""
 
-#: templates/webmention-settings.php:24
+#: templates/webmention-settings.php:18
 msgid "Disable self-pings on the same URL"
 msgstr ""
 
-#: templates/webmention-settings.php:25
+#: templates/webmention-settings.php:19
 msgid "(for example \"http://example.com/?p=123\")"
 msgstr ""
 
-#: templates/webmention-settings.php:32
+#: templates/webmention-settings.php:26
 msgid "Disable self-pings on the same Domain"
 msgstr ""
 
-#: templates/webmention-settings.php:33
+#: templates/webmention-settings.php:27
 msgid "(for example \"example.com\")"
 msgstr ""
 
-#: templates/webmention-settings.php:40
+#: templates/webmention-settings.php:34
 msgid "Disable sending webmentions for media links(image, video, audio)"
 msgstr ""
 
-#: templates/webmention-settings.php:49
+#: templates/webmention-settings.php:43
 msgid "Receiver"
 msgstr ""
 
-#: templates/webmention-settings.php:51
+#: templates/webmention-settings.php:45
 msgid ""
 "A Webmention Receiver is an implementation that receives Webmentions to one "
 "or more target URLs on which the Receiver's Webmention endpoint is "
 "advertised."
 msgstr ""
 
-#: templates/webmention-settings.php:55
+#: templates/webmention-settings.php:49
 msgid "Webmention support for post types"
 msgstr ""
 
-#: templates/webmention-settings.php:58
+#: templates/webmention-settings.php:52
 msgid "Enable Webmention support for the following post types:"
 msgstr ""
 
-#: templates/webmention-settings.php:74
+#: templates/webmention-settings.php:70
 msgid "Set a page for mentions of the homepage to be sent to:"
 msgstr ""
 
-#: templates/webmention-settings.php:79
+#: templates/webmention-settings.php:75
 msgid "No homepage mentions"
 msgstr ""
 
-#: templates/webmention-settings.php:89
+#: templates/webmention-settings.php:85
 msgid "Visit site"
 msgstr ""
 
-#: templates/webmention-settings.php:97
+#: templates/webmention-settings.php:93
 msgid "Automatically approve Webmention from these domains"
 msgstr ""
 
-#: templates/webmention-settings.php:105
+#: templates/webmention-settings.php:101
 msgid ""
 "A Webmention received from a site that matches a domain in this list will "
 "be auto-approved. One domain (e.g. indieweb.org) per line."
 msgstr ""
 
-#: templates/webmention-settings.php:112
+#: templates/webmention-settings.php:108
 msgid "Comment settings"
 msgstr ""
 
-#: templates/webmention-settings.php:118
+#: templates/webmention-settings.php:114
 msgid ""
 "Show a Webmention form at the comment section, to allow anyone to notify "
 "you of a mention."
 msgstr ""
 
-#: templates/webmention-settings.php:127
+#: templates/webmention-settings.php:123
 msgid "Change the default help text of the Webmention form"
 msgstr ""
 
-#: templates/webmention-settings.php:134
+#: templates/webmention-settings.php:130
 msgid "Avatars"
 msgstr ""
 
-#: templates/webmention-settings.php:139
+#: templates/webmention-settings.php:135
 msgid "Show avatars on webmentions if available."
 msgstr ""
 
@@ -589,7 +582,7 @@ msgstr ""
 msgid "https://notiz.blog/"
 msgstr ""
 
-#: includes/functions.php:455
+#: includes/functions.php:334
 msgctxt "noun"
 msgid "Comment"
 msgstr ""

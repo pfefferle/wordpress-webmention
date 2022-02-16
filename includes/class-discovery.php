@@ -51,7 +51,7 @@ class Discovery {
 	}
 
 	/**
-	 * Generates webfinger/host-meta links
+	 * Generates WebFinger/host-meta links
 	 */
 	public static function jrd_links( $array ) {
 		$array['links'][] = array(

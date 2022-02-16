@@ -146,7 +146,7 @@ class Response {
 		}
 
 		if ( $validate_content_type && ( ! in_array( $this->get_content_type(), array( 'text/html', 'text/xml' ), true ) ) ) {
-			return new WP_Error( 'wrong_content_type', __( 'Cannot Generate DOMDocument', 'webmention' ), array( $this->get_content_type() ) );
+			return new WP_Error( 'wrong_content_type', __( 'Cannot generate DOMDocument', 'webmention' ), array( $this->get_content_type() ) );
 		}
 
 		$body = $this->body;
