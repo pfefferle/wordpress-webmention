@@ -648,8 +648,8 @@ class MF2 extends Base {
 		 * replies
 		 * @link https://indieweb.org/in-reply-to
 		 */
-		$rel_mapper['in-reply-to'] = 'reply';
-		$rel_mapper['reply-of']    = 'reply';
+		$rel_mapper['in-reply-to'] = 'comment';
+		$rel_mapper['reply-of']    = 'comment';
 
 		/*
 		 * bookmarks
