@@ -302,12 +302,12 @@ class Item {
 	 */
 	public function verify() {
 		// If there is no author information then try something else.
-		if ( ! empty( $this->get_author( 'name' ) ) ) {
+		if ( empty( $this->get_author( 'name' ) ) ) {
 			return false;
 		}
 
 		// If this is a reply it needs a summary. Summary should be generated from content if no summary.
-		if ( 'reply' === $this->get_response_type() && ! empty( $this->get_content() ) ) {
+		if ( 'comment' === $this->get_response_type() && empty( $this->get_content() ) ) {
 			return false;
 		}
 

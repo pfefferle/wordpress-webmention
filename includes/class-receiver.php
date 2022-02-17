@@ -628,11 +628,10 @@ class Receiver {
 			return $commentdata;
 		}
 
-		$request = new Request( $commentdata['source'] );
-		$request->fetch();
+		$response = Request::get( $commentdata['source'] );
 
 		$handler = new Handler();
-		$item    = $handler->parse( $request, $commentdata['target'] );
+		$item    = $handler->parse( $response, $commentdata['target'] );
 
 		if ( ! $item->verify() ) {
 			return new WP_Error( 'incomplete_item', __( 'Not enough data available', 'webmention' ) );
