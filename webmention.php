@@ -41,7 +41,7 @@ add_action( 'admin_menu', array( '\Webmention\Admin', 'admin_menu' ) );
  */
 function init() {
 	// Add support for webmentions to custom post types.
-	$post_types = get_option( '\Webmention\support_post_types', array( 'post', 'page' ) ) ? get_option( '\Webmention\support_post_types', array( 'post', 'page' ) ) : array();
+	$post_types = get_option( 'webmention_support_post_types', array( 'post', 'page' ) ) ? get_option( 'webmention_support_post_types', array( 'post', 'page' ) ) : array();
 
 	foreach ( $post_types as $post_type ) {
 		add_post_type_support( $post_type, 'webmentions' );
