@@ -362,7 +362,7 @@ class Item {
 	/**
 	 * Returns a property from the raw data in the webmention_item.
 	 *
-	 * @param $string $key Property Key.
+	 * @param string $key Property Key.
 	 *
 	 * @return mixed Return property or false if not found.
 	 */

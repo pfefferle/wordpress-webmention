@@ -89,5 +89,4 @@ class Tools {
 	public static function tools_page() {
 		load_template( dirname( __FILE__ ) . '/../templates/webmention-tools.php' );
 	}
-
 }
