@@ -32,6 +32,8 @@ class Admin {
 		add_filter( 'comment_unapproved_to_approved', array( static::class, 'transition_to_approvelist' ), 10 );
 
 		self::add_privacy_policy_content();
+
+		add_action( 'admin_enqueue_scripts', array( static::class, 'enqueue_admin_assets' ) );
 	}
 
 	/**
@@ -230,8 +232,6 @@ class Admin {
 	 * Load settings page
 	 */
 	public static function settings_page() {
-		add_thickbox();
-		wp_enqueue_script( 'plugin-install' );
 		load_template( dirname( __FILE__ ) . '/../templates/webmention-settings.php' );
 	}
 
@@ -405,5 +405,17 @@ class Admin {
 		if ( function_exists( 'wp_add_privacy_policy_content' ) ) {
 			wp_add_privacy_policy_content( __( 'Webmention', 'webmention' ), $content );
 		}
+	}
+
+	/**
+	 * Enqueue admin assets like scripts and styles
+	 */
+	public static function enqueue_admin_assets( $hook ) {
+		if ( $hook !== 'settings_page_webmention' ) {
+			return;
+		}
+		wp_enqueue_style( 'webmention_admin_style', plugin_dir_url( dirname( __FILE__ ) ) . 'styles/admin.css', array(), false, 'all' );
+
+		wp_enqueue_script( 'webmention_admin_script', plugin_dir_url( dirname( __FILE__ ) ) . 'scripts/admin.js', array('jquery'), false, true );
 	}
 }
