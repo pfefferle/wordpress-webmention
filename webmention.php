@@ -63,6 +63,9 @@ function init() {
 	require_once dirname( __FILE__ ) . '/includes/class-comment.php';
 	add_action( 'init', array( '\Webmention\Comment', 'init' ) );
 
+	require_once dirname( __FILE__ ) . '/includes/class-comment-walker.php';
+	add_action( 'init', array( '\Webmention\Comment_Walker', 'init' ) );
+
 	// Handler Control Class.
 	require_once dirname( __FILE__ ) . '/includes/class-handler.php';
 	require_once dirname( __FILE__ ) . '/includes/Handler/class-base.php';
