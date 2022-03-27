@@ -63,6 +63,7 @@ class Comment_Walker extends Walker_Comment {
 			add_filter( 'comment_text', array( $this, 'filter_comment_text' ), 40, 2 );
 		}
 
+		// Maintain the original pingback and trackback output.
 		if ( ( 'pingback' === $comment->comment_type || 'trackback' === $comment->comment_type ) && $args['short_ping'] ) {
 			ob_start();
 			$this->ping( $comment, $depth, $args );
@@ -136,16 +137,16 @@ class Comment_Walker extends Walker_Comment {
 		$show_pending_links = isset( $commenter['comment_author'] ) && $commenter['comment_author'];
 
 		if ( $commenter['comment_author_email'] ) {
-			$moderation_note = __( 'Your comment is awaiting moderation.' );
+			$moderation_note = __( 'Your comment is awaiting moderation.', 'default' );
 		} else {
-			$moderation_note = __( 'Your comment is awaiting moderation. This is a preview; your comment will be visible after it has been approved.' );
+			$moderation_note = __( 'Your comment is awaiting moderation. This is a preview; your comment will be visible after it has been approved.', 'default' );
 		}
 		?>
 		<<?php echo $tag; ?> <?php comment_class( $this->has_children ? 'parent' : '', $comment ); ?> id="comment-<?php comment_ID(); ?>">
 		<?php if ( 'div' !== $args['style'] ) : ?>
 		<div id="div-comment-<?php comment_ID(); ?>" class="comment-body">
 		<?php endif; ?>
-		<div class="comment-author vcard">
+		<div class="comment-author vcard h-card u-author">
 			<?php
 			if ( 0 != $args['avatar_size'] ) {
 				echo get_avatar( $comment, $args['avatar_size'] );
@@ -160,8 +161,8 @@ class Comment_Walker extends Walker_Comment {
 
 			printf(
 				/* translators: %s: Comment author link. */
-				__( '%s <span class="says">says:</span>' ),
-				sprintf( '<cite class="fn">%s</cite>', $comment_author )
+				__( '%s <span class="says">says:</span>', 'default' ),
+				sprintf( '<cite class="fn p-name">%s</cite>', $comment_author )
 			);
 			?>
 		</div>
@@ -183,10 +184,11 @@ class Comment_Walker extends Walker_Comment {
 				)
 			);
 
-			edit_comment_link( __( '(Edit)' ), ' &nbsp;&nbsp;', '' );
+			edit_comment_link( __( '(Edit)', 'default' ), ' &nbsp;&nbsp;', '' );
 			?>
 		</div>
 
+		<div class="comment-content e-content">
 		<?php
 		comment_text(
 			$comment,
@@ -200,6 +202,7 @@ class Comment_Walker extends Walker_Comment {
 			)
 		);
 		?>
+		</div>
 
 		<?php
 		comment_reply_link(
@@ -247,7 +250,7 @@ class Comment_Walker extends Walker_Comment {
 		<<?php echo $tag; ?> id="comment-<?php comment_ID(); ?>" <?php comment_class( $this->has_children ? 'parent' : '', $comment ); ?>>
 			<article id="div-comment-<?php comment_ID(); ?>" class="comment-body">
 				<footer class="comment-meta">
-					<div class="comment-author vcard">
+					<div class="comment-author vcard h-card u-author">
 						<?php
 						if ( 0 != $args['avatar_size'] ) {
 							echo get_avatar( $comment, $args['avatar_size'] );
@@ -271,9 +274,9 @@ class Comment_Walker extends Walker_Comment {
 					<div class="comment-metadata">
 						<?php
 						printf(
-							'<a href="%s"><time datetime="%s">%s</time></a>',
+							'<a href="%s"><time datetime="%$s">%$s</time></a>',
 							esc_url( get_comment_link( $comment, $args ) ),
-							get_comment_time( 'c' ),
+							get_comment_time( DATE_W3C ),
 							sprintf(
 								/* translators: 1: Comment date, 2: Comment time. */
 								__( '%1$s at %2$s' ),
@@ -291,7 +294,7 @@ class Comment_Walker extends Walker_Comment {
 					<?php endif; ?>
 				</footer><!-- .comment-meta -->
 
-				<div class="comment-content">
+				<div class="comment-content e-content">
 					<?php comment_text(); ?>
 				</div><!-- .comment-content -->
 
