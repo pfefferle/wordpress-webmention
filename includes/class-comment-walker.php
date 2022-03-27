@@ -49,8 +49,8 @@ class Comment_Walker extends Walker_Comment {
 		$comment = $data_object;
 
 		$depth++;
-		$GLOBALS['comment_depth'] = $depth;
-		$GLOBALS['comment']       = $comment;
+		$GLOBALS['comment_depth'] = $depth; // phpcs:ignore
+		$GLOBALS['comment']       = $comment; // phpcs:ignore
 
 		/* Changes the signature of callbacks. Behaves as previous if string.
 		 * Now accepts an array of callbacks by comment type.
