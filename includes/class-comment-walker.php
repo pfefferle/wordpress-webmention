@@ -52,11 +52,27 @@ class Comment_Walker extends Walker_Comment {
 		$GLOBALS['comment_depth'] = $depth;
 		$GLOBALS['comment']       = $comment;
 
+		/* Changes the signature of callbacks. Behaves as previous if string.
+		 * Now accepts an array of callbacks by comment type.
+		 * If no calback for the type or no general callback drops through to normal handler.
+		 */
 		if ( ! empty( $args['callback'] ) ) {
-			ob_start();
-			call_user_func( $args['callback'], $comment, $args, $depth );
-			$output .= ob_get_clean();
-			return;
+			$callback = null;
+			if ( is_string( $args['callback'] ) ) {
+				$callback = $args['callback'];
+			} elseif ( is_array( $args['callback'] ) && ! wp_is_numeric_array( $args['callback'] ) ) {
+				if ( array_key_exists( $comment->comment_type, $args['callback'] ) ) {
+					$callback = $args['callback'][ $comment->comment_type ];
+				} elseif ( array_key_exists( 'all', $args['callback'] ) ) {
+					$callback = $args['callback']['all'];
+				}
+			}
+			if ( $callback ) {
+				ob_start();
+				call_user_func( $callback, $comment, $args, $depth );
+				$output .= ob_get_clean();
+				return;
+			}
 		}
 
 		if ( 'comment' === $comment->comment_type ) {
