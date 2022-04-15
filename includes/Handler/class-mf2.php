@@ -51,12 +51,12 @@ class MF2 extends Base {
 
 		// add response type
 		$response_type = $this->get_response_type( $item, $data, $target_url );
-		$this->webmention_item->set_response_type( wp_slash( $response_type ) );
+		$this->webmention_item->add_response_type( wp_slash( $response_type ) );
 
 		$this->set_properties( $item );
 		$this->set_property_author( $author );
 
-		$this->webmention_item->set_url( $source_url ); // If there is no URL property then use the retrieved URL.
+		$this->webmention_item->add_url( $source_url ); // If there is no URL property then use the retrieved URL.
 
 		return true;
 	}
@@ -71,28 +71,28 @@ class MF2 extends Base {
 	public function set_properties( $mf_array ) {
 
 		// Only store the raw representative item and discard other information.
-		$this->webmention_item->set_raw( $mf_array );
+		$this->webmention_item->add_raw( $mf_array );
 
 		// Retrieve time properties if available.
-		$this->webmention_item->set_published( $this->get_datetime_property( 'published', $mf_array ) );
-		$this->webmention_item->set_updated( $this->get_datetime_property( 'updated', $mf_array ) );
+		$this->webmention_item->add_published( $this->get_datetime_property( 'published', $mf_array ) );
+		$this->webmention_item->add_updated( $this->get_datetime_property( 'updated', $mf_array ) );
 
-		$this->webmention_item->set_url( $this->get_plaintext( $mf_array, 'url' ) );
+		$this->webmention_item->add_url( $this->get_plaintext( $mf_array, 'url' ) );
 
 		// Sometimes the featured image is stored in featured. Otherwise try photo.
-		$this->webmention_item->set_photo( $this->get_plaintext( $mf_array, 'featured' ) );
-		$this->webmention_item->set_photo( $this->get_plaintext( $mf_array, 'photo' ) );
+		$this->webmention_item->add_photo( $this->get_plaintext( $mf_array, 'featured' ) );
+		$this->webmention_item->add_photo( $this->get_plaintext( $mf_array, 'photo' ) );
 
 		$content = $this->get_html( $mf_array, 'content' );
-		$this->webmention_item->set_content( $content );
+		$this->webmention_item->add_content( $content );
 
 		$summary = $this->get_plaintext( $mf_array, 'summary' );
 		if ( empty( $summary ) ) {
 			$summary = $this->generate_summary( $content );
 		}
 
-		$this->webmention_item->set_summary( $summary );
-		$this->webmention_item->set_meta( apply_filters( 'webmention_handler_mf2_set_properties', array(), $this ) );
+		$this->webmention_item->add_summary( $summary );
+		$this->webmention_item->add_meta( apply_filters( 'webmention_handler_mf2_set_properties', array(), $this ) );
 
 		return true;
 	}
@@ -111,7 +111,7 @@ class MF2 extends Base {
 			}
 		}
 
-		$this->webmention_item->set_author( array_filter( $author ) );
+		$this->webmention_item->add_author( array_filter( $author ) );
 	}
 
 	/**

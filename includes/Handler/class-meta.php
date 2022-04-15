@@ -56,17 +56,17 @@ class Meta extends Base {
 			$meta[ $meta_name ] = $meta_value;
 		}
 
-		$this->webmention_item->set_raw( $meta );
+		$this->webmention_item->add_raw( $meta );
 
 		$this->add_properties( $meta );
 
 		if ( ! $this->webmention_item->get_name() ) {
-			$this->webmention_item->set_name( trim( $xpath->query( '//title' )->item( 0 )->textContent ) );
+			$this->webmention_item->add_name( trim( $xpath->query( '//title' )->item( 0 )->textContent ) );
 		}
 
 		// If Site Name is not set use domain name less www
 		if ( ! $this->webmention_item->has_site_name() && $this->webmention_item->has_url() ) {
-			$this->webmention_item->set__site_name( preg_replace( '/^www\./', '', wp_parse_url( $this->webmention_item->get_url(), PHP_URL_HOST ) ) );
+			$this->webmention_item->add__site_name( preg_replace( '/^www\./', '', wp_parse_url( $this->webmention_item->get_url(), PHP_URL_HOST ) ) );
 		}
 	}
 
@@ -98,6 +98,6 @@ class Meta extends Base {
 				}
 			}
 		}
-		$this->webmention_item->set_meta( apply_filters( 'webmention_handler_meta_set_properties', array(), $this ) );
+		$this->webmention_item->add_meta( apply_filters( 'webmention_handler_meta_set_properties', array(), $this ) );
 	}
 }

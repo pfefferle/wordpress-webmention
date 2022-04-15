@@ -121,6 +121,15 @@ class Item {
 		if ( strncasecmp( $method, 'set', 3 ) === 0 ) {
 			$this->$var = current( $params );
 		}
+
+		if ( strncasecmp( $method, 'add', 3 ) === 0 ) {
+			if ( empty( $this->$var ) ) {
+				call_user_func( array( $this, 'set_' . $var ), current( $params ) );
+				return true;
+			}
+
+			return false;
+		}
 	}
 
 	public function set( $key, $value ) {
