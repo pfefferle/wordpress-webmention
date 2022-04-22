@@ -30,18 +30,22 @@ class Item {
 	 */
 	protected $url;
 
-	// mabe also an entity
+	/**
+	 * Array of authors.
+	 *
+	 * @var array
+	 */
 	protected $author = array();
 
 	/**
-	 * Array of photos
+	 * Array of photos.
 	 *
 	 * @var array
 	 */
 	protected $photo = array();
 
 	/**
-	 * The response name
+	 * The response name.
 	 *
 	 * @var string
 	 */
@@ -58,7 +62,7 @@ class Item {
 	protected $site_name;
 
 	/**
-	 * The response content
+	 * The response content.
 	 *
 	 * @var string
 	 */
@@ -72,7 +76,7 @@ class Item {
 	protected $summary;
 
 	/**
-	 * The response type
+	 * The response type.
 	 *
 	 * @example comment-meta
 	 *
@@ -90,18 +94,18 @@ class Item {
 	protected $raw;
 
 	/**
-	 * Optional Parsed Properties to be Saved in Comment Meta
-	 *
+	 * Optional Parsed Properties to be Saved in Comment Meta.
 	 *
 	 * @var array
 	 */
 	protected $meta;
 
 	/**
-	 * Magic function for getter/setter
+	 * Magic function for getter/setter.
 	 *
 	 * @param string $method
 	 * @param array  $params
+	 *
 	 * @return void
 	 */
 	public function __call( $method, $params ) {
@@ -132,12 +136,37 @@ class Item {
 		}
 	}
 
+	/**
+	 * Generic adder.
+	 *
+	 * @param string $key   The object property name.
+	 * @param mixed  $value The object property value.
+	 *
+	 * @return boolean
+	 */
+	public function add( $key, $value ) {
+		if ( empty( $this->$key ) ) {
+			call_user_func( array( $this, 'set_' . $key ), $value );
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Generic setter.
+	 *
+	 * @param string $key   The object property name.
+	 * @param mixed  $value The object property value.
+	 *
+	 * @return void
+	 */
 	public function set( $key, $value ) {
 		call_user_func( array( $this, 'set_' . $key ), $value );
 	}
 
 	/**
-	 * Setter for $this->updated
+	 * Setter for "updated".
 	 *
 	 * @param mixed $updated
 	 *
@@ -155,7 +184,7 @@ class Item {
 	}
 
 	/**
-	 * Setter for $this->content
+	 * Setter for "content".
 	 *
 	 * @param string $content
 	 *
@@ -166,7 +195,7 @@ class Item {
 	}
 
 	/**
-	 * Setter for $this->summary
+	 * Setter for "summary".
 	 *
 	 * @param mixed $summary
 	 *
@@ -177,7 +206,7 @@ class Item {
 	}
 
 	/**
-	 * Setter for $this->published
+	 * Setter for "published".
 	 *
 	 * @param mixed $published
 	 *
@@ -195,7 +224,7 @@ class Item {
 	}
 
 	/**
-	 * Setter for $this->author
+	 * Setter for "author".
 	 *
 	 * @param mixed $author
 	 *
@@ -220,9 +249,9 @@ class Item {
 	}
 
 	/**
-	 * Getter for author
+	 * Getter for "author".
 	 *
-	 * @param string $propery the author property to return
+	 * @param string $propery The author property to return
 	 *
 	 * @return array|string
 	 */
@@ -239,7 +268,7 @@ class Item {
 	}
 
 	/**
-	 * Getter for content with fallback to summary
+	 * Getter for "content" with fallback to "summary".
 	 *
 	 * @return string
 	 */
@@ -248,7 +277,7 @@ class Item {
 	}
 
 	/**
-	 * Getter for response type with fallback to 'mention'
+	 * Getter for response type with fallback to "mention".
 	 *
 	 * @return string
 	 */
@@ -257,7 +286,7 @@ class Item {
 	}
 
 	/**
-	 * Getter for published
+	 * Getter for "published".
 	 *
 	 * @return DateTimeImmutable
 	 */
@@ -270,7 +299,7 @@ class Item {
 	}
 
 	/**
-	 * Getter for published as GMT
+	 * Getter for "published" as GMT.
 	 *
 	 * @return DateTimeImmutable
 	 */
@@ -282,7 +311,7 @@ class Item {
 	}
 
 	/**
-	 * Getter for meta
+	 * Getter for "meta".
 	 *
 	 * @return array
 	 */
@@ -295,7 +324,7 @@ class Item {
 	}
 
 	/**
-	 * Check if all fields are set
+	 * Check if all fields are set.
 	 *
 	 * @return boolean
 	 */
@@ -305,7 +334,7 @@ class Item {
 	}
 
 	/**
-	 * Check if all fields for a valid comment are available
+	 * Check if all fields for a valid comment are available.
 	 *
 	 * @return boolean
 	 */
@@ -324,9 +353,9 @@ class Item {
 	}
 
 	/**
-	 * Returns the representative entry as array
+	 * Returns the representative entry as array.
 	 *
-	 * return array;
+	 * @return array
 	 */
 	public function to_array() {
 		$array = get_object_vars( $this );
@@ -335,9 +364,9 @@ class Item {
 	}
 
 	/**
-	 * Returns the representative entry as JF2 data
+	 * Returns the representative entry as JF2 data.
 	 *
-	 * return string the JF2 JSON
+	 * @return string The JF2 JSON
 	 */
 	public function to_json() {
 		return wp_json_encode( $this->to_array() );
@@ -346,7 +375,7 @@ class Item {
 	/**
 	 * Returns the representative entry as a comment array.
 	 *
-	 * return array;
+	 * @return array
 	 */
 	public function to_commentdata_array() {
 		$this->meta['avatar']   = $this->get_author( 'photo' );
@@ -371,7 +400,7 @@ class Item {
 	/**
 	 * Returns a property from the raw data in the webmention_item.
 	 *
-	 * @param string $key Property Key.
+	 * @param string $key Property key.
 	 *
 	 * @return mixed Return property or false if not found.
 	 */
