@@ -75,6 +75,16 @@ class Comment_Walker extends Walker_Comment {
 			}
 		}
 
+		/* Implements an argument that will just output an avatar */
+		if ( ! isset( $args['avatar_only'] ) ) {
+			$args['avatar_only'] = true;
+		}
+
+		/* Implements an argument that optionally overlays an icon on top of the profile image, applies only to the avatar only output  */
+		if ( ! isset( $args['overlay'] ) ) {
+			$args['overlay'] = true;
+		}
+
 		if ( 'comment' === $comment->comment_type ) {
 			add_filter( 'comment_text', array( $this, 'filter_comment_text' ), 40, 2 );
 		}
@@ -84,6 +94,11 @@ class Comment_Walker extends Walker_Comment {
 			ob_start();
 			$this->ping( $comment, $depth, $args );
 			$output .= ob_get_clean();
+		} elseif ( $args['avatar_only'] ) {
+			ob_start();
+			$this->avatar_only( $comment, $depth, $args );
+			$output .= ob_get_clean();
+
 		} elseif ( 'html5' === $args['format'] ) {
 			ob_start();
 			$this->html5_comment( $comment, $depth, $args );
@@ -127,5 +142,32 @@ class Comment_Walker extends Walker_Comment {
 		} else {
 			$output .= "</li><!-- #comment-## -->\n";
 		}
+	}
+
+	/**
+	 * Outputs a comment as just a profile picture.
+	 *
+	 * @param WP_Comment $comment The comment object.
+	 * @param int        $depth   Depth of the current comment.
+	 * @param array      $args    An array of arguments.
+	*/
+	protected function avatar_only( $comment, $depth, $args ) {
+		$tag = ( 'div' === $args['style'] ) ? 'div' : 'li';
+
+		$title = get_comment_text( $comment, $args );
+		// Optionally overlay an icon.
+		$overlay = '';
+		?>
+		<<?php echo $tag; ?> id="comment-<?php comment_ID(); ?>" <?php comment_class( '', $comment ); ?>>
+			<div class="comment-body">
+				<span class="p-author h-card">
+					<a class="u-url" title="<?php esc_attr( $title ); ?>" href="<?php echo get_comment_author_url( $comment ); ?>">
+						<?php echo get_avatar( $comment, $args['avatar_size'] ); ?>
+						<?php echo $overlay; ?>
+					</a>
+					<span class="hide-name p-name"><?php echo get_comment_author( $comment ); ?></span>
+				</span>
+			</div>
+		<?php
 	}
 }
