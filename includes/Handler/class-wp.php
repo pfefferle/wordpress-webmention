@@ -58,7 +58,7 @@ class WP extends Base {
 
 		// Decode the site json to get the site name, description, base URL, and timezone string.
 		$site_json = $this->parse_site( $response );
-		$this->webmention_item->set__site_name( $site_json['name'] );
+		$this->webmention_item->add__site_name( $site_json['name'] );
 
 		$response = Request::get( $api_link );
 		if ( is_wp_error( $response ) ) {
@@ -85,7 +85,7 @@ class WP extends Base {
 		}
 
 		$raw['_sitedata'] = $site_json;
-		$this->webmention_item->set_raw( $raw );
+		$this->webmention_item->add_raw( $raw );
 		return true;
 
 	}
