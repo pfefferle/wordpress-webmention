@@ -8,10 +8,10 @@ class DB {
 	 *
 	 * @var int
 	 */
-	private static $target_version = 1.0;
+	private static $target_version = '1.0.0';
 
 	private static function get_target_version() {
-		return self::$db_version;
+		return self::$target_version;
 	}
 
 	private static function get_version() {
@@ -26,11 +26,11 @@ class DB {
 	private static function is_latest_version() {
 		$current_version = self::get_version();
 
-		return $current_version === self::$db_version;
+		return (bool) version_compare( $current_version, self::$target_version, '==' );
 	}
 
 	/**
-	 * Updates the database structure if necessary
+	 * Updates the database structure if necessary.
 	 */
 	public static function update_database() {
 		if ( self::is_latest_version() ) {
@@ -38,11 +38,14 @@ class DB {
 		}
 
 		$version_from_db = self::get_version();
-		if ( $version_from_db < 1.0 ) {
+		if ( version_compare( $version_from_db, '1.0.0', '<' ) ) {
 			global $wpdb;
 
 			// 1. rename comment meta
 			self::update_commentmeta_key( 'semantic_linkbacks_avatar', 'avatar' );
+			self::update_commentmeta_key( 'semantic_linkbacks_author_url', 'webmention_author_url' );
+			self::update_commentmeta_key( 'semantic_linkbacks_canonical', 'webmention_canonical' );
+			self::update_commentmeta_key( 'semantic_linkbacks_source', 'webmention_source' );
 			// 2. migrate comment type
 		}
 
@@ -50,7 +53,7 @@ class DB {
 	}
 
 	/**
-	 * Rename meta keys
+	 * Rename meta keys.
 	 *
 	 * @param string $old The old commentmeta key
 	 * @param string $new The new commentmeta key
@@ -69,7 +72,7 @@ class DB {
 	}
 
 	/**
-	 * Rename option keys
+	 * Rename option keys.
 	 *
 	 * @param string $old The old option key
 	 * @param string $new The new option key
