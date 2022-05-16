@@ -216,7 +216,7 @@ class Webmention_Request {
 						'status' => 400,
 					)
 				);
-			case 452:
+			case 451:
 				return new WP_Error(
 					'resource_removed',
 					__( 'Resource removed for legal reasons', 'webmention' ),
