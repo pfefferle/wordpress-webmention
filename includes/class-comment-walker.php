@@ -77,7 +77,7 @@ class Comment_Walker extends Walker_Comment {
 
 		/* Implements an argument that will just output an avatar */
 		if ( ! isset( $args['avatar_only'] ) ) {
-			$args['avatar_only'] = true;
+			$args['avatar_only'] = false;
 		}
 
 		/* Implements an argument that optionally overlays an icon on top of the profile image, applies only to the avatar only output  */
@@ -158,7 +158,7 @@ class Comment_Walker extends Walker_Comment {
 		// Optionally overlay an icon.
 		$overlay = '';
 		?>
-		<<?php echo $tag; ?> id="comment-<?php comment_ID(); ?>" <?php comment_class( '', $comment ); ?>>
+		<<?php echo $tag; ?> id="comment-<?php comment_ID(); ?>" <?php comment_class( array( 'u-comment', 'h-cite' ), $comment ); ?>>
 			<div class="comment-body">
 				<span class="p-author h-card">
 					<a class="u-url" title="<?php esc_attr( $title ); ?>" href="<?php echo get_comment_author_url( $comment ); ?>">
