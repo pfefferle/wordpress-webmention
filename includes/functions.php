@@ -478,15 +478,15 @@ if ( ! function_exists( 'normalize_url' ) ) {
 }
 
 if ( ! function_exists( 'ifset' ) ) {
-		/**
-		 * If set, return otherwise false.
-		 *
-		 * @param type $var Check if set.
-		 * @return $var|false Return either $var or $return.
-		 */
+	/**
+	 * If set, return otherwise false.
+	 *
+	 * @param mixed $var Check if set.
+	 *
+	 * @return mixed|false Return either $var or $return.
+	 */
 	function ifset( &$var, $return = false ) {
-
-			return isset( $var ) ? $var : $return;
+		return isset( $var ) ? $var : $return;
 	}
 }
 
