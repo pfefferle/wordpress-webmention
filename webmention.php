@@ -51,7 +51,6 @@ function init() {
 	}
 
 	require_once dirname( __FILE__ ) . '/includes/class-tools.php';
-	add_action( 'admin_menu', array( '\Webmention\Tools', 'admin_menu' ) );
 	add_action( 'init', array( '\Webmention\Tools', 'init' ) );
 
 	// Request Handler.

@@ -43,6 +43,8 @@ class WP extends Base {
 			return new WP_Error( 'no_api_link', __( 'No API link found in the source code', 'webmention' ) );
 		}
 
+		$api_link = null;
+
 		// check if link is API link and skip JSON-Feed links for example
 		foreach ( $post_api_links as $post_api_link ) {
 			if ( false !== strstr( $post_api_link['uri'], $root_api_links[0]['uri'] ) ) {
@@ -51,21 +53,24 @@ class WP extends Base {
 			}
 		}
 
-		$response = Request::get( $root_api_links[0]['uri'] );
+		if ( ! $api_link ) {
+			return new WP_Error( 'no_api_link', __( 'No valid API link found', 'webmention' ) );
+		}
+
+		$response = Request::get( $api_link );
 		if ( is_wp_error( $response ) ) {
-			return response;
+			return $response;
 		}
 
 		// Decode the site json to get the site name, description, base URL, and timezone string.
 		$site_json = $this->parse_site( $response );
-		$this->webmention_item->add__site_name( $site_json['name'] );
 
 		$response = Request::get( $api_link );
 		if ( is_wp_error( $response ) ) {
 			return response;
 		}
 
-		$page = $this->parse_page( $response, $site_json['timezone'] );
+		$page = $this->parse_page( $response );
 
 		$response = Request::get( $page['author'] );
 		if ( is_wp_error( $response ) ) {
@@ -87,7 +92,6 @@ class WP extends Base {
 		$raw['_sitedata'] = $site_json;
 		$this->webmention_item->add_raw( $raw );
 		return true;
-
 	}
 
 	public function parse_page( $response, $timezone = null ) {
@@ -124,10 +128,11 @@ class WP extends Base {
 	public function parse_site( $response ) {
 		// Decode the site json to get the site name, description, base URL, and timezone string.
 		$site_json = json_decode( $response->get_body(), true );
+
 		unset( $site_json['namespaces'] );
 		unset( $site_json['authentication'] );
 		unset( $site_json['routes'] );
-		$site_json['timezone'] = new DateTimeZone( $site_json['timezone_string'] );
+
 		return $site_json;
 	}
 }
