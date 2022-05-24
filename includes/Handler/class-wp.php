@@ -63,21 +63,21 @@ class WP extends Base {
 		}
 
 		// Decode the site json to get the site name, description, base URL, and timezone string.
-		$site_json = $this->parse_site( $response );
+		$site_json = $this->parse_site_json( $response );
 
 		$response = Request::get( $api_link );
 		if ( is_wp_error( $response ) ) {
 			return response;
 		}
 
-		$page = $this->parse_page( $response, $site_json['timezone'] );
+		$page = $this->parse_post_json( $response, $site_json['timezone'] );
 
 		$response = Request::get( $page['author'] );
 		if ( is_wp_error( $response ) ) {
 			return response;
 		}
 
-		$result = array_merge( $page, $this->parse_author( $response ) );
+		$result = array_merge( $page, $this->parse_author_json( $response ) );
 
 		$raw = array();
 
@@ -94,38 +94,63 @@ class WP extends Base {
 		return true;
 	}
 
-	public function parse_page( $response, $timezone = null ) {
+	/**
+	 * Parse post/page JSON
+	 *
+	 * @param Response          $response
+	 * @param DateTimeZone|null $timezone
+	 *
+	 * @return array
+	 */
+	public function parse_post_json( Response $response, $timezone = null ) {
 		if ( ! $timezone ) {
 			$timezone = wp_timezone();
 		}
+
 		$page_json = json_decode( $response->get_body(), true );
+
 		return array_filter(
 			array(
-				'name'      => $page_json['title']['rendered'],
-				'summary'   => $page_json['excerpt']['rendered'],
-				'content'   => $page_json['content']['rendered'],
-				'url'       => $page_json['link'],
+				'name'      => ifset( $page_json['title']['rendered'] ),
+				'summary'   => ifset( $page_json['excerpt']['rendered'] ),
+				'content'   => ifset( $page_json['content']['rendered'] ),
+				'url'       => ifset( $page_json['link'] ),
 				'published' => new DateTimeImmutable( $page_json['date'], $timezone ),
 				'updated'   => new DateTimeImmutable( $page_json['modified'], $timezone ),
-				'author'    => $page_json['_links']['author'][0]['href'],
+				'author'    => ifset( $page_json['_links']['author'][0]['href'] ),
 				'_pagedata' => $page_json,
 			)
 		);
 	}
 
-	public function parse_author( $response ) {
+	/**
+	 * Parse author JSON
+	 *
+	 * @param Response $response
+	 *
+	 * @return array
+	 */
+	public function parse_author_json( Response $response ) {
 		$author_json = json_decode( $response->get_body(), true );
+
 		return array(
 			'author'      => array(
-				'name'  => $author_json['name'],
-				'url'   => $author_json['link'],
-				'photo' => $author_json['avatar_urls']['96'],
+				'name'  => ifset( $author_json['name'] ),
+				'url'   => ifset( $author_json['link'] ),
+				'photo' => ifset( $author_json['avatar_urls']['96'] ),
 			),
 			'_authordata' => $author_json,
 		);
 	}
 
-	public function parse_site( $response ) {
+	/**
+	 * Parse site JSON
+	 *
+	 * @param Response $response
+	 *
+	 * @return array
+	 */
+	public function parse_site_json( Response $response ) {
 		// Decode the site json to get the site name, description, base URL, and timezone string.
 		$site_json = json_decode( $response->get_body(), true );
 
@@ -134,6 +159,7 @@ class WP extends Base {
 		unset( $site_json['routes'] );
 
 		$site_json['timezone'] = new DateTimeZone( $site_json['timezone_string'] );
+
 		return $site_json;
 	}
 }
