@@ -83,7 +83,7 @@ class WP extends Base {
 
 		foreach ( $result as $key => $value ) {
 			if ( '_' !== substr( $key, 0, 1 ) ) {
-				$this->webmention_item->set( $key, $value );
+				$this->webmention_item->add( $key, $value );
 			} else {
 				$raw[ $key ] = $value;
 			}
