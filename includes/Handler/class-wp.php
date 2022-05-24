@@ -57,7 +57,7 @@ class WP extends Base {
 			return new WP_Error( 'no_api_link', __( 'No valid API link found', 'webmention' ) );
 		}
 
-		$response = Request::get( $api_link );
+		$response = Request::get( $root_api_links[0]['uri'] );
 		if ( is_wp_error( $response ) ) {
 			return $response;
 		}
@@ -70,7 +70,7 @@ class WP extends Base {
 			return response;
 		}
 
-		$page = $this->parse_page( $response );
+		$page = $this->parse_page( $response, $site_json['timezone'] );
 
 		$response = Request::get( $page['author'] );
 		if ( is_wp_error( $response ) ) {
@@ -133,6 +133,7 @@ class WP extends Base {
 		unset( $site_json['authentication'] );
 		unset( $site_json['routes'] );
 
+		$site_json['timezone'] = new DateTimeZone( $site_json['timezone_string'] );
 		return $site_json;
 	}
 }
