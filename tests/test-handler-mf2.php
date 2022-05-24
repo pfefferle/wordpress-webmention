@@ -19,7 +19,12 @@ class Webmention_Handler_MF2_Test extends WP_UnitTestCase {
 
 		$subset = json_decode( file_get_contents( substr( $path, 0, -4 ) . 'json' ), true );
 
-		$this->assertArraySubset( $subset, $handler->get_webmention_item()->to_array() );
+		$array = $handler->get_webmention_item()->to_array();
+
+		foreach ( $subset as $key => $value ) {
+			$this->assertArrayHasKey( $key, $array );
+			$this->assertSame( $value, $array[ $key ] );
+		}
 	}
 
 	public function template_provider() {
