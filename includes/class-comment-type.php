@@ -25,13 +25,19 @@ final class Comment_Type {
 	 */
 	public $label;
 
-
 	/**
 	 * Name of the comment type. Usually plural.
 	 *
 	 * @var string $singular
 	 */
 	public $singular;
+
+	/**
+	 * Single Character Emoji Representation of the Comment Type. Optional.
+	 *
+	 * @var string $icon
+	 */
+	public $icon;
 
 	/**
 	 * A short descriptive summary of what the comment type is.
