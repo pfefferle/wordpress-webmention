@@ -1,0 +1,18 @@
+
+
+.avatar-only .comment-body {
+	float: left;
+	display: inline-block;
+	position: relative;
+	margin: 0 5px 10px 0;
+}
+
+.comment-body .emoji-overlay {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+}
+
+.hide-name {
+	display: none;
+}

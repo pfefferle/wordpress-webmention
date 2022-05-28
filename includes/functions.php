@@ -47,6 +47,29 @@ function get_webmention_comment_types() {
 }
 
 /**
+ * Return the registered custom comment types.
+ *
+ * @param WP_Comment Comment Object
+ * @return array The registered custom comment types
+ */
+function get_webmention_comment_icon( $comment ) {
+	$comment = get_comment( $comment );
+	if ( ! $comment ) {
+		return '';
+	}
+	$types = get_webmention_comment_types();
+	if ( 'reacji' === $comment->comment_type ) {
+		return $comment->comment_content;
+	} 
+
+	if ( array_key_exists( $comment->comment_type, $types ) ) {
+		return $types[ $comment->comment_type ]->icon;
+	}
+
+	return '💬';
+}
+
+/**
  * A wrapper for Webmention\Sender::send_webmention.
  *
  * @since 2.4.0

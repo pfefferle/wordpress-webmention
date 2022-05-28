@@ -116,8 +116,20 @@ function init() {
 	remove_action( 'init', array( '\WebMentionFormPlugin', 'init' ) );
 	remove_action( 'init', array( '\WebMentionForCommentsPlugin', 'init' ) );
 
+	add_action( 'wp_enqueue_scripts', '\Webmention\enqueue_scripts' );
+
 }
+
 add_action( 'plugins_loaded', '\Webmention\init' );
+
+
+/**
+ * Add CSS and JavaScript
+ */
+function enqueue_scripts() {
+	wp_enqueue_style( 'webmention', plugin_dir_url( __FILE__ ) . 'css/webmention.css', array() );
+}
+
 
 /**
  * `get_plugin_data` wrapper
