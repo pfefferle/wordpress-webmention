@@ -75,15 +75,11 @@ class Comment_Walker extends Walker_Comment {
 			}
 		}
 
-		/* Implements an argument that will just output an avatar */
-		if ( ! isset( $args['avatar_only'] ) ) {
-			$args['avatar_only'] = false;
-		}
-
-		/* Implements an argument that optionally overlays an icon on top of the profile image, applies only to the avatar only output  */
-		if ( ! isset( $args['overlay'] ) ) {
-			$args['overlay'] = true;
-		}
+		$defaults = array(
+			'avatar_only' => false, // Implements an argument that will just output an avatar
+			'overlay'     => true, // Implements an argument that optionally overlays an icon on top of the profile image, applies only to the avatar only output
+		);
+		$args     = wp_parse_args( $args, $defaults );
 
 		if ( 'comment' === $comment->comment_type ) {
 			add_filter( 'comment_text', array( $this, 'filter_comment_text' ), 40, 2 );
