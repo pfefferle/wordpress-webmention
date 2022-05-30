@@ -55,10 +55,11 @@ function get_webmention_comment_types() {
 function get_webmention_comment_type_icon( $type ) {
 	$types = get_webmention_comment_types();
 	if ( array_key_exists( $type, $types ) ) {
-		return $types[ $type ]->icon;
+		$return = $types[ $type ]->icon;
+	} else {
+		$return = '💬';
 	}
-
-	return '💬';
+	return apply_filters( 'webmention_comment_type_icon', $return, $type );
 }
 
 /**
