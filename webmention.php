@@ -37,6 +37,15 @@ add_action( 'admin_init', array( '\Webmention\Admin', 'admin_init' ) );
 add_action( 'admin_menu', array( '\Webmention\Admin', 'admin_menu' ) );
 
 /**
+ * Plugin Version Number used for caching.
+ */
+function version() {
+	$meta = get_plugin_meta( array( 'Version' => 'Version' ) );
+
+	return $meta['Version'];
+}
+
+/**
  * Initialize Webmention Plugin
  */
 function init() {
@@ -61,6 +70,9 @@ function init() {
 	require_once dirname( __FILE__ ) . '/includes/class-comment-type.php';
 	require_once dirname( __FILE__ ) . '/includes/class-comment.php';
 	add_action( 'init', array( '\Webmention\Comment', 'init' ) );
+
+	require_once dirname( __FILE__ ) . '/includes/class-comment-walker.php';
+	add_action( 'init', array( '\Webmention\Comment_Walker', 'init' ) );
 
 	// Handler Control Class.
 	require_once dirname( __FILE__ ) . '/includes/class-handler.php';
@@ -112,16 +124,43 @@ function init() {
 	remove_action( 'init', array( '\WebMentionFormPlugin', 'init' ) );
 	remove_action( 'init', array( '\WebMentionForCommentsPlugin', 'init' ) );
 
+	add_action( 'wp_enqueue_scripts', '\Webmention\enqueue_scripts' );
+
 }
+
 add_action( 'plugins_loaded', '\Webmention\init' );
+
+/**
+ * Add CSS and JavaScript
+ */
+function enqueue_scripts() {
+	wp_enqueue_style( 'webmention', plugin_dir_url( __FILE__ ) . 'css/webmention.css', array(), version() );
+}
 
 /**
  * `get_plugin_data` wrapper
  *
  * @return array the plugin metadata array
  */
-function get_plugin_meta( $markup = true, $translate = true ) {
-	return get_plugin_data( __FILE__, $markup, $translate );
+function get_plugin_meta( $default_headers = array() ) {
+	if ( ! $default_headers ) {
+		$default_headers = array(
+			'Name'        => 'Plugin Name',
+			'PluginURI'   => 'Plugin URI',
+			'Version'     => 'Version',
+			'Description' => 'Description',
+			'Author'      => 'Author',
+			'AuthorURI'   => 'Author URI',
+			'TextDomain'  => 'Text Domain',
+			'DomainPath'  => 'Domain Path',
+			'Network'     => 'Network',
+			'RequiresWP'  => 'Requires at least',
+			'RequiresPHP' => 'Requires PHP',
+			'UpdateURI'   => 'Update URI',
+		);
+	}
+
+	return \get_file_data( __FILE__, $default_headers, 'plugin' );
 }
 
 // Check for CLI env, to add the CLI commands
