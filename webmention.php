@@ -40,12 +40,7 @@ add_action( 'admin_menu', array( '\Webmention\Admin', 'admin_menu' ) );
  * Plugin Version Number used for caching.
  */
 function version() {
-	$meta = \get_file_data(
-		__FILE__,
-		array(
-			'Version' => 'Version',
-		)
-	);
+	$meta = get_plugin_meta( array( 'Version' => 'Version' ) );
 
 	return $meta['Version'];
 }
@@ -148,8 +143,25 @@ function enqueue_scripts() {
  *
  * @return array the plugin metadata array
  */
-function get_plugin_meta( $markup = true, $translate = true ) {
-	return get_plugin_data( __FILE__, $markup, $translate );
+function get_plugin_meta( $default_headers = array() ) {
+	if ( ! $default_headers ) {
+		$default_headers = array(
+			'Name'        => 'Plugin Name',
+			'PluginURI'   => 'Plugin URI',
+			'Version'     => 'Version',
+			'Description' => 'Description',
+			'Author'      => 'Author',
+			'AuthorURI'   => 'Author URI',
+			'TextDomain'  => 'Text Domain',
+			'DomainPath'  => 'Domain Path',
+			'Network'     => 'Network',
+			'RequiresWP'  => 'Requires at least',
+			'RequiresPHP' => 'Requires PHP',
+			'UpdateURI'   => 'Update URI',
+		);
+	}
+
+	return \get_file_data( __FILE__, $default_headers, 'plugin' );
 }
 
 // Check for CLI env, to add the CLI commands
