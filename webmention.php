@@ -40,9 +40,10 @@ add_action( 'admin_menu', array( '\Webmention\Admin', 'admin_menu' ) );
  * Plugin Version Number used for caching.
  */
 function version() {
-	return '5.X';
-}
+	$meta = get_plugin_meta( false );
 
+	return $meta['Version'];
+}
 
 /**
  * Initialize Webmention Plugin
@@ -130,14 +131,12 @@ function init() {
 
 add_action( 'plugins_loaded', '\Webmention\init' );
 
-
 /**
  * Add CSS and JavaScript
  */
 function enqueue_scripts() {
 	wp_enqueue_style( 'webmention', plugin_dir_url( __FILE__ ) . 'css/webmention.css', array(), version() );
 }
-
 
 /**
  * `get_plugin_data` wrapper
