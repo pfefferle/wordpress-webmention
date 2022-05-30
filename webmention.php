@@ -40,7 +40,12 @@ add_action( 'admin_menu', array( '\Webmention\Admin', 'admin_menu' ) );
  * Plugin Version Number used for caching.
  */
 function version() {
-	$meta = get_plugin_meta( false );
+	$meta = \get_file_data(
+		__FILE__,
+		array(
+			'Version' => 'Version',
+		)
+	);
 
 	return $meta['Version'];
 }
