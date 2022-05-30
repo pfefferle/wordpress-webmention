@@ -111,36 +111,6 @@ class Comment_Walker extends Walker_Comment {
 	}
 
 	/**
-	 * Ends the element output, if needed.
-	 *
-	 * @see Walker::end_el()
-	 * @see wp_list_comments()
-	 *
-	 * @param string     $output      Used to append additional content. Passed by reference.
-	 * @param WP_Comment $data_object Comment data object.
-	 * @param int        $depth       Optional. Depth of the current comment. Default 0.
-	 * @param array      $args        Optional. An array of arguments. Default empty array.
-	 */
-	public function end_el( &$output, $data_object, $depth = 0, $args = array() ) {
-		if ( ! empty( $args['end-callback'] ) ) {
-			ob_start();
-			call_user_func(
-				$args['end-callback'],
-				$data_object, // The current comment object.
-				$args,
-				$depth
-			);
-			$output .= ob_get_clean();
-			return;
-		}
-		if ( 'div' === $args['style'] ) {
-			$output .= "</div><!-- #comment-## -->\n";
-		} else {
-			$output .= "</li><!-- #comment-## -->\n";
-		}
-	}
-
-	/**
 	 * Outputs a comment as just a profile picture.
 	 *
 	 * @param WP_Comment $comment The comment object.
