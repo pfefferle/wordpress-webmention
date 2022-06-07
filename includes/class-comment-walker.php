@@ -14,6 +14,11 @@ class Comment_Walker extends Walker_Comment {
 	public static function init() {
 		// Set New Walker at Priority 5 so it can be overwritten by anything at a higher level.
 		add_filter( 'wp_list_comments_args', array( static::class, 'filter_comment_args' ), 5 );
+		// Remove webmention types from the Comment Template Query
+		if ( separate_webmentions_from_comments() ) {
+			add_filter( 'comments_template_query_args', array( static::class, 'filter_comments_query_args' ) );
+			add_filter( 'comments_template', array( static::class, 'filter_comments_template' ) );
+		}
 	}
 
 	/**
@@ -26,6 +31,29 @@ class Comment_Walker extends Walker_Comment {
 	public static function filter_comment_args( $args ) {
 		$args['walker'] = new Comment_Walker();
 		return $args;
+	}
+
+	/**
+	 * Filter the comment template query arguments to exclude webmention comment types
+	 *
+	 * @param array $args an array of arguments for displaying comments
+	 *
+	 * @return array the filtered array
+	 */
+	public static function filter_comments_query_args( $args ) {
+		$args[ 'type__not_in' ] = get_webmention_comment_type_names();
+		return $args;
+	}
+
+	/**
+	 * Filter the comments to add custom comment walker
+	 *
+	 * @param array $args an array of arguments for displaying comments
+	 *
+	 * @return array the filtered array
+	 */
+	public static function filter_comments_template( $theme_template ) {
+		return plugin_dir_path( dirname( __FILE__ ) ) . 'templates/webmention-comments.php';
 	}
 
 	/**

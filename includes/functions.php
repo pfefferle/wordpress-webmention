@@ -47,6 +47,21 @@ function get_webmention_comment_types() {
 }
 
 /**
+ * Return the registered custom comment types names plus webmention for backcompat.
+ *
+ * @return array The registered custom comment type names
+ */
+function get_webmention_comment_type_names() {
+	global $webmention_comment_types;
+
+	$types = array_values( wp_list_pluck( get_webmention_comment_types(), 'name' ) );
+	$types[] = 'webmention';
+	return $types;
+}
+
+
+
+/**
  * Return the registered custom comment type icon.
  *
  * @param string $type Comment Type.
@@ -60,6 +75,15 @@ function get_webmention_comment_type_icon( $type ) {
 		$return = '💬';
 	}
 	return apply_filters( 'webmention_comment_type_icon', $return, $type );
+}
+
+/**
+ * Return the current config for whether to separate comments from webmentions by default.
+ *
+ * @return boolean
+ */
+function separate_webmentions_from_comments() {
+	return apply_filters( 'separate_webmentions_from_comments', get_option( 'webmention_separate_comment', 1 ) );
 }
 
 /**
