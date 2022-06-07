@@ -41,7 +41,7 @@ class Comment_Walker extends Walker_Comment {
 	 * @return array the filtered array
 	 */
 	public static function filter_comments_query_args( $args ) {
-		$args[ 'type__not_in' ] = get_webmention_comment_type_names();
+		$args['type__not_in'] = get_webmention_comment_type_names();
 		return $args;
 	}
 
