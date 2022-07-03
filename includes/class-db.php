@@ -117,6 +117,7 @@ class DB {
 			);
 			$wpdb->query( $query );
 		}
+	}
 
 	/**
 	 * Add protocol designation for webmentions.
