@@ -1,24 +1,24 @@
 <?php
-
-
 $mentions = get_comments(
 	array(
-		'post_id' => get_the_ID(),
+		'post_id'  => get_the_ID(),
 		'type__in' => get_webmention_comment_type_names(),
-		'status' => 'approve',
+		'status'   => 'approve',
 	)
 );
+?>
 
-echo '<ul class="mention-list">';
+<ul class="mention-list">
 
-wp_list_comments( 
+<?php
+wp_list_comments(
 	array(
 		'avatar_only' => true,
 		'avatar_size' => 64
 	),
 	$mentions
-); 
+);
+?>
+</ul>
 
-echo '</ul>';
-
-load_template( get_theme_file_path( '/comments.php' ) );
+<?php load_template( locate_template( 'comments.php' ) ); ?>
