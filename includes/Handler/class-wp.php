@@ -65,17 +65,15 @@ class WP extends Base {
 		// Decode the site json to get the site name, description, base URL, and timezone string.
 		$site_json = $this->parse_site_json( $response );
 
+		// Embed extra data in the call
+		$api_link = add_query_arg( '_embed', 1, $api_link );
+
 		$response = Request::get( $api_link );
 		if ( is_wp_error( $response ) ) {
 			return response;
 		}
 
 		$page = $this->parse_post_json( $response, $site_json['timezone'] );
-
-		$response = Request::get( $page['author'] );
-		if ( is_wp_error( $response ) ) {
-			return response;
-		}
 
 		$result = array_merge( $page, $this->parse_author_json( $response ) );
 
@@ -131,7 +129,12 @@ class WP extends Base {
 	 * @return array
 	 */
 	public function parse_author_json( Response $response ) {
-		$author_json = json_decode( $response->get_body(), true );
+		$json = json_decode( $response->get_body(), true );
+		if ( ! array_key_exists( '_embedded', $json ) ) {
+			return null;
+		}
+
+		$author_json = $json['_embedded']['author'][0];
 
 		return array(
 			'author'      => array(
