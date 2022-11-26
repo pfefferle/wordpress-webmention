@@ -3,13 +3,14 @@ global $wp_query, $post;
 $comment_id = $wp_query->query['replytocom'];
 $comment = get_comment( $comment_id );
 $target  = '';
+$permalink = '';
 
-if ( $comment->comment_author_url ) {
+if ( !empty($comment) && $comment->comment_author_url ) {
 	$target = $comment->comment_author_url;
 }
 
 // check parent comment
-if ( $comment->comment_parent ) {
+if ( !empty($comment) && $comment->comment_parent ) {
 	// get parent comment...
 	$parent = get_comment( $comment->comment_parent );
 	// ...and gernerate target url
@@ -17,6 +18,12 @@ if ( $comment->comment_parent ) {
 		$target = $parent->comment_author_url;
 	}
 }
+
+//	check permalink
+if ( !empty($comment) && $comment->comment_post_ID ) {
+	$permalink = get_permalink( $comment->comment_post_ID );
+}
+
 ?><!DOCTYPE html>
 <html <?php language_attributes(); ?>>
 	<head>
@@ -26,7 +33,7 @@ if ( $comment->comment_parent ) {
 		<script type="text/javascript">
 			<!--
 			// redirect to comment-page and scroll to comment
-			window.location = "<?php echo get_permalink( $comment->comment_post_ID ) . '#comment-' . $comment_id; ?>";
+			window.location = "<?php echo $permalink . '#comment-' . $comment_id; ?>";
 			//–>
 		</script>
 	</head>
