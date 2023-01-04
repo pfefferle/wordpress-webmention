@@ -1,3 +1,9 @@
+<?php
+/**
+ * Hook to add custom content before the webmention form added to the comment form.
+ */
+do_action( 'webmention_comment_form_template_start' );
+?>
 <form id="webmention-form" action="<?php echo get_webmention_endpoint(); ?>" method="post">
 	<p>
 		<label for="webmention-source"><?php echo get_webmention_form_text( get_the_ID() ); ?></label>
@@ -11,3 +17,9 @@
 	<input id="webmention-format" type="hidden" name="format" value="html" />
 	<input id="webmention-target" type="hidden" name="target" value="<?php the_permalink(); ?>" />
 </form>
+<?php
+/**
+ * Hook to add custom content after the webmention form added to the comment form.
+ */
+do_action( 'webmention_comment_form_template_end' );
+?>
