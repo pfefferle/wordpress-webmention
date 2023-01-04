@@ -2,7 +2,7 @@
 /**
  * Hook to add custom content before the webmention form added to the comment form.
  */
-do_action( 'webmention_comment_form_template_start' );
+do_action( 'webmention_comment_form_template_before' );
 ?>
 <form id="webmention-form" action="<?php echo get_webmention_endpoint(); ?>" method="post">
 	<p>
@@ -21,5 +21,5 @@ do_action( 'webmention_comment_form_template_start' );
 /**
  * Hook to add custom content after the webmention form added to the comment form.
  */
-do_action( 'webmention_comment_form_template_end' );
+do_action( 'webmention_comment_form_template_after' );
 ?>
