@@ -16,6 +16,7 @@ class Tools {
 	 * Register Webmention tools settings.
 	 */
 	public static function init() {
+		add_action( 'admin_menu', array( static::class, 'admin_menu' ) );
 		add_action( 'rest_api_init', array( static::class, 'register_routes' ) );
 	}
 
@@ -28,7 +29,7 @@ class Tools {
 			$title,
 			$title,
 			'manage_options',
-			'webmention',
+			'webmention-tools',
 			array( static::class, 'tools_page' )
 		);
 	}
@@ -89,5 +90,4 @@ class Tools {
 	public static function tools_page() {
 		load_template( dirname( __FILE__ ) . '/../templates/webmention-tools.php' );
 	}
-
 }

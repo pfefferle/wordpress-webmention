@@ -1,4 +1,7 @@
 <?php
+
+use DMS\PHPUnitExtensions\ArraySubset\Assert;
+
 class Webmention_Handler_MF2_Test extends WP_UnitTestCase {
 	/**
 	 * @dataProvider template_provider
@@ -19,7 +22,7 @@ class Webmention_Handler_MF2_Test extends WP_UnitTestCase {
 
 		$subset = json_decode( file_get_contents( substr( $path, 0, -4 ) . 'json' ), true );
 
-		$this->assertArraySubset( $subset, $handler->get_webmention_item()->to_array() );
+		Assert::assertArraySubset( $subset, $handler->get_webmention_item()->to_array() );
 	}
 
 	public function template_provider() {

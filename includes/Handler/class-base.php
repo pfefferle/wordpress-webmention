@@ -40,7 +40,7 @@ abstract class Base {
 	}
 
 	/**
-	 * Get Item
+	 * Get Item.
 	 *
 	 * @return Webmention\Entity\Item
 	 */
@@ -58,9 +58,10 @@ abstract class Base {
 	}
 
 	/**
-	 * Set Item
+	 * Set Item.
 	 *
 	 * @param Webmention\Entity\Item $webmention_item the Webmention Item
+	 *
 	 * @return WP_Error|true
 	 */
 	public function set_webmention_item( $webmention_item ) {
@@ -76,6 +77,7 @@ abstract class Base {
 	 * Generate Summary from Content.
 	 *
 	 * @param string $content Content.
+	 *
 	 * @return string Summary.
 	 */
 	public function generate_summary( $content ) {
@@ -86,8 +88,8 @@ abstract class Base {
 	/**
 	 * Takes a response object and parses it.
 	 *
-	 * @param Webmention\Response $response Response Object.
-	 * @param string $target_url The target URL
+	 * @param Webmention\Response $response   Response Object.
+	 * @param string              $target_url The target URL
 	 *
 	 * @return WP_Error|true Return error or true if successful.
 	 */

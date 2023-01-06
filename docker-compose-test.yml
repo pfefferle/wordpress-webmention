@@ -3,6 +3,7 @@ services:
   test-db:
     image: mysql:5.7
     environment:
+      MYSQL_DATABASE: webmention-test
       MYSQL_ROOT_PASSWORD: webmention-test
 
   test-php:

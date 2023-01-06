@@ -1,7 +1,9 @@
 {
   "author": {
     "name": "Matthias Pfefferle",
-    "url": "https://www.facebook.com/10153762523688552"
+    "url": "https://www.facebook.com/10153762523688552",
+    "photo": "https://graph.facebook.com/v2.6/10153762523688552/picture?type=large"
   },
-  "response_type": "reply"
+  "response_type": "comment",
+  "content": "😢"
 }

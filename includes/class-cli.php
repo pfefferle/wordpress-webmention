@@ -67,7 +67,7 @@ class Cli extends WP_CLI_Command {
 	 * @return void
 	 */
 	public function meta( $args, $assoc_args ) {
-		$plugin_data = get_plugin_meta( false );
+		$plugin_data = get_plugin_meta();
 
 		if ( $assoc_args ) {
 			$plugin_data = array_intersect_key( $plugin_data, $assoc_args );

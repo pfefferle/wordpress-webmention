@@ -5,7 +5,7 @@
  *
  *
  * @param string $comment_type Key for comment type.
- * @param array $args Arguments.
+ * @param array  $args         Arguments.
  *
  * @return Webmention\Comment_Type The registered webmention comment type.
  */
@@ -33,6 +33,49 @@ function register_webmention_comment_type( $comment_type, $args = array() ) {
 	do_action( 'registered_webmention_comment_type', $comment_type, $comment_type_object );
 
 	return $comment_type_object;
+}
+
+/**
+ * Return the registered custom comment types.
+ *
+ * @return array The registered custom comment types
+ */
+function get_webmention_comment_types() {
+	global $webmention_comment_types;
+
+	return $webmention_comment_types;
+}
+
+/**
+ * Return the registered custom comment type icon.
+ *
+ * @param string $type Comment Type.
+ * @return array The registered custom comment types
+ */
+function get_webmention_comment_type_icon( $type ) {
+	$types = get_webmention_comment_types();
+	if ( array_key_exists( $type, $types ) ) {
+		$return = $types[ $type ]->icon;
+	} else {
+		$return = '💬';
+	}
+	return apply_filters( 'webmention_comment_type_icon', $return, $type );
+}
+
+/**
+ * Return the icon for the current comment object
+ *
+ * @param WP_Comment|int Comment ID or Object
+ * @return array The registered custom comment types
+ */
+function get_webmention_comment_icon( $comment ) {
+	$type = get_comment_type( $comment );
+
+	if ( 'reacji' === $comment->comment_type ) {
+		return $comment->comment_content;
+	}
+
+	return get_webmention_comment_type_icon( $type );
 }
 
 /**
@@ -467,15 +510,15 @@ if ( ! function_exists( 'normalize_url' ) ) {
 }
 
 if ( ! function_exists( 'ifset' ) ) {
-		/**
-		 * If set, return otherwise false.
-		 *
-		 * @param type $var Check if set.
-		 * @return $var|false Return either $var or $return.
-		 */
+	/**
+	 * If set, return otherwise false.
+	 *
+	 * @param mixed $var Check if set.
+	 *
+	 * @return mixed|false Return either $var or $return.
+	 */
 	function ifset( &$var, $return = false ) {
-
-			return isset( $var ) ? $var : $return;
+		return isset( $var ) ? $var : $return;
 	}
 }
 

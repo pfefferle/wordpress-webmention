@@ -45,8 +45,8 @@ class JSONLD extends Base {
 		}
 
 		// Set raw data.
-		$this->webmention_item->set_raw( $jsonld );
-		$this->webmention_item->set_response_type( 'mention' );
+		$this->webmention_item->add_raw( $jsonld );
+		$this->webmention_item->add_response_type( 'mention' );
 		$return = $this->add_properties( $jsonld );
 		return is_wp_error( $return ) ? $return : true;
 	}
@@ -64,24 +64,24 @@ class JSONLD extends Base {
 			}
 			if ( in_array( $json['@type'], array( 'WebPage', 'Article', 'NewsArticle', 'BlogPosting' ), true ) ) {
 				if ( isset( $json['datePublished'] ) ) {
-					$this->webmention_item->set_published( new DateTimeImmutable( $json['datePublished'] ) );
+					$this->webmention_item->add_published( new DateTimeImmutable( $json['datePublished'] ) );
 				}
 				if ( isset( $json['dateModified'] ) ) {
-					$this->webmention_item->set_updated( new DateTimeImmutable( $json['dateModified'] ) );
+					$this->webmention_item->add_updated( new DateTimeImmutable( $json['dateModified'] ) );
 				}
 				if ( isset( $json['url'] ) ) {
-					$this->webmention_item->set_url( $json['url'] );
+					$this->webmention_item->add_url( $json['url'] );
 				}
 				if ( isset( $json['headline'] ) ) {
-					$this->webmention_item->set_name( $json['headline'] );
+					$this->webmention_item->add_name( $json['headline'] );
 				} elseif ( isset( $json['name'] ) ) {
-					$this->webmention_item->set_name( $json['name'] );
+					$this->webmention_item->add_name( $json['name'] );
 				}
 				if ( isset( $json['description'] ) ) {
-					$this->webmention_item->set_summary( $json['description'] );
+					$this->webmention_item->add_summary( $json['description'] );
 				}
 				if ( isset( $json['keywords'] ) ) {
-					$this->webmention_item->set_category( $json['keywords'] );
+					$this->webmention_item->add_category( $json['keywords'] );
 				}
 
 				if ( isset( $json['articleBody'] ) ) {
@@ -98,9 +98,9 @@ class JSONLD extends Base {
 						$json['image'] = end( $json['image'] );
 					}
 					if ( is_string( $json['image'] ) ) {
-						$this->webmention_item->set_photo( $json['image'] );
+						$this->webmention_item->add_photo( $json['image'] );
 					} elseif ( ! $this->is_jsonld( $json['image'] ) && $this->is_jsonld_type( $json['image'], 'ImageObject' ) ) {
-						$this->webmention_item->set_photo( $json['image']['url'] );
+						$this->webmention_item->add_photo( $json['image']['url'] );
 					}
 				}
 
@@ -119,16 +119,16 @@ class JSONLD extends Base {
 							'me'    => isset( $json['sameAs'] ) ? $json['author']['sameAs'] : null,
 							'email' => isset( $json['email'] ) ? $json['author']['email'] : null,
 						);
-						$this->webmention_item->set_author( array_filter( $author ) );
+						$this->webmention_item->add_author( array_filter( $author ) );
 					}
 				}
 				if ( isset( $json['isPartOf'] ) ) {
-					$this->webmention_item->set_site_name( $json['isPartOf']['name'] );
+					$this->webmention_item->add_site_name( $json['isPartOf']['name'] );
 				}
 			}
 		}
 
-		$this->webmention_item->set_meta( apply_filters( 'webmention_handler_jsonld_set_properties', array(), $this ) );
+		$this->webmention_item->add_meta( apply_filters( 'webmention_handler_jsonld_set_properties', array(), $this ) );
 		return true;
 	}
 

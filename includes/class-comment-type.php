@@ -1,7 +1,6 @@
 <?php
 /**
  * Comment Type Class
- *
  */
 
 namespace Webmention;
@@ -26,13 +25,19 @@ final class Comment_Type {
 	 */
 	public $label;
 
-
 	/**
 	 * Name of the comment type. Usually plural.
 	 *
 	 * @var string $singular
 	 */
 	public $singular;
+
+	/**
+	 * Single Character Emoji Representation of the Comment Type. Optional.
+	 *
+	 * @var string $icon
+	 */
+	public $icon;
 
 	/**
 	 * A short descriptive summary of what the comment type is.
@@ -42,6 +47,13 @@ final class Comment_Type {
 	 * @var string $description
 	 */
 	public $description = '';
+
+	/**
+	 * An excerpt to show instead of the "real" content.
+	 *
+	 * @var string $excerpt
+	 */
+	public $excerpt = '';
 
 	/**
 	 * Constructor.
@@ -73,7 +85,7 @@ final class Comment_Type {
 		/**
 		 * Filters the arguments for registering a comment type.
 		 *
-		 * @param array  $args      Array of arguments for registering a comment type.
+		 * @param array  $args         Array of arguments for registering a comment type.
 		 * @param string $comment_type Comment type key.
 		 */
 		$args = apply_filters( 'register_webmention_comment_type_args', $args, $this->name );
