@@ -39,7 +39,7 @@ class DB {
 
 		$version_from_db = self::get_version();
 		if ( version_compare( $version_from_db, '1.0.0', '<' ) ) {
-			
+
 			// Before renaming comment meta add the webmention protocol key to where it may not be present.
 			self::add_protocol_key();
 
@@ -66,14 +66,14 @@ class DB {
 	public static function update_commentmeta_key( $old, $new ) {
 		global $wpdb;
 
-		$query = $wpdb->prepare(
-			"UPDATE {$wpdb->commentmeta} SET meta_key = %s WHERE meta_key = %s",
-			$new,
-			$old
+		$wpdb->query(
+			$wpdb->prepare(
+				'UPDATE %s SET meta_key = %s WHERE meta_key = %s',
+				$wpdb->commentmeta,
+				$new,
+				$old
+			)
 		);
-
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		$wpdb->query( $query );
 	}
 
 	/**
@@ -85,14 +85,14 @@ class DB {
 	public static function update_options_key( $old, $new ) {
 		global $wpdb;
 
-		$query = $wpdb->prepare(
-			"UPDATE {$wpdb->options} SET options_name = %s WHERE options_name = %s",
-			$new,
-			$old
+		$wpdb->query(
+			$wpdb->prepare(
+				'UPDATE %s SET options_name = %s WHERE options_name = %s',
+				$wpdb->options,
+				$new,
+				$old
+			)
 		);
-
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		$wpdb->query( $query );
 	}
 
 	/**
@@ -101,21 +101,27 @@ class DB {
 	 */
 	public static function update_comment_type() {
 		global $wpdb;
-		foreach( array( 'mention', 'reply', 'repost', 'like', 'favorite', 'tag', 'bookmark', 'invited', 'listen', 'watch', 'read', 'follow' ) as $type ) {
-			$comment_id_list = get_comments( 
-						array(
-							'type' => 'webmention',
-							'meta_key' => 'semantic_linkbacks_type',
-							'meta_value' => $type,
-							'fields' => 'ids'
-						)
-			$query = $wpdb->prepare(
-					"UPDATE {$wpdb->comments}
-					SET comment_type = '{$type}'
-					WHERE comment_type = 'webmention'
-					AND comment_ID IN ({$comment_id_list})" 
+		foreach ( array( 'mention', 'reply', 'repost', 'like', 'favorite', 'tag', 'bookmark', 'invited', 'listen', 'watch', 'read', 'follow' ) as $type ) {
+			$comment_id_list = get_comments(
+				array(
+					'type'       => 'webmention',
+					'meta_key'   => 'semantic_linkbacks_type',
+					'meta_value' => $type,
+					'fields'     => 'ids',
+				)
 			);
-			$wpdb->query( $query );
+
+			$wpdb->query(
+				$wpdb->prepare(
+					'UPDATE %s
+					SET comment_type = %s
+					WHERE comment_type = "webmention"
+					AND comment_ID IN (%s)',
+					$wpdb->comments,
+					$type,
+					$comment_id_list
+				)
+			);
 		}
 	}
 
@@ -127,57 +133,61 @@ class DB {
 	public static function add_protocol_key() {
 		$ids = get_comments(
 			array(
-				'type' => 'webmention',
-				'fields' => 'ids'
-			);
-		foreach( $ids as $id ) {
+				'type'   => 'webmention',
+				'fields' => 'ids',
+			)
+		);
+
+		foreach ( $ids as $id ) {
 			update_comment_meta( $id, 'protocol', 'webmention' );
 		}
 
-		/* The above covers adding webmention as a protocol to comment type webmention before we change these over to their new types.
-		 * But what about comment types which were used for reply? We start with the meta keys we added in Version 3.2.0.
-		 */
+		// The above covers adding webmention as a protocol to comment type webmention before
+		// we change these over to their new types.
+		// But what about comment types which were used for reply? We start with the meta keys
+		// we added in Version 3.2.0.
 
 		$ids = get_comments(
 			array(
-				'type' => 'comment',
-				'fields' => 'ids',
+				'type'       => 'comment',
+				'fields'     => 'ids',
 				'meta_query' => array(
 					array(
-						'key' => 'webmention_source_url',
-						'compare' => 'EXISTS'
-					)
-				)
-			);
-		foreach( $ids as $id ) {
+						'key'     => 'webmention_source_url',
+						'compare' => 'EXISTS',
+					),
+				),
+			)
+		);
+
+		foreach ( $ids as $id ) {
 			update_comment_meta( $id, 'protocol', 'webmention' );
 		}
 
-		/* What were the indicators pre-3.2? These would be limited to Semantic Linkbacks indicators.
-		 * Problem is that Semantic Linkbacks processed pingbacks and trackbacks in this way.
-		 * We are going to assume that anything rendered as a comment was a webmention even though there
-		 * is a small chance this is not true. Instances of pingbacks being sent with reply to microformats
-		 * seem rare.
-		 * Pingbacks and trackbacks of other types will remain type pingback or type trackback.
-		 */
+		// What were the indicators pre-3.2? These would be limited to Semantic Linkbacks indicators.
+		// Problem is that Semantic Linkbacks processed pingbacks and trackbacks in this way.
+		// We are going to assume that anything rendered as a comment was a webmention even though there
+		// is a small chance this is not true. Instances of pingbacks being sent with reply to microformats
+		// seem rare.
+
+		// Pingbacks and trackbacks of other types will remain type pingback or type trackback.
 
 		$ids = get_comments(
 			array(
-				'type' => 'comment',
-				'fields' => 'ids',
+				'type'       => 'comment',
+				'fields'     => 'ids',
 				'meta_query' => array(
 					array(
-						'key' => 'semantic_linkbacks_type',
-						'value' => 'reply',
-						'compare' => '='
-					)
-				)
-			);
-		foreach( $ids as $id ) {
+						'key'     => 'semantic_linkbacks_type',
+						'value'   => 'reply',
+						'compare' => '=',
+					),
+				),
+			)
+		);
+
+		foreach ( $ids as $id ) {
 			update_comment_meta( $id, 'protocol', 'webmention' );
 		}
-
 	}
-
-
 }
