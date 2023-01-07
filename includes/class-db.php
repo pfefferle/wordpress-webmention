@@ -93,8 +93,9 @@ class DB {
 	 */
 	public static function migrate_to_1_0_0() {
 		// 1. rename comment meta
-		self::update_commentmeta_key( 'semantic_linkbacks_avatar', 'avatar' );
 		self::update_commentmeta_key( 'semantic_linkbacks_source', 'webmention_source_url' );
+		self::update_commentmeta_key( 'semantic_linkbacks_avatar', 'avatar' );
+		self::update_commentmeta_key( 'semantic_linkbacks_canonical', 'url' );
 		// 2. migrate comment type
 		global $wpdb;
 
