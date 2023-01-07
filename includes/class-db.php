@@ -95,8 +95,8 @@ class DB {
 		// 1. rename comment meta
 		self::update_commentmeta_key( 'semantic_linkbacks_avatar', 'avatar' );
 		self::update_commentmeta_key( 'semantic_linkbacks_author_url', 'webmention_author_url' );
-		self::update_commentmeta_key( 'semantic_linkbacks_canonical', 'webmention_canonical' );
-		self::update_commentmeta_key( 'semantic_linkbacks_source', 'webmention_source' );
+		self::update_commentmeta_key( 'semantic_linkbacks_canonical', 'webmention_canonical_url' );
+		self::update_commentmeta_key( 'semantic_linkbacks_source', 'webmention_source_url' );
 		// 2. migrate comment type
 		global $wpdb;
 
