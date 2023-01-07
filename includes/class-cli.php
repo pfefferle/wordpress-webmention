@@ -205,7 +205,7 @@ class Cli extends WP_CLI_Command {
 
 		for ( $index = $total; $index < $limit; $index++ ) {
 			$comment_types = array(
-				'reply',
+				'comment',
 				'like',
 				'mention',
 				'repost',
@@ -220,10 +220,8 @@ class Cli extends WP_CLI_Command {
 					'comment_type'    => $comment_type,
 					'comment_meta'    => array(
 						'protocol'                 => 'webmention',
-						'avatar'                   => 'https://i.pravatar.cc/80',
+						'avatar'                   => "https://i.pravatar.cc/80?u={$index}",
 						'webmention_created_at'    => current_time( 'mysql', 1 ),
-						'webmention_author_url'    => 'https://example.org/author_url',
-						'webmention_source_url'    => 'https://example.org/source',
 						'webmention_target_url'    => 'https://example.org/target',
 						'webmention_canonical_url' => 'https://example.org/canonical',
 					),

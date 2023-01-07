@@ -39,11 +39,6 @@ class Receiver {
 
 		add_filter( 'pre_comment_approved', array( static::class, 'auto_approve' ), 11, 2 );
 
-		// Allow for avatars on webmention comment types
-		if ( 0 !== (int) get_option( 'webmention_avatars', 1 ) ) {
-			add_filter( 'get_avatar_comment_types', array( static::class, 'get_avatar_comment_types' ), 99 );
-		}
-
 		// Threaded comments support
 		add_filter( 'template_include', array( static::class, 'comment_template_include' ) );
 
@@ -128,18 +123,6 @@ class Receiver {
 	public static function query_var( $vars ) {
 		$vars[] = 'replytocom';
 		return $vars;
-	}
-
-	/**
-	 * Show avatars on webmentions if set
-	 *
-	 * @param array $types list of avatar enabled comment types
-	 *
-	 * @return array show avatars on webmentions
-	 */
-	public static function get_avatar_comment_types( $types ) {
-		$types[] = 'webmention';
-		return array_unique( $types );
 	}
 
 	/**
