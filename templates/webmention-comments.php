@@ -14,7 +14,7 @@ $mentions = get_comments(
 wp_list_comments(
 	array(
 		'avatar_only' => true,
-		'avatar_size' => 64
+		'avatar_size' => 64,
 	),
 	$mentions
 );

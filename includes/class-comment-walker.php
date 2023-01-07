@@ -14,6 +14,7 @@ class Comment_Walker extends Walker_Comment {
 	public static function init() {
 		// Set New Walker at Priority 5 so it can be overwritten by anything at a higher level.
 		add_filter( 'wp_list_comments_args', array( static::class, 'filter_comment_args' ), 5 );
+
 		// Remove webmention types from the Comment Template Query
 		if ( separate_webmentions_from_comments() ) {
 			add_filter( 'comments_template_query_args', array( static::class, 'filter_comments_query_args' ) );
@@ -30,6 +31,7 @@ class Comment_Walker extends Walker_Comment {
 	 */
 	public static function filter_comment_args( $args ) {
 		$args['walker'] = new Comment_Walker();
+
 		return $args;
 	}
 
@@ -42,6 +44,7 @@ class Comment_Walker extends Walker_Comment {
 	 */
 	public static function filter_comments_query_args( $args ) {
 		$args['type__not_in'] = get_webmention_comment_type_names();
+
 		return $args;
 	}
 
