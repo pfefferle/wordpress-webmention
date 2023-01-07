@@ -2,6 +2,7 @@ version: '2'
 services:
   test-db:
     image: mysql:5.7
+    platform: linux/x86_64
     environment:
       MYSQL_DATABASE: webmention-test
       MYSQL_ROOT_PASSWORD: webmention-test
