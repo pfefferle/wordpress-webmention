@@ -21,8 +21,6 @@ class Receiver {
 	 * Initialize the plugin, registering WordPress hooks
 	 */
 	public static function init() {
-		add_filter( 'query_vars', array( static::class, 'query_var' ) );
-
 		// Configure the REST API route
 		add_action( 'rest_api_init', array( static::class, 'register_routes' ) );
 		// Filter the response to allow a webmention form if no parameters are passed
@@ -38,9 +36,6 @@ class Receiver {
 		add_filter( 'webmention_comment_data', array( static::class, 'default_commentdata' ), 21, 1 );
 
 		add_filter( 'pre_comment_approved', array( static::class, 'auto_approve' ), 11, 2 );
-
-		// Threaded comments support
-		add_filter( 'template_include', array( static::class, 'comment_template_include' ) );
 
 		// Support Webmention delete
 		add_action( 'webmention_data_error', array( static::class, 'delete' ) );
@@ -111,18 +106,6 @@ class Receiver {
 			'show_in_rest' => true,
 		);
 		register_meta( 'comment', 'webmention_vouch_url', $args );
-	}
-
-	/**
-	 * adds some query vars
-	 *
-	 * @param array $vars
-	 *
-	 * @return array
-	 */
-	public static function query_var( $vars ) {
-		$vars[] = 'replytocom';
-		return $vars;
 	}
 
 	/**
@@ -709,23 +692,5 @@ class Receiver {
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * replace the template for all URLs with a "replytocom" query-param
-	 *
-	 * @param string $template the template url
-	 *
-	 * @return string
-	 */
-	public static function comment_template_include( $template ) {
-		global $wp_query;
-
-		// replace template
-		if ( isset( $wp_query->query['replytocom'] ) ) {
-			return apply_filters( 'webmention_comment_template', dirname( __FILE__ ) . '/../templates/webmention-comment.php' );
-		}
-
-		return $template;
 	}
 }

@@ -13,6 +13,11 @@ class Comment {
 	 */
 	public static function init() {
 		self::register_comment_types();
+
+		add_filter( 'query_vars', array( static::class, 'query_var' ) );
+
+		// Threaded comments support
+		add_filter( 'template_include', array( static::class, 'comment_template_include' ) );
 	}
 
 	/**
@@ -190,5 +195,35 @@ class Comment {
 				'excerpt'     => '%s',
 			)
 		);
+	}
+
+	/**
+	 * replace the template for all URLs with a "replytocom" query-param
+	 *
+	 * @param string $template the template url
+	 *
+	 * @return string
+	 */
+	public static function comment_template_include( $template ) {
+		global $wp_query;
+
+		// replace template
+		if ( isset( $wp_query->query['replytocom'] ) ) {
+			return apply_filters( 'webmention_comment_template', dirname( __FILE__ ) . '/../templates/webmention-comment.php' );
+		}
+
+		return $template;
+	}
+
+	/**
+	 * adds some query vars
+	 *
+	 * @param array $vars
+	 *
+	 * @return array
+	 */
+	public static function query_var( $vars ) {
+		$vars[] = 'replytocom';
+		return $vars;
 	}
 }
