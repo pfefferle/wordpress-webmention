@@ -65,7 +65,8 @@ function get_webmention_comment_type_names() {
  * Return the registered custom comment type icon.
  *
  * @param string $type Comment Type.
- * @return array The registered custom comment types
+ *
+ * @return string The Comment Type icon.
  */
 function get_webmention_comment_type_icon( $type ) {
 	$types = get_webmention_comment_types();
@@ -75,6 +76,23 @@ function get_webmention_comment_type_icon( $type ) {
 		$return = '💬';
 	}
 	return apply_filters( 'webmention_comment_type_icon', $return, $type );
+}
+
+/**
+ * Return the registered custom comment type label.
+ *
+ * @param string $type Comment Type.
+ *
+ * @return string The Comment Type label.
+ */
+function get_webmention_comment_type_label( $type ) {
+	$types = get_webmention_comment_types();
+	if ( array_key_exists( $type, $types ) ) {
+		$return = $types[ $type ]->label;
+	} else {
+		$return = strtoupper( $type );
+	}
+	return apply_filters( 'webmention_comment_type_label', $return, $type );
 }
 
 /**

@@ -6,19 +6,29 @@ $mentions = get_comments(
 		'status'   => 'approve',
 	)
 );
-?>
 
-<ul class="mention-list">
+$grouped_mentions = separate_comments( $mentions );
 
-<?php
-wp_list_comments(
-	array(
-		'avatar_only' => true,
-		'avatar_size' => 64,
-	),
-	$mentions
-);
-?>
+foreach ( $grouped_mentions as $mention_type => $mentions ) {
+	if ( empty( $mentions ) ) {
+		continue;
+	}
+	?>
+
+<ul class="reaction-list p-mention">
+	<h2><?php echo get_webmention_comment_type_label( $mention_type ); ?></h2>
+	<?php
+	wp_list_comments(
+		array(
+			'avatar_only' => true,
+			'avatar_size' => 64,
+		),
+		$mentions
+	);
+	?>
 </ul>
+	<?php
+}
 
-<?php load_template( locate_template( 'comments.php' ) ); ?>
+load_template( locate_template( 'comments.php' ) );
+?>

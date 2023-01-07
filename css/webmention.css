@@ -1,8 +1,8 @@
-.mention-list ul {
+.reaction-list ul {
 	border-style: solid;
 }
 
-.mention-list li {
+.reaction-list li {
 	display: inline-block;
 	list-style: none;
 	vertical-align: top;
