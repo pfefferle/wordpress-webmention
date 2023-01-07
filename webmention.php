@@ -166,7 +166,7 @@ function upgrade( $package, $data, $package_type ) {
 	require_once dirname( __FILE__ ) . '/includes/class-db.php';
 	\Webmention\DB::update_database();
 }
-add_action( 'upgrader_overwrote_package', array( '\Webmention\upgrade' ), 10, 3 );
+add_action( 'upgrader_overwrote_package', '\Webmention\upgrade', 10, 3 );
 
 /**
  * Add CSS and JavaScript
