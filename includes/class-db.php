@@ -10,12 +10,12 @@ class DB {
 	 */
 	private static $target_version = '1.0.0';
 
-	private static function get_target_version() {
+	public static function get_target_version() {
 		return self::$target_version;
 	}
 
-	private static function get_version() {
-		return floatval( get_option( 'webmention_db_version', 0 ) );
+	public static function get_version() {
+		return get_option( 'webmention_db_version', 0 );
 	}
 
 	/**
@@ -23,10 +23,12 @@ class DB {
 	 *
 	 * @return bool
 	 */
-	private static function is_latest_version() {
-		$current_version = self::get_version();
-
-		return (bool) version_compare( $current_version, self::$target_version, '==' );
+	public static function is_latest_version() {
+		return (bool) version_compare(
+			self::get_version(),
+			self::get_target_version(),
+			'=='
+		);
 	}
 
 	/**
