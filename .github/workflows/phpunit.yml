@@ -18,7 +18,7 @@ jobs:
         php-versions: ['5.6', '7.0', '7.2', '7.3', '7.4', '8.0', '8.1']
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -27,7 +27,7 @@ jobs:
           tools: composer, phpunit-polyfills
           extensions: mysql
       - name: Install Composer dependencies for PHP
-        uses: "ramsey/composer-install@v1"
+        uses: "ramsey/composer-install@v2"
       - name: Setup Test Environment
         run: bash ./bin/install-wp-tests.sh wordpress_test root root 127.0.0.1 latest
       - name: Unit Testing
