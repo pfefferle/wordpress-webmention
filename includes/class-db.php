@@ -94,20 +94,23 @@ class DB {
 	public static function migrate_to_1_0_0() {
 		// 1. rename comment meta
 		self::update_commentmeta_key( 'semantic_linkbacks_avatar', 'avatar' );
-		self::update_commentmeta_key( 'semantic_linkbacks_author_url', 'webmention_author_url' );
-		self::update_commentmeta_key( 'semantic_linkbacks_canonical', 'webmention_canonical_url' );
 		self::update_commentmeta_key( 'semantic_linkbacks_source', 'webmention_source_url' );
 		// 2. migrate comment type
 		global $wpdb;
 
-		//Migrate webmentions to comment types.
+		//Migrate Webmentions to comment types.
 		$wpdb->query(
 			"UPDATE {$wpdb->comments} comment SET comment_type = ( SELECT meta_value FROM {$wpdb->commentmeta} WHERE comment_id = comment.comment_ID AND meta_key = 'semantic_linkbacks_type' LIMIT 1 ) WHERE comment_type = 'webmention'"
 		);
 
-		// Add protocol designation for webmentions.
+		// Add protocol designation for Webmentions.
 		$wpdb->query(
 			"UPDATE {$wpdb->commentmeta} SET meta_key = 'protocol', meta_value = 'webmention' WHERE meta_key = 'semantic_linkbacks_type' OR meta_key = 'webmention_type'"
+		);
+
+		// Delete any other Semantic-Linkbacks metas
+		$wpdb->query(
+			"DELETE FROM {$wpdb->commentmeta} WHERE meta_key LIKE 'semantic_linkbacks_%'"
 		);
 	}
 }
