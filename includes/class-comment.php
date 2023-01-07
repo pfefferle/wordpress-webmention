@@ -126,7 +126,8 @@ class Comment {
 				'label'       => __( 'Mention', 'webmention' ),
 				'description' => __( 'A mention is a post which links to another post without explicitly being in response to it. In contrast, a reply, like, or repost are explicit responses to a post.', 'webmention' ),
 				'icon'        => '💬',
-				'excerpt'     => '%s',
+				// translators: %1$s username, %2$s opject format (post, audio, ...), %3$s URL, %4$s domain
+				'excerpt'     => __( '%1$s <strong>mentioned</strong> %2$s on <a href="%3$s">%4$s</a>.', 'webmention' ),
 			)
 		);
 
