@@ -155,10 +155,10 @@ class Comment_Walker extends Walker_Comment {
 		// Optionally overlay an icon.
 		$overlay = '';
 		if ( $args['overlay'] ) {
-			$overlay = '<span class="emoji-overlay">' . get_webmention_comment_icon( $comment ) . '</span>';
+			$overlay = '<span class="emoji-overlay">' . get_webmention_comment_type_attr( $comment->comment_type, 'icon' ) . '</span>';
 		}
 		?>
-		<<?php echo $tag; ?> id="comment-<?php comment_ID(); ?>" <?php comment_class( array( 'u-comment', 'h-cite', 'avatar-only' ), $comment ); ?>>
+		<<?php echo $tag; ?> id="comment-<?php comment_ID(); ?>" <?php comment_class( array( get_webmention_comment_type_attr( $comment->comment_type, 'class' ), 'h-cite', 'avatar-only' ), $comment ); ?>>
 			<div class="comment-body">
 				<span class="p-author h-card">
 					<a class="u-url" title="<?php esc_attr( $title ); ?>" href="<?php echo get_comment_author_url( $comment ); ?>">

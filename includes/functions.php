@@ -41,9 +41,7 @@ function register_webmention_comment_type( $comment_type, $args = array() ) {
  * @return array The registered custom comment types
  */
 function get_webmention_comment_types() {
-	global $webmention_comment_types;
-
-	return $webmention_comment_types;
+	return \Webmention\Comment::get_comment_types();
 }
 
 /**
@@ -52,47 +50,20 @@ function get_webmention_comment_types() {
  * @return array The registered custom comment type names
  */
 function get_webmention_comment_type_names() {
-	global $webmention_comment_types;
-
-	$types   = array_values( wp_list_pluck( get_webmention_comment_types(), 'name' ) );
-	$types[] = 'webmention';
-	return $types;
+	return \Webmention\Comment::get_comment_type_names();
 }
 
 
 
 /**
- * Return the registered custom comment type icon.
+ * Return the registered custom Comment Type icon.
  *
  * @param string $type Comment Type.
  *
  * @return string The Comment Type icon.
  */
-function get_webmention_comment_type_icon( $type ) {
-	$types = get_webmention_comment_types();
-	if ( array_key_exists( $type, $types ) ) {
-		$return = $types[ $type ]->icon;
-	} else {
-		$return = '💬';
-	}
-	return apply_filters( 'webmention_comment_type_icon', $return, $type );
-}
-
-/**
- * Return the registered custom comment type label.
- *
- * @param string $type Comment Type.
- *
- * @return string The Comment Type label.
- */
-function get_webmention_comment_type_label( $type ) {
-	$types = get_webmention_comment_types();
-	if ( array_key_exists( $type, $types ) ) {
-		$return = $types[ $type ]->label;
-	} else {
-		$return = strtoupper( $type );
-	}
-	return apply_filters( 'webmention_comment_type_label', $return, $type );
+function get_webmention_comment_type_attr( $type, $attr ) {
+	return \Webmention\Comment::get_comment_type_attr( $type, $attr );
 }
 
 /**
@@ -102,22 +73,6 @@ function get_webmention_comment_type_label( $type ) {
  */
 function separate_webmentions_from_comments() {
 	return apply_filters( 'separate_webmentions_from_comments', get_option( 'webmention_separate_comment', 1 ) );
-}
-
-/**
- * Return the icon for the current comment object
- *
- * @param WP_Comment|int Comment ID or Object
- * @return array The registered custom comment types
- */
-function get_webmention_comment_icon( $comment ) {
-	$type = get_comment_type( $comment );
-
-	if ( 'reacji' === $comment->comment_type ) {
-		return $comment->comment_content;
-	}
-
-	return get_webmention_comment_type_icon( $type );
 }
 
 /**
@@ -164,30 +119,6 @@ function get_default_webmention_form_text() {
  */
 function is_webmention_source_allowed( $url ) {
 	return \Webmention\Receiver::is_source_allowed( $url );
-}
-
-/**
- * Return the Number of Webmentions.
- *
- * @param int $post_id The post ID (optional).
- * @return int the number of Webmentions for one Post
- */
-function get_webmentions_number( $post_id = 0 ) {
-	$post = get_post( $post_id );
-
-	// change this if your theme can't handle the Webmentions comment type.
-	$comment_type = apply_filters( 'webmention_comment_type', WEBMENTION_COMMENT_TYPE );
-
-	$args = array(
-		'post_id' => $post->ID,
-		'type'    => $comment_type,
-		'count'   => true,
-		'status'  => 'approve',
-	);
-
-	$comments_query = new WP_Comment_Query();
-
-	return $comments_query->query( $args );
 }
 
 /**
