@@ -32,7 +32,7 @@ class DB_Test extends WP_UnitTestCase {
 		$this->assertEquals( $metas['avatar'][0], 'https://example.org/avatar' );
 		$this->assertEquals( $metas['protocol'][0], 'webmention' );
 		$this->assertEquals( $metas['webmention_source_url'][0], 'https://example.org/source' );
-		$this->assertFalse( $metas['url'][0], 'https://example.org/canonical' );
+		$this->assertEquals( $metas['url'][0], 'https://example.org/canonical' );
 		$this->assertFalse( array_key_exists( 'semantic_linkbacks_author_url', $metas ) );
 
 		$comment = get_comment( $comment_id );
