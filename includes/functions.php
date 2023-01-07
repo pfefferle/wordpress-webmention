@@ -54,7 +54,7 @@ function get_webmention_comment_types() {
 function get_webmention_comment_type_names() {
 	global $webmention_comment_types;
 
-	$types = array_values( wp_list_pluck( get_webmention_comment_types(), 'name' ) );
+	$types   = array_values( wp_list_pluck( get_webmention_comment_types(), 'name' ) );
 	$types[] = 'webmention';
 	return $types;
 }

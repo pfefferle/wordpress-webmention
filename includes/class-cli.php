@@ -4,6 +4,7 @@ namespace Webmention;
 
 use WP_CLI;
 use WP_CLI_Command;
+use WP_CLI\Utils;
 use Webmention\Sender;
 use function Webmention\get_plugin_meta;
 
@@ -89,10 +90,10 @@ class Cli extends WP_CLI_Command {
 	 * The post ID or the permalink
 	 *
 	 * [--source=<source>]
-	 * The Plugin Name
+	 * : The Plugin Name
 	 *
 	 * [--target=<target>]
-	 * The Plugin URI
+	 * : The Plugin URI
 	 *
 	 * ## EXAMPLES
 	 *
@@ -150,5 +151,97 @@ class Cli extends WP_CLI_Command {
 		} else {
 			WP_CLI::error( __( 'Please provide a post-id/permalink or a source and a target', 'webmention' ) );
 		}
+	}
+
+	/**
+	 * Generates some number of new dummy Webmentions.
+	 *
+	 * Creates a specified number of new Webmentions with dummy data.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--count=<number>]
+	 * : How many Webmentions to generate?
+	 * ---
+	 * default: 100
+	 * ---
+	 *
+	 * [--post_id=<post-id>]
+	 * : Assign Webmentions to a specific post.
+	 *
+	 * [--format=<format>]
+	 * : Render output in a particular format.
+	 * ---
+	 * default: progress
+	 * options:
+	 *   - progress
+	 *   - ids
+	 * ---
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     # Generate comments for the given post.
+	 *     $ wp comment generate --format=ids --count=3 --post_id=123
+	 *     138 139 140
+	 */
+	public function generate( $args, $assoc_args ) {
+
+		$defaults   = array(
+			'count'   => 100,
+			'post_id' => 0,
+		);
+		$assoc_args = array_merge( $defaults, $assoc_args );
+
+		$format = Utils\get_flag_value( $assoc_args, 'format', 'progress' );
+
+		$notify = false;
+		if ( 'progress' === $format ) {
+			$notify = Utils\make_progress_bar( 'Generating comments', $assoc_args['count'] );
+		}
+
+		$comment_count = wp_count_comments();
+		$total         = (int) $comment_count->total_comments;
+		$limit         = $total + $assoc_args['count'];
+
+		for ( $index = $total; $index < $limit; $index++ ) {
+			$comment_types = array(
+				'reply',
+				'like',
+				'mention',
+				'repost',
+			);
+
+			$comment_type = $comment_types[ array_rand( $comment_types ) ];
+
+			$comment_id = wp_insert_comment(
+				array(
+					'comment_content' => "{$comment_type} {$index}",
+					'comment_post_ID' => $assoc_args['post_id'],
+					'comment_type'    => $comment_type,
+					'comment_meta'    => array(
+						'protocol'                 => 'webmention',
+						'avatar'                   => 'https://i.pravatar.cc/80',
+						'webmention_created_at'    => current_time( 'mysql', 1 ),
+						'webmention_author_url'    => 'https://example.org/author_url',
+						'webmention_source_url'    => 'https://example.org/source',
+						'webmention_target_url'    => 'https://example.org/target',
+						'webmention_canonical_url' => 'https://example.org/canonical',
+					),
+				)
+			);
+			if ( 'progress' === $format ) {
+				$notify->tick();
+			} elseif ( 'ids' === $format ) {
+				echo $comment_id;
+				if ( $index < $limit - 1 ) {
+					echo ' ';
+				}
+			}
+		}
+
+		if ( 'progress' === $format ) {
+			$notify->finish();
+		}
+
 	}
 }
