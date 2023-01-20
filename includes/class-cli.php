@@ -5,6 +5,7 @@ namespace Webmention;
 use WP_CLI;
 use WP_CLI_Command;
 use WP_CLI\Utils;
+use Webmention\DB;
 use Webmention\Sender;
 use function Webmention\get_plugin_meta;
 
@@ -240,6 +241,21 @@ class Cli extends WP_CLI_Command {
 		if ( 'progress' === $format ) {
 			$notify->finish();
 		}
+	}
+  
+  /**
+	 * Run the Database Migration script
+	 *
+	 * @param array|null $args       The arguments.
+	 * @param array|null $assoc_args The associative arguments.
+	 *
+	 * @return void
+	 */
+	public function db_migration( $args, $assoc_args ) {
+		require_once dirname( __FILE__ ) . '/class-db.php';
 
+		DB::update_database();
+
+		WP_CLI::success( __( 'DB Migration finished', 'webmention' ) );
 	}
 }
