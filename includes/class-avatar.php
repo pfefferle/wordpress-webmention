@@ -71,7 +71,7 @@ class Avatar {
 			case 'mm':
 			case 'mystery':
 			case 'mysteryman':
-				return plugin_dir_url( dirname( __FILE__ ) ) . 'img/mm.jpg';
+				return plugin_dir_url( dirname( __FILE__ ) ) . 'assets/img/mm.jpg';
 		}
 
 		return apply_filters( 'webmention_default_avatar', $type );
