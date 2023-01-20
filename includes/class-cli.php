@@ -242,8 +242,8 @@ class Cli extends WP_CLI_Command {
 			$notify->finish();
 		}
 	}
-  
-  /**
+
+	/**
 	 * Run the Database Migration script
 	 *
 	 * @param array|null $args       The arguments.
