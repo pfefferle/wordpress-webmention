@@ -172,7 +172,7 @@ add_action( 'upgrader_overwrote_package', '\Webmention\upgrade', 10, 3 );
  * Add CSS and JavaScript
  */
 function enqueue_scripts() {
-	wp_enqueue_style( 'webmention', plugin_dir_url( __FILE__ ) . 'css/webmention.css', array(), version() );
+	wp_enqueue_style( 'webmention', plugin_dir_url( __FILE__ ) . 'assets/css/webmention.css', array(), version() );
 }
 
 /**
