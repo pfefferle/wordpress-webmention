@@ -131,6 +131,44 @@ function init() {
 add_action( 'plugins_loaded', '\Webmention\init' );
 
 /**
+ * Activation Hook
+ *
+ * Migrate DB if needed
+ */
+function activation() {
+	require_once dirname( __FILE__ ) . '/includes/class-db.php';
+	\Webmention\DB::update_database();
+}
+register_activation_hook( __FILE__, '\Webmention\activation' );
+
+/**
+ * Update Hook
+ *
+ * Migrate DB if needed
+ *
+ * @param string $package The package file.
+ * @param array  $data The new plugin or theme data.
+ * @param string $package_type The package type.
+ *
+ * @return void
+ */
+function upgrade( $package, $data, $package_type ) {
+	if ( 'plugin' !== $package_type ) {
+		return;
+	}
+
+	$text_domain = isset( $data['TextDomain'] ) ? $data['TextDomain'] : '';
+
+	if ( 'webmention' !== $text_domain ) {
+		return;
+	}
+
+	require_once dirname( __FILE__ ) . '/includes/class-db.php';
+	\Webmention\DB::update_database();
+}
+add_action( 'upgrader_overwrote_package', '\Webmention\upgrade', 10, 3 );
+
+/**
  * Add CSS and JavaScript
  */
 function enqueue_scripts() {
