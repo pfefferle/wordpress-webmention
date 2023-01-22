@@ -26,7 +26,7 @@ final class Comment_Type {
 	public $label;
 
 	/**
-	 * Name of the comment type. Usually plural.
+	 * Name of the comment type. Singular.
 	 *
 	 * @var string $singular
 	 */
