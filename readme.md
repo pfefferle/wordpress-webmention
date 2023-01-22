@@ -4,7 +4,7 @@
 **Tags:** webmention, pingback, trackback, linkback, indieweb, comment, response  
 **Requires at least:** 4.9  
 **Tested up to:** 5.9  
-**Stable tag:** 4.0.4  
+**Stable tag:** 5.0.0  
 **Requires PHP:** 5.6  
 **License:** MIT  
 **License URI:** https://opensource.org/licenses/MIT  
@@ -18,7 +18,7 @@ A [Webmention](https://www.w3.org/TR/webmention/) is a notification that one URL
 
 For example, a response can be an RSVP to an event, an indication that someone "likes" another post, a "bookmark" of another post, and many others. Webmention enables these interactions to happen across different websites, enabling a distributed social web.
 
-The Webmention plugin supports the webmention protocol, giving you support for sending and receiving webmentions. It offers a simple built in presentation. To further enhance the presentation, you can install Semantic Linkbacks.
+The Webmention plugin supports the webmention protocol, giving you support for sending and receiving webmentions. It offers a simple built in presentation.
 
 ## Frequently Asked Questions ##
 
@@ -75,7 +75,7 @@ As Webmention uses the REST API endpoint system, most up to date caching plugins
 
 ### Why does this plugin have settings about avatars? ###
 
-Webmentions have the ability to act as rich comments. This includes showing avatars. If there is an avatar discovered, the URL for it will be stored in comment meta. This can either be reflect something from the media library or a URL of a file.
+Webmentions have the ability to act as rich comments. This includes showing avatars. If there is an avatar discovered, the URL for it will be stored. This can either be reflect something from the media library or a URL of a file.
 
 Since webmentions do not usually have email addresses, Gravatar, built into WordPress, is not necessary. WordPress returns even the anonymous avatars from Gravatar. Therefore, if there is no email the plugin will simply return a local copy of the Mystery Man default avatar. If there is an email address, the plugin will cache whether a Gravatar exists and serve the local file if it does not. It defaults to a week, but you can change it to a day, or any number by adding below to your wp-config.php file.
 
@@ -90,6 +90,15 @@ Webmention headers are only shown if webmentions are available for that particul
 ## Changelog ##
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
+
+### 5.0.0 ###
+
+* Complete rewrite of the codebase
+* Introduce PHP namespaces
+* New parser which will fallback on the WordPress REST API, JSON-LD, or HTML meta tags if Microformats are not sufficient to render a comment.
+* New debugger/test tool for Webmention Parsing under Tools
+* Webmentions are no longer stored as comment type mention, but as custom comment types
+* New simplified presentation code, providing for optional custom templating in future.
 
 ### 4.0.4 ###
 
@@ -385,6 +394,12 @@ To install a WordPress Plugin manually:
 * Click **Activate** to activate it.
 
 ## Upgrade Notice ##
+
+### 5.0.0 ###
+
+This version is a complete rewrite of the code and a merge of the Semantic Linkbacks plugin. You should uninstall Semantic Linkbacks for this upgrade. Please file upgrade issues via Github.
+
+Warning: Please backup your database before upgrading. This version changes the storage method of webmentions.
 
 ### 3.0.0 ###
 
