@@ -376,6 +376,16 @@ class Admin {
 				'default'      => 1,
 			)
 		);
+		register_setting(
+			'webmention',
+			'webmention_separate_comment',
+			array(
+				'type'         => 'int',
+				'description'  => esc_html__( 'Separate Webmention Comment Types in Display from Comments', 'webmention' ),
+				'show_in_rest' => true,
+				'default'      => 1,
+			)
+		);
 	}
 
 	/**

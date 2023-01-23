@@ -1,4 +1,14 @@
+.reaction-list ul {
+	border-style: solid;
+}
 
+.reaction-list li {
+	display: inline-block;
+	list-style: none;
+	vertical-align: top;
+	margin-left: 3px;
+	position: relative;
+}
 
 .avatar-only .comment-body {
 	float: left;
