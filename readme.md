@@ -3,13 +3,13 @@
 **Donate link:** https://notiz.blog/donate/  
 **Tags:** webmention, pingback, trackback, linkback, indieweb, comment, response  
 **Requires at least:** 4.9  
-**Tested up to:** 5.9  
+**Tested up to:** 6.1  
 **Stable tag:** 5.0.0  
 **Requires PHP:** 5.6  
 **License:** MIT  
 **License URI:** https://opensource.org/licenses/MIT  
 
-Enable conversation across the web. When you link to a website you can send it a webmention to notify it and then that website
+Enable conversation across the web. When you link to a website you can send it a Webmention to notify it and then that website
 may display your post as a comment, like, or other response, and presto, you’re having a conversation from one site to another!
 
 ## Description ##
@@ -18,7 +18,7 @@ A [Webmention](https://www.w3.org/TR/webmention/) is a notification that one URL
 
 For example, a response can be an RSVP to an event, an indication that someone "likes" another post, a "bookmark" of another post, and many others. Webmention enables these interactions to happen across different websites, enabling a distributed social web.
 
-The Webmention plugin supports the webmention protocol, giving you support for sending and receiving webmentions. It offers a simple built in presentation.
+The Webmention plugin supports the Webmention protocol, giving you support for sending and receiving Webmentions. It offers a simple built in presentation.
 
 ## Frequently Asked Questions ##
 
@@ -34,19 +34,19 @@ Webmention is an update/replacement for Pingback or Trackback. Unlike the older 
 
 On the Settings --> Discussion Page in WordPress:
 
-* On the Webmention Settings page, decide which post types you want to enable webmentions for. By default, posts and pages.
-* Set a page to redirect homepage mentions to. This will automatically enable webmentions for that page.
-* If you want to enable a webmention form in the comment section, check the box.
+* On the Webmention Settings page, decide which post types you want to enable Webmentions for. By default, posts and pages.
+* Set a page to redirect homepage mentions to. This will automatically enable Webmentions for that page.
+* If you want to enable a Webmention form in the comment section, check the box.
 
 You can use the `send_webmention($source, $target)` function and pass a source and a target or you can fire an action like `do_action('send_webmention', $source, $target)`.
 
 ### How do I support Webmentions for my custom post type? ###
 
-When declaring your custom post type, add post type support for webmentions by either including it in your `register_post_type` entry. This can also be added in the webmention settings.
+When declaring your custom post type, add post type support for Webmentions by either including it in your `register_post_type` entry. This can also be added in the Webmention settings.
 
-### How do I send/receive webmentions for attachments? ###
+### How do I send/receive Webmentions for attachments? ###
 
-You can enable receiving webmentions for attachments in webmention settings. You can enable sending webmentions for media links in the settings. Please note that most receivers of webmentions do not support receiving them to image, audio, and video files. In order to support receiving them on WordPress, webmention endpoint headers would have to be added at the webserver level.
+You can enable receiving Webmentions for attachments in Webmention settings. You can enable sending Webmentions for media links in the settings. Please note that most receivers of Webmentions do not support receiving them to image, audio, and video files. In order to support receiving them on WordPress, Webmention endpoint headers would have to be added at the webserver level.
 
 ### How can I handle Webmentions to my Homepage or Archive Pages? ###
 
@@ -69,7 +69,7 @@ In the below example, if there is no page returned it will send mentions to a ca
 
 ### Will a caching plugin affect my ability to use this? ###
 
-The URL for the webmention endpoint, which you can view in the source of your pages, should be excluded from any server or plugin caching.
+The URL for the Webmention endpoint, which you can view in the source of your pages, should be excluded from any server or plugin caching.
 
 As Webmention uses the REST API endpoint system, most up to date caching plugins should exclude it by default.
 
@@ -77,13 +77,13 @@ As Webmention uses the REST API endpoint system, most up to date caching plugins
 
 Webmentions have the ability to act as rich comments. This includes showing avatars. If there is an avatar discovered, the URL for it will be stored. This can either be reflect something from the media library or a URL of a file.
 
-Since webmentions do not usually have email addresses, Gravatar, built into WordPress, is not necessary. WordPress returns even the anonymous avatars from Gravatar. Therefore, if there is no email the plugin will simply return a local copy of the Mystery Man default avatar. If there is an email address, the plugin will cache whether a Gravatar exists and serve the local file if it does not. It defaults to a week, but you can change it to a day, or any number by adding below to your wp-config.php file.
+Since Webmentions do not usually have email addresses, Gravatar, built into WordPress, is not necessary. WordPress returns even the anonymous avatars from Gravatar. Therefore, if there is no email the plugin will simply return a local copy of the Mystery Man default avatar. If there is an email address, the plugin will cache whether a Gravatar exists and serve the local file if it does not. It defaults to a week, but you can change it to a day, or any number by adding below to your wp-config.php file.
 
     define( 'WEBMENTION_GRAVATAR_CACHE_TIME', DAY_IN_SECONDS );
 
-### There are no webmention headers on some pages of my site ###
+### There are no Webmention headers on some pages of my site ###
 
-Webmention headers are only shown if webmentions are available for that particular URL. If you want to show it regardless, you can add below to your wp-config.php file.
+Webmention headers are only shown if Webmentions are available for that particular URL. If you want to show it regardless, you can add below to your wp-config.php file.
 
     define( 'WEBMENTION_ALWAYS_SHOW_HEADERS', 1 );
 
@@ -116,19 +116,19 @@ Project and support maintained on github at [pfefferle/wordpress-webmention](htt
 
 ### 4.0.1 ###
 
-* Show webmention form only if `pings_open`
-* Show webmention form also if comments are disabled
+* Show Webmention form only if `pings_open`
+* Show Webmention form also if comments are disabled
 
 ### 4.0.0 ###
 
-* Add settings for enabling webmention support by public post type
+* Add settings for enabling Webmention support by public post type
 * Add setting for disabling sending media links...URLs attached to image, video, or audio tags
-* Switch from sending webmentions to all URLs in post content to only ones with proper HTML markup
+* Switch from sending Webmentions to all URLs in post content to only ones with proper HTML markup
 * Support handling avatars if stored in meta
 * Support serving a local anonymous avatar if no email and cache whether there is a gravatar for a definable period of time
-* Store a webmention protocol property in comment meta
-* Do not show webmention headers if URL does not support webmentions
-* Update webmention meta template to use separate file which is shown on the edit comment screen
+* Store a Webmention protocol property in comment meta
+* Do not show Webmention headers if URL does not support Webmentions
+* Update Webmention meta template to use separate file which is shown on the edit comment screen
 * Minimum PHP version bumped to 5.4. WordPress currently has a minimum of 5.6 but we support back to version 4.9
 * For compatibility reasons, load a version of `is_avatar_comment_type` (introduced 5.1) and `get_self_link` (introduced 5.3) for use in this plugin
 * Improve all settings and template forms ( props @tw2113 )
@@ -139,7 +139,7 @@ Project and support maintained on github at [pfefferle/wordpress-webmention](htt
 
 ### 3.8.10 ###
 
-* Always enable webmentions on basis that using plugin means you want webmentions instead of using default pingback setting
+* Always enable Webmentions on basis that using plugin means you want Webmentions instead of using default pingback setting
 * Fix auto approve based on domain
 
 ### 3.8.9 ###
@@ -212,7 +212,7 @@ Thanks Sebastian Greger, David Shanske and Chris Aldrich
 
 ### 3.4.1 ###
 
-* Add filter to allow setting of webmention form text
+* Add filter to allow setting of Webmention form text
 * Move register settings to init due new default options not being set if admin only
 * Add `edit_webmention` hook due comment array filtering
 * Display Webmention Meta on Edit Comment page
@@ -237,11 +237,11 @@ Thanks Sebastian Greger, David Shanske and Chris Aldrich
 ### 3.2.0 ###
 
 * Enable option for page support
-* Allow custom post types to declare support for webmentions as a feature which will enable pings.
+* Allow custom post types to declare support for Webmentions as a feature which will enable pings.
 * Remove new meta properties from being added during preprocessing as these are added after Semantic Linkbacks Enhancement.
-* Move new meta properties to being built into webmention code
-* Store webmention source in comment meta but fall back to checking `comment_author_url` if not set.
-* Store webmention creation time in comment meta as comment time is overridden by Semantic Linkbacks allowing to determine if a comment has been modified.
+* Move new meta properties to being built into Webmention code
+* Store Webmention source in comment meta but fall back to checking `comment_author_url` if not set.
+* Store Webmention creation time in comment meta as comment time is overridden by Semantic Linkbacks allowing to determine if a comment has been modified.
 
 ### 3.1.1 ###
 
@@ -265,11 +265,11 @@ Thanks Sebastian Greger, David Shanske and Chris Aldrich
 ### 3.0.0 ###
 
 * Plugin refactored to use API infrastructure.
-* Visiting the endpoint in a web browser now returns a webmention form.
+* Visiting the endpoint in a web browser now returns a Webmention form.
 * Plugin now compliant with draft specification although remains synchronous.
-* Deprecation of webmention_title and webmention_content filters in favor of a single targeted webmention comment data filter.
-* webmention_post_send action now fires on all attempts to send a webmention instead of only successful ones. Allows for logging functions to be added.
-* Supports adding additional parameters when sending webmentions
+* Deprecation of webmention_title and webmention_content filters in favor of a single targeted Webmention comment data filter.
+* webmention_post_send action now fires on all attempts to send a Webmention instead of only successful ones. Allows for logging functions to be added.
+* Supports adding additional parameters when sending Webmentions
 * Fix incompatibility with Ultimate Category Excluder plugin.
 
 ### 2.6.0 ###
@@ -282,7 +282,7 @@ Thanks Sebastian Greger, David Shanske and Chris Aldrich
 
 * add salmon/crossposting-extension support (props @singpolyma)
 * disable self-pings via settings
-* do not unapprove already-approved webmention (props @singpolyma)
+* do not unapprove already-approved Webmention (props @singpolyma)
 * some code improvements
 
 ### 2.4.0 ###
@@ -295,16 +295,16 @@ Thanks Sebastian Greger, David Shanske and Chris Aldrich
 
 ### 2.3.3 ###
 
-* added filter for webmention endpoint (to add/require additional paramaters: <https://github.com/pfefferle/wordpress-webmention/issues/39> or <https://github.com/pfefferle/wordpress-webmention/pull/41>)
+* added filter for Webmention endpoint (to add/require additional paramaters: <https://github.com/pfefferle/wordpress-webmention/issues/39> or <https://github.com/pfefferle/wordpress-webmention/pull/41>)
 
 ### 2.3.2 ###
 
 * added more params to `webmention_post_send` (props to @snarfed)
-* removed rescedule of webmentions (props to @snarfed)
+* removed rescedule of Webmentions (props to @snarfed)
 
 ### 2.3.1 ###
 
-* use error-code 403 instead of 500 if pingbacks/webmentions are disabled for a post (thanks @snarfed)
+* use error-code 403 instead of 500 if Pingbacks/Webmentions are disabled for a post (thanks @snarfed)
 * added `webmention_comment_parent` filter
 
 ### 2.3.0 ###
@@ -399,7 +399,7 @@ To install a WordPress Plugin manually:
 
 This version is a complete rewrite of the code and a merge of the Semantic Linkbacks plugin. You should uninstall Semantic Linkbacks for this upgrade. Please file upgrade issues via Github.
 
-Warning: Please backup your database before upgrading. This version changes the storage method of webmentions.
+Warning: Please backup your database before upgrading. This version changes the storage method of Webmentions.
 
 ### 3.0.0 ###
 

@@ -23,7 +23,7 @@ class Receiver {
 	public static function init() {
 		// Configure the REST API route
 		add_action( 'rest_api_init', array( static::class, 'register_routes' ) );
-		// Filter the response to allow a webmention form if no parameters are passed
+		// Filter the response to allow a Webmention form if no parameters are passed
 		add_filter( 'rest_pre_serve_request', array( static::class, 'serve_request' ), 11, 4 );
 
 		add_filter( 'duplicate_comment_id', array( static::class, 'disable_wp_check_dupes' ), 20, 2 );
@@ -132,9 +132,9 @@ class Receiver {
 	}
 
 	/**
-	 * Hooks into the REST API output to output a webmention form.
+	 * Hooks into the REST API output to output a Webmention form.
 	 *
-	 * This is only done for the webmention endpoint.
+	 * This is only done for the Webmention endpoint.
 	 *
 	 * @param bool                      $served  Whether the request has already been served.
 	 * @param WP_HTTP_ResponseInterface $result  Result to send to the client. Usually a WP_REST_Response.
@@ -149,7 +149,7 @@ class Receiver {
 		}
 
 		if ( 'GET' === $request->get_method() ) {
-			// If someone tries to poll the webmention endpoint return a webmention form.
+			// If someone tries to poll the Webmention endpoint return a Webmention form.
 			if ( ! headers_sent() ) {
 				$server->send_header( 'Content-Type', 'text/html; charset=' . get_option( 'blog_charset' ) );
 			}
@@ -163,7 +163,7 @@ class Receiver {
 
 		// render nice HTML views for non API-calls
 		if ( $request->get_param( 'format' ) === 'html' ) {
-			// If someone tries to poll the webmention endpoint return a webmention form.
+			// If someone tries to poll the Webmention endpoint return a Webmention form.
 			if ( ! headers_sent() ) {
 				$server->send_header( 'Content-Type', 'text/html; charset=' . get_option( 'blog_charset' ) );
 			}
@@ -179,9 +179,9 @@ class Receiver {
 	}
 
 	/**
-	 * GET Callback for the webmention endpoint.
+	 * GET Callback for the Webmention endpoint.
 	 *
-	 * Returns true. Any GET request is intercepted to return a webmention form.
+	 * Returns true. Any GET request is intercepted to return a Webmention form.
 	 *
 	 * @param WP_REST_Request $request Full data about the request.
 	 *
@@ -192,7 +192,7 @@ class Receiver {
 	}
 
 	/**
-	 * POST Callback for the webmention endpoint.
+	 * POST Callback for the Webmention endpoint.
 	 *
 	 * Returns the response.
 	 *
@@ -285,7 +285,7 @@ class Receiver {
 
 		// Define WEBMENTION_PROCESS_TYPE as true if you want to define an asynchronous handler
 		if ( WEBMENTION_PROCESS_TYPE_ASYNC === get_webmention_process_type() ) {
-			// Schedule an action a random period of time in the next 2 minutes to handle webmentions.
+			// Schedule an action a random period of time in the next 2 minutes to handle Webmentions.
 			wp_schedule_single_event( time() + wp_rand( 0, 120 ), 'webmention_process_schedule', array( $commentdata ) );
 
 			// Return the source and target and the 202 Message
@@ -395,7 +395,7 @@ class Receiver {
 	}
 
 	/**
-	 * Verify a webmention and either return an error if not verified or return the array with retrieved
+	 * Verify a Webmention and either return an error if not verified or return the array with retrieved
 	 * data.
 	 *
 	 * @param array $data {
@@ -497,7 +497,7 @@ class Receiver {
 	/**
 	 * Check if a comment already exists
 	 *
-	 * @param  array $commentdata the comment, created for the webmention data
+	 * @param  array $commentdata the comment, created for the Webmention data
 	 *
 	 * @return array|null the dupe or null
 	 */
@@ -660,7 +660,7 @@ class Receiver {
 				return $approved;
 			}
 		}
-		// If this is set auto approve all webmentions
+		// If this is set auto approve all Webmentions
 		if ( 1 === WEBMENTION_COMMENT_APPROVE ) {
 			return 1;
 		}

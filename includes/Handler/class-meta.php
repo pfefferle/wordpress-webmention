@@ -7,7 +7,7 @@ use WP_Error;
 use Webmention\Response;
 
 /**
- * Class for webmention parsing using META tags.
+ * Class for Webmention parsing using META tags.
  */
 class Meta extends Base {
 

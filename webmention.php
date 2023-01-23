@@ -49,7 +49,7 @@ function version() {
  * Initialize Webmention Plugin
  */
 function init() {
-	// Add support for webmentions to custom post types.
+	// Add support for Webmentions to custom post types.
 	$post_types = get_option( 'webmention_support_post_types', array( 'post', 'page' ) ) ? get_option( 'webmention_support_post_types', array( 'post', 'page' ) ) : array();
 
 	foreach ( $post_types as $post_type ) {

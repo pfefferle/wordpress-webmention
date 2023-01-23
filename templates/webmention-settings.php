@@ -31,7 +31,7 @@
 
 						<label for="webmention_disable_media_mentions">
 							<input type="checkbox" name="webmention_disable_media_mentions" id="webmention_disable_media_mentions" value="1" <?php echo checked( true, get_option( 'webmention_disable_media_mentions' ) ); ?> />
-							<?php esc_html_e( 'Disable sending webmentions for media links(image, video, audio)', 'webmention' ); ?>
+							<?php esc_html_e( 'Disable sending Webmentions for media links(image, video, audio)', 'webmention' ); ?>
 						</label>
 					</fieldset>
 				</td>
@@ -132,7 +132,7 @@
 					<fieldset>
 						<label for="webmention_avatars">
 							<input type="checkbox" name="webmention_avatars" id="webmention_avatars" value="1" <?php echo checked( true, get_option( 'webmention_avatars', 1 ) ); ?> />
-							<?php esc_html_e( 'Show avatars on webmentions if available.', 'webmention' ); ?>
+							<?php esc_html_e( 'Show avatars on Webmentions if available.', 'webmention' ); ?>
 						</label>
 					</fieldset>
 				</td>

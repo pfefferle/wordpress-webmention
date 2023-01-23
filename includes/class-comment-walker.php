@@ -15,7 +15,7 @@ class Comment_Walker extends Walker_Comment {
 		// Set New Walker at Priority 5 so it can be overwritten by anything at a higher level.
 		add_filter( 'wp_list_comments_args', array( static::class, 'filter_comment_args' ), 5 );
 
-		// Remove webmention types from the Comment Template Query
+		// Remove Webmention types from the Comment Template Query
 		if ( separate_webmentions_from_comments() ) {
 			add_filter( 'comments_template_query_args', array( static::class, 'filter_comments_query_args' ) );
 			add_filter( 'comments_template', array( static::class, 'filter_comments_template' ) );
@@ -36,7 +36,7 @@ class Comment_Walker extends Walker_Comment {
 	}
 
 	/**
-	 * Filter the comment template query arguments to exclude webmention comment types
+	 * Filter the comment template query arguments to exclude Webmention comment types
 	 *
 	 * @param array $args an array of arguments for displaying comments
 	 *

@@ -132,7 +132,7 @@ class Discovery {
 			return false;
 		}
 
-		// If the post type does not support webmentions do not even check if pings_open is set
+		// If the post type does not support Webmentions do not even check if pings_open is set
 		if ( ! post_type_supports( get_post_type( $post_id ), 'webmentions' ) ) {
 			return false;
 		}
@@ -147,8 +147,8 @@ class Discovery {
 	/**
 	 * Finds a Webmention server URI based on the given URL.
 	 *
-	 * Checks the HTML for the rel="webmention" link and webmention headers. It does
-	 * a check for the webmention headers first and returns that, if available. The
+	 * Checks the HTML for the rel="webmention" link and Webmention headers. It does
+	 * a check for the Webmention headers first and returns that, if available. The
 	 * check for the rel="webmention" has more overhead than just the header.
 	 * Supports backward compatability to webmention.org headers.
 	 *

@@ -7,7 +7,7 @@ use WP_Error;
 use Webmention\Response;
 
 /**
- * Class for webmention parsing using JSON-LD.
+ * Class for Webmention parsing using JSON-LD.
  */
 class JSONLD extends Base {
 

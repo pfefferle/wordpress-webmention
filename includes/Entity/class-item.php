@@ -379,7 +379,7 @@ class Item {
 	 */
 	public function to_commentdata_array() {
 		$this->meta['avatar']   = $this->get_author( 'photo' );
-		$this->meta['protocol'] = 'webmention'; // Since this is the webmention plugin it should always be a webmention.
+		$this->meta['protocol'] = 'webmention'; // Since this is the Webmention plugin it should always be a Webmention.
 		$this->meta['url']      = $this->get_url(); // This is the parsed URL, which may or may not be the same as the source URL, which will be added as source_url.
 
 		$comment = array(

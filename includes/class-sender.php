@@ -36,7 +36,7 @@ class Sender {
 	}
 
 	/**
-	 * Marks the post as "no webmentions sent yet"
+	 * Marks the post as "no Webmentions sent yet"
 	 *
 	 * @param int $post_id Post ID.
 	 */
@@ -45,7 +45,7 @@ class Sender {
 	}
 
 	/**
-	 * Send webmentions on new comments.
+	 * Send Webmentions on new comments.
 	 *
 	 * @param int $id the post id.
 	 */
@@ -96,7 +96,7 @@ class Sender {
 			return false;
 		}
 
-		// discover the webmention endpoint
+		// discover the Webmention endpoint
 		$webmention_server_url = webmention_discover_endpoint( $target );
 
 		// if I can't find an endpoint, perhaps you can!
@@ -167,13 +167,13 @@ class Sender {
 		$targets = array_unique( $targets );
 		$pung    = get_pung( $post );
 
-		// Find previously sent webmentions and send them one last time.
+		// Find previously sent Webmentions and send them one last time.
 		$deletes = array_diff( $pung, $targets );
 
 		$ping = array();
 
 		foreach ( $targets as $target ) {
-			// send webmention
+			// send Webmention
 			$response = self::send_webmention( $source, $target, $post_id );
 
 			// check response
@@ -189,7 +189,7 @@ class Sender {
 		}
 
 		foreach ( $deletes as $deleted ) {
-			// send delete webmention
+			// send delete Webmention
 			$response = self::send_webmention( $source, $deleted, $post_id );
 
 			// reschedule if server responds with a http error 5xx
@@ -262,7 +262,7 @@ class Sender {
 	}
 
 	/**
-	 * Do webmentions
+	 * Do Webmentions
 	 */
 	public static function do_webmentions() {
 		// The Ultimate Category Excluder plugin filters get_posts to hide

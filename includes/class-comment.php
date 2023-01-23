@@ -32,7 +32,7 @@ class Comment {
 	}
 
 	/**
-	 * Return the registered custom comment types names plus webmention for backcompat.
+	 * Return the registered custom comment types names plus Webmention for backcompat.
 	 *
 	 * @return array The registered custom comment type names
 	 */

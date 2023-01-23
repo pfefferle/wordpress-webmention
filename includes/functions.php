@@ -1,13 +1,13 @@
 <?php
 
 /**
- * Registers a webmention comment type.
+ * Registers a Webmention comment type.
  *
  *
  * @param string $comment_type Key for comment type.
  * @param array  $args         Arguments.
  *
- * @return Webmention\Comment_Type The registered webmention comment type.
+ * @return Webmention\Comment_Type The registered Webmention comment type.
  */
 function register_webmention_comment_type( $comment_type, $args = array() ) {
 	global $webmention_comment_types;
@@ -24,7 +24,7 @@ function register_webmention_comment_type( $comment_type, $args = array() ) {
 	$webmention_comment_types[ $comment_type ] = $comment_type_object;
 
 	/**
-	 * Fires after a webmention comment type is registered.
+	 * Fires after a Webmention comment type is registered.
 	 *
 	 *
 	 * @param string                   $comment_type        Comment type.
@@ -45,7 +45,7 @@ function get_webmention_comment_types() {
 }
 
 /**
- * Return the registered custom comment types names plus webmention for backcompat.
+ * Return the registered custom comment types names plus Webmention for backcompat.
  *
  * @return array The registered custom comment type names
  */
@@ -103,7 +103,7 @@ function get_webmention_form_text( $post_id ) {
 }
 
 /**
- * Return the default text for a webmention form.
+ * Return the default text for a Webmention form.
  *
  * @return string
  */
@@ -144,7 +144,7 @@ function get_webmention_process_type() {
 }
 
 /**
- * Return the post_id for a URL filtered for webmentions.
+ * Return the post_id for a URL filtered for Webmentions.
  *
  * Allows redirecting to another id to add linkbacks to the home page or archive
  * page or taxonomy page.
@@ -214,8 +214,8 @@ function get_webmention_approve_domains() {
 /**
  * Finds a Webmention server URI based on the given URL.
  *
- * Checks the HTML for the rel="webmention" link and webmention headers. It does
- * a check for the webmention headers first and returns that, if available. The
+ * Checks the HTML for the rel="webmention" link and Webmention headers. It does
+ * a check for the Webmention headers first and returns that, if available. The
  * check for the rel="webmention" has more overhead than just the header.
  * Supports backward compatability to webmention.org headers.
  *
@@ -312,7 +312,8 @@ function webmention_extract_urls( $content, $support_media_urls = false ) {
 
 
 /**
- * Returns whether this is a webmention comment type
+ * Returns whether this is a Webmention Comment Type
+ *
  * @param int|WP_Comment $comment
  * @return array
  */
@@ -537,7 +538,7 @@ function webmention_get_default_comment_status( $status, $post_type, $comment_ty
 }
 
 /**
- * Render the webmention comment form.
+ * Render the Webmention comment form.
  *
  * Can be filtered to load a custom template of your choosing.
  *

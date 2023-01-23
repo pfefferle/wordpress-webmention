@@ -10,7 +10,7 @@ use Webmention\Handler\Meta;
 use Webmention\Handler\Jsonld;
 
 /**
- * Class for handling webmention handlers
+ * Class for handling Webmention handlers
 */
 class Handler {
 

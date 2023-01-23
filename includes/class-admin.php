@@ -130,7 +130,7 @@ class Admin {
 
 	/**
 	 * Extend the "filter by comment type" of in the comments section
-	 * of the admin interface with "webmention"
+	 * of the admin interface with "Webmention"
 	 *
 	 * @param array $types the different comment types
 	 *
@@ -311,7 +311,7 @@ class Admin {
 			'webmention_disable_media_mentions',
 			array(
 				'type'         => 'boolean',
-				'description'  => esc_html__( 'Disable sending webmentions for media links (image, video, and audio tags)', 'webmention' ),
+				'description'  => esc_html__( 'Disable sending Webmentions for media links (image, video, and audio tags)', 'webmention' ),
 				'show_in_rest' => true,
 				'default'      => 1,
 			)
@@ -393,8 +393,8 @@ class Admin {
 	 */
 	public static function add_privacy_policy_content() {
 		$content =
-			'<p>' . esc_html__( 'Webmentions are an explicit feature of your content management system: by sending a webmention to the webmention endpoint of this website, you request the server to take notice of that referral and process it. As long as public content is concerned (i.e. you are not sending a private webmention), such use of this website’s webmention endpoint implies that you are aware of it being published.', 'webmention' ) . '</p>' .
-			'<p>' . esc_html__( 'You can at any time request the removal of one or all webmentions originating from your website.', 'webmention' ) . '</p>' .
+			'<p>' . esc_html__( 'Webmentions are an explicit feature of your content management system: by sending a Webmention to the Webmention endpoint of this website, you request the server to take notice of that referral and process it. As long as public content is concerned (i.e. you are not sending a private Webmention), such use of this website’s Webmention endpoint implies that you are aware of it being published.', 'webmention' ) . '</p>' .
+			'<p>' . esc_html__( 'You can at any time request the removal of one or all Webmentions originating from your website.', 'webmention' ) . '</p>' .
 
 			'<h3>' . esc_html__( 'Processing', 'webmention' ) . '</h3>' .
 			'<p>' . esc_html__( 'Incoming Webmentions are handled as a request to process personal data that you make available by explicitly providing metadata in your website\'s markup.', 'webmention' ) . '</p>' .

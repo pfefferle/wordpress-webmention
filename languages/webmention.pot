@@ -1,25 +1,29 @@
-# Copyright (C) 2022 Matthias Pfefferle
+# Copyright (C) 2023 Matthias Pfefferle
 # This file is distributed under the MIT.
 msgid ""
 msgstr ""
-"Project-Id-Version: Webmention 5.X\n"
+"Project-Id-Version: Webmention 5.0.0\n"
 "Report-Msgid-Bugs-To: "
 "https://wordpress.org/support/plugin/wordpress-webmention\n"
-"POT-Creation-Date: 2022-02-16 08:55:34+00:00\n"
+"POT-Creation-Date: 2023-01-23 09:48:25+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2022-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2023-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "X-Generator: grunt-wp-i18n 1.0.3\n"
 
-#: includes/Handler/class-base.php:68
+#: includes/Handler/class-base.php:69
 msgid "$webmention_item is not an instance of Webmention\\Entity\\Item"
 msgstr ""
 
 #: includes/Handler/class-wp.php:43
 msgid "No API link found in the source code"
+msgstr ""
+
+#: includes/Handler/class-wp.php:57
+msgid "No valid API link found"
 msgstr ""
 
 #: includes/class-admin.php:19 templates/webmention-settings.php:2
@@ -159,7 +163,7 @@ msgid "Disable self Webmentions on the same domain"
 msgstr ""
 
 #: includes/class-admin.php:314
-msgid "Disable sending webmentions for media links (image, video, and audio tags)"
+msgid "Disable sending Webmentions for media links (image, video, and audio tags)"
 msgstr ""
 
 #: includes/class-admin.php:324
@@ -186,157 +190,391 @@ msgstr ""
 msgid "Show Avatars on Webmentions"
 msgstr ""
 
-#: includes/class-admin.php:386
+#: includes/class-admin.php:384
+msgid "Separate Webmention Comment Types in Display from Comments"
+msgstr ""
+
+#: includes/class-admin.php:396
 msgid ""
 "Webmentions are an explicit feature of your content management system: by "
-"sending a webmention to the webmention endpoint of this website, you "
+"sending a Webmention to the Webmention endpoint of this website, you "
 "request the server to take notice of that referral and process it. As long "
 "as public content is concerned (i.e. you are not sending a private "
-"webmention), such use of this website’s webmention endpoint implies that "
+"Webmention), such use of this website’s Webmention endpoint implies that "
 "you are aware of it being published."
 msgstr ""
 
-#: includes/class-admin.php:387
+#: includes/class-admin.php:397
 msgid ""
-"You can at any time request the removal of one or all webmentions "
+"You can at any time request the removal of one or all Webmentions "
 "originating from your website."
 msgstr ""
 
-#: includes/class-admin.php:389
+#: includes/class-admin.php:399
 msgid "Processing"
 msgstr ""
 
-#: includes/class-admin.php:390
+#: includes/class-admin.php:400
 msgid ""
 "Incoming Webmentions are handled as a request to process personal data that "
 "you make available by explicitly providing metadata in your website's "
 "markup."
 msgstr ""
 
-#: includes/class-admin.php:392
+#: includes/class-admin.php:402
 msgid "Publishing"
 msgstr ""
 
-#: includes/class-admin.php:393
+#: includes/class-admin.php:403
 msgid ""
 "An incoming Webmention request is by design a request for publishing a "
 "comment from elsewhere on the web; this is what the protocol was designed "
 "for and why it is active on your website."
 msgstr ""
 
-#: includes/class-admin.php:395
+#: includes/class-admin.php:405
 msgid "Personal data"
 msgstr ""
 
-#: includes/class-admin.php:396
+#: includes/class-admin.php:406
 msgid "The Webmention plugin processes the following data (if available):"
 msgstr ""
 
-#: includes/class-admin.php:399
+#: includes/class-admin.php:409
 msgid "Your name"
 msgstr ""
 
-#: includes/class-admin.php:400
+#: includes/class-admin.php:410
 msgid "The profile picture from your website"
 msgstr ""
 
-#: includes/class-admin.php:401
+#: includes/class-admin.php:411
 msgid "The URL of your website"
 msgstr ""
 
-#: includes/class-admin.php:402
+#: includes/class-admin.php:412
 msgid "Personal information you include in your post"
 msgstr ""
 
-#: includes/class-avatar.php:24
+#: includes/class-avatar.php:29
 msgid "Mystery Person (hosted locally)"
 msgstr ""
 
-#: includes/class-cli.php:75
+#: includes/class-cli.php:77
 msgid "Webmention Plugin Meta:\n"
 msgstr ""
 
-#: includes/class-cli.php:124 includes/class-cli.php:146
+#: includes/class-cli.php:126 includes/class-cli.php:148
 msgid "Nothing to ping."
 msgstr ""
 
-#: includes/class-cli.php:127
+#: includes/class-cli.php:129
 msgid "Webmentions sent:"
 msgstr ""
 
-#: includes/class-cli.php:133
+#: includes/class-cli.php:135
 msgid "Invalid post ID or permalink"
 msgstr ""
 
-#: includes/class-cli.php:140 includes/class-cli.php:151
+#: includes/class-cli.php:142 includes/class-cli.php:153
 msgid "Please provide a post-id/permalink or a source and a target"
 msgstr ""
 
-#: includes/class-cli.php:148
+#: includes/class-cli.php:150
 msgid "Webmention sent!"
 msgstr ""
 
-#: includes/class-receiver.php:62
+#: includes/class-cli.php:259
+msgid "DB Migration finished"
+msgstr ""
+
+#: includes/class-comment.php:62
+msgid "Reposts"
+msgstr ""
+
+#: includes/class-comment.php:63
+msgid "Repost"
+msgstr ""
+
+#: includes/class-comment.php:64
+msgid ""
+"A repost on the indieweb is a post that is purely a 100% re-publication of "
+"another (typically someone else's) post."
+msgstr ""
+
+#: includes/class-comment.php:68
+#. translators: %1$s username, %2$s opject format (post, audio, ...), %3$s URL,
+#. %4$s domain
+msgid "%1$s reposted %2$s on <a href=\"%3$s\">%4$s</a>."
+msgstr ""
+
+#: includes/class-comment.php:75
+msgid "Likes"
+msgstr ""
+
+#: includes/class-comment.php:76
+msgid "Like"
+msgstr ""
+
+#: includes/class-comment.php:77
+msgid ""
+"A like is a popular webaction button and in some cases post type on various "
+"silos such as Facebook and Instagram."
+msgstr ""
+
+#: includes/class-comment.php:81
+#. translators: %1$s username, %2$s opject format (post, audio, ...), %3$s URL,
+#. %4$s domain
+msgid "%1$s liked %2$s on <a href=\"%3$s\">%4$s</a>."
+msgstr ""
+
+#: includes/class-comment.php:88
+msgid "Favorites"
+msgstr ""
+
+#: includes/class-comment.php:89
+msgid "Favorite"
+msgstr ""
+
+#: includes/class-comment.php:90
+msgid ""
+"A favorite is a common webaction on many silos (like Flickr, Twitter), "
+"typically visually indicated with a star symbol that fills in with a color "
+"when activated (pink, orange)."
+msgstr ""
+
+#: includes/class-comment.php:94
+#. translators: %1$s username, %2$s opject format (post, audio, ...), %3$s URL,
+#. %4$s domain
+msgid "%1$s favorited %2$s on <a href=\"%3$s\">%4$s</a>."
+msgstr ""
+
+#: includes/class-comment.php:101
+msgid "Tags"
+msgstr ""
+
+#: includes/class-comment.php:102
+msgid "Tag"
+msgstr ""
+
+#: includes/class-comment.php:103
+msgid ""
+"Tags or tagging refers to categorizing or labeling content, your own or "
+"others (tag-reply), with words, phrases, names, or other information, "
+"optionally linked to specific people, events, locations, such as the "
+"practice of tagging posts being about certain people (person-tag), like "
+"tagging people or other items where (area-tag) they're depicted in a photo."
+msgstr ""
+
+#: includes/class-comment.php:107
+#. translators: %1$s username, %2$s opject format (post, audio, ...), %3$s URL,
+#. %4$s domain
+msgid "%1$s tagged %2$s on <a href=\"%3$s\">%4$s</a>."
+msgstr ""
+
+#: includes/class-comment.php:114
+msgid "Bookmarks"
+msgstr ""
+
+#: includes/class-comment.php:115
+msgid "Bookmark"
+msgstr ""
+
+#: includes/class-comment.php:116
+msgid ""
+"A bookmark (or linkblog) is a post that is primarily comprised of a URL, "
+"often title text from that URL, sometimes optional text describing, "
+"tagging, or quoting from its contents."
+msgstr ""
+
+#: includes/class-comment.php:120
+#. translators: %1$s username, %2$s opject format (post, audio, ...), %3$s URL,
+#. %4$s domain
+msgid "%1$s bookmarked %2$s on <a href=\"%3$s\">%4$s</a>."
+msgstr ""
+
+#: includes/class-comment.php:127
+msgid "Listens"
+msgstr ""
+
+#: includes/class-comment.php:128
+msgid "Listen"
+msgstr ""
+
+#: includes/class-comment.php:129
+msgid ""
+"A \"listen\" is a passive type of post used to publish a song (music or "
+"audio track, including concert recordings or DJ sets) or podcast that you "
+"have listened to."
+msgstr ""
+
+#: includes/class-comment.php:133
+#. translators: %1$s username, %2$s opject format (post, audio, ...), %3$s URL,
+#. %4$s domain
+msgid "%1$s <strong>listened</strong> to %2$s (via <a href=\"%3$s\">%4$s</a>)."
+msgstr ""
+
+#: includes/class-comment.php:140
+msgid "Watches"
+msgstr ""
+
+#: includes/class-comment.php:141
+msgid "Watch"
+msgstr ""
+
+#: includes/class-comment.php:142
+msgid ""
+"A watch is a semi-passive type of post used to publish that you have "
+"watched a video (movie, TV, film), or a live show (theater, concert)."
+msgstr ""
+
+#: includes/class-comment.php:146
+#. translators: %1$s username, %2$s opject format (post, audio, ...), %3$s URL,
+#. %4$s domain
+msgid "%1$s <strong>watched</strong> %2$s (via <a href=\"%3$s\">%4$s</a>)."
+msgstr ""
+
+#: includes/class-comment.php:153
+msgid "Reads"
+msgstr ""
+
+#: includes/class-comment.php:154
+msgid "Read"
+msgstr ""
+
+#: includes/class-comment.php:157
+msgid ""
+"To read or reading is the act of viewing and interpreting posts or other "
+"documents; on the IndieWeb, a read post expresses that something has been "
+"read, like a book or section thereof."
+msgstr ""
+
+#: includes/class-comment.php:159
+#. translators: %1$s username, %2$s opject format (post, audio, ...), %3$s URL,
+#. %4$s domain
+msgid "%1$s <strong>read</strong> %2$s (via <a href=\"%3$s\">%4$s</a>)."
+msgstr ""
+
+#: includes/class-comment.php:166
+msgid "Follows"
+msgstr ""
+
+#: includes/class-comment.php:167
+msgid "Follow"
+msgstr ""
+
+#: includes/class-comment.php:168
+msgid ""
+"Follow is a common feature (and often UI button) in silo UIs (like Twitter) "
+"that adds updates from that profile (typically a person) to the stream "
+"shown in an integrated reader, and sometimes creates a follow post either "
+"in the follower's stream (\"… followed …\" or \"… is following …\") thus "
+"visible to their followers, and/or in the notifications of the user being "
+"followed (\"… followed you\")."
+msgstr ""
+
+#: includes/class-comment.php:172
+#. translators: %1$s username, %2$s opject format (post, audio, ...), %3$s URL,
+#. %4$s domain
+msgid "%1$s <strong>followed</strong> %2$s (via <a href=\"%3$s\">%4$s</a>)."
+msgstr ""
+
+#: includes/class-comment.php:179
+msgid "Mentions"
+msgstr ""
+
+#: includes/class-comment.php:180
+msgid "Mention"
+msgstr ""
+
+#: includes/class-comment.php:181
+msgid ""
+"A mention is a post which links to another post without explicitly being in "
+"response to it. In contrast, a reply, like, or repost are explicit "
+"responses to a post."
+msgstr ""
+
+#: includes/class-comment.php:185
+#. translators: %1$s username, %2$s opject format (post, audio, ...), %3$s URL,
+#. %4$s domain
+msgid "%1$s <strong>mentioned</strong> %2$s on <a href=\"%3$s\">%4$s</a>."
+msgstr ""
+
+#: includes/class-comment.php:192
+msgid "Reacjis"
+msgstr ""
+
+#: includes/class-comment.php:193
+msgid "Reacji"
+msgstr ""
+
+#: includes/class-comment.php:194
+msgid ""
+"Reacji is an emoji reaction, the use of a single emoji character in "
+"response to a post."
+msgstr ""
+
+#: includes/class-receiver.php:52
 msgid "Protocol Used to Receive"
 msgstr ""
 
-#: includes/class-receiver.php:70
+#: includes/class-receiver.php:60
 msgid "Target URL for the Webmention"
 msgstr ""
 
-#: includes/class-receiver.php:79
+#: includes/class-receiver.php:69
 msgid "Source URL for the Webmention"
 msgstr ""
 
-#: includes/class-receiver.php:87
+#: includes/class-receiver.php:77
 msgid "Target URL Fragment for the Webmention"
 msgstr ""
 
-#: includes/class-receiver.php:96
+#: includes/class-receiver.php:86
 msgid "Original Creation Time for the Webmention (GMT)"
 msgstr ""
 
-#: includes/class-receiver.php:105
+#: includes/class-receiver.php:95
 msgid "Response Code Returned During Webmention Verification"
 msgstr ""
 
-#: includes/class-receiver.php:114
+#: includes/class-receiver.php:104
 msgid "Webmention Vouch URL"
 msgstr ""
 
-#: includes/class-receiver.php:247
+#: includes/class-receiver.php:213
 msgid "Target is not on this domain"
 msgstr ""
 
-#: includes/class-receiver.php:254 includes/class-receiver.php:268
+#: includes/class-receiver.php:220 includes/class-receiver.php:234
 msgid "Target is not a valid post"
 msgstr ""
 
-#: includes/class-receiver.php:258
+#: includes/class-receiver.php:224
 msgid "Target and source cannot direct to the same resource"
 msgstr ""
 
-#: includes/class-receiver.php:263
+#: includes/class-receiver.php:229
 msgid "Pings are disabled for this post"
 msgstr ""
 
-#: includes/class-receiver.php:331
+#: includes/class-receiver.php:297
 msgid "Webmention is scheduled"
 msgstr ""
 
-#: includes/class-receiver.php:405
+#: includes/class-receiver.php:371
 msgid "Webmention was successful"
 msgstr ""
 
-#: includes/class-receiver.php:456 includes/class-vouch.php:64
+#: includes/class-receiver.php:422 includes/class-vouch.php:64
 msgid "Invalid data passed"
 msgstr ""
 
-#: includes/class-receiver.php:481
+#: includes/class-receiver.php:447
 msgid "Cannot find target link"
 msgstr ""
 
-#: includes/class-receiver.php:638
+#: includes/class-receiver.php:603
 msgid "Not enough data available"
 msgstr ""
 
@@ -365,7 +603,7 @@ msgstr ""
 msgid "Vouch Not Found"
 msgstr ""
 
-#: includes/functions.php:71
+#: includes/functions.php:111
 msgid ""
 "To respond on your own website, enter the URL of your response which should "
 "contain a link to this post's permalink URL. Your response will then appear "
@@ -374,15 +612,15 @@ msgid ""
 "(<a href=\"https://indieweb.org/webmention\">Learn More</a>)"
 msgstr ""
 
-#: includes/functions.php:337
+#: includes/functions.php:354
 msgid "Pingback"
 msgstr ""
 
-#: includes/functions.php:340
+#: includes/functions.php:357
 msgid "Trackback"
 msgstr ""
 
-#: includes/functions.php:346
+#: includes/functions.php:363
 msgid "Response"
 msgstr ""
 
@@ -391,12 +629,12 @@ msgstr ""
 msgid "Webmention Endpoint"
 msgstr ""
 
-#: templates/webmention-comment-form.php:6
+#: templates/webmention-comment-form.php:12
 #: templates/webmention-endpoint-form.php:130
 msgid "URL/Permalink of your article"
 msgstr ""
 
-#: templates/webmention-comment-form.php:9
+#: templates/webmention-comment-form.php:15
 #: templates/webmention-endpoint-form.php:137
 msgid "Ping me!"
 msgstr ""
@@ -426,7 +664,7 @@ msgstr ""
 msgid "Send a Webmention"
 msgstr ""
 
-#: templates/webmention-endpoint-form.php:129 templates/webmention-tools.php:7
+#: templates/webmention-endpoint-form.php:129 templates/webmention-tools.php:11
 msgid "Source URL"
 msgstr ""
 
@@ -478,7 +716,7 @@ msgid "(for example \"example.com\")"
 msgstr ""
 
 #: templates/webmention-settings.php:34
-msgid "Disable sending webmentions for media links(image, video, audio)"
+msgid "Disable sending Webmentions for media links(image, video, audio)"
 msgstr ""
 
 #: templates/webmention-settings.php:43
@@ -541,7 +779,15 @@ msgid "Avatars"
 msgstr ""
 
 #: templates/webmention-settings.php:135
-msgid "Show avatars on webmentions if available."
+msgid "Show avatars on Webmentions if available."
+msgstr ""
+
+#: templates/webmention-settings.php:141
+msgid "Display"
+msgstr ""
+
+#: templates/webmention-settings.php:146
+msgid "Separate Webmention Types from Comments."
 msgstr ""
 
 #: templates/webmention-tools.php:2
@@ -558,11 +804,11 @@ msgid ""
 "is available to produce a rich comment"
 msgstr ""
 
-#: templates/webmention-tools.php:9
+#: templates/webmention-tools.php:14
 msgid "Target"
 msgstr ""
 
-#: templates/webmention-tools.php:11
+#: templates/webmention-tools.php:17
 msgid "Parse"
 msgstr ""
 
@@ -582,7 +828,7 @@ msgstr ""
 msgid "https://notiz.blog/"
 msgstr ""
 
-#: includes/functions.php:334
+#: includes/functions.php:351
 msgctxt "noun"
 msgid "Comment"
 msgstr ""

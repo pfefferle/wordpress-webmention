@@ -19,7 +19,7 @@ class Avatar {
 		// All the default gravatars come from Gravatar instead of being generated locally so add a local default
 		add_filter( 'avatar_defaults', array( static::class, 'anonymous_avatar' ) );
 
-		// Allow for avatars on webmention comment types
+		// Allow for avatars on Webmention comment types
 		if ( 0 !== (int) get_option( 'webmention_avatars', 1 ) ) {
 			add_filter( 'get_avatar_comment_types', array( static::class, 'get_avatar_comment_types' ), 99 );
 		}
@@ -206,11 +206,11 @@ class Avatar {
 	}
 
 	/**
-	 * Show avatars on webmentions if set
+	 * Show avatars on Webmentions if set
 	 *
 	 * @param array $types list of avatar enabled comment types
 	 *
-	 * @return array show avatars on webmentions
+	 * @return array show avatars on Webmentions
 	 */
 	public static function get_avatar_comment_types( $types ) {
 		$comment_types = get_webmention_comment_type_names();

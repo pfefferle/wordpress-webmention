@@ -11,7 +11,7 @@ use DateTimeZone;
 use DateTimeImmutable;
 
 /**
- * Class for webmention parsing using the WordPress API.
+ * Class for Webmention parsing using the WordPress API.
  */
 class WP extends Base {
 

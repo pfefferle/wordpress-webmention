@@ -7,7 +7,7 @@ use Webmention\Response;
 use Webmention\Entity\Item;
 
 /**
- * Base class for webmention parsing and post processing.
+ * Base class for Webmention parsing and post processing.
  */
 abstract class Base {
 

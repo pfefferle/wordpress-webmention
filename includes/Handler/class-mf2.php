@@ -9,7 +9,7 @@ use Webmention\Response;
 use Webmention\Mf2\Parser;
 
 /**
- * Class for webmention parsing using Microformats 2.
+ * Class for Webmention parsing using Microformats 2.
  */
 class MF2 extends Base {
 
