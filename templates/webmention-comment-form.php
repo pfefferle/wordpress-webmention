@@ -1,6 +1,6 @@
 <?php
 /**
- * Hook to add custom content before the webmention form added to the comment form.
+ * Hook to add custom content before the Webmention form added to the comment form.
  */
 do_action( 'webmention_comment_form_template_before' );
 ?>
