@@ -74,7 +74,7 @@ class Comment {
 			array(
 				'label'       => __( 'Likes', 'webmention' ),
 				'singular'    => __( 'Like', 'webmention' ),
-				'description' => __( 'Like', 'webmention' ),
+				'description' => __( 'A like is a popular webaction button and in some cases post type on various silos such as Facebook and Instagram.', 'webmention' ),
 				'icon'        => '👍',
 				'class'       => 'u-like-of',
 				// translators: %1$s username, %2$s opject format (post, audio, ...), %3$s URL, %4$s domain
@@ -137,7 +137,7 @@ class Comment {
 		register_webmention_comment_type(
 			'watch',
 			array(
-				'label'       => __( 'Watchs', 'webmention' ),
+				'label'       => __( 'Watches', 'webmention' ),
 				'singular'    => __( 'Watch', 'webmention' ),
 				'description' => __( 'A watch is a semi-passive type of post used to publish that you have watched a video (movie, TV, film), or a live show (theater, concert).', 'webmention' ),
 				'icon'        => '📺',

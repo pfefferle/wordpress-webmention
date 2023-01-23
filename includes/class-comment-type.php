@@ -26,7 +26,7 @@ final class Comment_Type {
 	public $label = 'Mentions';
 
 	/**
-	 * Name of the comment type.
+	 * Name of the comment type. Singular.
 	 *
 	 * @var string $singular
 	 */
