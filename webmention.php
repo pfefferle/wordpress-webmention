@@ -152,7 +152,7 @@ register_activation_hook( __FILE__, '\Webmention\activation' );
  *
  * @return void
  */
-function upgrade( $package, $data, $package_type ) {
+function upgrader_overwrote_package( $package, $data, $package_type ) {
 	if ( 'plugin' !== $package_type ) {
 		return;
 	}
@@ -166,7 +166,38 @@ function upgrade( $package, $data, $package_type ) {
 	require_once dirname( __FILE__ ) . '/includes/class-db.php';
 	\Webmention\DB::update_database();
 }
-add_action( 'upgrader_overwrote_package', '\Webmention\upgrade', 10, 3 );
+add_action( 'upgrader_overwrote_package', '\Webmention\upgrader_overwrote_package', 10, 3 );
+
+/**
+ * Runs after upgrades are completed.
+ *
+ * @since 2.10.0
+ *
+ * @param \WP_Upgrader $wp_upgrader WP_Upgrader instance.
+ * @param array        $hook_extra Array of bulk item update data.
+ */
+function upgrader_process_complete( $wp_upgrader, $hook_extra ) {
+	if ( ! $wp_upgrader instanceof Plugin_Upgrader || ! isset( $hook_extra['plugins'] ) ) {
+		return;
+	}
+	$updated_plugins = $hook_extra['plugins'];
+	$updated         = false;
+
+	foreach ( $updated_plugins as $updated_plugin ) {
+		if ( plugin_basename( __FILE__ ) !== $updated_plugin ) {
+			continue;
+		}
+		$updated = true;
+	}
+
+	if ( false === $updated ) {
+		return;
+	}
+
+	require_once dirname( __FILE__ ) . '/includes/class-db.php';
+	\Webmention\DB::update_database();
+}
+add_action( 'upgrader_process_complete', '\Webmention\upgrader_overwrote_package', 10, 2 );
 
 /**
  * Add CSS and JavaScript
