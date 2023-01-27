@@ -259,6 +259,6 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
  * @return void
  */
 function remove_semantic_linkbacks() {
-	deactivate_plugins( array( WEBMENTION_PLUGIN_BASENAME ) );
-	delete_plugins( array( WEBMENTION_PLUGIN_BASENAME ) );
+	deactivate_plugins( array( 'semantic-linkbacks/semantic-linkbacks.php' ) );
+	delete_plugins( array( 'semantic-linkbacks/semantic-linkbacks.php' ) );
 }
