@@ -259,6 +259,14 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
  * @return void
  */
 function remove_semantic_linkbacks() {
-	deactivate_plugins( array( 'semantic-linkbacks/semantic-linkbacks.php' ) );
-	delete_plugins( array( 'semantic-linkbacks/semantic-linkbacks.php' ) );
+	require_once ABSPATH . 'wp-admin/includes/plugin.php';
+	require_once ABSPATH . 'wp-admin/includes/file.php';
+
+	$plugin_slug       = 'semantic-linkbacks/semantic-linkbacks.php';
+	$installed_plugins = get_plugins();
+
+	if ( array_key_exists( $plugin_slug, $installed_plugins ) ) {
+		\deactivate_plugins( array( $plugin_slug ), true );
+		\delete_plugins( array( $plugin_slug ), true );
+	}
 }
