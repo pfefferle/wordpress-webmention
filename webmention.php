@@ -161,7 +161,7 @@ register_activation_hook( __FILE__, '\Webmention\activation' );
  *
  * @return void
  */
-function upgrader_overwrote_package( $package, $data, $package_type ) {
+function upgrader_overwrote_package( $package, $data, $package_type = 'plugin' ) {
 	if ( 'plugin' !== $package_type ) {
 		return;
 	}
