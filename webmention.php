@@ -31,6 +31,10 @@ defined( 'WEBMENTION_VOUCH' ) || define( 'WEBMENTION_VOUCH', false );
 // Mentions with content less than this length will be rendered in full.
 defined( 'MAX_INLINE_MENTION_LENGTH' ) || define( 'MAX_INLINE_MENTION_LENGTH', 300 );
 
+\define( 'WEBMENTION_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+\define( 'WEBMENTION_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
+\define( 'WEBMENTION_PLUGIN_FILE', plugin_dir_path( __FILE__ ) . '/' . basename( __FILE__ ) );
+
 // initialize admin settings.
 require_once dirname( __FILE__ ) . '/includes/class-admin.php';
 add_action( 'admin_init', array( '\Webmention\Admin', 'admin_init' ) );
@@ -124,10 +128,13 @@ function init() {
 	remove_action( 'init', array( '\WebMentionFormPlugin', 'init' ) );
 	remove_action( 'init', array( '\WebMentionForCommentsPlugin', 'init' ) );
 
+	// remove old Semantic Linkbacks code
+	remove_action( 'plugins_loaded', array( 'Semantic_Linkbacks_Plugin', 'init' ), 11 );
+	remove_action( 'admin_init', array( 'Semantic_Linkbacks_Plugin', 'admin_init' ) );
+
 	add_action( 'wp_enqueue_scripts', '\Webmention\enqueue_scripts' );
 
 }
-
 add_action( 'plugins_loaded', '\Webmention\init' );
 
 /**
@@ -138,6 +145,8 @@ add_action( 'plugins_loaded', '\Webmention\init' );
 function activation() {
 	require_once dirname( __FILE__ ) . '/includes/class-db.php';
 	\Webmention\DB::update_database();
+
+	\Webmention\remove_semantic_linkbacks();
 }
 register_activation_hook( __FILE__, '\Webmention\activation' );
 
@@ -165,6 +174,8 @@ function upgrader_overwrote_package( $package, $data, $package_type ) {
 
 	require_once dirname( __FILE__ ) . '/includes/class-db.php';
 	\Webmention\DB::update_database();
+
+	\Webmention\remove_semantic_linkbacks();
 }
 add_action( 'upgrader_overwrote_package', '\Webmention\upgrader_overwrote_package', 10, 3 );
 
@@ -184,7 +195,7 @@ function upgrader_process_complete( $wp_upgrader, $hook_extra ) {
 	$updated         = false;
 
 	foreach ( $updated_plugins as $updated_plugin ) {
-		if ( plugin_basename( __FILE__ ) !== $updated_plugin ) {
+		if ( WEBMENTION_PLUGIN_BASENAME !== $updated_plugin ) {
 			continue;
 		}
 		$updated = true;
@@ -196,6 +207,8 @@ function upgrader_process_complete( $wp_upgrader, $hook_extra ) {
 
 	require_once dirname( __FILE__ ) . '/includes/class-db.php';
 	\Webmention\DB::update_database();
+
+	\Webmention\remove_semantic_linkbacks();
 }
 add_action( 'upgrader_process_complete', '\Webmention\upgrader_overwrote_package', 10, 2 );
 
@@ -236,4 +249,24 @@ function get_plugin_meta( $default_headers = array() ) {
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	require_once dirname( __FILE__ ) . '/includes/class-cli.php';
 	WP_CLI::add_command( 'webmention', '\Webmention\Cli' );
+}
+
+/**
+ * Remove the Semantic Linkbacks plugin
+ *
+ * @since 5.0.0
+ *
+ * @return void
+ */
+function remove_semantic_linkbacks() {
+	require_once ABSPATH . 'wp-admin/includes/plugin.php';
+	require_once ABSPATH . 'wp-admin/includes/file.php';
+
+	$plugin_slug       = 'semantic-linkbacks/semantic-linkbacks.php';
+	$installed_plugins = get_plugins();
+
+	if ( array_key_exists( $plugin_slug, $installed_plugins ) ) {
+		\deactivate_plugins( array( $plugin_slug ), true );
+		\delete_plugins( array( $plugin_slug ), true );
+	}
 }
