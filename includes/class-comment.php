@@ -44,8 +44,15 @@ class Comment {
 	}
 
 	public static function get_comment_type_attr( $type, $attr ) {
-		$types  = self::get_comment_types();
-		$return = $types[ $type ]->get( $attr );
+		$types = self::get_comment_types();
+
+		if ( in_array( $type, $types, true ) ) {
+			$comment_type = $types[ $type ];
+		} else {
+			$comment_type = $types['mention'];
+		}
+
+		$return = $comment_type->get( $attr );
 
 		return apply_filters( "webmention_comment_type_{$attr}", $return, $type );
 	}
