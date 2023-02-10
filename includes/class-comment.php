@@ -46,7 +46,7 @@ class Comment {
 	public static function get_comment_type_attr( $type, $attr ) {
 		$types = self::get_comment_types();
 
-		if ( in_array( $type, $types, true ) ) {
+		if ( in_array( $type, array_keys( $types ), true ) ) {
 			$comment_type = $types[ $type ];
 		} else {
 			$comment_type = $types['mention'];
