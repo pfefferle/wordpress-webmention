@@ -241,7 +241,7 @@ if ( ! function_exists( 'is_avatar_comment_type' ) ) :
 		 */
 		$allowed_comment_types = apply_filters( 'get_avatar_comment_types', array( 'comment' ) );
 
-			return in_array( $comment_type, (array) $allowed_comment_types, true );
+		return in_array( $comment_type, (array) $allowed_comment_types, true );
 	}
 endif;
 
@@ -324,7 +324,6 @@ function is_webmention_comment_type( $comment ) {
 	}
 	$types = array( apply_filters( 'webmention_comment_type', WEBMENTION_COMMENT_TYPE ) );
 	return in_array( $comment->comment_type, $types, true );
-
 }
 
 /**
