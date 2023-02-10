@@ -151,68 +151,6 @@ function activation() {
 register_activation_hook( __FILE__, '\Webmention\activation' );
 
 /**
- * Update Hook
- *
- * Migrate DB if needed
- *
- * @param string $package The package file.
- * @param array  $data The new plugin or theme data.
- * @param string $package_type The package type.
- *
- * @return void
- */
-function upgrader_overwrote_package( $package, $data, $package_type = 'plugin' ) {
-	if ( 'plugin' !== $package_type ) {
-		return;
-	}
-
-	$text_domain = isset( $data['TextDomain'] ) ? $data['TextDomain'] : '';
-
-	if ( 'webmention' !== $text_domain ) {
-		return;
-	}
-
-	require_once dirname( __FILE__ ) . '/includes/class-db.php';
-	\Webmention\DB::update_database();
-
-	\Webmention\remove_semantic_linkbacks();
-}
-add_action( 'upgrader_overwrote_package', '\Webmention\upgrader_overwrote_package', 10, 3 );
-
-/**
- * Runs after upgrades are completed.
- *
- * @since 2.10.0
- *
- * @param \WP_Upgrader $wp_upgrader WP_Upgrader instance.
- * @param array        $hook_extra Array of bulk item update data.
- */
-function upgrader_process_complete( $wp_upgrader, $hook_extra ) {
-	if ( ! $wp_upgrader instanceof Plugin_Upgrader || ! isset( $hook_extra['plugins'] ) ) {
-		return;
-	}
-	$updated_plugins = $hook_extra['plugins'];
-	$updated         = false;
-
-	foreach ( $updated_plugins as $updated_plugin ) {
-		if ( WEBMENTION_PLUGIN_BASENAME !== $updated_plugin ) {
-			continue;
-		}
-		$updated = true;
-	}
-
-	if ( false === $updated ) {
-		return;
-	}
-
-	require_once dirname( __FILE__ ) . '/includes/class-db.php';
-	\Webmention\DB::update_database();
-
-	\Webmention\remove_semantic_linkbacks();
-}
-add_action( 'upgrader_process_complete', '\Webmention\upgrader_overwrote_package', 10, 2 );
-
-/**
  * Add CSS and JavaScript
  */
 function enqueue_scripts() {
