@@ -386,6 +386,16 @@ class Admin {
 				'default'      => 1,
 			)
 		);
+		register_setting(
+			'webmention',
+			'webmention_facepile_fold_limit',
+			array(
+				'type'         => 'int',
+				'description'  => esc_html__( 'Initial number of faces to show in facepiles <small>(0 for all)</small>', 'webmention' ),
+				'show_in_rest' => true,
+				'default'      => 0,
+			)
+		);
 	}
 
 	/**

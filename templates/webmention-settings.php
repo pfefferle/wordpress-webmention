@@ -146,6 +146,13 @@
 							<?php esc_html_e( 'Separate Webmention Types from Comments.', 'webmention' ); ?>
 						</label>
 					</fieldset>
+
+					<fieldset>
+						<label for="webmention_facepile_fold_limit">
+							<input type="number" min="0" class="small-text" name="webmention_facepile_fold_limit" id="webmention_facepile_fold_limit" value="<?php echo esc_attr( get_option( 'webmention_facepile_fold_limit' ) ); ?>" />
+							<?php esc_html_e( 'Initial number of faces to show in facepiles (0 for all).', 'webmention' ); ?>
+						</label>
+					</fieldset>
 				</td>
 			</tr>
 		</table>
