@@ -246,7 +246,7 @@ class Receiver {
 
 		if ( $vouch ) {
 			// If there is a vouch pass it along
-			$vouch = urldecode( $params['vouch'] );
+			$vouch = urldecode( $vouch );
 			// Safely store a version of the data
 			$comment_meta['webmention_vouch_url'] = esc_url_raw( $vouch );
 		}
