@@ -138,7 +138,7 @@ class Response {
 	 *
 	 * @param bool $validate_content_type Validate content type header
 	 *
-	 * @return WP_Error|true An Error object or true.
+	 * @return WP_Error|DOMDocument An Error object or the DOMDocument.
 	 */
 	public function get_dom_document( $validate_content_type = true ) {
 		if ( $this->dom_document instanceof DOMDocument ) {

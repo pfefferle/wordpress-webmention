@@ -14,7 +14,7 @@ class Request {
 	 * @param string  $url  The URL to retrieve.
 	 * @param boolean $safe Whether to use the safe or unfiltered version of HTTP API.
 	 *
-	 * @return WP_Error|array Either an error or the complete return object
+	 * @return WP_Error|Response Either an error or the complete return object
 	 */
 	public static function get( $url, $safe = true ) {
 		$args = self::get_arguments();
