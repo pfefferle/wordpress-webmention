@@ -225,7 +225,7 @@ class Sender {
 
 		$new = implode( "\n", $pinged );
 
-		$return = $wpdb->update( $wpdb->posts, array( 'pinged' => $new ), array( 'ID' => $post->ID ) );
+		$wpdb->update( $wpdb->posts, array( 'pinged' => $new ), array( 'ID' => $post->ID ) );
 		clean_post_cache( $post->ID );
 
 		return $new;

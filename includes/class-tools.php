@@ -24,8 +24,8 @@ class Tools {
 	 * Add admin menu entry
 	 */
 	public static function admin_menu() {
-		$title      = esc_html__( 'Webmention', 'webmention' );
-		$tools_page = add_management_page(
+		$title = esc_html__( 'Webmention', 'webmention' );
+		add_management_page(
 			$title,
 			$title,
 			'manage_options',
