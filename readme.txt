@@ -100,6 +100,26 @@ Project and support maintained on github at [pfefferle/wordpress-webmention](htt
 * Webmentions are no longer stored as comment type mention, but as custom comment types
 * New simplified presentation code, providing for optional custom templating in future.
 
+= 4.0.9 =
+
+* Fix XSS issue
+
+= 4.0.8 =
+
+* Add `onerror` handling also for `srcset` ( props @florianbrinkmann for testing )
+
+= 4.0.7 =
+
+* Re-add `onerror` handling for broken images ( props @snarfed )
+
+= 4.0.6 =
+
+* Updated requirements
+
+= 4.0.5 =
+
+* Remov `Webmention_Notification` class until proper tested/used
+
 = 4.0.4 =
 
 * Update dependencies

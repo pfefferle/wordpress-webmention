@@ -1,8 +1,17 @@
 <?php
 global $wp_query, $post;
-$comment_id = $wp_query->query['replytocom'];
-$comment = get_comment( $comment_id );
-$target  = '';
+$comment_id = esc_attr( $wp_query->query['replytocom'] );
+$comment    = get_comment( $comment_id ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+
+// load 404 if replytocom is not valid
+if ( ! $comment ) {
+	status_header( 404 );
+	nocache_headers();
+	include get_query_template( '404' );
+	die();
+}
+
+$target = '';
 
 if ( $comment->comment_author_url ) {
 	$target = $comment->comment_author_url;
@@ -26,7 +35,7 @@ if ( $comment->comment_parent ) {
 		<script type="text/javascript">
 			<!--
 			// redirect to comment-page and scroll to comment
-			window.location = "<?php echo get_permalink( $comment->comment_post_ID ) . '#comment-' . $comment_id; ?>";
+			window.location = "<?php echo get_permalink( $comment->comment_post_ID ) . '#comment-' . $comment->comment_ID; ?>";
 			//–>
 		</script>
 	</head>
