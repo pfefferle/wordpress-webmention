@@ -1,15 +1,15 @@
-# Copyright (C) 2022 Matthias Pfefferle
+# Copyright (C) 2023 Matthias Pfefferle
 # This file is distributed under the MIT.
 msgid ""
 msgstr ""
-"Project-Id-Version: Webmention 4.0.8\n"
+"Project-Id-Version: Webmention 4.0.9\n"
 "Report-Msgid-Bugs-To: "
 "https://wordpress.org/support/plugin/wordpress-webmention\n"
-"POT-Creation-Date: 2022-01-31 17:01:43+00:00\n"
+"POT-Creation-Date: 2023-03-08 17:11:06+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2022-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2023-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "X-Generator: grunt-wp-i18n 1.0.3\n"
@@ -471,7 +471,7 @@ msgstr ""
 msgid "Ping me!"
 msgstr ""
 
-#: templates/webmention-comment.php:48
+#: templates/webmention-comment.php:55
 #. translators: 1: date, 2: time
 msgid "%1$s at %2$s"
 msgstr ""

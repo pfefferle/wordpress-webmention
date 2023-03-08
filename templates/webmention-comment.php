@@ -2,7 +2,14 @@
 global $wp_query, $post;
 $comment_id = esc_attr( $wp_query->query['replytocom'] );
 $comment = get_comment( $comment_id );
-$target  = '';
+
+if ( ! $comment ) {
+	$wp_query->set_404();
+	status_header( 404 );
+	exit();
+}
+
+$target = '';
 
 if ( $comment->comment_author_url ) {
 	$target = $comment->comment_author_url;

@@ -3,8 +3,8 @@
 **Donate link:** https://notiz.blog/donate/  
 **Tags:** webmention, pingback, trackback, linkback, indieweb, comment, response  
 **Requires at least:** 4.9  
-**Tested up to:** 5.9  
-**Stable tag:** 4.0.8  
+**Tested up to:** 6.1  
+**Stable tag:** 4.0.9  
 **Requires PHP:** 5.6  
 **License:** MIT  
 **License URI:** https://opensource.org/licenses/MIT  
@@ -90,6 +90,10 @@ Webmention headers are only shown if webmentions are available for that particul
 ## Changelog ##
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
+
+### 4.0.9 ###
+
+* Fix XSS issue
 
 ### 4.0.8 ###
 
