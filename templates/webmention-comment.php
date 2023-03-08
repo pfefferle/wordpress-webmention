@@ -1,6 +1,6 @@
 <?php
 global $wp_query, $post;
-$comment_id = $wp_query->query['replytocom'];
+$comment_id = esc_attr( $wp_query->query['replytocom'] );
 $comment = get_comment( $comment_id );
 $target  = '';
 
