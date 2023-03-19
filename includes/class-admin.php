@@ -230,6 +230,10 @@ class Admin {
 	 * Load settings page
 	 */
 	public static function settings_page() {
+		require_once dirname( __FILE__ ) . '/class-db.php';
+		\Webmention\DB::update_database();
+		\Webmention\remove_semantic_linkbacks();
+
 		add_thickbox();
 		wp_enqueue_script( 'plugin-install' );
 		load_template( dirname( __FILE__ ) . '/../templates/webmention-settings.php' );
