@@ -3,7 +3,7 @@
 **Donate link:** https://notiz.blog/donate/  
 **Tags:** webmention, pingback, trackback, linkback, indieweb, comment, response  
 **Requires at least:** 4.9  
-**Tested up to:** 6.1  
+**Tested up to:** 6.2  
 **Stable tag:** 5.0.0  
 **Requires PHP:** 5.6  
 **License:** MIT  
