@@ -720,7 +720,7 @@ msgid "(for example \"example.com\")"
 msgstr ""
 
 #: templates/webmention-settings.php:34
-msgid "Disable sending Webmentions for media links(image, video, audio)"
+msgid "Disable sending Webmentions for media links (image, video, audio)"
 msgstr ""
 
 #: templates/webmention-settings.php:43
