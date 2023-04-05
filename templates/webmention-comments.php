@@ -15,7 +15,7 @@ foreach ( $grouped_mentions as $mention_type => $mentions ) {
 	}
 	?>
 
-<ul class="reaction-list">
+<ul class="reaction-list reaction-list--<?php echo $mention_type; ?>">
 	<h2><?php echo get_webmention_comment_type_attr( $mention_type, 'label' ); ?></h2>
 	<?php
 	wp_list_comments(
