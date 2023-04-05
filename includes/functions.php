@@ -550,3 +550,38 @@ function webmention_comment_form() {
 		load_template( $template );
 	}
 }
+
+/**
+ * Returns templates that can be overwritten by the theme
+ *
+ * @since 5.0.1
+ */
+function webmention_template( $slug, $name = null, $args = array() ) {
+
+	$locations = array();
+	$template  = '';
+	$name      = (string) $name;
+
+	if ( '' !== $name ) {
+		$locations[] = "/webmention/{$slug}-{$name}.php";
+	}
+
+	$locations[] = "/webmention/{$slug}.php";
+
+	$template = locate_template( $locations, false );
+
+	if ( empty( $template ) ) {
+		if ( '' !== $name && file_exists( WEBMENTION_PLUGIN_DIR . 'templates/display/' . $slug . '-' . $name . '.php' ) ) {
+			$template = WEBMENTION_PLUGIN_DIR . 'templates/display/' . $slug . '-' . $name . '.php';
+		} elseif ( file_exists( WEBMENTION_PLUGIN_DIR . 'templates/display/' . $slug . '.php' ) ) {
+			$template = WEBMENTION_PLUGIN_DIR . 'templates/display/' . $slug . '.php';
+		}
+	}
+
+	if ( '' !== $template ) {
+		load_template( $template, false, $args );
+	}
+
+	return $template;
+
+}
