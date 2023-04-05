@@ -31,7 +31,7 @@
 
 						<label for="webmention_disable_media_mentions">
 							<input type="checkbox" name="webmention_disable_media_mentions" id="webmention_disable_media_mentions" value="1" <?php echo checked( true, get_option( 'webmention_disable_media_mentions' ) ); ?> />
-							<?php esc_html_e( 'Disable sending Webmentions for media links(image, video, audio)', 'webmention' ); ?>
+							<?php esc_html_e( 'Disable sending Webmentions for media links (image, video, audio)', 'webmention' ); ?>
 						</label>
 					</fieldset>
 				</td>
