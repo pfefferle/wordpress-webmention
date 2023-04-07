@@ -11,7 +11,7 @@ if ( ! $comment ) {
 	$template_404 = get_query_template( 404 );
 	// return 404 template
 	if ( $template_404 ) {
-		include get_query_template( '404' ); 
+		include $template_404; 
 	}
 	die();
 }
