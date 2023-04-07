@@ -157,7 +157,7 @@ class Comment_Walker extends Walker_Comment {
 		if ( $args['overlay'] ) {
 			$overlay = '<span class="emoji-overlay">' . get_webmention_comment_type_attr( $comment->comment_type, 'icon' ) . '</span>';
 		}
-		webmention_template( 'reaction', 'item', array(
+		webmention_template( 'reaction-item', esc_attr( $comment->comment_type ), array(
 			'comment'            => $comment,
 			'title'              => $title,
 			'tag'                => $tag,
@@ -189,7 +189,7 @@ class Comment_Walker extends Walker_Comment {
 			$moderation_note = __( 'Your comment is awaiting moderation. This is a preview; your comment will be visible after it has been approved.' );
 		}
 
-		webmention_template( 'comment', 'item', array(
+		webmention_template( 'comment-item', esc_attr( $comment->comment_type ), array(
 			'comment'            => $comment,
 			'depth'              => $depth,
 			'tag'                => $tag,
