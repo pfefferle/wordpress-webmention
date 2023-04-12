@@ -11,9 +11,14 @@ if ( ! $comment ) {
 	$template_404 = get_query_template( 404 );
 	// return 404 template
 	if ( $template_404 ) {
-		include $template_404; 
+		include $template_404;
+		die();
+	} else {
+		wp_die(
+			__( 'Page not found', 'webmention' ),
+			__( '404', 'webmention' )
+		);
 	}
-	die();
 }
 
 $target = '';
