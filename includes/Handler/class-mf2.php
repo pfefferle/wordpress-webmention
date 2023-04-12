@@ -30,11 +30,12 @@ class MF2 extends Base {
 	 */
 	public function parse( Response $response, $target_url ) {
 		$dom = $response->get_dom_document();
+
 		if ( is_wp_error( $dom ) ) {
 			return $dom;
 		}
 		if ( ! class_exists( '\Webmention\Mf2\Parser' ) ) {
-			require_once plugin_dir_path( __FILE__ ) . '../../libraries/mf2/Mf2/Parser.php';
+			require_once WEBMENTION_PLUGIN_DIR . '/libraries/mf2/Mf2/Parser.php';
 		}
 
 		$source_url = $response->get_url();

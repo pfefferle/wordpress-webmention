@@ -21,19 +21,19 @@ class Handler {
 	 */
 	public function __construct() {
 		// MF2 Handler  Class
-		require_once dirname( __FILE__ ) . '/Handler/class-mf2.php';
+		require_once WEBMENTION_PLUGIN_DIR . '/includes/Handler/class-mf2.php';
 		$this->handlers[] = new MF2();
 
 		// WordPress Handler Class
-		require_once dirname( __FILE__ ) . '/Handler/class-wp.php';
+		require_once WEBMENTION_PLUGIN_DIR . '/includes/Handler/class-wp.php';
 		$this->handlers[] = new WP();
 
 		// Meta Handler Class
-		require_once dirname( __FILE__ ) . '/Handler/class-meta.php';
+		require_once WEBMENTION_PLUGIN_DIR . '/includes/Handler/class-meta.php';
 		$this->handlers[] = new Meta();
 
 		// JSON-LD Handler  Class
-		require_once dirname( __FILE__ ) . '/Handler/class-jsonld.php';
+		require_once WEBMENTION_PLUGIN_DIR . '/includes/Handler/class-jsonld.php';
 		$this->handlers[] = new Jsonld();
 	}
 
@@ -112,7 +112,7 @@ class Handler {
 		foreach ( $this->handlers as $handler ) {
 			$return = $handler->parse( $response, $target_url );
 			if ( is_wp_error( $return ) ) {
-				return $return;
+				continue;
 			}
 			$item = $handler->get_webmention_item();
 
