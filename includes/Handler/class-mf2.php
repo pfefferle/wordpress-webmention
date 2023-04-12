@@ -52,10 +52,23 @@ class MF2 extends Base {
 
 		// add response type
 		$response_type = $this->get_response_type( $item, $data, $target_url );
-		$this->webmention_item->add_response_type( wp_slash( $response_type ) );
-
+			
 		$this->set_properties( $item );
 		$this->set_property_author( $author );
+
+		// Reclassify short mentions as comments
+		if ( 'mention' === $response_type ) {
+			$text = $this->webmention_item->get_content();
+			if ( is_string( $text ) ) {	
+				$text_len = mb_strlen( wp_strip_all_tags( html_entity_decode( $text, ENT_QUOTES ) ) );
+				if ( $text_len <= MAX_INLINE_MENTION_LENGTH ) {
+					$response_type = 'comment';
+				}
+			}
+		}
+
+
+		$this->webmention_item->add_response_type( wp_slash( $response_type ) );
 
 		$this->webmention_item->add_url( $source_url ); // If there is no URL property then use the retrieved URL.
 
