@@ -220,11 +220,11 @@ class Cli extends WP_CLI_Command {
 					'comment_post_ID' => $assoc_args['post_id'],
 					'comment_type'    => $comment_type,
 					'comment_meta'    => array(
-						'protocol'                 => 'webmention',
-						'avatar'                   => "https://i.pravatar.cc/80?u={$index}",
-						'webmention_created_at'    => current_time( 'mysql', 1 ),
-						'webmention_target_url'    => 'https://example.org/target',
-						'webmention_canonical_url' => 'https://example.org/canonical',
+						'protocol'              => 'webmention',
+						'avatar'                => "https://i.pravatar.cc/80?u={$index}",
+						'url'                   => 'https://example.org/canonical',
+						'webmention_created_at' => current_time( 'mysql', 1 ),
+						'webmention_source_url' => 'https://example.org/source',
 					),
 				)
 			);
