@@ -106,6 +106,23 @@ class Receiver {
 			'show_in_rest' => true,
 		);
 		register_meta( 'comment', 'webmention_vouch_url', $args );
+
+		$args = array(
+			'type'         => 'string',
+			'description'  => esc_html__( 'Canonical URL for the Webmention', 'webmention' ),
+			'single'       => true,
+			'show_in_rest' => true,
+		);
+		register_meta( 'comment', 'url', $args );
+
+		$args = array(
+			'type'         => 'string',
+			'description'  => esc_html__( 'Avatar URL', 'webmention' ),
+			'single'       => true,
+			'show_in_rest' => true,
+		);
+		register_meta( 'comment', 'avatar', $args );
+
 	}
 
 	/**
