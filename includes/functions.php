@@ -185,6 +185,36 @@ function webmention_url_to_postid( $url ) {
 }
 
 /**
+ * Get URL from Webmention Comment.
+ * Factors in canonical versus source URL.
+ *
+ * @param int|WP_Comment $comment Comment Object or ID.
+ * @return string $url Return URL representing the URL of the webmention
+ */
+function get_url_from_webmention( $comment ) {
+	$comment = get_comment( $comment );
+	if ( ! $comment ) {
+		return null;
+	}
+	// Return the canonical URL.
+	$url = get_comment_meta( $comment->comment_ID, 'url', true );
+	if ( $url ) {
+		return $url;
+	}
+	// If no canonical URL exists, return source url.
+	$url = get_comment_meta( $comment->comment_ID, 'webmention_source_url', true );
+	if ( $url ) {
+		return $url;
+	}
+	// If no source URL exists, which should not happen, return author url just for backcompat.
+	$url = $comment->comment_author_url;
+	if ( $url ) {
+		return $url;
+	}
+	return null;
+}
+
+/**
  * Extract the domain for a url, sans www.
  *
  * @since 3.8.9
