@@ -108,7 +108,7 @@ class Comment_Walker extends Walker_Comment {
 
 		$defaults = array(
 			'avatar_only' => false, // Implements an argument that will just output an avatar
-			'overlay'     => true, // Implements an argument that optionally overlays an icon on top of the profile image, applies only to the avatar only output
+			'overlay'     => ( 1 == get_option( 'webmention_reaction_overlay', 1 ) ), // Implements an argument that optionally overlays an icon on top of the profile image, applies only to the avatar only output
 		);
 		$args     = wp_parse_args( $args, $defaults );
 
@@ -125,7 +125,6 @@ class Comment_Walker extends Walker_Comment {
 			ob_start();
 			$this->avatar_only( $comment, $depth, $args );
 			$output .= ob_get_clean();
-
 		} elseif ( 'html5' === $args['format'] ) {
 			ob_start();
 			$this->html5_comment( $comment, $depth, $args );

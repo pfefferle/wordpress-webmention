@@ -392,6 +392,16 @@ class Admin {
 		);
 		register_setting(
 			'webmention',
+			'webmention_reaction_overlay',
+			array(
+				'type'         => 'int',
+				'description'  => esc_html__( 'Overlay Reaction Icons', 'webmention' ),
+				'show_in_rest' => true,
+				'default'      => 1,
+			)
+		);
+		register_setting(
+			'webmention',
 			'webmention_facepile_fold_limit',
 			array(
 				'type'         => 'int',
