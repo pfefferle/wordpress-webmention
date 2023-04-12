@@ -9,6 +9,8 @@ $mentions = get_comments(
 
 $grouped_mentions = separate_comments( $mentions );
 
+do_action( 'webmention_before_reaction_list' );
+
 foreach ( $grouped_mentions as $mention_type => $mentions ) {
 	if ( empty( $mentions ) ) {
 		continue;
@@ -29,6 +31,8 @@ foreach ( $grouped_mentions as $mention_type => $mentions ) {
 </ul>
 	<?php
 }
+
+do_action( 'webmention_after_reaction_list' );
 
 load_template( locate_template( 'comments.php' ) );
 ?>
