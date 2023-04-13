@@ -87,15 +87,6 @@ class WP extends Base {
 			}
 		}
 
-		// Reclassify short mentions as comments
-		$text = $this->webmention_item->get_content();
-		if ( is_string( $text ) ) {
-			$text_len = mb_strlen( wp_strip_all_tags( html_entity_decode( $text, ENT_QUOTES ) ) );
-			if ( $text_len <= MAX_INLINE_MENTION_LENGTH ) {
-				$this->webmention_item->add_response_type( wp_slash( 'comment' ) );
-			}
-		}
-
 		$raw['_sitedata'] = $site_json;
 		$this->webmention_item->add_raw( $raw );
 		return true;

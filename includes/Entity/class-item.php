@@ -282,7 +282,18 @@ class Item {
 	 * @return string
 	 */
 	public function get_response_type() {
-		return $this->response_type ? $this->response_type : 'mention';
+		$response_type = $this->response_type ? $this->response_type : 'mention';
+		// Reclassify short mentions as comments
+		if ( 'mention' === $this->response_type ) {
+			$text = $this->get_content();
+			if ( is_string( $text ) ) {
+				$text_len = mb_strlen( wp_strip_all_tags( html_entity_decode( $text, ENT_QUOTES ) ) );
+				if ( $text_len <= MAX_INLINE_MENTION_LENGTH ) {
+					return 'comment';
+				}
+			}
+		}
+		return $response_type;
 	}
 
 	/**
