@@ -98,6 +98,7 @@ class Meta extends Base {
 				}
 			}
 		}
+
 		$this->webmention_item->add_meta( apply_filters( 'webmention_handler_meta_set_properties', array(), $this ) );
 	}
 }
