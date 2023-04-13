@@ -242,7 +242,7 @@ class Comment_Walker extends Walker_Comment {
 							get_comment_time( DATE_W3C ),
 							sprintf(
 								/* translators: 1: Comment date, 2: Comment time. */
-								__( '%1$s at %2$s' ),
+								__( '%1$s at %2$s', 'default' ),
 								get_comment_date( '', $comment ),
 								get_comment_time()
 							)
