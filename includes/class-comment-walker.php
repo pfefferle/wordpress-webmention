@@ -209,7 +209,7 @@ class Comment_Walker extends Walker_Comment {
 				<footer class="comment-meta">
 					<div class="comment-author vcard h-card u-author">
 						<?php
-						if ( 0 != $args['avatar_size'] ) {
+						if ( 0 !== $args['avatar_size'] ) {
 							echo get_avatar( $comment, $args['avatar_size'] );
 						}
 						?>
