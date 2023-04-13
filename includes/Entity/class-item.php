@@ -284,7 +284,7 @@ class Item {
 	public function get_response_type() {
 		$response_type = $this->response_type ? $this->response_type : 'mention';
 		// Reclassify short mentions as comments
-		if ( 'mention' === $this->response_type ) {
+		if ( 'mention' === $response_type ) {
 			$text = $this->get_content();
 			if ( is_string( $text ) ) {
 				$text_len = mb_strlen( wp_strip_all_tags( html_entity_decode( $text, ENT_QUOTES ) ) );
