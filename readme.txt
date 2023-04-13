@@ -87,6 +87,17 @@ Webmention headers are only shown if Webmentions are available for that particul
 
     define( 'WEBMENTION_ALWAYS_SHOW_HEADERS', 1 );
 
+= How do I customize the display of my webmentions? = 
+
+This plugin includes several enhancements to the built-in WordPress commenting system to allow for enhancement, while allowing existing methods to offer customization. It customizes the classic defaults for WordPress to account for webmentions by using a custom comment walker that minimally changes to defaults.
+By default, many themes provide a custom callback to the `wp_list_comments` function. This plugin adds several enhancements to that. For one, the custom callbacks argument is usually a string with the function name. We enhance it to behave as normal in that case, but if an array is passed, to allow specific callbacks per the key of the array, or the 'all' key as a default. This means each comment type, which would be each webmention type or otherwise, can have its own custom callback.
+
+It introduces a new version of the default function for html5 comments, adding correct microformats2 markup, and for webmentions, a proper site citation, e.g. Bob @ Example.Com as well as a hook, `webmention_comment_metadata` which offers a comment object as the sole argument, to add arbitrary metadata. This would be overridden by any custom comment rendering done by themes.
+
+There is an option within the plugin to show webmentions not determined to be replies or comments inline, or to display them separately as avatar only lists. The `wp_list_comments` function is overridden to allow for the `avatar_only` option, which will render this, with a second option of `overlay` to overlay an icon reflecting the reaction type. Reactions are webmention types such as like, which there is no textual component to it. If you opt to display them as comments, the text will read that the author `likes this post`. 
+
+While not all display options can be settings, we are looking to provide some simple options which could be customized in a theme if needed.
+
 == Changelog ==
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
