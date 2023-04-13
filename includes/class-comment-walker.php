@@ -216,7 +216,7 @@ class Comment_Walker extends Walker_Comment {
 						<?php
 						$comment_author = get_comment_author_link( $comment );
 
-						if ( '0' == $comment->comment_approved && ! $show_pending_links ) {
+						if ( '0' === $comment->comment_approved && ! $show_pending_links ) {
 							$comment_author = get_comment_author( $comment );
 						}
 
