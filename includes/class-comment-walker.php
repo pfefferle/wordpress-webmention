@@ -186,8 +186,8 @@ class Comment_Walker extends Walker_Comment {
 
 		$tag = ( 'div' === $args['style'] ) ? 'div' : 'li';
 
-		$cite  = apply_filters( 'webmention_cite', '<small>&nbsp;@&nbsp;<cite><a href="%1s">%2s</a></cite></small>' );
-		$url = get_url_from_webmention( $comment );
+		$cite = apply_filters( 'webmention_cite', '<small>&nbsp;@&nbsp;<cite><a href="%1s">%2s</a></cite></small>' );
+		$url  = get_url_from_webmention( $comment );
 		$host = wp_parse_url( $url, PHP_URL_HOST );
 		$host = preg_replace( '/^www\./', '', $host );
 		$type = get_webmention_comment_type_attr( $comment->comment_type, 'class' );
