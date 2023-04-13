@@ -28,6 +28,9 @@ class Admin {
 		add_filter( 'manage_edit-comments_columns', array( static::class, 'comment_columns' ) );
 		add_filter( 'manage_comments_custom_column', array( static::class, 'manage_comments_custom_column' ), 10, 2 );
 
+		add_action( 'bulk_actions-edit-comments', array( static::class, 'bulk_comment_actions' ), 10, 3 );
+		add_filter( 'handle_bulk_actions-edit-comments', array( static::class, 'bulk_comment_action_handler' ), 10, 3 );
+
 		add_filter( 'comment_row_actions', array( static::class, 'comment_row_actions' ), 13, 2 );
 		add_filter( 'comment_unapproved_to_approved', array( static::class, 'transition_to_approvelist' ), 10 );
 
@@ -68,6 +71,59 @@ class Admin {
 			return;
 		}
 		echo esc_html( get_webmention_comment_type_string( $comment_id ) );
+	}
+
+	/**
+	 * Add bulk option to bulk comment handler
+	 */
+	public static function bulk_comment_actions( $bulk_actions ) {
+		$bulk_actions['refresh_webmention'] = __( 'Refresh Webmention', 'webmention' );
+		return $bulk_actions;
+	}
+
+	/**
+	 * Add bulk action handler to comments
+	 *
+	 */
+	public static function bulk_comment_action_handler( $redirect_to, $doaction, $comment_ids ) {
+		if ( 'refresh_webmention' !== $doaction ) {
+			return $redirect_to;
+		}
+
+		$returns = array();
+		$errors  = array();
+		foreach ( $comment_ids as $comment_id ) {
+			if ( 'webmention' === get_comment_meta( $comment_id, 'protocol', true ) ) {
+				$source = get_comment_meta( $comment_id, 'webmention_source_url', true );
+				$target = get_comment_meta( $comment_id, 'webmention_target_url', true );
+				if ( ! $target || ! $source ) {
+					return $redirect_to;
+				}
+				$response = Request::get( $source );
+				if ( ! is_wp_error( $response ) ) {
+					$handler                   = new Handler();
+					$item                      = $handler->parse( $response, $target );
+					$commentdata               = $item->to_commentdata_array();
+					$commentdata['comment_ID'] = $comment_id;
+					if ( ! array_key_exists( 'comment_meta', $commentdata ) ) {
+						$commentdata['comment_meta'] = array();
+					}
+					$commentdata['comment_meta']['webmention_refreshed'] = current_time( 'mysql', 1 );
+
+					// In the event someone needs to make extra checks on the update or omit something.
+					$commentdata = apply_filters( 'webmention_refresh', $commentdata, $comment_id );
+
+					$result = wp_update_comment( $commentdata );
+					if ( $result ) {
+						$returns[] = $comment_id;
+					}
+				} else {
+					$errors[] = $comment_id;
+				}
+			}
+		}
+
+		return $redirect_to;
 	}
 
 	/**
