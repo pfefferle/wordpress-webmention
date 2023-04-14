@@ -34,6 +34,7 @@ defined( 'MAX_INLINE_MENTION_LENGTH' ) || define( 'MAX_INLINE_MENTION_LENGTH', 3
 \define( 'WEBMENTION_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 \define( 'WEBMENTION_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 \define( 'WEBMENTION_PLUGIN_FILE', plugin_dir_path( __FILE__ ) . '/' . basename( __FILE__ ) );
+\define( 'WEBMENTION_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
 // initialize admin settings.
 require_once dirname( __FILE__ ) . '/includes/class-admin.php';
