@@ -42,6 +42,10 @@ class Sender {
 	 */
 	public static function publish_hook( $post_id ) {
 		add_post_meta( $post_id, '_mentionme', '1', true );
+		// Post Types Other than Post Do Not Trigger Pings. This will unless it is already scheduled.
+		if ( ! wp_next_scheduled( 'do_pings' ) ) {
+			wp_schedule_single_event( time(), 'do_pings' );
+		}
 	}
 
 	/**
