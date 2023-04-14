@@ -75,11 +75,8 @@ As Webmention uses the REST API endpoint system, most up to date caching plugins
 
 = Why does this plugin have settings about avatars? =
 
-Webmentions have the ability to act as rich comments. This includes showing avatars. If there is an avatar discovered, the URL for it will be stored. This can either be reflect something from the media library or a URL of a file.
-
-Since Webmentions do not usually have email addresses, Gravatar, built into WordPress, is not necessary. WordPress returns even the anonymous avatars from Gravatar. Therefore, if there is no email the plugin will simply return a local copy of the Mystery Man default avatar. If there is an email address, the plugin will cache whether a Gravatar exists and serve the local file if it does not. It defaults to a week, but you can change it to a day, or any number by adding below to your wp-config.php file.
-
-    define( 'WEBMENTION_GRAVATAR_CACHE_TIME', DAY_IN_SECONDS );
+Webmentions have the ability to act as rich comments. This includes showing avatars. If there is an avatar discovered, the URL for it will be stored. This can either be reflect something from the media library or a URL of a file. If the file is broken, it will store a local
+copy of the default gravatar image.
 
 = There are no Webmention headers on some pages of my site =
 
