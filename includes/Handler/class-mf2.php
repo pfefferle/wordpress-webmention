@@ -52,10 +52,11 @@ class MF2 extends Base {
 
 		// add response type
 		$response_type = $this->get_response_type( $item, $data, $target_url );
-		$this->webmention_item->add_response_type( wp_slash( $response_type ) );
 
 		$this->set_properties( $item );
 		$this->set_property_author( $author );
+
+		$this->webmention_item->add_response_type( wp_slash( $response_type ) );
 
 		$this->webmention_item->add_url( $source_url ); // If there is no URL property then use the retrieved URL.
 
