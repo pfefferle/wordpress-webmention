@@ -63,7 +63,7 @@ class Avatar {
 		}
 
 		// Simple method to prevent broken images
-		$args['extra_attr'] .= sprintf( ' onerror="this.onerror=null;this.src=\'%1$s\';this.srcset=\'%1$s\';"', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/img/mm.jpg' );
+		$args['extra_attr'] .= sprintf( ' onerror="this.onerror=null;this.src=\'%1$s\';this.srcset=\'%1$s\';"', WEBMENTION_PLUGIN_URL . 'assets/img/mm.jpg' );
 
 		// If another filter has already provided a url
 		if ( isset( $args['url'] ) && wp_http_validate_url( $args['url'] ) ) {
