@@ -258,7 +258,6 @@ class Receiver {
 		$comment_agent                         = isset( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT'] : '';
 		$comment_date                          = current_time( 'mysql' );
 		$comment_date_gmt                      = current_time( 'mysql', 1 );
-		$comment_meta['webmention_created_at'] = $comment_date_gmt;
 		$comment_meta['protocol']              = 'webmention';
 
 		if ( $vouch ) {
@@ -346,6 +345,12 @@ class Receiver {
 
 		// update or save webmention
 		if ( empty( $commentdata['comment_ID'] ) ) {
+			if ( ! is_array( $commentdata['comment_meta'] ) ) {
+				$commentdata['comment_meta'] = array();
+			}
+			// Set created at time only for new comments
+			$commentdata['comment_meta']['webmention_created_at'] = $comment_date_gmt;
+
 			// save comment
 			$commentdata['comment_ID'] = wp_new_comment( $commentdata, true );
 
