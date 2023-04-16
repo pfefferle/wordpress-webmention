@@ -550,3 +550,46 @@ function webmention_comment_form() {
 		load_template( $template );
 	}
 }
+
+/**
+ * Refresh an existing comment
+ *
+ * @param int|WP_Comment Comment object or ID.
+ * @return WP_Error|bool Return true or error object.
+ */
+function webmention_refresh( $comment ) {
+	$comment = get_comment( $comment );
+	if ( ! $comment ) {
+		return false;
+	}
+	if ( 'webmention' !== get_comment_meta( $comment->comment_ID, 'protocol', true ) ) {
+		return false;
+	}
+
+	$source = get_comment_meta( $comment->comment_ID, 'webmention_source_url', true );
+	$target = get_comment_meta( $comment->comment_ID, 'webmention_target_url', true );
+	if ( ! $target || ! $source ) {
+		return false;
+	}
+	$response = \Webmention\Request::get( $source );
+	if ( ! is_wp_error( $response ) ) {
+		$handler                   = new \Webmention\Handler();
+		$item                      = $handler->parse( $response, $target );
+		$commentdata               = $item->to_commentdata_array();
+		$commentdata['comment_ID'] = $comment->comment_ID;
+		if ( ! array_key_exists( 'comment_meta', $commentdata ) ) {
+			$commentdata['comment_meta'] = array();
+		}
+		$commentdata['comment_meta']['webmention_refreshed'] = current_time( 'mysql', 1 );
+
+		// In the event someone needs to make extra checks on the update or omit something.
+		$commentdata = apply_filters( 'webmention_refresh', $commentdata, $comment->comment_ID );
+
+		$result = wp_update_comment( $commentdata );
+		if ( $result ) {
+			return true;
+		}
+	} else {
+		return $response;
+	}
+}

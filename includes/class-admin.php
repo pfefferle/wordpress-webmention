@@ -90,37 +90,8 @@ class Admin {
 			return $redirect_to;
 		}
 
-		$returns = array();
-		$errors  = array();
 		foreach ( $comment_ids as $comment_id ) {
-			if ( 'webmention' === get_comment_meta( $comment_id, 'protocol', true ) ) {
-				$source = get_comment_meta( $comment_id, 'webmention_source_url', true );
-				$target = get_comment_meta( $comment_id, 'webmention_target_url', true );
-				if ( ! $target || ! $source ) {
-					return $redirect_to;
-				}
-				$response = Request::get( $source );
-				if ( ! is_wp_error( $response ) ) {
-					$handler                   = new Handler();
-					$item                      = $handler->parse( $response, $target );
-					$commentdata               = $item->to_commentdata_array();
-					$commentdata['comment_ID'] = $comment_id;
-					if ( ! array_key_exists( 'comment_meta', $commentdata ) ) {
-						$commentdata['comment_meta'] = array();
-					}
-					$commentdata['comment_meta']['webmention_refreshed'] = current_time( 'mysql', 1 );
-
-					// In the event someone needs to make extra checks on the update or omit something.
-					$commentdata = apply_filters( 'webmention_refresh', $commentdata, $comment_id );
-
-					$result = wp_update_comment( $commentdata );
-					if ( $result ) {
-						$returns[] = $comment_id;
-					}
-				} else {
-					$errors[] = $comment_id;
-				}
-			}
+			$return = webmention_refresh( $comment_id );
 		}
 
 		return $redirect_to;
