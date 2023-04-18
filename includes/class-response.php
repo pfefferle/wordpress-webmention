@@ -197,13 +197,22 @@ class Response {
 				$item   = array();
 				$pieces = explode( ';', $link );
 				$uri    = array_shift( $pieces );
+
 				foreach ( $pieces as $p ) {
 					$elements = explode( '=', $p );
 
-					$item[ trim( $elements[0] ) ] = trim( $elements[1], '"\'' );
+					if (
+						is_array( $elements ) &&
+						! empty( $elements[0] ) &&
+						! empty( $elements[1] )
+					) {
+						$item[ trim( $elements[0] ) ] = trim( $elements[1], "\"' \n\r\t\v\x00" );
+					}
+
+					continue;
 				}
 
-				$item['uri'] = trim( trim( $uri ), '<>' );
+				$item['uri'] = trim( $uri, "<> \n\r\t\v\x00" );
 
 				if ( isset( $item['rel'] ) ) {
 					$rels = explode( ' ', $item['rel'] );
