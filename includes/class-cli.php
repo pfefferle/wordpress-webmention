@@ -223,7 +223,7 @@ class Cli extends WP_CLI_Command {
 						'protocol'              => 'webmention',
 						'avatar'                => "https://i.pravatar.cc/80?u={$index}",
 						'url'                   => 'https://example.org/canonical',
-						'webmention_created_at' => current_time( 'mysql', 1 ),
+						'webmention_last_modified' => current_time( 'mysql', 1 ),
 						'webmention_source_url' => 'https://example.org/source',
 					),
 				)

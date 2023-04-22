@@ -83,11 +83,11 @@ class Receiver {
 		// Purpose of this is to store the original time as there is no modified time in the comment table.
 		$args = array(
 			'type'         => 'string',
-			'description'  => esc_html__( 'Original Creation Time for the Webmention (GMT)', 'webmention' ),
+			'description'  => esc_html__( 'Last Modified Time for the Webmention (GMT)', 'webmention' ),
 			'single'       => true,
 			'show_in_rest' => true,
 		);
-		register_meta( 'comment', 'webmention_created_at', $args );
+		register_meta( 'comment', 'webmention_last_modified', $args );
 
 		// Purpose of this is to store the response code returned during verification
 		$args = array(
@@ -284,6 +284,8 @@ class Receiver {
 			$commentdata['comment_meta']['webmention_target_fragment'] = $fragment;
 		}
 		$commentdata['comment_meta']['webmention_target_url'] = $commentdata['target'];
+		// Set last modified time
+		$commentdata['comment_meta']['webmention_last_modified'] = $comment_date_gmt;
 
 		$commentdata['comment_parent'] = '';
 		// check if there is a parent comment
@@ -348,8 +350,6 @@ class Receiver {
 			if ( ! is_array( $commentdata['comment_meta'] ) ) {
 				$commentdata['comment_meta'] = array();
 			}
-			// Set created at time only for new comments
-			$commentdata['comment_meta']['webmention_created_at'] = $comment_date_gmt;
 
 			// save comment
 			$commentdata['comment_ID'] = wp_new_comment( $commentdata, true );
