@@ -520,6 +520,11 @@ class Receiver {
 			return $commentdata;
 		}
 
+		// This check should never be tripped as all current webmentions should have the source url property.
+		if ( ! array_key_exists( 'comment_meta', $commentdata ) && ! array_key_exists( 'webmention_source_url', $commentdata['comment_meta'] ) ) {
+			return $commentdata;
+		}
+
 		$fragment = wp_parse_url( $commentdata['target'], PHP_URL_FRAGMENT );
 		$args     = array(
 			'post_id'    => $commentdata['comment_post_ID'],
