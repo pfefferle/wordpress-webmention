@@ -560,16 +560,16 @@ function webmention_comment_form() {
 function webmention_refresh( $comment ) {
 	$comment = get_comment( $comment );
 	if ( ! $comment ) {
-		return false;
+		return new WP_Error( 'invalid_comment_object', __( 'Valid Comment Not Passed to Function', 'webmention' ) );
 	}
 	if ( 'webmention' !== get_comment_meta( $comment->comment_ID, 'protocol', true ) ) {
-		return false;
+		return new WP_Error( 'not_webmention', __( 'Comment object is not a Webmention', 'webmention' ) );
 	}
 
 	$source = get_comment_meta( $comment->comment_ID, 'webmention_source_url', true );
 	$target = get_comment_meta( $comment->comment_ID, 'webmention_target_url', true );
 	if ( ! $target || ! $source ) {
-		return false;
+		return new WP_Error( 'webmention_data_missing', __( 'Webmention data missing - unable to refresh', 'webmention' ) );
 	}
 	$response = \Webmention\Request::get( $source );
 	if ( ! is_wp_error( $response ) ) {
