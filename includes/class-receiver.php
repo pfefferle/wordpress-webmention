@@ -528,40 +528,40 @@ class Receiver {
 		$fragment = wp_parse_url( $commentdata['target'], PHP_URL_FRAGMENT );
 		// Meta Query for searching for the URL
 		$meta_query = array(
-					'relation' => 'OR',
-					// This would catch incoming webmentions with the same source URL
-					array(
-						'key'     => 'webmention_source_url',
-						'value'   => $commentdata['comment_meta']['webmention_source_url'],
-						'compare' => '=',
-					),
+			'relation' => 'OR',
+			// This would catch incoming webmentions with the same source URL
+			array(
+				'key'     => 'webmention_source_url',
+				'value'   => $commentdata['comment_meta']['webmention_source_url'],
+				'compare' => '=',
+			),
 
-					// This should catch incoming webmentions with the same canonical URL for Bridgy
-					array(
-						'key'     => 'url',
-						'value'   => $commentdata['comment_meta']['webmention_source_url'],
-						'compare' => '=',
-					),
-					// check comments sent via salmon are also dupes
-					// or anyone else who can't use comment_author_url as the original link,
-					// but can use a _crossposting_link meta value.
-					// @link https://github.com/pfefferle/wordpress-salmon
-					array(
-						'key'     => '_crossposting_link',
-						'value'   => $commentdata['comment_meta']['webmention_source_url'],
-						'compare' => '=',
-					),
+			// This should catch incoming webmentions with the same canonical URL for Bridgy
+			array(
+				'key'     => 'url',
+				'value'   => $commentdata['comment_meta']['webmention_source_url'],
+				'compare' => '=',
+			),
+			// check comments sent via salmon are also dupes
+			// or anyone else who can't use comment_author_url as the original link,
+			// but can use a _crossposting_link meta value.
+			// @link https://github.com/pfefferle/wordpress-salmon
+			array(
+				'key'     => '_crossposting_link',
+				'value'   => $commentdata['comment_meta']['webmention_source_url'],
+				'compare' => '=',
+			),
 
-					// This would catch incoming activitypub matches, which uses source_url
-					array(
-						'key'     => 'source_url',
-						'value'   => $commentdata['comment_meta']['webmention_source_url'],
-						'compare' => '=',
-					),
-				);
-		$args     = array(
+			// This would catch incoming activitypub matches, which uses source_url
+			array(
+				'key'     => 'source_url',
+				'value'   => $commentdata['comment_meta']['webmention_source_url'],
+				'compare' => '=',
+			),
+		);
+		$args = array(
 			'post_id'    => $commentdata['comment_post_ID'],
-			'meta_query' => array( $meta_query )
+			'meta_query' => array( $meta_query ),
 		);
 
 		if ( ! empty( $fragment ) ) {
