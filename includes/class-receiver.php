@@ -83,11 +83,11 @@ class Receiver {
 		// Purpose of this is to store the original time as there is no modified time in the comment table.
 		$args = array(
 			'type'         => 'string',
-			'description'  => esc_html__( 'Original Creation Time for the Webmention (GMT)', 'webmention' ),
+			'description'  => esc_html__( 'Last Modified Time for the Webmention (GMT)', 'webmention' ),
 			'single'       => true,
 			'show_in_rest' => true,
 		);
-		register_meta( 'comment', 'webmention_created_at', $args );
+		register_meta( 'comment', 'webmention_last_modified', $args );
 
 		// Purpose of this is to store the response code returned during verification
 		$args = array(
@@ -258,7 +258,6 @@ class Receiver {
 		$comment_agent                         = isset( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT'] : '';
 		$comment_date                          = current_time( 'mysql' );
 		$comment_date_gmt                      = current_time( 'mysql', 1 );
-		$comment_meta['webmention_created_at'] = $comment_date_gmt;
 		$comment_meta['protocol']              = 'webmention';
 
 		if ( $vouch ) {
@@ -285,6 +284,8 @@ class Receiver {
 			$commentdata['comment_meta']['webmention_target_fragment'] = $fragment;
 		}
 		$commentdata['comment_meta']['webmention_target_url'] = $commentdata['target'];
+		// Set last modified time
+		$commentdata['comment_meta']['webmention_last_modified'] = $comment_date_gmt;
 
 		$commentdata['comment_parent'] = '';
 		// check if there is a parent comment
@@ -346,6 +347,10 @@ class Receiver {
 
 		// update or save webmention
 		if ( empty( $commentdata['comment_ID'] ) ) {
+			if ( ! is_array( $commentdata['comment_meta'] ) ) {
+				$commentdata['comment_meta'] = array();
+			}
+
 			// save comment
 			$commentdata['comment_ID'] = wp_new_comment( $commentdata, true );
 
