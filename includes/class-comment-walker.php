@@ -58,6 +58,13 @@ class Comment_Walker extends Walker_Comment {
 	}
 
 	/**
+	 * Display
+	 */
+	public static function get_overlay_default() {
+		return apply_filters( 'webmention_reaction_overlay', (bool) get_option( 'webmention_reaction_overlay', true ) );
+	}
+
+	/**
 	 * Starts the element output.
 	 *
 	 *              to match parent class for PHP 8 named parameter support.
@@ -106,7 +113,7 @@ class Comment_Walker extends Walker_Comment {
 
 		$defaults = array(
 			'avatar_only' => false, // Implements an argument that will just output an avatar
-			'overlay'     => (bool) get_option( 'webmention_reaction_overlay', true ), // Implements an argument that optionally overlays an icon on top of the profile image, applies only to the avatar only output
+			'overlay'     => self::get_overlay_default(), // Implements an argument that optionally overlays an icon on top of the profile image, applies only to the avatar only output
 		);
 		$args     = wp_parse_args( $args, $defaults );
 
