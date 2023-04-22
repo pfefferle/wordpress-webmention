@@ -526,10 +526,8 @@ class Receiver {
 		}
 
 		$fragment = wp_parse_url( $commentdata['target'], PHP_URL_FRAGMENT );
-		$args     = array(
-			'post_id'    => $commentdata['comment_post_ID'],
-			'meta_query' => array(
-				array(
+		// Meta Query for searching for the URL
+		$meta_query = array(
 					'relation' => 'OR',
 					// This would catch incoming webmentions with the same source URL
 					array(
@@ -560,13 +558,15 @@ class Receiver {
 						'value'   => $commentdata['comment_meta']['webmention_source_url'],
 						'compare' => '=',
 					),
-				),
-			),
+				);
+		$args     = array(
+			'post_id'    => $commentdata['comment_post_ID'],
+			'meta_query' => array( $meta_query )
 		);
 
 		if ( ! empty( $fragment ) ) {
-			// Ensure that if there is a
-			$args['meta_query'][0][] = array(
+			// Ensure that if there is a fragment it is matched
+			$args['meta_query'][] = array(
 				'key'     => 'webmention_target_fragment',
 				'value'   => $fragment,
 				'compare' => '=',
