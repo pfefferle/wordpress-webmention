@@ -111,8 +111,10 @@ class Cli extends WP_CLI_Command {
 			$comment_id = isset( $assoc_args['comment'] ) ? $assoc_args['comment'] : null;
 			if ( $comment_id ) {
 				$return = webmention_refresh( $comment_id );
-				if ( $return ) {
+				if ( ! is_wp_error( $return ) ) {
 					WP_CLI::success( __( 'Webmention refreshed!', 'webmention' ) );
+				} else {
+					WP_CLI::error( $return->get_error_message() );
 				}
 			}
 			$post = isset( $assoc_args['post'] ) ? $assoc_args['post'] : null;
