@@ -31,4 +31,3 @@ foreach ( $grouped_mentions as $mention_type => $mentions ) {
 }
 
 load_template( locate_template( 'comments.php' ) );
-?>
