@@ -580,7 +580,7 @@ function webmention_refresh( $comment ) {
 		if ( ! array_key_exists( 'comment_meta', $commentdata ) ) {
 			$commentdata['comment_meta'] = array();
 		}
-		$commentdata['comment_meta']['webmention_refreshed'] = current_time( 'mysql', 1 );
+		$commentdata['comment_meta']['webmention_last_modified'] = current_time( 'mysql', 1 );
 
 		// In the event someone needs to make extra checks on the update or omit something.
 		$commentdata = apply_filters( 'webmention_refresh', $commentdata, $comment->comment_ID );
