@@ -18,7 +18,9 @@ class Comment_Walker extends Walker_Comment {
 		// Remove Webmention types from the Comment Template Query
 		if ( separate_webmentions_from_comments() ) {
 			add_filter( 'comments_template_query_args', array( static::class, 'filter_comments_query_args' ) );
-			add_filter( 'comments_template', array( static::class, 'filter_comments_template' ) );
+
+			add_action( 'comment_form_before', array( static::class, 'show_separated_reactions' ) );
+			add_action( 'comment_form_comments_closed', array( static::class, 'show_separated_reactions' ) );
 		}
 	}
 
@@ -49,14 +51,10 @@ class Comment_Walker extends Walker_Comment {
 	}
 
 	/**
-	 * Filter the comments to add custom comment walker
-	 *
-	 * @param array $args an array of arguments for displaying comments
-	 *
-	 * @return array the filtered array
+	 * Show Facepile section
 	 */
-	public static function filter_comments_template( $theme_template ) {
-		return plugin_dir_path( dirname( __FILE__ ) ) . 'templates/webmention-comments.php';
+	public static function show_separated_reactions() {
+		load_template( plugin_dir_path( dirname( __FILE__ ) ) . 'templates/webmention-comments.php' );
 	}
 
 	/**
