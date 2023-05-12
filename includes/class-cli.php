@@ -83,6 +83,69 @@ class Cli extends WP_CLI_Command {
 	}
 
 	/**
+	 * Refresh Webmentions by post or by comment_id
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--comment=<comment_id>]
+	 * : The comment ID
+	 *
+	 * [--post=<post>]
+	 * : Instead of just a comment ID, support using a post ID or post URL
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     $ wp webmention refresh 1
+	 *
+	 *     $ wp webmention refresh --post=http://example.com/post/1
+	 *
+	 *     $ wp webmention refresh --post=1
+	 *
+	 * @param array|null $args       The arguments.
+	 * @param array|null $assoc_args The associative arguments.
+	 *
+	 * @return void
+	 */
+	public function refresh( $args, $assoc_args ) {
+		if ( $assoc_args ) {
+			$comment_id = isset( $assoc_args['comment'] ) ? $assoc_args['comment'] : null;
+			if ( $comment_id ) {
+				$return = webmention_refresh( $comment_id );
+				if ( ! is_wp_error( $return ) ) {
+					WP_CLI::success( __( 'Webmention refreshed!', 'webmention' ) );
+				} else {
+					WP_CLI::error( $return->get_error_message() );
+				}
+			}
+			$post = isset( $assoc_args['post'] ) ? $assoc_args['post'] : null;
+			if ( $post ) {
+				if ( true === filter_var( $post, FILTER_VALIDATE_URL ) ) {
+					$post = url_to_postid( $post );
+				}
+				$post     = get_post( intval( $post ) );
+				$comments = get_comments(
+					array(
+						'post_id' => $post->ID,
+						'fields'  => 'ids',
+					)
+				);
+				foreach ( $comments as $comment_id ) {
+					$return = webmention_refresh( $comment_id );
+					if ( is_wp_error( $return ) ) {
+						WP_CLI::error( __( 'Failure: ', 'webmention' ) . $comment_id . ' ' . $return->get_error_message() );
+					} elseif ( $return ) {
+						WP_CLI::line( __( 'Success: ', 'webmention' ) . $comment_id );
+					} else {
+						WP_CLI::error( __( 'Failure: ', 'webmention' ) . $comment_id );
+					}
+				}
+			}
+		} else {
+			WP_CLI::error( __( 'Please provide a comment ID or a post-id/permalink', 'webmention' ) );
+		}
+	}
+
+	/**
 	 * (Re)-Send Webmentions by post or by source/target
 	 *
 	 * ## OPTIONS
@@ -223,7 +286,7 @@ class Cli extends WP_CLI_Command {
 						'protocol'              => 'webmention',
 						'avatar'                => "https://i.pravatar.cc/80?u={$index}",
 						'url'                   => 'https://example.org/canonical',
-						'webmention_created_at' => current_time( 'mysql', 1 ),
+						'webmention_last_modified' => current_time( 'mysql', 1 ),
 						'webmention_source_url' => 'https://example.org/source',
 					),
 				)

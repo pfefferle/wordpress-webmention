@@ -28,6 +28,9 @@ class Admin {
 		add_filter( 'manage_edit-comments_columns', array( static::class, 'comment_columns' ) );
 		add_filter( 'manage_comments_custom_column', array( static::class, 'manage_comments_custom_column' ), 10, 2 );
 
+		add_action( 'bulk_actions-edit-comments', array( static::class, 'bulk_comment_actions' ), 10, 3 );
+		add_filter( 'handle_bulk_actions-edit-comments', array( static::class, 'bulk_comment_action_handler' ), 10, 3 );
+
 		add_filter( 'comment_row_actions', array( static::class, 'comment_row_actions' ), 13, 2 );
 		add_filter( 'comment_unapproved_to_approved', array( static::class, 'transition_to_approvelist' ), 10 );
 
@@ -68,6 +71,30 @@ class Admin {
 			return;
 		}
 		echo esc_html( get_webmention_comment_type_string( $comment_id ) );
+	}
+
+	/**
+	 * Add bulk option to bulk comment handler
+	 */
+	public static function bulk_comment_actions( $bulk_actions ) {
+		$bulk_actions['refresh_webmention'] = __( 'Refresh Webmention', 'webmention' );
+		return $bulk_actions;
+	}
+
+	/**
+	 * Add bulk action handler to comments
+	 *
+	 */
+	public static function bulk_comment_action_handler( $redirect_to, $doaction, $comment_ids ) {
+		if ( 'refresh_webmention' !== $doaction ) {
+			return $redirect_to;
+		}
+
+		foreach ( $comment_ids as $comment_id ) {
+			$return = webmention_refresh( $comment_id );
+		}
+
+		return $redirect_to;
 	}
 
 	/**
