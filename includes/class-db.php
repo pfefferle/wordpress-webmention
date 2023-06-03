@@ -41,8 +41,10 @@ class DB {
 
 		$version_from_db = self::get_version();
 
-		if ( version_compare( $version_from_db, '1.0.1', '<' ) ) {
+		if ( version_compare( $version_from_db, '1.0.0', '<' ) ) {
 			self::migrate_to_1_0_0();
+		}
+		if ( version_compare( $version_from_db, '1.0.1', '<' ) ) {
 			self::mf2_author_migration();
 		}
 
@@ -141,13 +143,13 @@ class DB {
 		);
 		foreach ( $comments as $comment_id ) {
 			$author = get_comment_meta( $comment_id, 'mf2_author', true );
+			$source = get_comment_meta( $comment_id, 'webmention_source_url', true );
 			if ( is_array( $author ) ) {
-				if ( array_key_exists( 'url', $author ) ) {
+				if ( array_key_exists( 'url', $author ) && ( $source !== $author['url'] ) ) {
 					$comment               = get_comment( $comment_id, ARRAY_A );
 					$comment['author_url'] = $author['url'];
 					wp_update_comment( $comment );
 				}
-				delete_comment_meta( $comment_id, 'mf2_author' );
 			}
 		}
 	}
