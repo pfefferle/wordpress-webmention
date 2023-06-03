@@ -61,7 +61,7 @@ class Comment_Walker extends Walker_Comment {
 	 * Display
 	 */
 	public static function get_overlay_default() {
-		return apply_filters( 'webmention_reaction_overlay', (bool) get_option( 'webmention_reaction_overlay', true ) );
+		return apply_filters( 'webmention_reaction_overlay', true );
 	}
 
 	/**

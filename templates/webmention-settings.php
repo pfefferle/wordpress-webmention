@@ -142,12 +142,6 @@
 				<td>
 
 					<fieldset>
-						<label for="webmention_reaction_overlay">
-							<input type="checkbox" name="webmention_reaction_overlay" id="webmention_reaction_overlay" value="1" <?php echo checked( true, get_option( 'webmention_reaction_overlay', 1 ) ); ?> />
-							<?php esc_html_e( 'Overlay Reaction Icon on Avatars.', 'webmention' ); ?>
-						</label>
-					</fieldset>
-					<fieldset>
 						<label for="webmention_separate_comment">
 							<input type="checkbox" name="webmention_separate_comment" id="webmention_separate_comment" value="1" <?php echo checked( true, get_option( 'webmention_separate_comment', 1 ) ); ?> />
 							<?php esc_html_e( 'Separate Webmention Types from Comments.', 'webmention' ); ?>
