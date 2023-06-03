@@ -8,7 +8,7 @@ class DB {
 	 *
 	 * @var int
 	 */
-	private static $target_version = '1.0.0';
+	private static $target_version = '1.0.1';
 
 	public static function get_target_version() {
 		return self::$target_version;
@@ -41,8 +41,9 @@ class DB {
 
 		$version_from_db = self::get_version();
 
-		if ( version_compare( $version_from_db, '1.0.0', '<' ) ) {
+		if ( version_compare( $version_from_db, '1.0.1', '<' ) ) {
 			self::migrate_to_1_0_0();
+			self::mf2_author_migration();
 		}
 
 		update_option( 'webmention_db_version', self::$target_version );
@@ -113,5 +114,41 @@ class DB {
 		$wpdb->query(
 			"DELETE FROM {$wpdb->commentmeta} WHERE meta_key LIKE 'semantic_linkbacks_%'"
 		);
+	}
+
+	/**
+	 * Author Migration tool from mf2_author
+	 *
+	 * @since 5.0.0
+	 *
+	 * @return void
+	 */
+	public static function mf2_author_migration() {
+		$comments = get_comments(
+			array(
+				'fields'     => 'ids',
+				'meta_query' => array(
+					array(
+						'key'     => 'mf2_author',
+						'compare' => 'EXISTS',
+					),
+					array(
+						'key'   => 'protocol',
+						'value' => 'webmention',
+					),
+				),
+			)
+		);
+		foreach ( $comments as $comment_id ) {
+			$author = get_comment_meta( $comment_id, 'mf2_author', true );
+			if ( is_array( $author ) ) {
+				if ( array_key_exists( 'url', $author ) ) {
+					$comment               = get_comment( $comment_id, ARRAY_A );
+					$comment['author_url'] = $author['url'];
+					wp_update_comment( $comment );
+				}
+				delete_comment_meta( $comment_id, 'mf2_author' );
+			}
+		}
 	}
 }
