@@ -23,7 +23,7 @@ class DB_Test extends WP_UnitTestCase {
 
 		\Webmention\DB::update_database();
 
-		$this->assertEquals( \Webmention\DB::get_version(), '1.0.0' );
+		$this->assertEquals( \Webmention\DB::get_version(), '1.0.1' );
 
 		wp_cache_flush();
 
