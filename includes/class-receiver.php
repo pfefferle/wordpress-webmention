@@ -567,6 +567,7 @@ class Receiver {
 		$args = array(
 			'post_id'    => $commentdata['comment_post_ID'],
 			'meta_query' => array( $meta_query ),
+			'status' => 'any'
 		);
 
 		if ( ! empty( $fragment ) ) {
