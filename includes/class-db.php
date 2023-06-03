@@ -45,7 +45,7 @@ class DB {
 			self::migrate_to_1_0_0();
 		}
 		if ( version_compare( $version_from_db, '1.0.1', '<' ) ) {
-			self::mf2_author_migration();
+			self::migrate_to_1_0_1();
 		}
 
 		update_option( 'webmention_db_version', self::$target_version );
@@ -119,13 +119,13 @@ class DB {
 	}
 
 	/**
-	 * Author Migration tool from mf2_author
+	 * Migrate to version 1.0.1
 	 *
-	 * @since 5.0.0
+	 * @since 5.1.0
 	 *
 	 * @return void
 	 */
-	public static function mf2_author_migration() {
+	public static function migrate_to_1_0_1() {
 		$comments = get_comments(
 			array(
 				'fields'     => 'ids',
