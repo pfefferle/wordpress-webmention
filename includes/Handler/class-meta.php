@@ -60,7 +60,10 @@ class Meta extends Base {
 
 		$this->add_properties( $meta );
 
-		if ( ! $this->webmention_item->get_name() ) {
+		if (
+			! $this->webmention_item->get_name() &&
+			isset( $xpath->query( '//title' )->item( 0 )->textContent )
+		) {
 			$this->webmention_item->add_name( trim( $xpath->query( '//title' )->item( 0 )->textContent ) );
 		}
 

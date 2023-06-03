@@ -385,10 +385,27 @@ class MF2 extends Base {
 						// check if reply is a "cite"
 						if ( isset( $obj['type'] ) && array_intersect( array( 'h-cite', 'h-entry' ), $obj['type'] ) ) {
 							// check url
-							if ( isset( $obj['properties'] ) && isset( $obj['properties']['url'] ) ) {
-								// check target
-								if ( $this->compare_urls( $target, $obj['properties']['url'] ) ) {
-									return $item;
+							if ( isset( $obj['properties'] ) ) {
+								if ( isset( $obj['properties']['url'] ) ) {
+									// check target
+									if ( $this->compare_urls( $target, $obj['properties']['url'] ) ) {
+										return $item;
+									}
+								}
+
+								// check properties if target urls was mentioned
+								foreach ( $obj['properties'] as $obj_key => $obj_values ) {
+									if ( $this->compare_urls( $target, $obj_values ) ) {
+										return $item;
+									}
+									// check content for the link
+									if ( 'content' === $obj_key &&
+										preg_match_all( '/<a[^>]+?' . preg_quote( $target, '/' ) . '[^>]*>([^>]+?)<\/a>/i', $obj_values[0]['html'], $context ) ) {
+										return $item;
+									} elseif ( 'summary' === $obj_key &&
+										preg_match_all( '/<a[^>]+?' . preg_quote( $target, '/' ) . '[^>]*>([^>]+?)<\/a>/i', $obj_values[0], $context ) ) {
+										return $item;
+									}
 								}
 							}
 						}
@@ -702,6 +719,21 @@ class MF2 extends Base {
 						if ( $this->has_property( $obj, 'url' ) ) {
 							// check target
 							if ( $this->compare_urls( $target, $obj['properties']['url'] ) ) {
+								return $classes[ $key ];
+							}
+						}
+
+						// check properties if target urls was mentioned
+						foreach ( $obj['properties'] as $obj_key => $obj_values ) {
+							if ( $this->compare_urls( $target, $obj_values ) ) {
+								return $classes[ $key ];
+							}
+							// check content for the link
+							if ( 'content' === $obj_key &&
+								preg_match_all( '/<a[^>]+?' . preg_quote( $target, '/' ) . '[^>]*>([^>]+?)<\/a>/i', $obj_values[0]['html'], $context ) ) {
+								return $classes[ $key ];
+							} elseif ( 'summary' === $obj_key &&
+								preg_match_all( '/<a[^>]+?' . preg_quote( $target, '/' ) . '[^>]*>([^>]+?)<\/a>/i', $obj_values[0], $context ) ) {
 								return $classes[ $key ];
 							}
 						}

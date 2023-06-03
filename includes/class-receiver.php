@@ -83,11 +83,11 @@ class Receiver {
 		// Purpose of this is to store the original time as there is no modified time in the comment table.
 		$args = array(
 			'type'         => 'string',
-			'description'  => esc_html__( 'Original Creation Time for the Webmention (GMT)', 'webmention' ),
+			'description'  => esc_html__( 'Last Modified Time for the Webmention (GMT)', 'webmention' ),
 			'single'       => true,
 			'show_in_rest' => true,
 		);
-		register_meta( 'comment', 'webmention_created_at', $args );
+		register_meta( 'comment', 'webmention_last_modified', $args );
 
 		// Purpose of this is to store the response code returned during verification
 		$args = array(
@@ -258,7 +258,6 @@ class Receiver {
 		$comment_agent                         = isset( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT'] : '';
 		$comment_date                          = current_time( 'mysql' );
 		$comment_date_gmt                      = current_time( 'mysql', 1 );
-		$comment_meta['webmention_created_at'] = $comment_date_gmt;
 		$comment_meta['protocol']              = 'webmention';
 
 		if ( $vouch ) {
@@ -285,6 +284,8 @@ class Receiver {
 			$commentdata['comment_meta']['webmention_target_fragment'] = $fragment;
 		}
 		$commentdata['comment_meta']['webmention_target_url'] = $commentdata['target'];
+		// Set last modified time
+		$commentdata['comment_meta']['webmention_last_modified'] = $comment_date_gmt;
 
 		$commentdata['comment_parent'] = '';
 		// check if there is a parent comment
@@ -346,6 +347,10 @@ class Receiver {
 
 		// update or save webmention
 		if ( empty( $commentdata['comment_ID'] ) ) {
+			if ( ! is_array( $commentdata['comment_meta'] ) ) {
+				$commentdata['comment_meta'] = array();
+			}
+
 			// save comment
 			$commentdata['comment_ID'] = wp_new_comment( $commentdata, true );
 
@@ -501,10 +506,7 @@ class Receiver {
 			return $dupe_id;
 		}
 
-		if (
-			( isset( $commentdata['comment_type'] ) && 'webmention' === $commentdata['comment_type'] ) ||
-			( isset( $commentdata['comment_meta'] ) && ! empty( $commentdata['comment_meta']['semantic_linkbacks_type'] ) )
-		) {
+		if ( ! empty( $commentdata['comment_meta']['protocol'] ) && 'webmention' === $commentdata['comment_meta']['protocol'] ) {
 			return 0;
 		}
 
@@ -523,77 +525,67 @@ class Receiver {
 			return $commentdata;
 		}
 
-		$fragment = wp_parse_url( $commentdata['target'], PHP_URL_FRAGMENT );
-		if ( ! empty( $fragment ) ) {
-			// Check for the newer meta value before checking for the more traditional location
-			$args = array(
-				'post_id'    => $commentdata['comment_post_ID'],
-				'meta_query' => array(
-					array(
-						'key'     => 'webmention_source_url',
-						'value'   => $commentdata['comment_author_url'],
-						'compare' => '=',
-					),
-					array(
-						'key'     => 'webmention_target_fragment',
-						'value'   => $fragment,
-						'compare' => '=',
-					),
-				),
-			);
-		} else {
-			$args = array(
-				'post_id'    => $commentdata['comment_post_ID'],
-				'meta_key'   => 'webmention_source_url',
-				'meta_value' => $commentdata['comment_author_url'],
-			);
-		}
-
-		$comments = get_comments( $args );
-		// check result
-		if ( ! empty( $comments ) ) {
-			$comment                         = $comments[0];
-			$commentdata['comment_ID']       = $comment->comment_ID;
-			$commentdata['comment_approved'] = $comment->comment_approved;
-
+		// This check should never be tripped as all current webmentions should have the source url property.
+		if ( ! array_key_exists( 'comment_meta', $commentdata ) && ! array_key_exists( 'webmention_source_url', $commentdata['comment_meta'] ) ) {
 			return $commentdata;
 		}
 
-		// Check in comment_author_url if the newer location is empty
+		$fragment = wp_parse_url( $commentdata['target'], PHP_URL_FRAGMENT );
+		// Meta Query for searching for the URL
+		$meta_query = array(
+			'relation' => 'OR',
+			// This would catch incoming webmentions with the same source URL
+			array(
+				'key'     => 'webmention_source_url',
+				'value'   => $commentdata['comment_meta']['webmention_source_url'],
+				'compare' => '=',
+			),
+
+			// This should catch incoming webmentions with the same canonical URL for Bridgy
+			array(
+				'key'     => 'url',
+				'value'   => $commentdata['comment_meta']['webmention_source_url'],
+				'compare' => '=',
+			),
+			// check comments sent via salmon are also dupes
+			// or anyone else who can't use comment_author_url as the original link,
+			// but can use a _crossposting_link meta value.
+			// @link https://github.com/pfefferle/wordpress-salmon
+			array(
+				'key'     => '_crossposting_link',
+				'value'   => $commentdata['comment_meta']['webmention_source_url'],
+				'compare' => '=',
+			),
+
+			// This would catch incoming activitypub matches, which uses source_url
+			array(
+				'key'     => 'source_url',
+				'value'   => $commentdata['comment_meta']['webmention_source_url'],
+				'compare' => '=',
+			),
+		);
 		$args = array(
 			'post_id'    => $commentdata['comment_post_ID'],
-			'author_url' => $commentdata['comment_author_url'],
+			'meta_query' => array( $meta_query ),
 		);
-		// If there is a fragment in the target URL then use this in the dupe search
+
 		if ( ! empty( $fragment ) ) {
-			$args['meta_key']   = 'webmention_target_fragment';
-			$args['meta_value'] = $fragment;
+			// Ensure that if there is a fragment it is matched
+			$args['meta_query'][] = array(
+				'key'     => 'webmention_target_fragment',
+				'value'   => $fragment,
+				'compare' => '=',
+			);
 		}
+
 		$comments = get_comments( $args );
 		// check result
 		if ( ! empty( $comments ) ) {
 			$comment                         = $comments[0];
 			$commentdata['comment_ID']       = $comment->comment_ID;
 			$commentdata['comment_approved'] = $comment->comment_approved;
+
 			return $commentdata;
-		}
-
-		// check comments sent via salmon are also dupes
-		// or anyone else who can't use comment_author_url as the original link,
-		// but can use a _crossposting_link meta value.
-		// @link https://github.com/pfefferle/wordpress-salmon/blob/master/plugin.php#L192
-		$args     = array(
-			'post_id'    => $commentdata['comment_post_ID'],
-			'meta_key'   => '_crossposting_link',
-			'meta_value' => $commentdata['comment_author_url'],
-		);
-		$comments = get_comments( $args );
-
-		// check result
-		if ( ! empty( $comments ) ) {
-			$comment                         = $comments[0];
-			$commentdata['comment_ID']       = $comment->comment_ID;
-			$commentdata['comment_approved'] = $comment->comment_approved;
 		}
 
 		return $commentdata;
