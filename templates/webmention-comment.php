@@ -7,8 +7,18 @@ $comment    = get_comment( $comment_id ); // phpcs:ignore WordPress.WP.GlobalVar
 if ( ! $comment ) {
 	status_header( 404 );
 	nocache_headers();
-	include get_query_template( '404' );
-	die();
+	// check if theme has a 404.php template
+	$template_404 = get_query_template( 404 );
+	// return 404 template
+	if ( $template_404 ) {
+		include $template_404;
+		die();
+	} else {
+		wp_die(
+			__( 'Page not found', 'webmention' ),
+			__( '404', 'webmention' )
+		);
+	}
 }
 
 $target = '';
