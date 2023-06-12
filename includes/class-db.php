@@ -111,11 +111,6 @@ class DB {
 		$wpdb->query(
 			"UPDATE {$wpdb->commentmeta} SET meta_key = 'protocol', meta_value = 'webmention' WHERE meta_key = 'semantic_linkbacks_type' OR meta_key = 'webmention_type'"
 		);
-
-		// Delete any other Semantic-Linkbacks metas
-		$wpdb->query(
-			"DELETE FROM {$wpdb->commentmeta} WHERE meta_key LIKE 'semantic_linkbacks_%'"
-		);
 	}
 
 	/**
