@@ -13,8 +13,12 @@ class DB_Test extends WP_UnitTestCase {
 					'semantic_linkbacks_source' => 'https://example.org/source',
 					'semantic_linkbacks_avatar' => 'https://example.org/avatar',
 					'semantic_linkbacks_canonical' => 'https://example.org/canonical',
-					'semantic_linkbacks_author_url' => 'https://example.org/author_url',
-					'semantic_linkbacks_type' => 'reply'
+					'semantic_linkbacks_type' => 'reply',
+					'mf2_author' => array(
+						'name' => 'Test',
+						'url' => 'https://example.org/author_url',
+						'photo' => 'https://example.org/avatar',
+					),
 				),
 			)
 		);
@@ -37,5 +41,6 @@ class DB_Test extends WP_UnitTestCase {
 		$comment = get_comment( $comment_id );
 
 		$this->assertEquals( $comment->comment_type, 'reply' );
+		$this->assertEquals( $comment->comment_author_url, 'https://example.org/author_url' );
 	}
 }
