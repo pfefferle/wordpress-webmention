@@ -40,11 +40,11 @@ final class Comment_Type {
 	public $icon = '💬';
 
 	/**
-	 * Single Character Emoji Representation of the Comment Type. Optional.
+	 * Class to use when displaying the comment. Optional.
 	 *
 	 * @var string $class
 	 */
-	public $class = 'u-mention-of';
+	public $class = 'p-mention';
 
 	/**
 	 * A short descriptive summary of what the comment type is.

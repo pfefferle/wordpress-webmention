@@ -140,6 +140,7 @@
 			<tr>
 				<th scope="row"><?php esc_html_e( 'Display', 'webmention' ); ?></th>
 				<td>
+
 					<fieldset>
 						<label for="webmention_separate_comment">
 							<input type="checkbox" name="webmention_separate_comment" id="webmention_separate_comment" value="1" <?php echo checked( true, get_option( 'webmention_separate_comment', 1 ) ); ?> />
