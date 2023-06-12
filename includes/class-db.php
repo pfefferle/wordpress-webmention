@@ -95,6 +95,8 @@ class DB {
 	 * @return void
 	 */
 	public static function migrate_to_1_0_0() {
+		wp_cache_flush();
+
 		// 1. rename comment meta
 		self::update_commentmeta_key( 'semantic_linkbacks_source', 'webmention_source_url' );
 		self::update_commentmeta_key( 'semantic_linkbacks_avatar', 'avatar' );
@@ -121,6 +123,8 @@ class DB {
 	 * @return void
 	 */
 	public static function migrate_to_1_0_1() {
+		wp_cache_flush();
+
 		$comments = get_comments(
 			array(
 				'fields'     => 'ids',
@@ -136,13 +140,14 @@ class DB {
 				),
 			)
 		);
+
 		foreach ( $comments as $comment_id ) {
 			$author = get_comment_meta( $comment_id, 'mf2_author', true );
 			$source = get_comment_meta( $comment_id, 'webmention_source_url', true );
 			if ( is_array( $author ) ) {
 				if ( array_key_exists( 'url', $author ) && ( $source !== $author['url'] ) ) {
-					$comment               = get_comment( $comment_id, ARRAY_A );
-					$comment['author_url'] = $author['url'];
+					$comment                       = get_comment( $comment_id, ARRAY_A );
+					$comment['comment_author_url'] = $author['url'];
 					wp_update_comment( $comment );
 				}
 			}

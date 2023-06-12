@@ -13,6 +13,7 @@ class DB_Test extends WP_UnitTestCase {
 					'semantic_linkbacks_source' => 'https://example.org/source',
 					'semantic_linkbacks_avatar' => 'https://example.org/avatar',
 					'semantic_linkbacks_canonical' => 'https://example.org/canonical',
+					'semantic_linkbacks_author_url' => 'https://example.org/author_url',
 					'semantic_linkbacks_type' => 'reply',
 					'mf2_author' => array(
 						'name' => 'Test',
