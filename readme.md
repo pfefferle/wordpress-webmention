@@ -4,7 +4,7 @@
 **Tags:** webmention, pingback, trackback, linkback, indieweb, comment, response  
 **Requires at least:** 4.9  
 **Tested up to:** 6.2  
-**Stable tag:** 5.0.0  
+**Stable tag:** 5.1.0  
 **Requires PHP:** 5.6  
 **License:** MIT  
 **License URI:** https://opensource.org/licenses/MIT  
@@ -75,11 +75,8 @@ As Webmention uses the REST API endpoint system, most up to date caching plugins
 
 ### Why does this plugin have settings about avatars? ###
 
-Webmentions have the ability to act as rich comments. This includes showing avatars. If there is an avatar discovered, the URL for it will be stored. This can either be reflect something from the media library or a URL of a file.
-
-Since Webmentions do not usually have email addresses, Gravatar, built into WordPress, is not necessary. WordPress returns even the anonymous avatars from Gravatar. Therefore, if there is no email the plugin will simply return a local copy of the Mystery Man default avatar. If there is an email address, the plugin will cache whether a Gravatar exists and serve the local file if it does not. It defaults to a week, but you can change it to a day, or any number by adding below to your wp-config.php file.
-
-    define( 'WEBMENTION_GRAVATAR_CACHE_TIME', DAY_IN_SECONDS );
+Webmentions have the ability to act as rich comments. This includes showing avatars. If there is an avatar discovered, the URL for it will be stored. This can either be reflect something from the media library or a URL of a file. If the file is broken, it will store a local
+copy of the default gravatar image.
 
 ### There are no Webmention headers on some pages of my site ###
 
@@ -87,9 +84,31 @@ Webmention headers are only shown if Webmentions are available for that particul
 
     define( 'WEBMENTION_ALWAYS_SHOW_HEADERS', 1 );
 
+### How do I customize the display of my webmentions? ###
+
+This plugin includes several enhancements to the built-in WordPress commenting system to allow for enhancement, while allowing existing methods to offer customization. It customizes the classic defaults for WordPress to account for webmentions by using a custom comment walker that minimally changes to defaults.
+By default, many themes provide a custom callback to the `wp_list_comments` function. This plugin adds several enhancements to that. For one, the custom callbacks argument is usually a string with the function name. We enhance it to behave as normal in that case, but if an array is passed, to allow specific callbacks per the key of the array, or the 'all' key as a default. This means each comment type, which would be each webmention type or otherwise, can have its own custom callback.
+
+It introduces a new version of the default function for html5 comments, adding correct microformats2 markup, and for webmentions, a proper site citation, e.g. Bob @ Example.Com as well as a hook, `webmention_comment_metadata` which offers a comment object as the sole argument, to add arbitrary metadata. This would be overridden by any custom comment rendering done by themes.
+
+There is an option within the plugin to show webmentions not determined to be replies or comments inline, or to display them separately as avatar only lists. The `wp_list_comments` function is overridden to allow for the `avatar_only` option, which will render this, with a second option of `overlay` to overlay an icon reflecting the reaction type. Reactions are webmention types such as like, which there is no textual component to it. If you opt to display them as comments, the text will read that the author `likes this post`.
+
+While not all display options can be settings, we are looking to provide some simple options which could be customized in a theme if needed.
+
 ## Changelog ##
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
+
+### 5.1.0 ###
+
+* Add mf2 author migration
+* Include spam and trash statuses for dupe check
+* Update tests and make u-url attrib optional for post-type discovery
+* Update dupe check
+* Set created at time only for new comments
+* Allow refreshing webmentions from the Bulk Actions menu
+* Remove Gravatar Cache
+* A lot of small improvements and fixes
 
 ### 5.0.0 ###
 
@@ -98,7 +117,7 @@ Project and support maintained on github at [pfefferle/wordpress-webmention](htt
 * New parser which will fallback on the WordPress REST API, JSON-LD, or HTML meta tags if Microformats are not sufficient to render a comment.
 * New debugger/test tool for Webmention Parsing under Tools
 * Webmentions are no longer stored as comment type mention, but as custom comment types
-* New simplified presentation code, providing for optional custom templating in future.
+* New simplified presentation code, providing for optional custom templating in future
 
 ### 4.0.9 ###
 
