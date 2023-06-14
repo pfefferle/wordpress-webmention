@@ -33,6 +33,3 @@ foreach ( $grouped_mentions as $mention_type => $mentions ) {
 }
 
 do_action( 'webmention_after_reaction_list' );
-
-load_template( locate_template( 'comments.php' ) );
-?>
