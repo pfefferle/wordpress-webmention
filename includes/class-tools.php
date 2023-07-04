@@ -55,7 +55,8 @@ class Tools {
 							'sanitize_callback' => 'esc_url_raw',
 						),
 						'mode'   => array(
-							'required' => false,
+							'required'          => false,
+							'sanitize_callback' => 'sanitize_key',
 						),
 					),
 					'permission_callback' => function () {
