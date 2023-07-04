@@ -607,7 +607,7 @@ class Receiver {
 		$response = Request::get( $commentdata['source'] );
 
 		$handler = new Handler();
-		$item    = $handler->parse( $response, $commentdata['target'] );
+		$item    = $handler->parse_aggregated( $response, $commentdata['target'] );
 
 		if ( ! $item->verify() ) {
 			return new WP_Error( 'incomplete_item', __( 'Not enough data available', 'webmention' ) );

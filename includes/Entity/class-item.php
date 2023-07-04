@@ -127,7 +127,7 @@ class Item {
 		}
 
 		if ( strncasecmp( $method, 'add', 3 ) === 0 ) {
-			if ( empty( $this->$var ) ) {
+			if ( ! $this->$var ) {
 				call_user_func( array( $this, 'set_' . $var ), current( $params ) );
 				return true;
 			}
@@ -341,7 +341,7 @@ class Item {
 	 */
 	public function is_complete() {
 		$properties = get_object_vars( $this );
-		return (bool) in_array( null, array_values( $properties ), true );
+		return ! (bool) in_array( null, array_values( $properties ), true );
 	}
 
 	/**

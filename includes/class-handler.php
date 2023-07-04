@@ -60,26 +60,19 @@ class Handler {
 	 * Iterate through a list of handlers and return an item.
 	 *
 	 * @param Webmention\Response $response Response Object.
-	 * @param string $target_url The target URL
+	 * @param string              $target_url The target URL
 	 *
 	 * @return Webmention\Entity\Item
 	 */
 	public function parse( Response $response, $target_url ) {
-		foreach ( $this->handlers as $handler ) {
-			$handler->parse( $response, $target_url );
-			$item = $handler->get_webmention_item();
-			if ( $item->is_complete() ) {
-				break;
-			}
-		}
-		return $item;
+		return $this->parse_aggregated( $response, $target_url );
 	}
 
 	/**
 	 * Iterate through a list of handlers and return an aggregated item.
 	 *
 	 * @param Webmention\Response $response Response Object.
-	 * @param string $target_url The target URL
+	 * @param string              $target_url The target URL
 	 *
 	 * @return Webmention\Entity\Item
 	 */
@@ -88,8 +81,15 @@ class Handler {
 
 		foreach ( $this->handlers as $handler ) {
 			$handler->set_webmention_item( $item );
-			$handler->parse( $response, $target_url );
-			$item = $handler->get_webmention_item();
+			$return = $handler->parse( $response, $target_url );
+
+			if ( is_wp_error( $return ) ) {
+				continue;
+			}
+
+			if ( ! is_wp_error( $handler->get_webmention_item() ) ) {
+				$item = $handler->get_webmention_item();
+			}
 
 			if ( $item->is_complete() ) {
 				break;
@@ -102,7 +102,7 @@ class Handler {
 	 * Iterate through a list of handlers and return an array of items.
 	 *
 	 * @param Webmention\Response $response Respone Object.
-	 * @param string $target_url The target URL
+	 * @param string              $target_url The target URL
 	 *
 	 * @return Webmention\Entity\Item
 	 */
@@ -111,9 +111,11 @@ class Handler {
 
 		foreach ( $this->handlers as $handler ) {
 			$return = $handler->parse( $response, $target_url );
+
 			if ( is_wp_error( $return ) ) {
 				continue;
 			}
+
 			$item = $handler->get_webmention_item();
 
 			if ( ! is_wp_error( $item ) ) {

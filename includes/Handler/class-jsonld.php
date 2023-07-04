@@ -84,6 +84,8 @@ class JSONLD extends Base {
 			}
 			if ( isset( $json['description'] ) ) {
 				$this->webmention_item->add_summary( $json['description'] );
+			} elseif ( isset( $json['articleBody'] ) ) {
+				$this->webmention_item->add_summary( $json['articleBody'] );
 			}
 			if ( isset( $json['keywords'] ) ) {
 				$this->webmention_item->add_category( $json['keywords'] );

@@ -604,7 +604,7 @@ function webmention_refresh( $comment ) {
 	$response = \Webmention\Request::get( $source );
 	if ( ! is_wp_error( $response ) ) {
 		$handler                   = new \Webmention\Handler();
-		$item                      = $handler->parse( $response, $target );
+		$item                      = $handler->parse_aggregated( $response, $target );
 		$commentdata               = $item->to_commentdata_array();
 		$commentdata['comment_ID'] = $comment->comment_ID;
 		if ( ! array_key_exists( 'comment_meta', $commentdata ) ) {

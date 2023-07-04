@@ -54,6 +54,9 @@ class Tools {
 							'required'          => true,
 							'sanitize_callback' => 'esc_url_raw',
 						),
+						'mode'   => array(
+							'required' => false,
+						),
 					),
 					'permission_callback' => function () {
 						return current_user_can( 'read' );
@@ -72,6 +75,7 @@ class Tools {
 	public static function read( $request ) {
 		$source = $request->get_param( 'source' );
 		$target = $request->get_param( 'target' );
+		$mode   = $request->get_param( 'mode' );
 
 		$response = Request::get( $source, false );
 
@@ -81,7 +85,17 @@ class Tools {
 
 		$handler = new Handler();
 
-		return $handler->parse_grouped( $response, $target );
+		if ( 'aggregated' === $mode ) {
+			$response = $handler->parse_aggregated( $response, $target );
+			$response = $response->to_array();
+		} elseif ( 'grouped' === $mode ) {
+			$response = $handler->parse_grouped( $response, $target );
+		} else {
+			$response = $handler->parse( $response, $target );
+			$response = $response->to_array();
+		}
+
+		return $response;
 	}
 
 	/**
