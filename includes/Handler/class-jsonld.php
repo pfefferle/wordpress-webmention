@@ -4,6 +4,7 @@ namespace Webmention\Handler;
 
 use DOMXPath;
 use WP_Error;
+use DateTimeImmutable;
 use Webmention\Response;
 
 /**
@@ -62,69 +63,73 @@ class JSONLD extends Base {
 			if ( ! $this->is_jsonld( $json ) ) {
 				continue;
 			}
-			if ( in_array( $json['@type'], array( 'WebPage', 'Article', 'NewsArticle', 'BlogPosting' ), true ) ) {
-				if ( isset( $json['datePublished'] ) ) {
-					$this->webmention_item->add_published( new DateTimeImmutable( $json['datePublished'] ) );
-				}
-				if ( isset( $json['dateModified'] ) ) {
-					$this->webmention_item->add_updated( new DateTimeImmutable( $json['dateModified'] ) );
-				}
-				if ( isset( $json['url'] ) ) {
-					$this->webmention_item->add_url( $json['url'] );
-				}
-				if ( isset( $json['headline'] ) ) {
-					$this->webmention_item->add_name( $json['headline'] );
-				} elseif ( isset( $json['name'] ) ) {
-					$this->webmention_item->add_name( $json['name'] );
-				}
-				if ( isset( $json['description'] ) ) {
-					$this->webmention_item->add_summary( $json['description'] );
-				}
-				if ( isset( $json['keywords'] ) ) {
-					$this->webmention_item->add_category( $json['keywords'] );
-				}
 
-				if ( isset( $json['articleBody'] ) ) {
-					$html            = webmention_sanitize_html( $json['articleBody'] );
-					$json['content'] = array(
-						'html'  => $html,
-						'value' => wp_strip_all_tags( $html ),
+			if ( ! in_array( $json['@type'], array( 'WebPage', 'Article', 'NewsArticle', 'BlogPosting', 'SocialMediaPosting' ), true ) ) {
+				continue;
+			}
+
+			if ( isset( $json['datePublished'] ) ) {
+				$this->webmention_item->add_published( new DateTimeImmutable( $json['datePublished'] ) );
+			}
+			if ( isset( $json['dateModified'] ) ) {
+				$this->webmention_item->add_updated( new DateTimeImmutable( $json['dateModified'] ) );
+			}
+			if ( isset( $json['url'] ) ) {
+				$this->webmention_item->add_url( $json['url'] );
+			}
+			if ( isset( $json['headline'] ) ) {
+				$this->webmention_item->add_name( $json['headline'] );
+			} elseif ( isset( $json['name'] ) ) {
+				$this->webmention_item->add_name( $json['name'] );
+			}
+			if ( isset( $json['description'] ) ) {
+				$this->webmention_item->add_summary( $json['description'] );
+			}
+			if ( isset( $json['keywords'] ) ) {
+				$this->webmention_item->add_category( $json['keywords'] );
+			}
+
+			if ( isset( $json['articleBody'] ) ) {
+				$html            = webmention_sanitize_html( $json['articleBody'] );
+				$json['content'] = array(
+					'html'  => $html,
+					'value' => wp_strip_all_tags( $html ),
+				);
+			}
+
+			if ( isset( $json['image'] ) ) {
+				// For now extract only a single image because this is usually multiple sizes.
+				if ( wp_is_numeric_array( $json['image'] ) ) {
+					$json['image'] = end( $json['image'] );
+				}
+				if ( is_string( $json['image'] ) ) {
+					$this->webmention_item->add_photo( $json['image'] );
+				} elseif ( ! $this->is_jsonld( $json['image'] ) && $this->is_jsonld_type( $json['image'], 'ImageObject' ) ) {
+					$this->webmention_item->add_photo( $json['image']['url'] );
+				}
+			}
+
+			if ( isset( $json['author'] ) ) {
+				// For now extract only a single author as we only support one.
+				if ( wp_is_numeric_array( $json['author'] ) ) {
+					$json['author'] = end( $json['author'] );
+				}
+				if ( $this->is_jsonld( $json['author'] ) ) {
+					$author = array(
+						'type'  => 'card',
+						'name'  => isset( $json['author']['name'] ) ? $json['author']['name'] : null,
+						'email' => isset( $json['author']['email'] ) ? $json['author']['name'] : null,
+						'photo' => isset( $json['author']['image']['url'] ) ? $json['author']['image']['url'] : null,
+						'url'   => isset( $json['author']['url'] ) ? $json['author']['url'] : null,
+						'me'    => isset( $json['author']['sameAs'] ) ? $json['author']['sameAs'] : null,
+						'email' => isset( $json['author']['email'] ) ? $json['author']['email'] : null,
 					);
+					$this->webmention_item->add_author( array_filter( $author ) );
 				}
+			}
 
-				if ( isset( $json['image'] ) ) {
-					// For now extract only a single image because this is usually multiple sizes.
-					if ( wp_is_numeric_array( $json['image'] ) ) {
-						$json['image'] = end( $json['image'] );
-					}
-					if ( is_string( $json['image'] ) ) {
-						$this->webmention_item->add_photo( $json['image'] );
-					} elseif ( ! $this->is_jsonld( $json['image'] ) && $this->is_jsonld_type( $json['image'], 'ImageObject' ) ) {
-						$this->webmention_item->add_photo( $json['image']['url'] );
-					}
-				}
-
-				if ( isset( $json['author'] ) ) {
-					// For now extract only a single author as we only support one.
-					if ( wp_is_numeric_array( $json['author'] ) ) {
-						$json['author'] = end( $json['author'] );
-					}
-					if ( $this->is_jsonld( $json['author'] ) ) {
-						$author = array(
-							'type'  => 'card',
-							'name'  => isset( $json['author']['name'] ) ? $json['author']['name'] : null,
-							'email' => isset( $json['author']['email'] ) ? $json['author']['name'] : null,
-							'photo' => isset( $json['image'] ) ? $json['author']['image'] : null,
-							'url'   => isset( $json['url'] ) ? $json['author']['url'] : null,
-							'me'    => isset( $json['sameAs'] ) ? $json['author']['sameAs'] : null,
-							'email' => isset( $json['email'] ) ? $json['author']['email'] : null,
-						);
-						$this->webmention_item->add_author( array_filter( $author ) );
-					}
-				}
-				if ( isset( $json['isPartOf'] ) ) {
-					$this->webmention_item->add_site_name( $json['isPartOf']['name'] );
-				}
+			if ( isset( $json['isPartOf'] ) ) {
+				$this->webmention_item->add_site_name( $json['isPartOf']['name'] );
 			}
 		}
 

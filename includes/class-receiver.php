@@ -253,12 +253,12 @@ class Receiver {
 
 		// In the event of async processing this needs to be stored here as it might not be available
 		// later.
-		$comment_meta                          = array();
-		$comment_author_ip                     = preg_replace( '/[^0-9a-fA-F:., ]/', '', $_SERVER['REMOTE_ADDR'] );
-		$comment_agent                         = isset( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT'] : '';
-		$comment_date                          = current_time( 'mysql' );
-		$comment_date_gmt                      = current_time( 'mysql', 1 );
-		$comment_meta['protocol']              = 'webmention';
+		$comment_meta             = array();
+		$comment_author_ip        = preg_replace( '/[^0-9a-fA-F:., ]/', '', $_SERVER['REMOTE_ADDR'] );
+		$comment_agent            = isset( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT'] : '';
+		$comment_date             = current_time( 'mysql' );
+		$comment_date_gmt         = current_time( 'mysql', 1 );
+		$comment_meta['protocol'] = 'webmention';
 
 		if ( $vouch ) {
 			// If there is a vouch pass it along
@@ -403,14 +403,14 @@ class Receiver {
 			'required'          => true,
 			'type'              => 'string',
 			'validate_callback' => 'wp_http_validate_url',
-			'sanitize_callback' => 'esc_url_raw',
+			'sanitize_callback' => 'esc_url',
 		);
 
 		$params['target'] = array(
 			'required'          => true,
 			'type'              => 'string',
 			'validate_callback' => 'wp_http_validate_url',
-			'sanitize_callback' => 'esc_url_raw',
+			'sanitize_callback' => 'esc_url',
 		);
 
 		return $params;
