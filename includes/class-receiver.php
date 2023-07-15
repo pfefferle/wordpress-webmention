@@ -351,8 +351,18 @@ class Receiver {
 				$commentdata['comment_meta'] = array();
 			}
 
-			// save comment
+			// save comment but remove content filtering because we filter our own content
+			remove_filter( 'pre_comment_content', 'wp_filter_post_kses' );
+			remove_filter( 'pre_comment_content', 'wp_filter_kses' );
+
 			$commentdata['comment_ID'] = wp_new_comment( $commentdata, true );
+
+			// restore filter after add
+			if ( current_user_can( 'unfiltered_html' ) ) {
+				add_filter( 'pre_comment_content', 'wp_filter_post_kses' );
+			} else {
+				add_filter( 'pre_comment_content', 'wp_filter_kses' );
+			}
 
 			/**
 			 * Fires when a webmention is created.
