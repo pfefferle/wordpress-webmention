@@ -96,7 +96,7 @@ class Meta extends Base {
 		foreach ( $mapping as $key => $values ) {
 			foreach ( $values as $value ) {
 				if ( array_key_exists( $value, $meta ) ) {
-					$this->webmention_item->set( $key, $meta[ $value ] );
+					$this->webmention_item->add( $key, $meta[ $value ] );
 					break;
 				}
 			}
