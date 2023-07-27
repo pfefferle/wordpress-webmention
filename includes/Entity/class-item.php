@@ -257,11 +257,20 @@ class Item {
 	 */
 	public function get_author( $property = null ) {
 		if ( ! $property ) {
-			return $this->author;
+			if ( $this->author ) {
+				return $this->author;
+			}
+
+			return array(
+				'type' => 'card',
+				'name' => 'anonymous',
+			);
 		}
 
 		if ( isset( $this->author[ $property ] ) ) {
 			return $this->author[ $property ];
+		} elseif ( 'name' === $property ) {
+			return 'anonymous';
 		} else {
 			return '';
 		}
@@ -273,7 +282,15 @@ class Item {
 	 * @return string
 	 */
 	public function get_content() {
-		return $this->content ? $this->content : $this->summary;
+		if ( $this->content ) {
+			return $this->content;
+		} elseif ( $this->summary ) {
+			return $this->summary;
+		} elseif ( $this->name ) {
+			return $this->name;
+		} else {
+			return '';
+		}
 	}
 
 	/**
@@ -369,7 +386,20 @@ class Item {
 	 * @return array
 	 */
 	public function to_array() {
-		$array = get_object_vars( $this );
+		$array = array();
+		$vars  = get_object_vars( $this );
+
+		foreach ( $vars as $key => $value ) {
+			// if value is empty, try to get it from a getter.
+			if ( empty( $value ) ) {
+				$value = call_user_func( array( $this, 'get_' . $key ) );
+			}
+
+			// if value is still empty, ignore it for the array and continue.
+			if ( ! empty( $value ) ) {
+				$array[ $key ] = $value;
+			}
+		}
 
 		return array_filter( $array );
 	}
