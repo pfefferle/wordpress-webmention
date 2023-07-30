@@ -301,7 +301,7 @@ class Item {
 		if ( ! empty( $this->summary ) ) {
 			return $this->summary;
 		} elseif ( ! empty( $this->name ) ) {
-			return $this - name;
+			return $this->name;
 		}
 
 		return '';
