@@ -85,18 +85,10 @@ class JSONLD extends Base {
 			if ( isset( $json['description'] ) ) {
 				$this->webmention_item->add_summary( $json['description'] );
 			} elseif ( isset( $json['articleBody'] ) ) {
-				$this->webmention_item->add_summary( $json['articleBody'] );
+				$this->webmention_item->add_content( $json['articleBody'] );
 			}
 			if ( isset( $json['keywords'] ) ) {
 				$this->webmention_item->add_category( $json['keywords'] );
-			}
-
-			if ( isset( $json['articleBody'] ) ) {
-				$html            = webmention_sanitize_html( $json['articleBody'] );
-				$json['content'] = array(
-					'html'  => $html,
-					'value' => wp_strip_all_tags( $html ),
-				);
 			}
 
 			if ( isset( $json['image'] ) ) {
@@ -130,7 +122,7 @@ class JSONLD extends Base {
 				}
 			}
 
-			if ( isset( $json['isPartOf'] ) ) {
+			if ( isset( $json['isPartOf']['name'] ) ) {
 				$this->webmention_item->add_site_name( $json['isPartOf']['name'] );
 			}
 		}
