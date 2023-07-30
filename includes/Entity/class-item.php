@@ -282,15 +282,29 @@ class Item {
 	 * @return string
 	 */
 	public function get_content() {
-		if ( $this->content ) {
-			return $this->content;
-		} elseif ( $this->summary ) {
-			return $this->summary;
-		} elseif ( $this->name ) {
-			return $this->name;
-		} else {
-			return '';
+		$text_len = $this->str_length( $this->content );
+
+		if ( ( 0 === $text_len ) ) {
+			if ( ! empty( $this->summary ) ) {
+				return $this->summary;
+			} elseif ( ! empty( $this->name ) ) {
+				return $this->name;
+			} 
 		}
+
+		// If this is set to a comment type or if if the content if less than maximum, always return.
+		if ( 'comment' === $this->response_type || $text_len <= MAX_INLINE_MENTION_LENGTH ) {
+			return $this->content;
+		}
+
+		// If there is a summary that isn't empty, return that, if not the name.
+		if ( ! empty( $this->summary ) ) {
+			return $this->summary;
+		} elseif ( ! empty( $this->name ) ) {
+			return $this-name;
+		}	
+
+		return '';
 	}
 
 	/**
@@ -303,15 +317,25 @@ class Item {
 		// Reclassify short mentions as comments
 		if ( 'mention' === $response_type ) {
 			$text = $this->get_content();
-			if ( is_string( $text ) ) {
-				$text_len = mb_strlen( wp_strip_all_tags( html_entity_decode( $text, ENT_QUOTES ) ) );
-				if ( $text_len <= MAX_INLINE_MENTION_LENGTH ) {
-					return 'comment';
-				}
+			$text_len = $this->str_length( $text );
+			if ( ( 0 < $text_len ) && ( $text_len <= MAX_INLINE_MENTION_LENGTH ) ) {
+				return 'comment';
 			}
 		}
 		return $response_type;
 	}
+
+	/**
+	 * String length function
+	 * @return int
+	 */
+	 public function str_length( $text ) {
+		if ( ! is_string( $text ) ) {
+			return 0;
+		}
+		return mb_strlen( wp_strip_all_tags( html_entity_decode( $text, ENT_QUOTES ) ) );
+	 }
+	 
 
 	/**
 	 * Getter for "published".
