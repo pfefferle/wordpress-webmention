@@ -285,9 +285,9 @@ class Item {
 		$text_len = $this->str_length( $this->content );
 
 		if ( ( 0 === $text_len ) ) {
-			if ( ! empty( $this->summary ) ) {
+			if ( $this->summary ) {
 				return $this->summary;
-			} elseif ( ! empty( $this->name ) ) {
+			} elseif ( $this->name ) {
 				return $this->name;
 			}
 		}
@@ -298,9 +298,9 @@ class Item {
 		}
 
 		// If there is a summary that isn't empty, return that, if not the name.
-		if ( ! empty( $this->summary ) ) {
+		if ( $this->summary ) {
 			return $this->summary;
-		} elseif ( ! empty( $this->name ) ) {
+		} elseif ( $this->name ) {
 			return $this->name;
 		}
 
