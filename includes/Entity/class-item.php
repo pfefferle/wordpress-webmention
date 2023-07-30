@@ -289,7 +289,7 @@ class Item {
 				return $this->summary;
 			} elseif ( ! empty( $this->name ) ) {
 				return $this->name;
-			} 
+			}
 		}
 
 		// If this is set to a comment type or if if the content if less than maximum, always return.
@@ -301,8 +301,8 @@ class Item {
 		if ( ! empty( $this->summary ) ) {
 			return $this->summary;
 		} elseif ( ! empty( $this->name ) ) {
-			return $this-name;
-		}	
+			return $this - name;
+		}
 
 		return '';
 	}
@@ -316,7 +316,7 @@ class Item {
 		$response_type = $this->response_type ? $this->response_type : 'mention';
 		// Reclassify short mentions as comments
 		if ( 'mention' === $response_type ) {
-			$text = $this->get_content();
+			$text     = $this->get_content();
 			$text_len = $this->str_length( $text );
 			if ( ( 0 < $text_len ) && ( $text_len <= MAX_INLINE_MENTION_LENGTH ) ) {
 				return 'comment';
@@ -329,13 +329,13 @@ class Item {
 	 * String length function
 	 * @return int
 	 */
-	 public function str_length( $text ) {
+	public function str_length( $text ) {
 		if ( ! is_string( $text ) ) {
 			return 0;
 		}
 		return mb_strlen( wp_strip_all_tags( html_entity_decode( $text, ENT_QUOTES ) ) );
-	 }
-	 
+	}
+
 
 	/**
 	 * Getter for "published".
