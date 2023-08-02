@@ -4,7 +4,7 @@ Donate link: https://notiz.blog/donate/
 Tags: webmention, pingback, trackback, linkback, indieweb, comment, response
 Requires at least: 4.9
 Tested up to: 6.2
-Stable tag: 5.1.1
+Stable tag: 5.1.2
 Requires PHP: 5.6
 License: MIT
 License URI: https://opensource.org/licenses/MIT
@@ -98,6 +98,13 @@ While not all display options can be settings, we are looking to provide some si
 == Changelog ==
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
+
+= 5.1.2 =
+
+* Remove built-in WordPress filtering in favor of plugin filtering of incoming webmentions.
+* If content is long and type is a mention, try to use the summary or name insteasd of full content as the display.
+* Fix issue where meta was overriding mf2
+* Improve JSON-LD handler
 
 = 5.1.1 =
 
