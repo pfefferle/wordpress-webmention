@@ -37,7 +37,7 @@ defined( 'MAX_INLINE_MENTION_LENGTH' ) || define( 'MAX_INLINE_MENTION_LENGTH', 3
 \define( 'WEBMENTION_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
 // initialize admin settings.
-require_once dirname( __FILE__ ) . '/includes/class-admin.php';
+require_once __DIR__ . '/includes/class-admin.php';
 add_action( 'admin_init', array( '\Webmention\Admin', 'admin_init' ) );
 add_action( 'admin_menu', array( '\Webmention\Admin', 'admin_menu' ) );
 
@@ -61,57 +61,57 @@ function init() {
 		add_post_type_support( $post_type, 'webmentions' );
 	}
 	if ( WP_DEBUG ) {
-		require_once dirname( __FILE__ ) . '/includes/debug.php';
+		require_once __DIR__ . '/includes/debug.php';
 	}
 
-	require_once dirname( __FILE__ ) . '/includes/class-tools.php';
+	require_once __DIR__ . '/includes/class-tools.php';
 	add_action( 'init', array( '\Webmention\Tools', 'init' ) );
 
 	// Request Handler.
-	require_once dirname( __FILE__ ) . '/includes/class-request.php';
-	require_once dirname( __FILE__ ) . '/includes/class-response.php';
+	require_once __DIR__ . '/includes/class-request.php';
+	require_once __DIR__ . '/includes/class-response.php';
 
 	// Comment Handler Classes.
-	require_once dirname( __FILE__ ) . '/includes/class-comment-type.php';
-	require_once dirname( __FILE__ ) . '/includes/class-comment.php';
+	require_once __DIR__ . '/includes/class-comment-type.php';
+	require_once __DIR__ . '/includes/class-comment.php';
 	add_action( 'init', array( '\Webmention\Comment', 'init' ) );
 
-	require_once dirname( __FILE__ ) . '/includes/class-comment-walker.php';
+	require_once __DIR__ . '/includes/class-comment-walker.php';
 	add_action( 'init', array( '\Webmention\Comment_Walker', 'init' ) );
 
 	// Handler Control Class.
-	require_once dirname( __FILE__ ) . '/includes/class-handler.php';
-	require_once dirname( __FILE__ ) . '/includes/Handler/class-base.php';
+	require_once __DIR__ . '/includes/class-handler.php';
+	require_once __DIR__ . '/includes/Handler/class-base.php';
 
 	// Webmention Item Class
-	require_once dirname( __FILE__ ) . '/includes/Entity/class-item.php';
+	require_once __DIR__ . '/includes/Entity/class-item.php';
 
 	// list of various public helper functions.
-	require_once dirname( __FILE__ ) . '/includes/functions.php';
+	require_once __DIR__ . '/includes/functions.php';
 
 	// load local avatar support.
-	require_once dirname( __FILE__ ) . '/includes/class-avatar.php';
+	require_once __DIR__ . '/includes/class-avatar.php';
 	add_action( 'init', array( '\Webmention\Avatar', 'init' ) );
 
 	// load HTTP 410 support.
-	require_once dirname( __FILE__ ) . '/includes/class-http-gone.php';
+	require_once __DIR__ . '/includes/class-http-gone.php';
 	add_action( 'init', array( '\Webmention\HTTP_Gone', 'init' ) );
 
 	// initialize Webmention Sender.
-	require_once dirname( __FILE__ ) . '/includes/class-sender.php';
+	require_once __DIR__ . '/includes/class-sender.php';
 	add_action( 'init', array( '\Webmention\Sender', 'init' ) );
 
 	// initialize Webmention Receiver.
-	require_once dirname( __FILE__ ) . '/includes/class-receiver.php';
+	require_once __DIR__ . '/includes/class-receiver.php';
 	add_action( 'init', array( '\Webmention\Receiver', 'init' ) );
 
 	// initialize Webmention Discovery.
-	require_once dirname( __FILE__ ) . '/includes/class-discovery.php';
+	require_once __DIR__ . '/includes/class-discovery.php';
 	add_action( 'init', array( '\Webmention\Discovery', 'init' ) );
 
 	// initialize Webmention Vouch
 	if ( WEBMENTION_VOUCH ) {
-		require_once dirname( __FILE__ ) . '/includes/class-vouch.php';
+		require_once __DIR__ . '/includes/class-vouch.php';
 		add_action( 'init', array( '\Webmention\Vouch', 'init' ) );
 	}
 
@@ -134,7 +134,6 @@ function init() {
 	remove_action( 'admin_init', array( 'Semantic_Linkbacks_Plugin', 'admin_init' ) );
 
 	add_action( 'wp_enqueue_scripts', '\Webmention\enqueue_scripts' );
-
 }
 add_action( 'plugins_loaded', '\Webmention\init' );
 
@@ -144,7 +143,7 @@ add_action( 'plugins_loaded', '\Webmention\init' );
  * Migrate DB if needed
  */
 function activation() {
-	require_once dirname( __FILE__ ) . '/includes/class-db.php';
+	require_once __DIR__ . '/includes/class-db.php';
 	\Webmention\DB::update_database();
 
 	\Webmention\remove_semantic_linkbacks();
@@ -186,7 +185,7 @@ function get_plugin_meta( $default_headers = array() ) {
 
 // Check for CLI env, to add the CLI commands
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
-	require_once dirname( __FILE__ ) . '/includes/class-cli.php';
+	require_once __DIR__ . '/includes/class-cli.php';
 	WP_CLI::add_command( 'webmention', '\Webmention\Cli' );
 }
 
@@ -206,6 +205,6 @@ function remove_semantic_linkbacks() {
 
 	if ( array_key_exists( $plugin_slug, $installed_plugins ) ) {
 		\deactivate_plugins( array( $plugin_slug ), true );
-		\delete_plugins( array( $plugin_slug ), true );
+		\delete_plugins( array( $plugin_slug ) );
 	}
 }

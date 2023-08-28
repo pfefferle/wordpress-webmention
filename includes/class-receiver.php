@@ -122,7 +122,6 @@ class Receiver {
 			'show_in_rest' => true,
 		);
 		register_meta( 'comment', 'avatar', $args );
-
 	}
 
 	/**

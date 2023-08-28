@@ -15,4 +15,3 @@ function allow_localhost( $r ) {
 	return $r;
 }
 add_filter( 'http_request_args', 'Webmention\allow_localhost', 10 );
-

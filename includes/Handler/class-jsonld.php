@@ -112,7 +112,6 @@ class JSONLD extends Base {
 					$author = array(
 						'type'  => 'card',
 						'name'  => isset( $json['author']['name'] ) ? $json['author']['name'] : null,
-						'email' => isset( $json['author']['email'] ) ? $json['author']['name'] : null,
 						'photo' => isset( $json['author']['image']['url'] ) ? $json['author']['image']['url'] : null,
 						'url'   => isset( $json['author']['url'] ) ? $json['author']['url'] : null,
 						'me'    => isset( $json['author']['sameAs'] ) ? $json['author']['sameAs'] : null,

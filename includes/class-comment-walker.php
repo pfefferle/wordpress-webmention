@@ -54,7 +54,7 @@ class Comment_Walker extends Walker_Comment {
 	 * Show Facepile section
 	 */
 	public static function show_separated_reactions() {
-		load_template( plugin_dir_path( dirname( __FILE__ ) ) . 'templates/webmention-comments.php' );
+		load_template( plugin_dir_path( __DIR__ ) . 'templates/webmention-comments.php' );
 	}
 
 	/**
@@ -84,7 +84,7 @@ class Comment_Walker extends Walker_Comment {
 		// Restores the more descriptive, specific name for use within this method.
 		$comment = $data_object;
 
-		$depth++;
+		++$depth;
 		$GLOBALS['comment_depth'] = $depth; // phpcs:ignore
 		$GLOBALS['comment']       = $comment; // phpcs:ignore
 

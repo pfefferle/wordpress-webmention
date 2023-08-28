@@ -249,7 +249,7 @@ class Sender {
 		}
 
 		// raise "tries" counter
-		$tries++;
+		++$tries;
 
 		// rescedule only three times
 		if ( $tries <= 3 ) {
