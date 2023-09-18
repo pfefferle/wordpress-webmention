@@ -154,7 +154,9 @@ register_activation_hook( __FILE__, '\Webmention\activation' );
  * Add CSS and JavaScript
  */
 function enqueue_scripts() {
-	wp_enqueue_style( 'webmention', plugin_dir_url( __FILE__ ) . 'assets/css/webmention.css', array(), version() );
+	if ( \is_singular() && \comments_open() ) {
+		wp_enqueue_style( 'webmention', plugin_dir_url( __FILE__ ) . 'assets/css/webmention.css', array(), version() );
+	}
 }
 
 /**
