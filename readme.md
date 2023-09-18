@@ -99,6 +99,10 @@ While not all display options can be settings, we are looking to provide some si
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
 
+### Next ###
+
+* Fixed: avoid enqueuing Webmention's CSS stylesheet when it is not needed.
+
 ### 5.1.3 ###
 
 * Fix timezone issue causes exception
