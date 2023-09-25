@@ -102,6 +102,7 @@ Project and support maintained on github at [pfefferle/wordpress-webmention](htt
 ### Next ###
 
 * Fixed: avoid enqueuing Webmention's CSS stylesheet when it is not needed.
+* Fixed: threaded comments support.
 
 ### 5.1.3 ###
 
