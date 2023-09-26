@@ -9,7 +9,7 @@ do_action( 'webmention_comment_form_template_before' );
 		<label for="webmention-source"><?php echo get_webmention_form_text( get_the_ID() ); ?></label>
 	</p>
 	<p>
-		<input id="webmention-source" type="url" autocomplete="url" name="source" placeholder="<?php esc_attr_e( 'URL/Permalink of your article', 'webmention' ); ?>" />
+		<input id="webmention-source" type="url" autocomplete="url" required pattern="^https?:\/\/(.*)" name="source" placeholder="<?php esc_attr_e( 'URL/Permalink of your article', 'webmention' ); ?>" />
 	</p>
 	<p>
 		<input id="webmention-submit" type="submit" name="submit" value="<?php esc_attr_e( 'Ping me!', 'webmention' ); ?>" />
