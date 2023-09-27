@@ -61,7 +61,7 @@ class Sender {
 			// get parent comment...
 			$parent = get_comment( $comment->comment_parent );
 			// ...and gernerate target url
-			$target = $parent->comment_author_url;
+			$target = get_url_from_webmention( $parent );
 
 			if ( $target ) {
 				$source = add_query_arg( 'replytocom', $comment->comment_ID, get_permalink( $comment->comment_post_ID ) );
