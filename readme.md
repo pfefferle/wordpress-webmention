@@ -4,7 +4,7 @@
 **Tags:** webmention, pingback, trackback, linkback, indieweb, comment, response  
 **Requires at least:** 4.9  
 **Tested up to:** 6.3  
-**Stable tag:** 5.1.3  
+**Stable tag:** 5.1.4  
 **Requires PHP:** 5.6  
 **License:** MIT  
 **License URI:** https://opensource.org/licenses/MIT  
@@ -99,10 +99,11 @@ While not all display options can be settings, we are looking to provide some si
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
 
-### Next ###
+### 5.1.4 ###
 
 * Fixed: avoid enqueuing Webmention's CSS stylesheet when it is not needed.
 * Fixed: threaded comments support.
+* Added: client URL validation.
 
 ### 5.1.3 ###
 
