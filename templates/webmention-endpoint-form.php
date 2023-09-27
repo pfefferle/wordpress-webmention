@@ -127,11 +127,11 @@
 			<?php do_action( 'webmention_endpoint_form_before_input_fields' ); ?>
 			<p>
 				<label for="webmention-source"><?php esc_html_e( 'Source URL', 'webmention' ); ?>:</label><br />
-				<input id="webmention-source" type="url" autocomplete="url" name="source" placeholder="<?php esc_attr_e( 'URL/Permalink of your article', 'webmention' ); ?>" size="70" />
+				<input id="webmention-source" type="url" autocomplete="url" required pattern="^https?:\/\/(.*)" name="source" placeholder="<?php esc_attr_e( 'URL/Permalink of your article', 'webmention' ); ?>" size="70" />
 			</p>
 			<p>
 				<label for="webmention-target"><?php esc_html_e( 'Target URL', 'webmention' ); ?>:</label><br />
-				<input id="webmention-target" type="url" autocomplete="url" name="target" placeholder="<?php esc_attr_e( 'URL/Permalink of my article', 'webmention' ); ?>" size="70" />
+				<input id="webmention-target" type="url" autocomplete="url" required pattern="^https?:\/\/(.*)" name="target" placeholder="<?php esc_attr_e( 'URL/Permalink of my article', 'webmention' ); ?>" size="70" />
 			</p>
 			<p>
 				<input id="webmention-submit" type="submit" name="submit" value="<?php esc_attr_e( 'Ping me!', 'webmention' ); ?>" />
