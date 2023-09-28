@@ -19,7 +19,7 @@ class Comment {
 		// Threaded comments support
 		add_filter( 'template_include', array( static::class, 'comment_template_include' ) );
 
-		add_filter( 'get_comment_link', array( self::class, 'remote_comment_link' ), 11, 2 );
+		add_filter( 'get_comment_link', array( static::class, 'remote_comment_link' ), 11, 2 );
 	}
 
 	/**
