@@ -18,6 +18,20 @@ class Comment {
 
 		// Threaded comments support
 		add_filter( 'template_include', array( static::class, 'comment_template_include' ) );
+
+		add_filter( 'get_comment_link', array( static::class, 'remote_comment_link' ), 11, 2 );
+	}
+
+	/**
+	 * Link remote comments to source url.
+	 *
+	 * @param string            $comment_link The comment link.
+	 * @param object|WP_Comment $comment      The comment object.
+	 *
+	 * @return string $url The url of the source.
+	 */
+	public static function remote_comment_link( $comment_link, $comment ) {
+		return get_url_from_webmention( $comment );
 	}
 
 	/**
