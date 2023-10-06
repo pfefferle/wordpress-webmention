@@ -26,3 +26,23 @@
 .hide-name {
 	display: none;
 }
+
+.reaction-list details summary {
+	cursor: pointer;
+}
+
+.reaction-list summary::marker {
+  content: none;
+  }
+
+.reaction-list summary::after {
+  content: '+';
+  font-size: 2em;
+  height: 0;
+  }
+
+.reaction-list [open] summary::after {
+  content: '-';
+  width: .75em;
+  height: 0;
+  }
