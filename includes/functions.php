@@ -533,8 +533,8 @@ if ( ! function_exists( 'ifset' ) ) {
  * @return boolean if webmentions are open
  */
 function webmentions_open( $post ) {
-	$_post = get_post( $post );
-	$post_id    = $_post ? $_post->ID : 0;
+	$_post   = get_post( $post );
+	$post_id = $_post ? $_post->ID : 0;
 
 	// If the post type does not support Webmentions do not even check further
 	if ( ! post_type_supports( get_post_type( $post_id ), 'webmentions' ) ) {
@@ -547,12 +547,12 @@ function webmentions_open( $post ) {
 	$open = ( $_post && ( pings_open( $post ) ) );
 	/**
 	 * Filters whether the current post is open for webmentions.
- 	 *
- 	 *
+	 *
+	 *
 	 * @param bool $open Whether the current post is open.
- 	 * @param int  $post_id    The post ID.
+	 * @param int  $post_id    The post ID.
 	 */
- 	return apply_filters( 'webmentions_open', $open, $post_id );
+	return apply_filters( 'webmentions_open', $open, $post_id );
 }
 
 /**
