@@ -123,7 +123,7 @@ class Discovery {
 	 */
 	public static function should_receive_mentions() {
 		if ( is_singular() ) {
-			return pings_open();
+			return webmentions_open();
 		} else {
 			$post_id = webmention_url_to_postid( get_self_link() );
 		}
@@ -132,12 +132,7 @@ class Discovery {
 			return false;
 		}
 
-		// If the post type does not support Webmentions do not even check if pings_open is set
-		if ( ! post_type_supports( get_post_type( $post_id ), 'webmentions' ) ) {
-			return false;
-		}
-
-		if ( pings_open( $post_id ) ) {
+		if ( webmentions_open( $post_id ) ) {
 			return true;
 		}
 

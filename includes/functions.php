@@ -525,6 +525,36 @@ if ( ! function_exists( 'ifset' ) ) {
 	}
 }
 
+
+/**
+ * Return whether webmentions are open for a specific post id
+ *
+ * @param WP_Post|int  $post The post ID or Post Object.
+ * @return boolean if webmentions are open
+ */
+function webmentions_open( $post ) {
+	$_post = get_post( $post );
+	$post_id    = $_post ? $_post->ID : 0;
+
+	// If the post type does not support Webmentions do not even check further
+	if ( ! post_type_supports( get_post_type( $post_id ), 'webmentions' ) ) {
+		return false;
+	}
+
+	if ( get_option( 'webmention_home_mentions' ) === $post_id ) {
+		return true;
+	}
+	$open = ( $_post && ( pings_open( $post ) ) );
+	/**
+	 * Filters whether the current post is open for webmentions.
+ 	 *
+ 	 *
+	 * @param bool $open Whether the current post is open.
+ 	 * @param int  $post_id    The post ID.
+	 */
+ 	return apply_filters( 'webmentions_open', $open, $post_id );
+}
+
 /**
  * Return enabled status of Homepage Webmentions.
  *
@@ -558,6 +588,7 @@ function webmention_get_default_comment_status( $status, $post_type, $comment_ty
 	if ( 'webmention' === $comment_type ) {
 		return post_type_supports( $post_type, 'webmentions' ) ? 'open' : 'closed';
 	}
+
 	// Since support for the pingback comment type is used to keep pings open...
 	if ( ( 'pingback' === $comment_type ) ) {
 		return ( post_type_supports( $post_type, 'webmentions' ) ? 'open' : $status );
@@ -576,7 +607,7 @@ function webmention_get_default_comment_status( $status, $post_type, $comment_ty
 function webmention_comment_form() {
 	$template = apply_filters( 'webmention_comment_form', plugin_dir_path( __FILE__ ) . '../templates/webmention-comment-form.php' );
 
-	if ( ( 1 === (int) get_option( 'webmention_show_comment_form', 1 ) ) && pings_open() ) {
+	if ( ( 1 === (int) get_option( 'webmention_show_comment_form', 1 ) ) && webmentions_open() ) {
 		load_template( $template );
 	}
 }

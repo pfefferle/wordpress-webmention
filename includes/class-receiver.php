@@ -240,9 +240,9 @@ class Receiver {
 			return new WP_Error( 'source_equals_target', esc_html__( 'Target and source cannot direct to the same resource', 'webmention' ), array( 'status' => 400 ) );
 		}
 
-		// check if pings are allowed
-		if ( ! pings_open( $comment_post_id ) ) {
-			return new WP_Error( 'pings_closed', esc_html__( 'Pings are disabled for this post', 'webmention' ), array( 'status' => 400 ) );
+		// check if webmentions are allowed
+		if ( ! webmentions_open( $comment_post_id ) ) {
+			return new WP_Error( 'webmentions_closed', esc_html__( 'Webmentions are disabled for this post', 'webmention' ), array( 'status' => 400 ) );
 		}
 
 		$post = get_post( $comment_post_id );
