@@ -78,7 +78,7 @@ class Discovery {
 	 * @return array
 	 */
 	public static function nodeinfo( $nodeinfo, $version ) {
-		if ( '2.0' === $version ) {
+		if ( $version >= '2.0' ) {
 			$nodeinfo['protocols'][] = 'webmention';
 		} else {
 			$nodeinfo['protocols']['inbound'][]  = 'webmention';
