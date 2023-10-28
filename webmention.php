@@ -114,7 +114,6 @@ function init() {
 	require_once __DIR__ . '/includes/class-discovery.php';
 	add_action( 'init', array( '\Webmention\Discovery', 'init' ) );
 
-
 	// load local avatar store.
 	if ( WEBMENTION_LOCAL_AVATAR_STORE ) {
 		require_once __DIR__ . '/includes/class-avatar-store.php';
