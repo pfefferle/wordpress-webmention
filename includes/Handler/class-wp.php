@@ -49,7 +49,6 @@ class WP extends Base {
 			);
 		}
 
-
 		if ( ! $root_api_links || ! is_array( $root_api_links ) ) {
 			return new WP_Error( 'no_api_link', __( 'No API link found in the source code', 'webmention' ) );
 		}
