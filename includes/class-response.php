@@ -238,17 +238,17 @@ class Response {
 	 * @return array
 	 */
 	public function get_html_links() {
-		$dom = $this->get_dom_document();
+		$dom   = $this->get_dom_document();
 		$xpath = new DOMXPath( $dom );
 		$items = array();
 
 		// check <link> and <a> elements
 		foreach ( $xpath->query( '(//link|//a)[@rel and @href]' ) as $link ) {
-			$item = array();
-			$item['rel']   = $link->getAttribute( 'rel' );
+			$item         = array();
+			$item['rel']  = $link->getAttribute( 'rel' );
 			$item['uri']  = $link->getAttribute( 'href' );
 			$item['type'] = $link->getAttribute( 'type' );
-			$items[] = $item;
+			$items[]      = $item;
 		}
 		return $items;
 	}
