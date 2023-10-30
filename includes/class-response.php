@@ -4,6 +4,7 @@ namespace Webmention;
 
 use WP_Error;
 use DOMDocument;
+use DOMXPath;
 
 /**
  * Encapsulates all Webmention HTTP requests
@@ -232,6 +233,27 @@ class Response {
 	}
 
 	/**
+	 * Parses HTML links
+	 *
+	 * @return array
+	 */
+	public function get_html_links() {
+		$dom   = $this->get_dom_document();
+		$xpath = new DOMXPath( $dom );
+		$items = array();
+
+		// check <link> and <a> elements
+		foreach ( $xpath->query( '(//link|//a)[@rel and @href]' ) as $link ) {
+			$item         = array();
+			$item['rel']  = $link->getAttribute( 'rel' );
+			$item['uri']  = $link->getAttribute( 'href' );
+			$item['type'] = $link->getAttribute( 'type' );
+			$items[]      = $item;
+		}
+		return $items;
+	}
+
+	/**
 	 * Get link headers by a filter
 	 *
 	 * @param array $filter Filter link headers
@@ -252,6 +274,31 @@ class Response {
 
 		return $items;
 	}
+
+
+	/**
+	 * Get html link headers by a filter
+	 *
+	 * @param array $filter Filter link headers
+	 *
+	 * @example array( 'rel' => 'alternate', 'type' => 'application/json' )
+	 *
+	 * @return array
+	 */
+	public function get_html_links_by( $filter ) {
+		$links = $this->get_html_links();
+		$items = array();
+
+		foreach ( $links as $link ) {
+			if ( array_intersect_uassoc( $link, $filter, 'strcasecmp' ) ) {
+				$items[] = $link;
+			}
+		}
+
+		return $items;
+	}
+
+
 
 	/**
 	 * Check if request returns an HTTP Error Code
