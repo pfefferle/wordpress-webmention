@@ -425,13 +425,16 @@ class MF2 extends Base {
 									if ( $this->compare_urls( $target, $obj_values ) ) {
 										return $item;
 									}
-									// check content for the link
-									if ( 'content' === $obj_key &&
-										preg_match_all( '/<a[^>]+?' . preg_quote( $target, '/' ) . '[^>]*>([^>]+?)<\/a>/i', $obj_values[0]['html'], $context ) ) {
-										return $item;
-									} elseif ( 'summary' === $obj_key &&
-										preg_match_all( '/<a[^>]+?' . preg_quote( $target, '/' ) . '[^>]*>([^>]+?)<\/a>/i', $obj_values[0], $context ) ) {
-										return $item;
+									// Make sure this is a numeric array before checking this.
+									if ( wp_is_numeric_array( $obj_values ) ) {
+										// check content for the link
+										if ( 'content' === $obj_key &&
+											preg_match_all( '/<a[^>]+?' . preg_quote( $target, '/' ) . '[^>]*>([^>]+?)<\/a>/i', $obj_values[0]['html'], $context ) ) {
+											return $item;
+										} elseif ( 'summary' === $obj_key &&
+											preg_match_all( '/<a[^>]+?' . preg_quote( $target, '/' ) . '[^>]*>([^>]+?)<\/a>/i', $obj_values[0], $context ) ) {
+											return $item;
+										}
 									}
 								}
 							}
