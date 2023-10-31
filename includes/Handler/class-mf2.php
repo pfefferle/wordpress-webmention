@@ -7,6 +7,7 @@ use Exception;
 use DateTimeImmutable;
 use Webmention\Response;
 use Webmention\Mf2\Parser;
+use Webmention\Request;
 
 /**
  * Class for Webmention parsing using Microformats 2.
@@ -123,18 +124,18 @@ class MF2 extends Base {
 	 *
 	 * @return bool
 	 */
-	protected function is_url( $string ) {
-		if ( ! is_string( $string ) ) {
+	protected function is_url( $str ) {
+		if ( ! is_string( $str ) ) {
 			return false;
 		}
 
 		// If debugging is on just validate that URL is validly formatted
 		if ( WP_DEBUG ) {
-			return filter_var( $string, FILTER_VALIDATE_URL ) !== false;
+			return filter_var( $str, FILTER_VALIDATE_URL ) !== false;
 		}
 
 		// If debugging is off limit based on WordPress parameters
-		return wp_http_validate_url( $string );
+		return wp_http_validate_url( $str );
 	}
 
 	/**
@@ -360,6 +361,32 @@ class MF2 extends Base {
 	 * helper to find the correct h-entry node
 	 *
 	 * @param array $mf_array the parsed microformats array
+	 * @param string $url the  url
+	 *
+	 * @return array the h-card node or false
+	 */
+	public function find_representative_hcard( $mf_array, $url ) {
+		if ( ! $this->is_microformat_collection( $mf_array ) ) {
+			return false;
+		}
+		$items = $mf_array['items'];
+		if ( ! is_array( $items ) || empty( $items ) ) {
+			return false;
+		}
+
+		foreach ( $items as $item ) {
+			if ( $this->is_type( $item, 'h-card' ) && $this->urls_match( $url, $this->get_plaintext( $item, 'url' ) ) ) {
+				return $item;
+			}
+		}
+		return false;
+	}
+
+
+	/**
+	 * helper to find the correct h-entry node
+	 *
+	 * @param array $mf_array the parsed microformats array
 	 * @param string $target the target url
 	 *
 	 * @return array the h-entry node or false
@@ -383,7 +410,7 @@ class MF2 extends Base {
 					// check included h-* formats and their links
 					foreach ( $values as $obj ) {
 						// check if reply is a "cite"
-						if ( isset( $obj['type'] ) && array_intersect( array( 'h-cite', 'h-entry' ), $obj['type'] ) ) {
+						if ( isset( $obj['type'] ) && array_intersect( array( 'h-entry', 'h-cite' ), $obj['type'] ) ) {
 							// check url
 							if ( isset( $obj['properties'] ) ) {
 								if ( isset( $obj['properties']['url'] ) ) {
@@ -509,12 +536,7 @@ class MF2 extends Base {
 		// 7. "if there is an author-page URL" .
 		if ( $authorpage ) {
 			if ( ! $this->urls_match( $authorpage, $this->get_plaintext( $mf_array, 'url' ) ) ) {
-				return array(
-					'type'       => array( 'h-card' ),
-					'properties' => array(
-						'url' => array( $authorpage ),
-					),
-				);
+				return $this->parse_authorpage( $authorpage );
 			}
 		}
 	}
@@ -776,5 +798,50 @@ class MF2 extends Base {
 			return $val[0];
 		}
 		return $val;
+	}
+
+	/**
+	 * Takes a response object and returns an author
+	 *
+	 * @param string $url Author URL
+	 *
+	 * @return WP_Error|array Return error or author array if successful.
+	 */
+	public function parse_authorpage( $url ) {
+		$response = Request::get( $url, false );
+
+		if ( is_wp_error( $response ) ) {
+			return $response;
+		}
+
+		$dom = $response->get_dom_document();
+
+		if ( is_wp_error( $dom ) ) {
+			return $dom;
+		}
+		if ( ! class_exists( '\Webmention\Mf2\Parser' ) ) {
+			require_once WEBMENTION_PLUGIN_DIR . '/libraries/mf2/Mf2/Parser.php';
+		}
+
+		$parser = new Parser( $dom, $url );
+		$data   = $parser->parse();
+		$item   = $this->find_representative_hcard( $data, $url );
+		$author = array(
+			'type'       => array( 'h-card' ),
+			'properties' => array(
+				'url' => array( $url ),
+			),
+		);
+
+		if ( empty( $item ) || ! is_array( $item ) ) {
+			$author['properties']['name'] = array( __( 'Anonymous', 'webmention' ) );
+		} else {
+			foreach ( array( 'name', 'nickname', 'given-name', 'family-name', 'email', 'photo' ) as $prop ) {
+				if ( array_key_exists( $prop, $item['properties'] ) ) {
+					$author['properties'][ $prop ] = $item['properties'][ $prop ];
+				}
+			}
+		}
+		return $author;
 	}
 }
