@@ -340,24 +340,19 @@ class Item {
 	/**
 	 * Getter for "published".
 	 *
+	 * @param DateTimeZone|null $timezone Optional Timezone Override.
 	 * @return DateTimeImmutable
 	 */
-	public function get_published() {
+	public function get_published( $timezone = null ) {
 		if ( ! $this->published && ! $this->published instanceof DateTimeImmutable ) {
 			return new DateTimeImmutable();
 		}
 
-		return $this->published;
-	}
+		if ( $timezone && $timezone instanceof DatetimeZone ) {
+			return $this->published->setTimeZone( $timezone );
+		}
 
-	/**
-	 * Getter for "published" as GMT.
-	 *
-	 * @return DateTimeImmutable
-	 */
-	public function get_published_gmt() {
-		$published = $this->get_published();
-		return $published->setTimeZone( new DateTimeZone( 'GMT' ) );
+		return $this->published;
 	}
 
 	/**
@@ -444,14 +439,13 @@ class Item {
 		$this->meta['avatar']   = $this->get_author( 'photo' );
 		$this->meta['protocol'] = 'webmention'; // Since this is the Webmention plugin it should always be a Webmention.
 		$this->meta['url']      = $this->get_url(); // This is the parsed URL, which may or may not be the same as the source URL, which will be added as source_url.
-
-		$comment = array(
+		$comment                = array(
 			'comment_author'       => $this->get_author( 'name' ),
 			'comment_author_email' => $this->get_author( 'email' ),
 			'comment_author_url'   => $this->get_author( 'url' ),
 			'comment_content'      => $this->get_content(),
-			'comment_date'         => $this->get_published()->format( 'Y-m-d H:i:s' ),
-			'comment_date_gmt'     => $this->get_published_gmt()->format( 'Y-m-d H:i:s' ),
+			'comment_date'         => $this->get_published( wp_timezone() )->format( 'Y-m-d H:i:s' ),
+			'comment_date_gmt'     => $this->get_published( new DatetimeZone( 'GMT' ) )->format( 'Y-m-d H:i:s' ),
 			'comment_type'         => $this->get_response_type(),
 			'comment_meta'         => array_filter( $this->get_meta() ),
 			'remote_source_raw'    => $this->get_raw(),
