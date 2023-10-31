@@ -357,9 +357,7 @@ class Item {
 	 */
 	public function get_published_gmt() {
 		$published = $this->get_published();
-		$published->setTimeZone( new DateTimeZone( 'GMT' ) );
-
-		return $published;
+		return $published->setTimeZone( new DateTimeZone( 'GMT' ) );
 	}
 
 	/**
