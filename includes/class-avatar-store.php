@@ -16,7 +16,6 @@ class Avatar_Store {
 		// Store Avatars Locally
 		add_action( 'comment_post', array( static::class, 'store_avatar' ), 20 );
 		add_action( 'edit_comment', array( static::class, 'store_avatar' ), 20 );
-		// add_action( 'get_comment', array( static::class, 'store_avatar' ), 20 );
 	}
 
 	/**
