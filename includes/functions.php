@@ -532,7 +532,7 @@ if ( ! function_exists( 'ifset' ) ) {
  * @param WP_Post|int  $post The post ID or Post Object.
  * @return boolean if webmentions are open
  */
-function webmentions_open( $post ) {
+function webmentions_open( $post = null ) {
 	$_post   = get_post( $post );
 	$post_id = $_post ? $_post->ID : 0;
 
