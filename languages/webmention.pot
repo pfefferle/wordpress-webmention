@@ -2,10 +2,10 @@
 # This file is distributed under the MIT.
 msgid ""
 msgstr ""
-"Project-Id-Version: Webmention 5.1.4\n"
+"Project-Id-Version: Webmention 5.1.5\n"
 "Report-Msgid-Bugs-To: "
 "https://wordpress.org/support/plugin/wordpress-webmention\n"
-"POT-Creation-Date: 2023-09-27 11:44:04+00:00\n"
+"POT-Creation-Date: 2023-11-03 20:56:52+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -22,11 +22,15 @@ msgstr ""
 msgid "$webmention_item is not an instance of Webmention\\Entity\\Item"
 msgstr ""
 
-#: includes/Handler/class-wp.php:43
+#: includes/Handler/class-mf2.php:840
+msgid "Anonymous"
+msgstr ""
+
+#: includes/Handler/class-wp.php:53
 msgid "No API link found in the source code"
 msgstr ""
 
-#: includes/Handler/class-wp.php:57
+#: includes/Handler/class-wp.php:67
 msgid "No valid API link found"
 msgstr ""
 
@@ -337,76 +341,76 @@ msgstr ""
 msgid "Edit"
 msgstr ""
 
-#: includes/class-comment.php:69
+#: includes/class-comment.php:83
 msgid "Reposts"
 msgstr ""
 
-#: includes/class-comment.php:70
+#: includes/class-comment.php:84
 msgid "Repost"
 msgstr ""
 
-#: includes/class-comment.php:71
+#: includes/class-comment.php:85
 msgid ""
 "A repost on the indieweb is a post that is purely a 100% re-publication of "
 "another (typically someone else's) post."
 msgstr ""
 
-#: includes/class-comment.php:75
+#: includes/class-comment.php:89
 #. translators: %1$s username, %2$s opject format (post, audio, ...), %3$s URL,
 #. %4$s domain
 msgid "%1$s reposted %2$s on <a href=\"%3$s\">%4$s</a>."
 msgstr ""
 
-#: includes/class-comment.php:82
+#: includes/class-comment.php:96
 msgid "Likes"
 msgstr ""
 
-#: includes/class-comment.php:83
+#: includes/class-comment.php:97
 msgid "Like"
 msgstr ""
 
-#: includes/class-comment.php:84
+#: includes/class-comment.php:98
 msgid ""
 "A like is a popular webaction button and in some cases post type on various "
 "silos such as Facebook and Instagram."
 msgstr ""
 
-#: includes/class-comment.php:88
+#: includes/class-comment.php:102
 #. translators: %1$s username, %2$s opject format (post, audio, ...), %3$s URL,
 #. %4$s domain
 msgid "%1$s liked %2$s on <a href=\"%3$s\">%4$s</a>."
 msgstr ""
 
-#: includes/class-comment.php:95
+#: includes/class-comment.php:109
 msgid "Favorites"
 msgstr ""
 
-#: includes/class-comment.php:96
+#: includes/class-comment.php:110
 msgid "Favorite"
 msgstr ""
 
-#: includes/class-comment.php:97
+#: includes/class-comment.php:111
 msgid ""
 "A favorite is a common webaction on many silos (like Flickr, Twitter), "
 "typically visually indicated with a star symbol that fills in with a color "
 "when activated (pink, orange)."
 msgstr ""
 
-#: includes/class-comment.php:101
+#: includes/class-comment.php:115
 #. translators: %1$s username, %2$s opject format (post, audio, ...), %3$s URL,
 #. %4$s domain
 msgid "%1$s favorited %2$s on <a href=\"%3$s\">%4$s</a>."
 msgstr ""
 
-#: includes/class-comment.php:108
+#: includes/class-comment.php:122
 msgid "Tags"
 msgstr ""
 
-#: includes/class-comment.php:109
+#: includes/class-comment.php:123
 msgid "Tag"
 msgstr ""
 
-#: includes/class-comment.php:110
+#: includes/class-comment.php:124
 msgid ""
 "Tags or tagging refers to categorizing or labeling content, your own or "
 "others (tag-reply), with words, phrases, names, or other information, "
@@ -415,104 +419,104 @@ msgid ""
 "tagging people or other items where (area-tag) they're depicted in a photo."
 msgstr ""
 
-#: includes/class-comment.php:114
+#: includes/class-comment.php:128
 #. translators: %1$s username, %2$s opject format (post, audio, ...), %3$s URL,
 #. %4$s domain
 msgid "%1$s tagged %2$s on <a href=\"%3$s\">%4$s</a>."
 msgstr ""
 
-#: includes/class-comment.php:121
+#: includes/class-comment.php:135
 msgid "Bookmarks"
 msgstr ""
 
-#: includes/class-comment.php:122
+#: includes/class-comment.php:136
 msgid "Bookmark"
 msgstr ""
 
-#: includes/class-comment.php:123
+#: includes/class-comment.php:137
 msgid ""
 "A bookmark (or linkblog) is a post that is primarily comprised of a URL, "
 "often title text from that URL, sometimes optional text describing, "
 "tagging, or quoting from its contents."
 msgstr ""
 
-#: includes/class-comment.php:127
+#: includes/class-comment.php:141
 #. translators: %1$s username, %2$s opject format (post, audio, ...), %3$s URL,
 #. %4$s domain
 msgid "%1$s bookmarked %2$s on <a href=\"%3$s\">%4$s</a>."
 msgstr ""
 
-#: includes/class-comment.php:134
+#: includes/class-comment.php:148
 msgid "Listens"
 msgstr ""
 
-#: includes/class-comment.php:135
+#: includes/class-comment.php:149
 msgid "Listen"
 msgstr ""
 
-#: includes/class-comment.php:136
+#: includes/class-comment.php:150
 msgid ""
 "A \"listen\" is a passive type of post used to publish a song (music or "
 "audio track, including concert recordings or DJ sets) or podcast that you "
 "have listened to."
 msgstr ""
 
-#: includes/class-comment.php:140
+#: includes/class-comment.php:154
 #. translators: %1$s username, %2$s opject format (post, audio, ...), %3$s URL,
 #. %4$s domain
 msgid "%1$s <strong>listened</strong> to %2$s (via <a href=\"%3$s\">%4$s</a>)."
 msgstr ""
 
-#: includes/class-comment.php:147
+#: includes/class-comment.php:161
 msgid "Watches"
 msgstr ""
 
-#: includes/class-comment.php:148
+#: includes/class-comment.php:162
 msgid "Watch"
 msgstr ""
 
-#: includes/class-comment.php:149
+#: includes/class-comment.php:163
 msgid ""
 "A watch is a semi-passive type of post used to publish that you have "
 "watched a video (movie, TV, film), or a live show (theater, concert)."
 msgstr ""
 
-#: includes/class-comment.php:153
+#: includes/class-comment.php:167
 #. translators: %1$s username, %2$s opject format (post, audio, ...), %3$s URL,
 #. %4$s domain
 msgid "%1$s <strong>watched</strong> %2$s (via <a href=\"%3$s\">%4$s</a>)."
 msgstr ""
 
-#: includes/class-comment.php:160
+#: includes/class-comment.php:174
 msgid "Reads"
 msgstr ""
 
-#: includes/class-comment.php:161
+#: includes/class-comment.php:175
 msgid "Read"
 msgstr ""
 
-#: includes/class-comment.php:164
+#: includes/class-comment.php:178
 msgid ""
 "To read or reading is the act of viewing and interpreting posts or other "
 "documents; on the IndieWeb, a read post expresses that something has been "
 "read, like a book or section thereof."
 msgstr ""
 
-#: includes/class-comment.php:166
+#: includes/class-comment.php:180
 #. translators: %1$s username, %2$s opject format (post, audio, ...), %3$s URL,
 #. %4$s domain
 msgid "%1$s <strong>read</strong> %2$s (via <a href=\"%3$s\">%4$s</a>)."
 msgstr ""
 
-#: includes/class-comment.php:173
+#: includes/class-comment.php:187
 msgid "Follows"
 msgstr ""
 
-#: includes/class-comment.php:174
+#: includes/class-comment.php:188
 msgid "Follow"
 msgstr ""
 
-#: includes/class-comment.php:175
+#: includes/class-comment.php:189
 msgid ""
 "Follow is a common feature (and often UI button) in silo UIs (like Twitter) "
 "that adds updates from that profile (typically a person) to the stream "
@@ -522,42 +526,42 @@ msgid ""
 "followed (\"… followed you\")."
 msgstr ""
 
-#: includes/class-comment.php:179
+#: includes/class-comment.php:193
 #. translators: %1$s username, %2$s opject format (post, audio, ...), %3$s URL,
 #. %4$s domain
 msgid "%1$s <strong>followed</strong> %2$s (via <a href=\"%3$s\">%4$s</a>)."
 msgstr ""
 
-#: includes/class-comment.php:186
+#: includes/class-comment.php:200
 msgid "Mentions"
 msgstr ""
 
-#: includes/class-comment.php:187
+#: includes/class-comment.php:201
 msgid "Mention"
 msgstr ""
 
-#: includes/class-comment.php:188
+#: includes/class-comment.php:202
 msgid ""
 "A mention is a post which links to another post without explicitly being in "
 "response to it. In contrast, a reply, like, or repost are explicit "
 "responses to a post."
 msgstr ""
 
-#: includes/class-comment.php:192
+#: includes/class-comment.php:206
 #. translators: %1$s username, %2$s opject format (post, audio, ...), %3$s URL,
 #. %4$s domain
 msgid "%1$s <strong>mentioned</strong> %2$s on <a href=\"%3$s\">%4$s</a>."
 msgstr ""
 
-#: includes/class-comment.php:199
+#: includes/class-comment.php:213
 msgid "Reacjis"
 msgstr ""
 
-#: includes/class-comment.php:200
+#: includes/class-comment.php:214
 msgid "Reacji"
 msgstr ""
 
-#: includes/class-comment.php:201
+#: includes/class-comment.php:215
 msgid ""
 "Reacji is an emoji reaction, the use of a single emoji character in "
 "response to a post."
@@ -612,7 +616,7 @@ msgid "Target and source cannot direct to the same resource"
 msgstr ""
 
 #: includes/class-receiver.php:245
-msgid "Pings are disabled for this post"
+msgid "Webmentions are disabled for this post"
 msgstr ""
 
 #: includes/class-receiver.php:314
@@ -635,19 +639,19 @@ msgstr ""
 msgid "Not enough data available"
 msgstr ""
 
-#: includes/class-response.php:109
+#: includes/class-response.php:110
 msgid "Content Type is not supported"
 msgstr ""
 
-#: includes/class-response.php:149
+#: includes/class-response.php:150
 msgid "Cannot generate DOMDocument"
 msgstr ""
 
-#: includes/class-response.php:155
+#: includes/class-response.php:156
 msgid "Request body has no data"
 msgstr ""
 
-#: includes/class-response.php:186
+#: includes/class-response.php:187
 msgid "No link header available"
 msgstr ""
 
@@ -681,15 +685,15 @@ msgstr ""
 msgid "Response"
 msgstr ""
 
-#: includes/functions.php:593
+#: includes/functions.php:624
 msgid "Valid Comment Not Passed to Function"
 msgstr ""
 
-#: includes/functions.php:596
+#: includes/functions.php:627
 msgid "Comment object is not a Webmention"
 msgstr ""
 
-#: includes/functions.php:602
+#: includes/functions.php:633
 msgid "Webmention data missing - unable to refresh"
 msgstr ""
 
