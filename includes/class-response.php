@@ -247,9 +247,9 @@ class Response {
 			$rels = explode( ' ', $link->getAttribute( 'rel' ) );
 			foreach ( $rels as $rel ) {
 				$item         = array();
-				$item['rel']  = $rel;
-				$item['uri']  = $link->getAttribute( 'href' );
-				$item['type'] = $link->getAttribute( 'type' );
+				$item['rel']  = trim( $rel );
+				$item['uri']  = trim( $link->getAttribute( 'href' ) );
+				$item['type'] = trim( $link->getAttribute( 'type' ) );
 				$items[]      = $item;
 			}
 		}
