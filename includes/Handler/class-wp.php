@@ -171,7 +171,7 @@ class WP extends Base {
 		unset( $site_json['authentication'] );
 		unset( $site_json['routes'] );
 
-		if ( isset( $site_json['timezone_string'] ) ) {
+		if ( ! empty( $site_json['timezone_string'] ) ) {
 			$site_json['timezone'] = new DateTimeZone( $site_json['timezone_string'] );
 		} else {
 			$site_json['timezone'] = null;
