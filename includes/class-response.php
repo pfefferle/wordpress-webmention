@@ -184,7 +184,7 @@ class Response {
 		$links = wp_remote_retrieve_header( $this->response, 'link' );
 
 		if ( ! $links ) {
-			return new WP_Error( 'no_link_header', __( 'No link header available', 'webmention' ) );
+			return array();
 		}
 
 		if ( ! is_array( $links ) ) {
@@ -244,12 +244,16 @@ class Response {
 
 		// check <link> and <a> elements
 		foreach ( $xpath->query( '(//link|//a)[@rel and @href]' ) as $link ) {
-			$item         = array();
-			$item['rel']  = $link->getAttribute( 'rel' );
-			$item['uri']  = $link->getAttribute( 'href' );
-			$item['type'] = $link->getAttribute( 'type' );
-			$items[]      = $item;
+			$rels = explode( ' ', $link->getAttribute( 'rel' ) );
+			foreach ( $rels as $rel ) {
+				$item         = array();
+				$item['rel']  = $rel;
+				$item['uri']  = $link->getAttribute( 'href' );
+				$item['type'] = $link->getAttribute( 'type' );
+				$items[]      = $item;
+			}
 		}
+
 		return $items;
 	}
 
@@ -257,8 +261,7 @@ class Response {
 	 * Get link headers by a filter
 	 *
 	 * @param array $filter Filter link headers
-	 *
-	 * @example array( 'rel' => 'alternate', 'type' => 'application/json' )
+	 *                      for example `array( 'rel' => 'alternate', 'type' => 'application/json' )`
 	 *
 	 * @return array
 	 */
@@ -285,10 +288,9 @@ class Response {
 	 * Get html link headers by a filter
 	 *
 	 * @param array $filter Filter link headers
+	 *                      for example `array( 'rel' => 'alternate', 'type' => 'application/json' )`
 	 *
-	 * @example array( 'rel' => 'alternate', 'type' => 'application/json' )
-	 *
-	 * @return array
+	 * @return array Array of links
 	 */
 	public function get_html_links_by( $filter ) {
 		$links = $this->get_html_links();
@@ -308,7 +310,31 @@ class Response {
 		return $items;
 	}
 
+	/**
+	 * Get head and html links by a filter
+	 *
+	 * @param array $filter Filter links
+	 *                      for example `array( 'rel' => 'alternate', 'type' => 'application/json' )`
+	 *
+	 * @return array Array of links
+	 */
+	public function get_links_by( $filter ) {
+		$links = array_merge( $this->get_header_links(), $this->get_html_links() );
 
+		if ( ! $links ) {
+			return $links;
+		}
+
+		$items = array();
+
+		foreach ( $links as $link ) {
+			if ( array_intersect( $filter, $link ) === $filter ) {
+				$items[] = $link;
+			}
+		}
+
+		return $items;
+	}
 
 	/**
 	 * Check if request returns an HTTP Error Code
