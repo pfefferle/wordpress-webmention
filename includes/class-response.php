@@ -264,10 +264,15 @@ class Response {
 	 */
 	public function get_header_links_by( $filter ) {
 		$links = $this->get_header_links();
+
+		if ( is_wp_error( $links ) ) {
+			return array();
+		}
+
 		$items = array();
 
 		foreach ( $links as $link ) {
-			if ( array_intersect_uassoc( $link, $filter, 'strcasecmp' ) ) {
+			if ( array_intersect( $filter, $link ) === $filter ) {
 				$items[] = $link;
 			}
 		}
@@ -287,10 +292,15 @@ class Response {
 	 */
 	public function get_html_links_by( $filter ) {
 		$links = $this->get_html_links();
+
+		if ( is_wp_error( $links ) ) {
+			return array();
+		}
+
 		$items = array();
 
 		foreach ( $links as $link ) {
-			if ( array_intersect_uassoc( $link, $filter, 'strcasecmp' ) ) {
+			if ( array_intersect( $filter, $link ) === $filter ) {
 				$items[] = $link;
 			}
 		}

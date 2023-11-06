@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="de-DE" prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width" />
+	<link rel="profile" href="http://microformats.org/profile/specs" />
+	<link rel="profile" href="http://microformats.org/profile/hatom" />
+
+	<link media="all" href="https://cdn.notiz.blog/wp-content/cache/autoptimize/css/autoptimize_355064c6cb83f1c26653b1ea7628db6d.css" rel="stylesheet"><title>Die Renaissance des Pingbacks &#8211; notizBlog</title>
+<meta name='robots' content='max-image-preview:large' />
+<link rel="alternate" type="application/rss+xml" title="notizBlog &raquo; Feed" href="https://notiz.blog/feed/" />
+<link rel="alternate" type="application/rss+xml" title="notizBlog &raquo; Kommentar-Feed" href="https://notiz.blog/comments/feed/" />
+<link rel="alternate" type="application/rss+xml" title="notizBlog &raquo; Die Renaissance des Pingbacks Kommentar-Feed" href="https://notiz.blog/2013/07/08/die-renaissance-des-pingbacks/feed/" />
+<link rel="alternate" type="application/stream+json" title="notizBlog &raquo; Activity-Streams Feed" href="https://notiz.blog/feed/as1/" />
+<link rel="alternate" type="application/stream+json" title="notizBlog &raquo; Activity-Streams Comments Feed " href="https://notiz.blog/comments/feed/as1/" />
+		<link rel="alternate" type="application/stream+json" title="notizBlog &raquo; Die Renaissance des Pingbacks Activity-Streams Comments Feed" href="https://notiz.blog/2013/07/08/die-renaissance-des-pingbacks/feed/as1/" />
+				<link rel="http://oexchange.org/spec/0.8/rel/related-target" type="application/xrd+xml" href="https://notiz.blog/?oexchange=xrd" />
+
+<style id='activitypub-followers-style-inline-css' type='text/css'>
+.activitypub-follower-block.is-style-compact .activitypub-handle,.activitypub-follower-block.is-style-compact .sep{display:none}.activitypub-follower-block.is-style-with-lines ul li{border-bottom:.5px solid;margin-bottom:.5rem;padding-bottom:.5rem}.activitypub-follower-block.is-style-with-lines ul li:last-child{border-bottom:none}.activitypub-follower-block.is-style-with-lines .activitypub-handle,.activitypub-follower-block.is-style-with-lines .activitypub-name{text-decoration:none}.activitypub-follower-block.is-style-with-lines .activitypub-handle:hover,.activitypub-follower-block.is-style-with-lines .activitypub-name:hover{text-decoration:underline}.activitypub-follower-block ul{margin:0!important;padding:0!important}.activitypub-follower-block li{display:flex;margin-bottom:1rem}.activitypub-follower-block img{border-radius:50%;height:40px;margin-right:var(--wp--preset--spacing--20,.5rem);width:40px}.activitypub-follower-block .activitypub-link{align-items:center;color:inherit!important;display:flex;flex-flow:row nowrap;max-width:100%;text-decoration:none!important}.activitypub-follower-block .activitypub-handle,.activitypub-follower-block .activitypub-name{text-decoration:underline;text-decoration-thickness:.8px;text-underline-position:under}.activitypub-follower-block .activitypub-handle:hover,.activitypub-follower-block .activitypub-name:hover{text-decoration:none}.activitypub-follower-block .activitypub-name{font-size:var(--wp--preset--font-size--normal,16px)}.activitypub-follower-block .activitypub-actor{font-size:var(--wp--preset--font-size--small,13px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.activitypub-follower-block .sep{padding:0 .2rem}.activitypub-follower-block .wp-block-query-pagination{margin-top:1.5rem}.activitypub-follower-block .activitypub-pager{cursor:default}.activitypub-follower-block .activitypub-pager.current{opacity:.33}.activitypub-follower-block .page-numbers{padding:0 .2rem}.activitypub-follower-block .page-numbers.current{font-weight:700;opacity:1}
+
+</style>
+<style id='activitypub-follow-me-style-inline-css' type='text/css'>
+.activitypub-follow-me-block-wrapper{width:100%}.activitypub-follow-me-block-wrapper.has-background .activitypub-profile,.activitypub-follow-me-block-wrapper.has-border-color .activitypub-profile{padding-left:1rem;padding-right:1rem}.activitypub-follow-me-block-wrapper .activitypub-profile{align-items:center;display:flex;padding:1rem 0}.activitypub-follow-me-block-wrapper .activitypub-profile .activitypub-profile__avatar{border-radius:50%;height:75px;margin-right:1rem;width:75px}.activitypub-follow-me-block-wrapper .activitypub-profile .activitypub-profile__content{flex:1;min-width:0}.activitypub-follow-me-block-wrapper .activitypub-profile .activitypub-profile__handle,.activitypub-follow-me-block-wrapper .activitypub-profile .activitypub-profile__name{line-height:1.2;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.activitypub-follow-me-block-wrapper .activitypub-profile .activitypub-profile__name{font-size:1.25em}.activitypub-follow-me-block-wrapper .activitypub-profile .activitypub-profile__follow{align-self:center;background-color:var(--wp--preset--color--black);color:var(--wp--preset--color--white);margin-left:1rem}.activitypub-profile__confirm.components-modal__frame{background-color:#f7f7f7;color:#333}.activitypub-profile__confirm.components-modal__frame .components-modal__header-heading,.activitypub-profile__confirm.components-modal__frame h4{color:#333;letter-spacing:inherit;word-spacing:inherit}.activitypub-follow-me__dialog{max-width:30em}.activitypub-follow-me__dialog h4{line-height:1;margin:0}.activitypub-follow-me__dialog .apmfd__section{margin-bottom:2em}.activitypub-follow-me__dialog .apfmd-description{font-size:var(--wp--preset--font-size--normal,.75rem);margin:.33em 0 1em}.activitypub-follow-me__dialog .apfmd__button-group{display:flex;justify-content:flex-end}.activitypub-follow-me__dialog .apfmd__button-group svg{height:21px;margin-right:.5em;width:21px}.activitypub-follow-me__dialog .apfmd__button-group input{flex:1;padding-left:1em;padding-right:1em}
+
+</style>
+
+<style id='classic-theme-styles-inline-css' type='text/css'>
+/*! This file is auto-generated */
+.wp-block-button__link{color:#fff;background-color:#32373c;border-radius:9999px;box-shadow:none;text-decoration:none;padding:calc(.667em + 2px) calc(1.333em + 2px);font-size:1.125em}.wp-block-file__button{background:#32373c;color:#fff;text-decoration:none}
+</style>
+<style id='global-styles-inline-css' type='text/css'>
+body{--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #fff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--color--blue: #0073aa;--wp--preset--color--lighter-blue: #229fd8;--wp--preset--color--blue-jeans: #5bc0eb;--wp--preset--color--orioles-orange: #fa5b0f;--wp--preset--color--usc-gold: #ffcc00;--wp--preset--color--gargoyle-gas: #fde74c;--wp--preset--color--yellow: #fff9c0;--wp--preset--color--android-green: #9bc53d;--wp--preset--color--very-light-gray: #eee;--wp--preset--color--very-dark-gray: #444;--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgba(6,147,227,1) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgba(252,185,0,1) 0%,rgba(255,105,0,1) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgba(255,105,0,1) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--font-size--small: 13px;--wp--preset--font-size--medium: 20px;--wp--preset--font-size--large: 36px;--wp--preset--font-size--x-large: 42px;--wp--preset--spacing--20: 0.44rem;--wp--preset--spacing--30: 0.67rem;--wp--preset--spacing--40: 1rem;--wp--preset--spacing--50: 1.5rem;--wp--preset--spacing--60: 2.25rem;--wp--preset--spacing--70: 3.38rem;--wp--preset--spacing--80: 5.06rem;--wp--preset--shadow--natural: 6px 6px 9px rgba(0, 0, 0, 0.2);--wp--preset--shadow--deep: 12px 12px 50px rgba(0, 0, 0, 0.4);--wp--preset--shadow--sharp: 6px 6px 0px rgba(0, 0, 0, 0.2);--wp--preset--shadow--outlined: 6px 6px 0px -3px rgba(255, 255, 255, 1), 6px 6px rgba(0, 0, 0, 1);--wp--preset--shadow--crisp: 6px 6px 0px rgba(0, 0, 0, 1);}:where(.is-layout-flex){gap: 0.5em;}:where(.is-layout-grid){gap: 0.5em;}body .is-layout-flow > .alignleft{float: left;margin-inline-start: 0;margin-inline-end: 2em;}body .is-layout-flow > .alignright{float: right;margin-inline-start: 2em;margin-inline-end: 0;}body .is-layout-flow > .aligncenter{margin-left: auto !important;margin-right: auto !important;}body .is-layout-constrained > .alignleft{float: left;margin-inline-start: 0;margin-inline-end: 2em;}body .is-layout-constrained > .alignright{float: right;margin-inline-start: 2em;margin-inline-end: 0;}body .is-layout-constrained > .aligncenter{margin-left: auto !important;margin-right: auto !important;}body .is-layout-constrained > :where(:not(.alignleft):not(.alignright):not(.alignfull)){max-width: var(--wp--style--global--content-size);margin-left: auto !important;margin-right: auto !important;}body .is-layout-constrained > .alignwide{max-width: var(--wp--style--global--wide-size);}body .is-layout-flex{display: flex;}body .is-layout-flex{flex-wrap: wrap;align-items: center;}body .is-layout-flex > *{margin: 0;}body .is-layout-grid{display: grid;}body .is-layout-grid > *{margin: 0;}:where(.wp-block-columns.is-layout-flex){gap: 2em;}:where(.wp-block-columns.is-layout-grid){gap: 2em;}:where(.wp-block-post-template.is-layout-flex){gap: 1.25em;}:where(.wp-block-post-template.is-layout-grid){gap: 1.25em;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}
+.wp-block-navigation a:where(:not(.wp-element-button)){color: inherit;}
+:where(.wp-block-post-template.is-layout-flex){gap: 1.25em;}:where(.wp-block-post-template.is-layout-grid){gap: 1.25em;}
+:where(.wp-block-columns.is-layout-flex){gap: 2em;}:where(.wp-block-columns.is-layout-grid){gap: 2em;}
+.wp-block-pullquote{font-size: 1.5em;line-height: 1.6;}
+</style>
+
+
+<style id='dominant-color-styles-inline-css' type='text/css'>
+img[data-dominant-color]:not(.has-transparency) { background-color: var(--dominant-color); }
+</style>
+
+
+
+<style id='autonomie-style-inline-css' type='text/css'>
+.page-banner {
+					background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.7)), url(https://notiz.blog/wp-content/uploads/2017/02/cropped-Unknown-2.jpeg) no-repeat center center scroll;
+				}
+
+</style>
+<link rel='stylesheet' id='autonomie-print-style-css' href='https://cdn.notiz.blog/wp-content/cache/autoptimize/css/autoptimize_single_e82bb92e955015a9f504b06a2e23c50a.css?ver=1.0.0' type='text/css' media='print' />
+<link rel='stylesheet' id='autonomie-narrow-style-css' href='https://cdn.notiz.blog/wp-content/cache/autoptimize/css/autoptimize_single_443f6a5dfeb31559e0ebb10f6ebfbefd.css?ver=1.0.0' type='text/css' media='(max-width: 800px)' />
+<link rel='stylesheet' id='autonomie-default-style-css' href='https://cdn.notiz.blog/wp-content/cache/autoptimize/css/autoptimize_single_d2cd62dae25fa4c5033d6814c18fed0b.css?ver=1.0.0' type='text/css' media='(min-width: 800px)' />
+<link rel='stylesheet' id='autonomie-wide-style-css' href='https://cdn.notiz.blog/wp-content/cache/autoptimize/css/autoptimize_single_dacba9d2f64631415635040bc6ebd29d.css?ver=1.0.0' type='text/css' media='(min-width: 1000px)' />
+<link rel="https://api.w.org/" href="https://notiz.blog/wp-api/" /><link rel="alternate" type="application/json" href="https://notiz.blog/wp-api/wp/v2/posts/5307" /><link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://notiz.blog/xmlrpc.php?rsd" />
+<meta name="generator" content="WordPress 6.3.2" />
+<link rel="canonical" href="https://notiz.blog/2013/07/08/die-renaissance-des-pingbacks/" />
+<link rel='shortlink' href='https://notiz.blog/b/1UT' />
+<link rel="alternate" type="application/json+oembed" href="https://notiz.blog/wp-api/oembed/1.0/embed?url=https%3A%2F%2Fnotiz.blog%2F2013%2F07%2F08%2Fdie-renaissance-des-pingbacks%2F" />
+<link rel="alternate" type="text/xml+oembed" href="https://notiz.blog/wp-api/oembed/1.0/embed?url=https%3A%2F%2Fnotiz.blog%2F2013%2F07%2F08%2Fdie-renaissance-des-pingbacks%2F&#038;format=xml" />
+<meta name="flattr:id" content="4vxek8" />
+<meta name="description" content="Pingbacks (und Trackbacks) werden zwar immer noch von allen WordPress Blogs unterstützt aber mal ehrlich... [...]" /><link rel="subscribe" href="https://reader.pfefferle.org/" />
+<link rel="payment" href="https://liberapay.com/pfefferle/" />
+<link rel="payment" href="https://www.paypal.me/matthiaspfefferle" />
+<link rel="payment" href="https://flattr.com/@pfefferle" />
+<link rel="alternate" type="application/feed+json" title="notizBlog &raquo; JSON Feed" href="https://notiz.blog/feed/json/" />
+<link rel="alternate" type="application/feed+json" title="notizBlog &raquo; Die Renaissance des Pingbacks Comments Feed" href="https://notiz.blog/2013/07/08/die-renaissance-des-pingbacks/feed/json/" />
+<link rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/" type="text/html" />
+<link rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/rdf" type="application/rdf+xml" />
+<meta property="og:title" content="Die Renaissance des Pingbacks" />
+<meta property="og:type" content="article" />
+<meta property="og:image" content="https://notiz.blog/wp-content/uploads/2017/02/cropped-Unknown-2.jpeg" />
+<meta property="og:url" content="https://notiz.blog/2013/07/08/die-renaissance-des-pingbacks/" />
+<meta property="og:description" content="Pingbacks (und Trackbacks) werden zwar immer noch von allen WordPress Blogs unterstützt aber mal ehrlich... wen interessieren sie denn noch wirklich? Das hängt hauptsächlich mit der etwas veralteten Spezifikation zusammen, in der folgendes vorgeschlagen wird: Bob&#039;s blog also retrieves other data required from the content of Alice&#039;s new post, such as the page title, an [...]" />
+<meta property="og:locale" content="de_DE" />
+<meta property="og:site_name" content="notizBlog" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:creator" content="@pfefferle" />
+<meta property="article:tag" content="IndieWeb" />
+<meta property="article:tag" content="IndieWebCamp" />
+<meta property="article:tag" content="Microformats" />
+<meta property="article:tag" content="Pingback" />
+<meta property="article:tag" content="Webmention" />
+<meta property="article:section" content="Open Web" />
+<meta property="article:published_time" content="2013-07-08T13:04:38+02:00" />
+<meta property="article:modified_time" content="2021-03-30T16:12:18+02:00" />
+<meta property="article:author" content="https://notiz.blog/author/matthias-pfefferle/" />
+<meta name="generator" content="Performance Lab 2.7.0; modules: images/webp-support, js-and-css/audit-enqueued-assets, database/audit-autoloaded-options, images/dominant-color-images">
+<meta name="generator" content="Performant Translations 1.0.6">
+		<link rel="manifest" href="https://notiz.blog/wp-api/wp/v2/web-app-manifest">
+		<meta name="theme-color" content="#fff">
+						<meta name="apple-mobile-web-app-capable" content="yes">
+				<meta name="mobile-web-app-capable" content="yes">
+
+				<link rel="apple-touch-startup-image" href="https://notiz.blog/wp-content/uploads/2019/10/cropped-notizblog-icon-1-192x192.png">
+
+				<meta name="apple-mobile-web-app-title" content="notizBlog">
+		<meta name="application-name" content="notizBlog">
+		<link rel="pingback" href="https://notiz.blog/xmlrpc.php" />
+<meta name="supported-color-schemes" content="light dark">
+<link rel="alternate" type="application/rss+xml" title="notizBlog &raquo; IndieWeb Schlagwort Feed" href="https://notiz.blog/tag/indieweb/feed/" />
+<link rel="alternate" type="application/rss+xml" title="notizBlog &raquo; IndieWebCamp Schlagwort Feed" href="https://notiz.blog/tag/indiewebcamp/feed/" />
+<link rel="alternate" type="application/rss+xml" title="notizBlog &raquo; Microformats Schlagwort Feed" href="https://notiz.blog/tag/microformats/feed/" />
+<link rel="alternate" type="application/rss+xml" title="notizBlog &raquo; Open Web Kategorie Feed" href="https://notiz.blog/category/web/feed/" />
+<link rel="alternate" type="application/rss+xml" title="notizBlog &raquo; Pingback Schlagwort Feed" href="https://notiz.blog/tag/pingback/feed/" />
+<link rel="alternate" type="application/rss+xml" title="notizBlog &raquo; Webmention Schlagwort Feed" href="https://notiz.blog/tag/webmention/feed/" />
+<link rel="alternate" type="application/rss+xml" title="notizBlog &raquo; Beiträge von Matthias Pfefferle-Feed" href="https://notiz.blog/author/matthias-pfefferle/feed/" />
+<link rel="alternate" type="application/rss+xml" title="notizBlog &raquo; Standard Post-Type-Feed" href="https://notiz.blog/type/standard/feed/" />
+<link rel="search" type="application/opensearchdescription+xml" title="Search notizBlog" href="https://notiz.blog/wp-api/opensearch/1.1/document" /><style type="text/css">.broken_link, a.broken_link {
+	text-decoration: line-through;
+}</style><link rel="icon" href="https://notiz.blog/wp-content/uploads/2019/10/cropped-notizblog-icon-1-32x32.png" sizes="32x32" />
+<link rel="icon" href="https://notiz.blog/wp-content/uploads/2019/10/cropped-notizblog-icon-1-192x192.png" sizes="192x192" />
+<link rel="apple-touch-icon" href="https://notiz.blog/wp-content/uploads/2019/10/cropped-notizblog-icon-1-180x180.png" />
+<meta name="msapplication-TileImage" content="https://notiz.blog/wp-content/uploads/2019/10/cropped-notizblog-icon-1-270x270.png" />
+<link rel="webmention" href="https://notiz.blog/wp-api/webmention/1.0/endpoint" />
+<link rel="http://webmention.org/" href="https://notiz.blog/wp-api/webmention/1.0/endpoint" />
+</head>
+
+<body class="post-template-default single single-post postid-5307 single-format-standard wp-custom-logo wp-embed-responsive multi-column single-author custom-header" itemscope="" itemtype="https://schema.org/BlogPosting" itemref="site-publisher" itemid="https://notiz.blog/2013/07/08/die-renaissance-des-pingbacks/">
+<div id="page">
+	<div class="skip-link screen-reader-text"><a href="#content" title="Zum Inhalt springen">Zum Inhalt springen</a></div>
+		<header id="site-header" class="site-header">
+		<div class="site-branding">
+			<svg id="notizblog_logo" width="40" height="40" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3000 2829" style="margin-bottom: 11px;">
+	<path d="M2663.52,987.89q-40.45-168.36-124.6-295.61l76.86-261.15c15.13-51.37,8.48-105.67-18.72-152.89-26.72-46.4-70.2-80.42-122.45-95.8-108.77-32-222.45,27.44-253.38,132.56l-26.38,89.63A1053.9,1053.9,0,0,0,2041.65,350c-147.62-40.53-298.75-55.07-451.09-59.26q-51-1.41-101.94-1.47c-167.89,0-334.76,13-498.95,54.29C651.43,428.63,425.38,632.84,337,974.15c-72.09,278.42-72.28,560.61-9.78,840.64,79.61,356.69,303.22,577,655.88,668,170.12,43.88,343.8,55.31,518.63,56.06,163.49-1.38,326.11-10.85,486.22-47.39,354.68-81,587.33-291.09,674.56-647.85C2732,1559.38,2731.85,1272.22,2663.52,987.89Zm-339-642.49c14.17-48.17,67.86-74.92,119.7-59.68l.48.16L2116.77,1400l-94.49-27.81ZM2181.43,1508.83l-94.89,129.33-71-21.54-12.16-160.18Zm313.75,293.85c-35.38,144.68-96.88,256.92-188,343.11-88.88,84.06-209.17,143.85-357.53,177.71-157.94,36-322.37,42-448.22,43.07-196.48-.9-343.11-16.51-475.29-50.6-146.21-37.71-264.28-101.21-350.94-188.73-88.37-89.26-147.2-203.74-179.84-350-57.86-259.23-55-514.91,8.42-759.94,35.68-137.78,96-245.62,184.52-329.68,86.13-81.82,201.67-141.39,343.4-177,133.16-33.49,278.36-49.09,456.94-49.09,31.11,0,62.91.46,97.2,1.4,164.18,4.52,294.53,21.42,410.22,53.18q81,22.23,149.55,55.85L1912.41,1364.2a53.59,53.59,0,0,0,.34,31.52,42.81,42.81,0,0,0,.07,5.06l29.79,392.43c-15.45-4.28-30.64-9.61-45.82-14.82-26.11-9-52.31-16.49-79.7-20.37-30.93-4.39-61.77-6.26-92.94-3.2a458.72,458.72,0,0,0-90.41,18.32c-27.44,8.42-54.69,17.83-83.06,22.58a128.89,128.89,0,0,1-69.63-8.87,182.78,182.78,0,0,1-29.4-17.19c-14-12-25.83-26.12-40.79-37.16-23.06-17-53.87-18.94-80.25-9-39.21,14.76-74.72,37.33-113,54.17a232.42,232.42,0,0,1-44,12.72,150.27,150.27,0,0,1-26.66.26,127.2,127.2,0,0,1-18.66-5.11,175.8,175.8,0,0,1-28.06-16.85c-15.59-12.62-29.9-26.69-44.32-40.61-10-9.69-20.38-20.88-33.18-26.7-14.94-6.78-28.83-8.78-45.13-5.83-9,1.64-17.49,5.65-25.79,9.53-49.63,23.23-98.68,47.8-148,71.69l-83.56,40.47c-9.74,4.72-18,16.91-20.78,27-3,10.82-1.63,25.23,4.56,34.84s15.49,18.15,27,20.78c12.39,2.82,23.41,1,34.85-4.56l118.1-57.21L942,1810.05c15.3-7.41,30.48-15.23,45.89-22.47,13.18,12.2,25.48,25.47,39,37.26,22.52,19.61,45.84,35.56,73.64,46.53,58.52,23.1,122.38,4.08,176.33-21.77,25.92-12.43,50.84-26.85,77.09-38.59,2.54-1,5.12-1.8,7.72-2.56,6,5.6,11.35,11.76,17.25,17.42a233.93,233.93,0,0,0,33.48,26.44,212.7,212.7,0,0,0,69.76,29.43c29.89,6.6,58.43,6.38,88.51,1.91,24.57-3.65,48.31-11.12,71.94-18.57,24.9-7.84,49.77-15.06,75.54-19.13a354.66,354.66,0,0,1,79.44,0c29.9,4.7,58.29,13.86,86.9,23.68,32.39,11.11,65.52,20.53,100.06,20.86,12.69.12,25.06-6,33.66-15.33a43.15,43.15,0,0,0,6.09-6.62l262.86-358.23c.86-1.18,1.62-2.41,2.36-3.66a53.54,53.54,0,0,0,17.44-26.33L2467.78,934a865.79,865.79,0,0,1,28.25,94.15C2558,1286.17,2557.75,1546.76,2495.18,1802.68Z"/>
+</svg>			<div id="site-title">
+				<a href="https://notiz.blog/" title="notizBlog" rel="home">
+				notizBlog				</a>
+			</div>
+
+			<form itemprop="potentialAction" itemscope itemtype="https://schema.org/SearchAction" role="search" method="get" class="search-form" action="https://notiz.blog/">
+				<label>
+					<span class="screen-reader-text">Suche nach:</span>
+					<input type="search" enterkeyhint="search" itemprop="query-input" class="search-field" placeholder="Suche &hellip;" value="" name="s" />
+				</label>
+				<input type="submit" class="search-submit" value="Suche" />
+			<meta itemprop="target" content="https://notiz.blog/?s={s} "/></form>		</div>
+
+		<nav id="site-navigation" class="site-navigation">
+			<button class="menu-toggle" aria-controls="site-navigation" aria-expanded="false">Hauptmenü</button>
+
+			<div class="menu-main-menu-container"><ul id="menu-main-menu" class="menu"><li id="menu-item-3533" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-3533"><a rel="home" href="/">Blog</a></li>
+<li id="menu-item-3535" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3535"><a rel="author me" href="https://notiz.blog/about/">About</a></li>
+<li id="menu-item-3536" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3536"><a href="https://notiz.blog/projects/">Projekte</a></li>
+<li id="menu-item-3537" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3537"><a href="https://notiz.blog/publications/">Artikel</a></li>
+<li id="menu-item-17992" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-17992"><a href="https://notiz.blog/speaking/">Vorträge</a></li>
+<li id="menu-item-18053" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-18053"><a href="https://notiz.blog/podcasts/">Podcasts</a></li>
+<li id="menu-item-3538" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3538"><a href="https://notiz.blog/contact/">Kontakt</a></li>
+<li id="menu-item-18252" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-18252"><a rel="payment" href="https://notiz.blog/donate/">Donate</a></li>
+<li id="menu-item-21435" class="icon-translate menu-item menu-item-type-post_type menu-item-object-page menu-item-21435"><a title="Read „notizBlog“ in english" href="https://notiz.blog/en/"><span class="dashicons dashicons-translation"></span> (en)</a></li>
+</ul></div>		</nav><!-- #site-navigation -->
+
+			</header><!-- #site-header -->
+
+			<main id="primary" class="h-entry hentry">
+
+
+
+<article id="post-5307" class="post-5307 post type-post status-publish format-standard category-web tag-indieweb tag-indiewebcamp tag-microformats tag-pingback tag-webmention">
+		<header class="entry-header">
+		<div class="entry-header-wrapper">
+						<div class="entry-meta post-format">
+				<a class="entry-format entry-format-standard" href="https://notiz.blog/type/standard/">Text</a>			</div>
+
+						<h1 class="entry-title p-name" itemprop="name headline">
+				<a href="https://notiz.blog/2013/07/08/die-renaissance-des-pingbacks/" class="u-url url" title="Permalink zu Die Renaissance des Pingbacks" rel="bookmark" itemprop="url">
+					Die Renaissance des Pingbacks				</a>
+			</h1>
+
+						<div class="entry-meta">
+				<address class="byline">
+				<span class="author p-author vcard hcard h-card" itemprop="author" itemscope itemtype="https://schema.org/Person">
+					<img alt='User Avatar of Matthias Pfefferle' src='https://notiz.blog/wp-content/uploads/avatar-privacy/cache/user/1/9/19d7da2fb5b6409265f7c51eb992c3aca83b854ddb371bec96ab05d6f40a45eb-40.jpg' srcset='https://notiz.blog/wp-content/uploads/avatar-privacy/cache/user/1/9/19d7da2fb5b6409265f7c51eb992c3aca83b854ddb371bec96ab05d6f40a45eb-80.jpg 2x' class='avatar avatar-40 photo u-photo' height='40' width='40'  itemprop="image" loading="lazy" decoding='async'/>
+					<a class="url uid u-url u-uid fn p-name" href="https://notiz.blog/author/matthias-pfefferle/" title="Zeige alle Beiträge von Matthias Pfefferle" rel="author">
+						<span itemprop="name">Matthias Pfefferle</span>
+					</a>
+					<link itemprop="url" href="https://notiz.blog/author/matthias-pfefferle/" />
+				</span>
+			</address> <span class="sep"> · </span> <a href="https://notiz.blog/2013/07/08/die-renaissance-des-pingbacks/" title="13:04" rel="bookmark" class="url u-url" itemprop="mainEntityOfPage"><time class="entry-date published dt-published" datetime="2013-07-08T13:04:38+02:00" itemprop="datePublished">8. Juli 2013</time></a> <span class="sep"> · </span> <span class="entry-duration"><time datetime="PT3M" class="dt-duration" itemprop="timeRequired">3 Minuten</time> zu lesen</span>			</div>
+					</div>
+	</header><!-- .entry-header -->
+
+
+		<div class="entry-content e-content" itemprop="description articleBody">
+
+<p><a href="http://www.hixie.ch/specs/pingback/pingback">Pingbacks</a> (und Trackbacks) werden zwar immer noch von allen WordPress Blogs unterstützt aber mal ehrlich&#8230; wen interessieren sie denn noch wirklich? Das hängt hauptsächlich mit der etwas veralteten Spezifikation zusammen, in der folgendes vorgeschlagen wird:</p>
+
+
+
+<blockquote class="wp-block-quote"><p>Bob&#8217;s blog also retrieves other data required from the content of Alice&#8217;s new post, such as the page title, an extract of the page content surrounding the link to Bob&#8217;s post, any attributes indicating which language the page is in, and so forth.</p></blockquote>
+
+
+
+<p>Das führt bei WordPress zu Einträgen die ungefähr so aussehen:</p>
+
+
+
+<blockquote class="wp-block-quote"><p>[&#8230;] und Wertvorstellungen entspricht und nicht von der Mehrheit meiner Freunde abhängig sein.» Dezentrale Walled Gardens Hier erscheinen von Montag bis Freitag ausgewählte Links zu lesenswerten Texten und aktuellen [&#8230;]</p></blockquote>
+
+
+
+<p>Der automatische generierte Ausschnitt lässt nicht wirklich erahnen was Markus Spath <a href="https://web.archive.org/web/20140209151129/http://netzwertig.com/2012/11/22/linkwertig-wi-apps-privacy-aufklaerung/">wirklich geschrieben hat</a> und deshalb verüble ich es niemandem, wenn er die Pingbacks/Trackbacks auf seiner Seite auf eine simple Liste von Links beschränkt hat. Als die Spezifikation 2002 geschrieben wurde, war das mit dem &#8222;Ausschnitt um den Link&#8220; sicherlich eine gute Lösung. Es gab keine andere Möglichkeit automatisch zu erkennen welcher Text genau zu dem Link gehört oder wann ein neuer Artikel, die Navigation oder sogar Werbung beginnt. Mittlerweile lassen sich Inhalte dank Websemantiken wie <a href="https://notiz.blog/tag/microformats">Microformats</a>, <a href="https://notiz.blog/tag/rdfa">RDFa</a> oder <a href="https://notiz.blog/tag/microdata">Microdata</a> sehr gut erkennen. Aber auch mit purem HTML5 Markup lässt sich problemlos ein <code>&lt;article /&gt;</code> und dessen Überschrift erkennen.</p>
+
+
+
+<p>Pingbacks sind aktuell die einfachste und wahrscheinlich sogar die einzige Möglichkeit, Kommentare dezentral und vor allem Plattform unabhängig zu &#8222;verschicken&#8220;, deshalb verstehe ich nicht wieso es so lange gedauert hat, bis jemand (im Rahmen eines <a href="http://indiewebcamp.com/pingback">IndieWebCamps</a>) auf die Idee kam sie den aktuellen Bedürfnissen und Möglichkeiten anzupassen anstatt sich weiter den Kopf über komplizierte dezentrale Protokolle zu zermartern. Wer sich das <a href="http://www.salmon-protocol.org/">Salmon Protocol</a> schon einmal angeschaut hat, weiß was ich meine&#8230;</p>
+
+
+
+<p>Pingbacks haben diverse Vorzüge:</p>
+
+
+
+<ul>
+    <li>Sie sind leicht zu implementieren (einfacher XML-RPC Request an jedem, im Text erwähnte URL)</li>
+    <li>Sie bieten einen simplen Schutz (wenn auch keinen 100%igen) gegen Spam, da der Pingende zumindest für eine gewisse Zeit auf die ge-pingte Seite verlinken muss</li>
+    <li><abbr title="don't repeat yourself">DRY</abbr>&#8230; Die Webseite dient als API und man muss seine Texte nicht zusätzlich in diversen XML oder JSON Formaten anbieten</li>
+</ul>
+
+
+
+<p>Auf der IndieWebCamp Seite gibt es eine Reihe an <a href="http://indiewebcamp.com/comments">interessanten Diskussionen</a> wie sich mit Hilfe von Microformats und ein paar <a href="http://indiewebcamp.com/responses"><code>rel</code>-Attributen</a> auch &#8222;Likes&#8220; oder &#8222;RSVPs&#8220; über Pingbacks realisieren ließen.</p>
+
+
+
+<p>Ein Like könnte beispielsweise folgendermaßen aussehen:</p>
+
+
+<pre class="wp-block-code" aria-describedby="shcb-language-1" data-shcb-language-name="HTML, XML" data-shcb-language-slug="xml"><style>.wp-block-code {
+	border: 0;
+	padding: 0;
+	-webkit-text-size-adjust: 100%;
+	text-size-adjust: 100%;
+}
+
+.wp-block-code > span {
+	display: block;
+	overflow: auto;
+}
+
+.shcb-language {
+	border: 0;
+	clip: rect(1px, 1px, 1px, 1px);
+	-webkit-clip-path: inset(50%);
+	clip-path: inset(50%);
+	height: 1px;
+	margin: -1px;
+	overflow: hidden;
+	padding: 0;
+	position: absolute;
+	width: 1px;
+	word-wrap: normal;
+	word-break: normal;
+}
+
+.hljs {
+	box-sizing: border-box;
+}
+
+.hljs.shcb-code-table {
+	display: table;
+	width: 100%;
+}
+
+.hljs.shcb-code-table > .shcb-loc {
+	color: inherit;
+	display: table-row;
+	width: 100%;
+}
+
+.hljs.shcb-code-table .shcb-loc > span {
+	display: table-cell;
+}
+
+.wp-block-code code.hljs:not(.shcb-wrap-lines) {
+	white-space: pre;
+}
+
+.wp-block-code code.hljs.shcb-wrap-lines {
+	white-space: pre-wrap;
+}
+
+.hljs.shcb-line-numbers {
+	border-spacing: 0;
+	counter-reset: line;
+}
+
+.hljs.shcb-line-numbers > .shcb-loc {
+	counter-increment: line;
+}
+
+.hljs.shcb-line-numbers .shcb-loc > span {
+	padding-left: 0.75em;
+}
+
+.hljs.shcb-line-numbers .shcb-loc::before {
+	border-right: 1px solid #ddd;
+	content: counter(line);
+	display: table-cell;
+	padding: 0 0.75em;
+	text-align: right;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	white-space: nowrap;
+	width: 1%;
+}
+</style><span><code class="hljs language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"h-entry"</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"p-autor h-card"</span>&gt;</span>Matthias Pfefferle<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span> likes <span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">rel</span>=<span class="hljs-string">"object-of-like"</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"http://hackr.de"</span>&gt;</span>hackr.de<span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></code></span><small class="shcb-language" id="shcb-language-1"><span class="shcb-language__label">Code-Sprache:</span> <span class="shcb-language__name">HTML, XML</span> <span class="shcb-language__paren">(</span><span class="shcb-language__slug">xml</span><span class="shcb-language__paren">)</span></small></pre>
+
+
+<p>Sandeep Shetty hat das auf <a href="http://www.sandeep.io/">sandeep.io</a> sehr schön <a href="http://www.sandeep.io/39">erklärt</a> und <a href="http://www.sandeep.io/39#likes">implementiert</a>!</p>
+
+
+
+<p><a href="http://werd.io/view/51cce999bed7de1e06ae3840">Ben Werdmuller</a> hat außerdem nochmal alles (Comments/Likes/RSVPs) als Video zusammengefasst:</p>
+
+
+
+<figure class="wp-block-embed-youtube wp-block-embed is-type-video is-provider-youtube wp-has-aspect-ratio wp-embed-aspect-16-9"><div class="wp-block-embed__wrapper">
+		<div class="embed-privacy-container is-disabled embed-youtube" data-embed-id="oembed_0af15cdc7e552d7847a5ec63d553c07a" data-embed-provider="youtube">						<button class="embed-privacy-enable screen-reader-text">Inhalt von YouTube anzeigen</button>						<div class="embed-privacy-overlay">				<div class="embed-privacy-inner">					<div class="embed-privacy-logo"></div>		<p>		Hier klicken, um den Inhalt von YouTube anzuzeigen.						<br>						Erfahre mehr in der <a href="https://policies.google.com/privacy?hl=de" target="_blank">Datenschutzerklärung</a> von YouTube.		</p>					<p class="embed-privacy-input-wrapper">				<input id="embed-privacy-store-youtube-0af15cdc7e552d7847a5ec63d553c07a" type="checkbox" value="1" class="embed-privacy-input" data-embed-provider="youtube">				<label for="embed-privacy-store-youtube-0af15cdc7e552d7847a5ec63d553c07a" class="embed-privacy-label" data-embed-provider="youtube">					Inhalt von YouTube immer anzeigen				</label>			</p>							</div>								<div class="embed-privacy-footer"><span class="embed-privacy-url"><a href="http://www.youtube.com/watch?v=zgvQq8o8RxU">„IndieWeb comments, likes and events“ direkt öffnen</a></span></div>			</div>						<div class="embed-privacy-content">				<script>var _oembed_0af15cdc7e552d7847a5ec63d553c07a = '{\"embed\":\"&lt;iframe title=&quot;IndieWeb comments, likes and events&quot; width=&quot;900&quot; height=&quot;506&quot; src=&quot;https:\\/\\/www.youtube-nocookie.com\\/embed\\/zgvQq8o8RxU?feature=oembed&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture&quot; allowfullscreen&gt;&lt;\\/iframe&gt;\"}';</script>			</div>						<style>				[data-embed-id="oembed_0af15cdc7e552d7847a5ec63d553c07a"] {							aspect-ratio: 900/506;						}.embed-youtube .embed-privacy-logo {							background-image: url(https://notiz.blog/wp-content/plugins/embed-privacy/assets/images/embed-youtube.png?v=1698874221);						}			</style>		</div>
+</div></figure>
+
+
+
+<p>Im nächsten Blogpost geht es dann um <a href="http://webmention.org/">Webmentions</a>, einer etwas moderneren Variante von Pingbacks.</p>
+			</div><!-- .entry-content -->
+
+		<footer class="entry-footer entry-meta">
+		<div class="entry-actions">
+						<indie-action do="reply" width="https://notiz.blog/2013/07/08/die-renaissance-des-pingbacks/"><div class="comments-link"><a href="https://notiz.blog/2013/07/08/die-renaissance-des-pingbacks/#comments">1 Kommentar</a></div></indie-action>
+						<indie-action do="post" with="https://notiz.blog/2013/07/08/die-renaissance-des-pingbacks/">
+	<button type="share" id="entry-share">
+		Teilen	</button>
+</indie-action>
+
+<div id="share-options" style="display: none;">
+	<p><strong>Sharing is caring ❤️</strong></p>
+	<p>
+		<label for="entry-shortlink">Kurz-URL</label>
+		<input id="entry-shortlink" class="u-url url shortlink" type="text" value="https://notiz.blog/b/1UT" />
+	</p>
+	<p>
+		<label for="entry-permalink">Permalink</label>
+		<input id="entry-permalink" class="u-url url u-uid uid bookmark" type="text" value="https://notiz.blog/2013/07/08/die-renaissance-des-pingbacks/" />
+	</p>
+		<p>
+		<label for="entry-summary">HTML</label>
+		<textarea id="entry-summary" class="code" type="text" rows="5" cols="70">&lt;cite class=&quot;h-cite&quot;&gt;&lt;a class=&quot;u-url p-name&quot; href=&quot;https://notiz.blog/2013/07/08/die-renaissance-des-pingbacks/&quot;&gt;Die Renaissance des Pingbacks&lt;/a&gt; (&lt;span class=&quot;p-author h-card&quot; title=&quot;Matthias Pfefferle&quot;&gt;Matthias Pfefferle&lt;/span&gt; &lt;time class=&quot;dt-published&quot; datetime=&quot;2013-07-08T13:04:38+02:00&quot;&gt;8. Juli 2013&lt;/time&gt;)&lt;/cite&gt;</textarea>
+	</p>
+	</div>
+		</div>
+
+		<address class="author p-author vcard hcard h-card" itemprop="author" itemscope="" itemtype="https://schema.org/Person">
+	<img alt='User Avatar of Matthias Pfefferle' src='https://notiz.blog/wp-content/uploads/avatar-privacy/cache/user/1/9/19d7da2fb5b6409265f7c51eb992c3aca83b854ddb371bec96ab05d6f40a45eb-100.jpg' srcset='https://notiz.blog/wp-content/uploads/avatar-privacy/cache/user/1/9/19d7da2fb5b6409265f7c51eb992c3aca83b854ddb371bec96ab05d6f40a45eb-200.jpg 2x' class='avatar avatar-100 photo u-photo' height='100' width='100'  itemprop="image" loading="lazy" decoding='async'/>	<a class="url uid u-url u-uid fn p-name" href="https://notiz.blog/author/matthias-pfefferle/">
+		<span itemprop="name">Matthias Pfefferle</span>
+	</a>
+	<div class="note e-note" itemprop="description">Ich bin Webworker und arbeite als "Open Web Lead" @ Automattic. Ich blogge, podcaste und schreibe <del>eine Kolumne</del> über das open, independent und federated social Web. <a href="https://notiz.blog/about/">Mehr über mich.</a></div>
+	<a class="subscribe" href="https://notiz.blog/author/matthias-pfefferle/feed/"><i class="openwebicons-feed"></i> Autorenfeed abonnieren</a>
+</address>
+<div class="cat-links">
+	Kategorien	<ul class="post-categories">
+	<li><a href="https://notiz.blog/category/web/" rel="category tag">Open Web</a></li></ul></div>
+
+<div class="tag-links" itemprop="keywords">
+	Schlagwörter	<ul><li><a class="p-category" href="https://notiz.blog/tag/indieweb/" rel="tag">IndieWeb</a></li><li><a class="p-category" href="https://notiz.blog/tag/indiewebcamp/" rel="tag">IndieWebCamp</a></li><li><a class="p-category" href="https://notiz.blog/tag/microformats/" rel="tag">Microformats</a></li><li><a class="p-category" href="https://notiz.blog/tag/pingback/" rel="tag">Pingback</a></li><li><a class="p-category" href="https://notiz.blog/tag/webmention/" rel="tag">Webmention</a></li><li><a href="https://news.indieweb.org/de" rel="tag" class="u-category u-tag">#indienews</a></li><li><a href="https://indieweb.xyz/de/web" rel="tag" class="u-category u-tag u-syndication">/de/web</a></li></ul></div>
+
+			</footer><!-- #entry-meta -->
+</article><!-- #post-5307 -->
+
+					<div id="comments">
+
+
+
+
+	<indie-action do="reply" with="https://notiz.blog/2013/07/08/die-renaissance-des-pingbacks/">
+<ul class="reaction-list reaction-list--mention">
+	<h2>Mentions</h2>
+
+			<li id="comment-716198" class="mention even thread-even depth-1 p-mention h-cite avatar-only h-entry p-comment comment">
+			<div class="comment-body">
+				<span class="p-author h-card">
+					<a class="u-url" title="" href="http://aaronparecki.com/bookmarks/2015/09/14/1/indieweb">
+						<img alt='User Avatar' src='https://notiz.blog/wp-content/plugins/avatar-privacy/public/images/mystery.svg' srcset='https://notiz.blog/wp-content/plugins/avatar-privacy/public/images/mystery.svg 2x' class='avatar avatar-64 photo u-photo' height='64' width='64'  onerror="this.onerror=null;this.src='https://notiz.blog/wp-content/plugins/webmention/assets/img/mm.jpg';this.srcset='https://notiz.blog/wp-content/plugins/webmention/assets/img/mm.jpg';" itemprop="image" loading="lazy" decoding='async'/>						<span class="emoji-overlay">💬</span>					</a>
+					<span class="hide-name p-name">Aaron Parecki</span>
+				</span>
+			</div>
+		</li><!-- #comment-## -->
+</ul>
+		<div id="respond" class="comment-respond">
+		<h3 id="reply-title" class="comment-reply-title">Schreibe einen Kommentar <small><a rel="nofollow" id="cancel-comment-reply-link" href="/2013/07/08/die-renaissance-des-pingbacks/#respond" style="display:none;">Antworten abbrechen</a></small></h3><form action="https://notiz.blog/wp-comments-post.php" method="post" id="commentform" class="comment-form" novalidate><p class="comment-notes"><span id="email-notes">Deine E-Mail-Adresse wird nicht veröffentlicht.</span> <span class="required-field-message">Erforderliche Felder sind mit <span class="required">*</span> markiert</span></p><p class="comment-form-comment"><label for="comment">Kommentar <span class="required">*</span></label> <textarea autocomplete="new-password"  enterkeyhint="next" id="d656177d9b"  name="d656177d9b"   cols="45" rows="8" maxlength="65525" required></textarea><textarea id="comment" aria-label="hp-comment" aria-hidden="true" name="comment" autocomplete="new-password" style="padding:0 !important;clip:rect(1px, 1px, 1px, 1px) !important;position:absolute !important;white-space:nowrap !important;height:1px !important;width:1px !important;overflow:hidden !important;" tabindex="-1"></textarea><script data-noptimize>document.getElementById("comment").setAttribute( "id", "acb7b5349c495af622c80d0ae41dc80e" );document.getElementById("d656177d9b").setAttribute( "id", "comment" );</script></p><p class="comment-form-author"><label for="author">Name</label> <input autocomplete="nickname name" enterkeyhint="next"  id="author" name="author" type="text" value="" size="30" maxlength="245" autocomplete="name" /></p>
+<p class="comment-form-email"><label for="email">E-Mail</label> <input autocomplete="email" inputmode="email" enterkeyhint="next"  id="email" name="email" type="email" value="" size="30" maxlength="100" aria-describedby="email-notes" autocomplete="email" /></p>
+<p class="comment-form-url"><label for="url">Website</label> <input autocomplete="url" inputmode="url" enterkeyhint="send"  id="url" name="url" type="url" value="" size="30" maxlength="200" autocomplete="url" /></p>
+<p class="comment-form-use-gravatar">
+	<input id="avatar-privacy-use-gravatar" name="avatar-privacy-use-gravatar" type="checkbox" value="true" 			style="margin-right:1ex;"
+		/><label
+			style="display:inline;"
+			for="avatar-privacy-use-gravatar"
+	>Ein <a href="https://de.gravatar.com/" rel="noopener nofollow" target="_self">Gravatar</a>-Bild neben meinen Kommentaren anzeigen.</label>
+</p>
+
+<p class="comment-form-cookies-consent"><input id="wp-comment-cookies-consent" name="wp-comment-cookies-consent" type="checkbox" value="yes" /> <label for="wp-comment-cookies-consent">Meinen Namen, meine E-Mail-Adresse und meine Website in diesem Browser für die nächste Kommentierung speichern.</label></p>
+<p class="form-submit"><input name="submit" type="submit" id="submit" class="submit" value="Kommentar abschicken" /> <input type='hidden' name='comment_post_ID' value='5307' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+</p></form>	</div><!-- #respond -->
+	</indie-action><form id="webmention-form" action="https://notiz.blog/wp-api/webmention/1.0/endpoint" method="post">
+	<p>
+		<label for="webmention-source">To respond on your own website, enter the URL of your response which should contain a link to this post's permalink URL. Your response will then appear (possibly after moderation) on this page. Want to update or remove your response? Update or delete your post and re-enter your post's URL again. (<a href="https://indieweb.org/webmention">Learn More</a>)</label>
+	</p>
+	<p>
+		<input id="webmention-source" type="url" autocomplete="url" required pattern="^https?:\/\/(.*)" name="source" placeholder="URL/Permalink deines Artikels" />
+	</p>
+	<p>
+		<input id="webmention-submit" type="submit" name="submit" value="Ping mich an!" />
+	</p>
+	<input id="webmention-format" type="hidden" name="format" value="html" />
+	<input id="webmention-target" type="hidden" name="target" value="https://notiz.blog/2013/07/08/die-renaissance-des-pingbacks/" />
+</form>
+
+</div><!-- #comments -->
+
+
+			</main><!-- #content -->
+
+
+	<footer id="colophon">
+			<div id="sidebar">
+
+		<div id="secondary" class="widget-area" role="complementary">
+			<aside id="hcard_widget-5" class="widget hcard_widget">
+		<div id="hcard_widget">
+			<div class="hcard-display h-card vcard u-author">
+	<div class="hcard-header">
+					<a class="u-url url fn u-uid" href="https://pfefferle.org/"><img alt='User Avatar' src='https://notiz.blog/wp-content/uploads/avatar-privacy/cache/user/1/9/19d7da2fb5b6409265f7c51eb992c3aca83b854ddb371bec96ab05d6f40a45eb-125.jpg' srcset='https://notiz.blog/wp-content/uploads/avatar-privacy/cache/user/1/9/19d7da2fb5b6409265f7c51eb992c3aca83b854ddb371bec96ab05d6f40a45eb-250.jpg 2x' class='avatar avatar-125 photo u-photo hcard-photo' height='125' width='125'  itemprop="image" loading="lazy" decoding='async'/></a>
+				<p class="hcard-name p-name n">Matthias Pfefferle</p>
+			</div> <!-- end hcard-header -->
+	<div class="hcard-body">
+		<ul class="hcard-properties">
+
+		</ul> <!-- end hcard-properties -->
+					<div class='relme'><ul>
+<li><a class="icon-github url u-url" href="https://github.com/pfefferle" title="Matthias Pfefferle @ GitHub"><span class="relmename">github</span><span class="relme-icon svg-github" aria-hidden="true" aria-label="GitHub" title="GitHub" ><svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>GitHub</title><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></span></a></li>
+<li><a class="icon-twitter url u-url" href="https://twitter.com/pfefferle" title="Matthias Pfefferle @ Twitter"><span class="relmename">twitter</span><span class="relme-icon svg-twitter" aria-hidden="true" aria-label="Twitter" title="Twitter" ><svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>Twitter</title><path d="M21.543 7.104c.015.211.015.423.015.636 0 6.507-4.954 14.01-14.01 14.01v-.003A13.94 13.94 0 0 1 0 19.539a9.88 9.88 0 0 0 7.287-2.041 4.93 4.93 0 0 1-4.6-3.42 4.916 4.916 0 0 0 2.223-.084A4.926 4.926 0 0 1 .96 9.167v-.062a4.887 4.887 0 0 0 2.235.616A4.928 4.928 0 0 1 1.67 3.148 13.98 13.98 0 0 0 11.82 8.292a4.929 4.929 0 0 1 8.39-4.49 9.868 9.868 0 0 0 3.128-1.196 4.941 4.941 0 0 1-2.165 2.724A9.828 9.828 0 0 0 24 4.555a10.019 10.019 0 0 1-2.457 2.549z"/></svg></span></a></li>
+<li><a class="icon-microblog url u-url" href="https://micro.blog/pfefferle" title="Matthias Pfefferle @ Micro.blog"><span class="relmename">microblog</span><span class="relme-icon svg-microdotblog" aria-hidden="true" aria-label="Micro.blog" title="Micro.blog" ><svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>Micro.blog</title><path d="M12 0C5.4 0 0 4.9 0 10.95 0 17 5.4 21.9 12 21.9c1.4 0 2.85-.25 4.2-.7.15-.05.35 0 .45.1 1 1.35 2.55 2.3 4.25 2.7l.25-.1v-.3a4.65 4.65 0 01.2-5.9C22.9 15.85 24 13.5 24 10.95 24 4.9 18.55 0 12 0zm-.05 5.2c.15 0 .3.1.35.25L13.55 9l3.85.1c.15 0 .3.1.35.2.05.15 0 .3-.15.4L14.55 12l1.1 3.6c.05.15 0 .3-.15.4h-.4l-3.15-2.15L8.8 16h-.4c-.15-.1-.2-.25-.15-.4l1.1-3.6L6.3 9.7c-.15-.1-.2-.25-.15-.4.05-.1.2-.2.35-.2l3.85-.1 1.25-3.55c.05-.15.2-.25.35-.25z"/></svg></span></a></li>
+<li><a class="icon-flickr url u-url" href="https://www.flickr.com/people/pfefferle" title="Matthias Pfefferle @ Flickr"><span class="relmename">flickr</span><span class="relme-icon svg-flickr" aria-hidden="true" aria-label="Flickr" title="Flickr" ><svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>Flickr</title><path d="M5.334 6.666C2.3884 6.666 0 9.055 0 12c0 2.9456 2.3884 5.334 5.334 5.334 2.9456 0 5.332-2.3884 5.332-5.334 0-2.945-2.3864-5.334-5.332-5.334zm13.332 0c-2.9456 0-5.332 2.389-5.332 5.334 0 2.9456 2.3864 5.334 5.332 5.334C21.6116 17.334 24 14.9456 24 12c0-2.945-2.3884-5.334-5.334-5.334Z"/></svg></span></a></li>
+<li><a class="icon-mastodon url u-url" href="https://mastodon.social/@pfefferle" title="Matthias Pfefferle @ Mastodon"><span class="relmename">mastodon</span><span class="relme-icon svg-mastodon" aria-hidden="true" aria-label="Mastodon" title="Mastodon" ><svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>Mastodon</title><path d="M23.268 5.313c-.35-2.578-2.617-4.61-5.304-5.004C17.51.242 15.792 0 11.813 0h-.03c-3.98 0-4.835.242-5.288.309C3.882.692 1.496 2.518.917 5.127.64 6.412.61 7.837.661 9.143c.074 1.874.088 3.745.26 5.611.118 1.24.325 2.47.62 3.68.55 2.237 2.777 4.098 4.96 4.857 2.336.792 4.849.923 7.256.38.265-.061.527-.132.786-.213.585-.184 1.27-.39 1.774-.753a.057.057 0 0 0 .023-.043v-1.809a.052.052 0 0 0-.02-.041.053.053 0 0 0-.046-.01 20.282 20.282 0 0 1-4.709.545c-2.73 0-3.463-1.284-3.674-1.818a5.593 5.593 0 0 1-.319-1.433.053.053 0 0 1 .066-.054c1.517.363 3.072.546 4.632.546.376 0 .75 0 1.125-.01 1.57-.044 3.224-.124 4.768-.422.038-.008.077-.015.11-.024 2.435-.464 4.753-1.92 4.989-5.604.008-.145.03-1.52.03-1.67.002-.512.167-3.63-.024-5.545zm-3.748 9.195h-2.561V8.29c0-1.309-.55-1.976-1.67-1.976-1.23 0-1.846.79-1.846 2.35v3.403h-2.546V8.663c0-1.56-.617-2.35-1.848-2.35-1.112 0-1.668.668-1.67 1.977v6.218H4.822V8.102c0-1.31.337-2.35 1.011-3.12.696-.77 1.608-1.164 2.74-1.164 1.311 0 2.302.5 2.962 1.498l.638 1.06.638-1.06c.66-.999 1.65-1.498 2.96-1.498 1.13 0 2.043.395 2.74 1.164.675.77 1.012 1.81 1.012 3.12z"/></svg></span></a></li>
+</ul></div>					<p class="p-note note">Ich bin Webworker und arbeite als "Open Web Lead" @ Automattic. Ich blogge, podcaste und schreibe <del>eine Kolumne</del> über das open, independent und federated social Web. <a href="https://notiz.blog/about/">Mehr über mich.</a></p>
+			</div> <!-- end hcard-body -->
+</div>
+<!-- end hcard-display -->
+		</div>
+
+		</aside><aside id="pages-2" class="widget widget_pages"><h2 class="widget-title">Seiten</h2>
+			<ul>
+				<li class="page_item page-item-14857"><a href="https://notiz.blog/now/">/now</a></li>
+<li class="page_item page-item-22646"><a href="https://notiz.blog/appearances/">Appearances</a></li>
+<li class="page_item page-item-15387"><a href="https://notiz.blog/datenschutz/">Datenschutzerklärung</a></li>
+<li class="page_item page-item-15055"><a href="https://notiz.blog/donate/">Donate</a></li>
+<li class="page_item page-item-17897"><a href="https://notiz.blog/follow/">Follow me</a></li>
+<li class="page_item page-item-24107"><a href="https://notiz.blog/followers/">Followers</a></li>
+<li class="page_item page-item-20616"><a href="https://notiz.blog/friends/">Friends</a></li>
+<li class="page_item page-item-16025"><a href="https://notiz.blog/impressum/">Impressum</a></li>
+<li class="page_item page-item-18042"><a href="https://notiz.blog/podcasts/">Podcasts</a></li>
+<li class="page_item page-item-21373"><a href="https://notiz.blog/en/">Read &#8222;notizBlog&#8220; in english</a></li>
+<li class="page_item page-item-21105"><a href="https://notiz.blog/thanks/">Thanks! ❤️🙌</a></li>
+<li class="page_item page-item-17977"><a href="https://notiz.blog/speaking/">Vorträge</a></li>
+<li class="page_item page-item-4 page_item_has_children"><a href="https://notiz.blog/about/">About</a>
+<ul class='children'>
+	<li class="page_item page-item-14977"><a href="https://notiz.blog/about/notiz-blog/">notiz.Blog</a></li>
+</ul>
+</li>
+<li class="page_item page-item-320 page_item_has_children"><a href="https://notiz.blog/projects/">Projekte</a>
+<ul class='children'>
+	<li class="page_item page-item-659"><a href="https://notiz.blog/projects/apml-for-wordpress/">APML for WordPress</a></li>
+	<li class="page_item page-item-18783"><a href="https://notiz.blog/projects/autonomie/">Autonomie</a></li>
+	<li class="page_item page-item-885"><a href="https://notiz.blog/projects/haudio-icons/">hAudio (Microformats) Icons</a></li>
+	<li class="page_item page-item-682"><a href="https://notiz.blog/projects/wp-hcard-commenting/">hCard Commenting</a></li>
+	<li class="page_item page-item-444"><a href="https://notiz.blog/projects/microformats-icons/">Microformats Icons</a></li>
+	<li class="page_item page-item-438"><a href="https://notiz.blog/projects/mycroformats/">Mycroformats</a></li>
+	<li class="page_item page-item-522"><a href="https://notiz.blog/projects/operator-user-scripts/">Operator User Scripts</a></li>
+	<li class="page_item page-item-321"><a href="https://notiz.blog/projects/save-microformats/">Save Microformats</a></li>
+	<li class="page_item page-item-4839"><a href="https://notiz.blog/projects/sempress/">SemPress</a></li>
+</ul>
+</li>
+<li class="page_item page-item-1724"><a href="https://notiz.blog/publications/">Artikel</a></li>
+<li class="page_item page-item-255"><a href="https://notiz.blog/contact/">Kontakt</a></li>
+			</ul>
+
+			</aside><aside id="meta-3" class="widget widget_meta"><h2 class="widget-title">Meta</h2>
+		<ul>
+						<li><a href="https://notiz.blog/wp-login.php">Anmelden</a></li>
+			<li><a href="https://notiz.blog/feed/">Feed der Einträge</a></li>
+			<li><a href="https://notiz.blog/comments/feed/">Kommentare-Feed</a></li>
+
+			<li><a href="https://de.wordpress.org/">WordPress.org</a></li>
+		</ul>
+
+		</aside>		</div><!-- #secondary .widget-area -->
+
+				<div id="tertiary" class="widget-area" role="complementary">
+			<aside id="search-2" class="widget widget_search"><form itemprop="potentialAction" itemscope itemtype="https://schema.org/SearchAction" role="search" method="get" class="search-form" action="https://notiz.blog/">
+				<label>
+					<span class="screen-reader-text">Suche nach:</span>
+					<input type="search" enterkeyhint="search" itemprop="query-input" class="search-field" placeholder="Suche &hellip;" value="" name="s" />
+				</label>
+				<input type="submit" class="search-submit" value="Suche" />
+			<meta itemprop="target" content="https://notiz.blog/?s={s} "/></form></aside><aside id="custom_html-2" class="widget_text widget widget_custom_html"><h2 class="widget-title">OpenWeb Podcast</h2><div class="textwidget custom-html-widget"><p>Der Podcast über offene Standards im Internet!</p>
+<ul><li><a href="https://openwebpodcast.de/" rel="me">Seite besuchen</a></li>
+<li><a href="https://openwebpodcast.de/feed/" rel="alternate">Den RSS-Feed abonnieren</a></li>
+<li><a href="https://notiz.blog/podcasts/">Mehr Infos</a></li></ul></div></aside><aside id="rss-2" class="widget widget_rss"><h2 class="widget-title"><a class="rsswidget rss-widget-feed" href="https://openwebpodcast.de/feed/"><img class="rss-widget-icon" style="border:0" width="14" height="14" src="https://notiz.blog/wp-includes/images/rss.png" alt="RSS" loading="lazy" /></a> <a class="rsswidget rss-widget-title" href="https://openwebpodcast.de/">Der deutsche OpenWeb-Podcast</a></h2><ul><li><a class='rsswidget' href='https://openwebpodcast.de/1883/neunetzcast-96/'>neunetzcast 96: Threads und die Zukunft von ActivityPub bei WordPress.com</a></li><li><a class='rsswidget' href='https://openwebpodcast.de/1882/neunetzcast-94/'>neunetzcast 94: Mastodon und ActivityPub haben den Tipping-Point überschritten</a></li><li><a class='rsswidget' href='https://openwebpodcast.de/1881/neunetzcast-93/'>neunetzcast 93: Was wir unter Dezentralität verstehen und was wir uns davon erhoffen</a></li><li><a class='rsswidget' href='https://openwebpodcast.de/1880/neunetzcast-86/'>neunetzcast 86: Was machen W3C und co. für dezentrale Social Networks?</a></li><li><a class='rsswidget' href='https://openwebpodcast.de/1878/hier-und-jetzt-open-web-6/'>Hier &amp; Jetzt – Open Web 6: Eine Liebeserklärung an RSS</a></li></ul></aside><aside id="tag_cloud-2" class="widget widget_tag_cloud"><h2 class="widget-title">Schlagwörter</h2><div class="tagcloud"><a href="https://notiz.blog/tag/activitypub/" class="tag-cloud-link tag-link-1080 tag-link-position-1" style="font-size: 9.3125pt;" aria-label="ActivityPub (15 Einträge)">ActivityPub</a>
+<a href="https://notiz.blog/tag/addon/" class="tag-cloud-link tag-link-176 tag-link-position-2" style="font-size: 8.765625pt;" aria-label="Addon (13 Einträge)">Addon</a>
+<a href="https://notiz.blog/tag/apml/" class="tag-cloud-link tag-link-449 tag-link-position-3" style="font-size: 9.640625pt;" aria-label="APML (16 Einträge)">APML</a>
+<a href="https://notiz.blog/tag/atom/" class="tag-cloud-link tag-link-105 tag-link-position-4" style="font-size: 8.765625pt;" aria-label="ATOM (13 Einträge)">ATOM</a>
+<a href="https://notiz.blog/tag/bud-spencer/" class="tag-cloud-link tag-link-77 tag-link-position-5" style="font-size: 8.765625pt;" aria-label="Bud Spencer (13 Einträge)">Bud Spencer</a>
+<a href="https://notiz.blog/tag/dataportability/" class="tag-cloud-link tag-link-478 tag-link-position-6" style="font-size: 14.671875pt;" aria-label="DataPortability (48 Einträge)">DataPortability</a>
+<a href="https://notiz.blog/tag/diso/" class="tag-cloud-link tag-link-470 tag-link-position-7" style="font-size: 10.625pt;" aria-label="DiSo (20 Einträge)">DiSo</a>
+<a href="https://notiz.blog/tag/facebook/" class="tag-cloud-link tag-link-480 tag-link-position-8" style="font-size: 12.484375pt;" aria-label="Facebook (30 Einträge)">Facebook</a>
+<a href="https://notiz.blog/tag/federated-social-web/" class="tag-cloud-link tag-link-892 tag-link-position-9" style="font-size: 10.1875pt;" aria-label="federated social web (18 Einträge)">federated social web</a>
+<a href="https://notiz.blog/tag/fediverse/" class="tag-cloud-link tag-link-1103 tag-link-position-10" style="font-size: 9.09375pt;" aria-label="Fediverse (14 Einträge)">Fediverse</a>
+<a href="https://notiz.blog/tag/firefox/" class="tag-cloud-link tag-link-130 tag-link-position-11" style="font-size: 12.15625pt;" aria-label="Firefox (28 Einträge)">Firefox</a>
+<a href="https://notiz.blog/tag/google/" class="tag-cloud-link tag-link-123 tag-link-position-12" style="font-size: 14.015625pt;" aria-label="Google (42 Einträge)">Google</a>
+<a href="https://notiz.blog/tag/hcalendar/" class="tag-cloud-link tag-link-167 tag-link-position-13" style="font-size: 9.09375pt;" aria-label="hCalendar (14 Einträge)">hCalendar</a>
+<a href="https://notiz.blog/tag/hcard/" class="tag-cloud-link tag-link-166 tag-link-position-14" style="font-size: 15.21875pt;" aria-label="hCard (54 Einträge)">hCard</a>
+<a href="https://notiz.blog/tag/html5/" class="tag-cloud-link tag-link-700 tag-link-position-15" style="font-size: 9.3125pt;" aria-label="HTML5 (15 Einträge)">HTML5</a>
+<a href="https://notiz.blog/tag/indieweb/" class="tag-cloud-link tag-link-992 tag-link-position-16" style="font-size: 13.796875pt;" aria-label="IndieWeb (40 Einträge)">IndieWeb</a>
+<a href="https://notiz.blog/tag/kolumne/" class="tag-cloud-link tag-link-828 tag-link-position-17" style="font-size: 9.09375pt;" aria-label="Kolumne (14 Einträge)">Kolumne</a>
+<a href="https://notiz.blog/tag/microdata/" class="tag-cloud-link tag-link-815 tag-link-position-18" style="font-size: 9.96875pt;" aria-label="Microdata (17 Einträge)">Microdata</a>
+<a href="https://notiz.blog/tag/microformats/" class="tag-cloud-link tag-link-164 tag-link-position-19" style="font-size: 22pt;" aria-label="Microformats (226 Einträge)">Microformats</a>
+<a href="https://notiz.blog/tag/microsoft/" class="tag-cloud-link tag-link-216 tag-link-position-20" style="font-size: 9.09375pt;" aria-label="Microsoft (14 Einträge)">Microsoft</a>
+<a href="https://notiz.blog/tag/mikroformate/" class="tag-cloud-link tag-link-183 tag-link-position-21" style="font-size: 16.640625pt;" aria-label="Mikroformate (73 Einträge)">Mikroformate</a>
+<a href="https://notiz.blog/tag/mr-t/" class="tag-cloud-link tag-link-92 tag-link-position-22" style="font-size: 8pt;" aria-label="Mr. T (11 Einträge)">Mr. T</a>
+<a href="https://notiz.blog/tag/oauth/" class="tag-cloud-link tag-link-422 tag-link-position-23" style="font-size: 13.03125pt;" aria-label="OAuth (34 Einträge)">OAuth</a>
+<a href="https://notiz.blog/tag/openid/" class="tag-cloud-link tag-link-423 tag-link-position-24" style="font-size: 17.40625pt;" aria-label="OpenID (86 Einträge)">OpenID</a>
+<a href="https://notiz.blog/tag/open-web/" class="tag-cloud-link tag-link-737 tag-link-position-25" style="font-size: 10.40625pt;" aria-label="Open Web (19 Einträge)">Open Web</a>
+<a href="https://notiz.blog/tag/openweb/" class="tag-cloud-link tag-link-791 tag-link-position-26" style="font-size: 9.640625pt;" aria-label="OpenWeb (16 Einträge)">OpenWeb</a>
+<a href="https://notiz.blog/tag/openweb-podcast/" class="tag-cloud-link tag-link-875 tag-link-position-27" style="font-size: 8.328125pt;" aria-label="OpenWeb Podcast (12 Einträge)">OpenWeb Podcast</a>
+<a href="https://notiz.blog/tag/operator/" class="tag-cloud-link tag-link-195 tag-link-position-28" style="font-size: 9.09375pt;" aria-label="Operator (14 Einträge)">Operator</a>
+<a href="https://notiz.blog/tag/plugin/" class="tag-cloud-link tag-link-181 tag-link-position-29" style="font-size: 11.828125pt;" aria-label="Plugin (26 Einträge)">Plugin</a>
+<a href="https://notiz.blog/tag/podcast/" class="tag-cloud-link tag-link-213 tag-link-position-30" style="font-size: 10.84375pt;" aria-label="Podcast (21 Einträge)">Podcast</a>
+<a href="https://notiz.blog/tag/portable-contacts/" class="tag-cloud-link tag-link-669 tag-link-position-31" style="font-size: 8.328125pt;" aria-label="Portable Contacts (12 Einträge)">Portable Contacts</a>
+<a href="https://notiz.blog/tag/pubsubhubbub/" class="tag-cloud-link tag-link-840 tag-link-position-32" style="font-size: 9.96875pt;" aria-label="PubSubHubbub (17 Einträge)">PubSubHubbub</a>
+<a href="https://notiz.blog/tag/rdf/" class="tag-cloud-link tag-link-104 tag-link-position-33" style="font-size: 8.765625pt;" aria-label="RDF (13 Einträge)">RDF</a>
+<a href="https://notiz.blog/tag/rdfa/" class="tag-cloud-link tag-link-527 tag-link-position-34" style="font-size: 13.578125pt;" aria-label="RDFa (38 Einträge)">RDFa</a>
+<a href="https://notiz.blog/tag/rss/" class="tag-cloud-link tag-link-103 tag-link-position-35" style="font-size: 10.1875pt;" aria-label="RSS (18 Einträge)">RSS</a>
+<a href="https://notiz.blog/tag/theme/" class="tag-cloud-link tag-link-58 tag-link-position-36" style="font-size: 8.328125pt;" aria-label="theme (12 Einträge)">theme</a>
+<a href="https://notiz.blog/tag/twitter/" class="tag-cloud-link tag-link-285 tag-link-position-37" style="font-size: 12.703125pt;" aria-label="Twitter (31 Einträge)">Twitter</a>
+<a href="https://notiz.blog/tag/w3c/" class="tag-cloud-link tag-link-533 tag-link-position-38" style="font-size: 9.09375pt;" aria-label="W3C (14 Einträge)">W3C</a>
+<a href="https://notiz.blog/tag/webfinger/" class="tag-cloud-link tag-link-843 tag-link-position-39" style="font-size: 8.328125pt;" aria-label="WebFinger (12 Einträge)">WebFinger</a>
+<a href="https://notiz.blog/tag/wordpress/" class="tag-cloud-link tag-link-57 tag-link-position-40" style="font-size: 16.53125pt;" aria-label="WordPress (71 Einträge)">WordPress</a>
+<a href="https://notiz.blog/tag/x-box/" class="tag-cloud-link tag-link-115 tag-link-position-41" style="font-size: 8pt;" aria-label="X-Box (11 Einträge)">X-Box</a>
+<a href="https://notiz.blog/tag/xbmc/" class="tag-cloud-link tag-link-114 tag-link-position-42" style="font-size: 9.3125pt;" aria-label="XBMC (15 Einträge)">XBMC</a>
+<a href="https://notiz.blog/tag/xfn/" class="tag-cloud-link tag-link-165 tag-link-position-43" style="font-size: 10.1875pt;" aria-label="XFN (18 Einträge)">XFN</a>
+<a href="https://notiz.blog/tag/xhtml/" class="tag-cloud-link tag-link-112 tag-link-position-44" style="font-size: 8pt;" aria-label="XHTML (11 Einträge)">XHTML</a>
+<a href="https://notiz.blog/tag/yahoo/" class="tag-cloud-link tag-link-487 tag-link-position-45" style="font-size: 11.0625pt;" aria-label="Yahoo (22 Einträge)">Yahoo</a></div>
+</aside>		</div><!-- #tertiary .widget-area -->
+
+				<div id="quaternary" class="widget-area" role="complementary">
+			<aside id="media_image-2" class="widget widget_media_image"><h2 class="widget-title">Dieses Blog, keine Werbung!</h2><img width="300" height="111" src="https://notiz.blog/wp-content/uploads/2018/12/adfree-300x111.png" class="image wp-image-17711  attachment-full size-full" alt="Logo von der Ad-Free-Blog Initiative" decoding="async" style="max-width: 100%; height: auto;" title="Dieses Blog, keine Werbung!" loading="lazy" /></aside><aside id="custom_html-3" class="widget_text widget widget_custom_html"><h2 class="widget-title">WebRing</h2><div class="textwidget custom-html-widget"><p>
+    <a href="https://xn--sr8hvo.ws/&#x1F48A;&#x1f401;/previous">←</a>
+    IndieWebRing
+    <a href="https://xn--sr8hvo.ws/&#x1F48A;&#x1f401;/next">→</a>
+</p>
+
+<p>
+    <a href="https://fediring.net/previous?host=notiz.blog">←</a>
+    <a href="https://fediring.net/">Fediring</a>
+    <a href="https://fediring.net/next?host=notiz.blog">→</a>
+</p></div></aside><aside id="linkcat-618" class="widget widget_links"><h2 class="widget-title">Blogroll (english)</h2>
+	<ul class='xoxo blogroll'>
+<li><a href="https://werd.io" rel="contact">Ben Werdmüller</a></li>
+<li><a href="https://adactio.com/" rel="contact">Jeremy Keith</a></li>
+<li><a href="https://tantek.com" rel="contact">Tantek Çelik</a></li>
+
+	</ul>
+</aside>
+<aside id="linkcat-51" class="widget widget_links"><h2 class="widget-title">Blogrolle (deutsch)</h2>
+	<ul class='xoxo blogroll'>
+<li><a href="https://blog.acali.de/" rel="contact met">Angelo Cali</a></li>
+<li><a href="https://anmutunddemut.de/" title="In meinem Herzen ist es schon fünf ">anmut und demut</a></li>
+<li><a href="https://blog.ancozockt.de/" rel="contact met">Daniel Seydel</a></li>
+<li><a href="https://depone.net/" rel="acquaintance met" title="NETZGESTALTUNG">Depone</a></li>
+<li><a href="https://wirres.net/" rel="contact" title="fachblog für irrelevanz">felix schwenzel</a></li>
+<li><a href="https://florianbrinkmann.com/" rel="contact met">Florian Brinkmann</a></li>
+<li><a href="https://hackr.de" rel="contact">hackr</a></li>
+<li><a href="https://krautpress.de/">KrautPress</a></li>
+<li><a href="https://simonkraft.de/" rel="contact met">Simon Kraft</a></li>
+
+	</ul>
+</aside>
+<aside id="linkcat-938" class="widget widget_links"><h2 class="widget-title">me on...</h2>
+	<ul class='xoxo blogroll'>
+<li><a href="https://twitter.com/pfefferle" rel="me">@pfefferle</a></li>
+<li><a href="https://www.crunchbase.com/person/matthias-pfefferle" rel="me">CrunchBase</a></li>
+<li><a href="https://github.com/pfefferle" rel="me">GitHub</a></li>
+<li><a href="https://gitlab.com/pfefferle" rel="me">GitLab</a></li>
+<li><a href="https://developers.google.com/profile/u/pfefferle" rel="me">Google Developer Profile</a></li>
+<li><a href="https://de.gravatar.com/pfefferle" rel="me">Gravatar</a></li>
+<li><a href="https://indieweb.org/User:Notiz.blog" rel="me">IndieWeb</a></li>
+<li><a href="https://www.linkedin.com/in/pfefferle/" rel="me">LinkedIN</a></li>
+<li><a href="https://mastodon.social/@pfefferle" rel="me">Mastodon</a></li>
+<li><a href="https://micro.blog/pfefferle" rel="me">Micro.blog</a></li>
+<li><a href="http://microformats.org/wiki/User:Pfefferle" rel="me">Microformats</a></li>
+<li><a href="https://www.npmjs.com/~pfefferle" rel="me">npm</a></li>
+<li><a href="https://packagist.org/packages/pfefferle/" rel="me">Packagist</a></li>
+<li><a href="https://www.slideshare.net/pfefferle" rel="me">SlideShare</a></li>
+<li><a href="https://pfefferle.tumblr.com/" rel="me">Tumblr</a></li>
+<li><a href="https://profiles.wordpress.org/pfefferle" rel="me" title="my WordPress.org profile">WordPress</a></li>
+<li><a href="https://wordpress.tv/speakers/matthias-pfefferle/" rel="me" title="Mein Speaker-Profil auf WordPress.tv">WordPress.tv</a></li>
+<li><a href="https://www.xing.com/profile/Matthias_Pfefferle" rel="me">XING</a></li>
+
+	</ul>
+</aside>
+		</div><!-- #quaternary .widget-area -->
+			</div>
+
+		<div id="site-publisher" itemprop="publisher" itemscope itemtype="https://schema.org/Organization">
+			<meta itemprop="name" content="notizBlog" />
+			<meta itemprop="url" content="https://notiz.blog/" />
+							<div itemprop="logo" itemscope itemtype="https://schema.org/ImageObject">
+					<meta itemprop="url" content="https://notiz.blog/wp-content/uploads/2019/10/cropped-notizblog.png" />
+					<meta itemprop="width" content="30" />
+					<meta itemprop="height" content="30" />
+				</div>
+					</div>
+
+		<div id="site-generator">
+						This site is powered by <a href="https://wordpress.org/" rel="generator">WordPress</a> and styled with the <a href="https://notiz.blog/projects/autonomie/">Autonomie</a> theme		</div>
+	</footer><!-- #colophon -->
+</div><!-- #page -->
+
+	<script type="module">
+		import { Workbox } from "https:\/\/notiz.blog\/wp-content\/plugins\/pwa\/wp-includes\/js\/workbox-v6.5.3\/workbox-window.prod.js";
+
+		if ( 'serviceWorker' in navigator ) {
+			window.wp = window.wp || {};
+			window.wp.serviceWorkerWindow = new Workbox(
+				"https:\/\/notiz.blog\/wp.serviceworker",
+				{"scope":"\/"}			);
+			window.wp.serviceWorkerWindow.register();
+		}
+	</script>
+
+
+
+
+
+
+<script id='embed-privacy-js-extra'>
+var embedPrivacy = {"alwaysActiveProviders":[0],"javascriptDetection":"yes"};
+</script>
+
+
+<script defer src="https://cdn.notiz.blog/wp-content/cache/autoptimize/js/autoptimize_0899e943d9dd3c48cdabdf39feaa1f2d.js"></script></body>
+</html>
+
+<!-- Performance optimized by Redis Object Cache. Learn more: https://wprediscache.com -->
