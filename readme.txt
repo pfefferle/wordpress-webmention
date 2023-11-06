@@ -4,7 +4,7 @@ Donate link: https://notiz.blog/donate/
 Tags: webmention, pingback, trackback, linkback, indieweb, comment, response
 Requires at least: 4.9
 Tested up to: 6.3
-Stable tag: 5.1.6
+Stable tag: 5.1.7
 Requires PHP: 5.6
 License: MIT
 License URI: https://opensource.org/licenses/MIT
@@ -99,10 +99,16 @@ While not all display options can be settings, we are looking to provide some si
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
 
-= 5.1.6 = 
+= 5.1.7 =
+
+* Fix fatal error in WP parser
+
+= 5.1.6 =
+
 * Allow variable to be null.
 
 = 5.1.5 =
+
 * Bring back overflow option for facepile this time using the details tag
 * Add html link discovery for finding WordPress REST API
 * Load author page to find name/photo when only the URL is provided

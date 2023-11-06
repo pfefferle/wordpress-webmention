@@ -2,10 +2,10 @@
 # This file is distributed under the MIT.
 msgid ""
 msgstr ""
-"Project-Id-Version: Webmention 5.1.5\n"
+"Project-Id-Version: Webmention 5.1.7\n"
 "Report-Msgid-Bugs-To: "
 "https://wordpress.org/support/plugin/wordpress-webmention\n"
-"POT-Creation-Date: 2023-11-03 20:56:52+00:00\n"
+"POT-Creation-Date: 2023-11-06 14:59:56+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -26,11 +26,12 @@ msgstr ""
 msgid "Anonymous"
 msgstr ""
 
-#: includes/Handler/class-wp.php:53
+#: includes/Handler/class-wp.php:38 includes/Handler/class-wp.php:115
+#: includes/Handler/class-wp.php:136
 msgid "No API link found in the source code"
 msgstr ""
 
-#: includes/Handler/class-wp.php:67
+#: includes/Handler/class-wp.php:52
 msgid "No valid API link found"
 msgstr ""
 
