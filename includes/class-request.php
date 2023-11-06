@@ -5,16 +5,22 @@ namespace Webmention;
 use WP_Error;
 
 /**
- * Encapsulates all Webmention HTTP requests
+ * Class Request
+ *
+ * This class encapsulates all Webmention HTTP requests. It provides methods for sending and receiving Webmentions,
+ * as well as for validating URLs and handling HTTP responses.
  */
 class Request {
 	/**
-	 *  Retrieve a URL.
+	 * Retrieve a URL.
+	 *
+	 * This function retrieves the content from the provided URL.
+	 * It can use either the safe or unfiltered version of the HTTP API, depending on the $safe parameter.
 	 *
 	 * @param string  $url  The URL to retrieve.
-	 * @param boolean $safe Whether to use the safe or unfiltered version of HTTP API.
+	 * @param boolean $safe Determines whether to use the safe (true) or unfiltered (false) version of the HTTP API.
 	 *
-	 * @return WP_Error|Response Either an error or the complete return object
+	 * @return WP_Error|Response Returns a WP_Error object if the request fails; otherwise, returns the complete return object.
 	 */
 	public static function get( $url, $safe = true ) {
 		$args = self::get_arguments();
@@ -39,12 +45,15 @@ class Request {
 	}
 
 	/**
-	 * Do a head request to check the suitability of a URL
+	 * Performs a HEAD request to verify the suitability of a URL.
 	 *
-	 * @param string $url The URL to check.
-	 * @param boolean $safe Whether to use the safe or unfiltered version of HTTP API.
+	 * This function performs a HEAD request to the provided URL to check its suitability.
+	 * It can use either the safe or unfiltered version of the HTTP API, depending on the $safe parameter.
 	 *
-	 * @return WP_Error|array Return error or HTTP API response array.
+	 * @param string  $url  The URL to be checked.
+	 * @param boolean $safe Determines whether to use the safe (true) or unfiltered (false) version of the HTTP API.
+	 *
+	 * @return WP_Error|array Returns a WP_Error object if the request fails; otherwise, returns an array containing the HTTP API response.
 	 */
 	public static function head( $url, $safe = true ) {
 		$args = self::get_arguments();
@@ -71,7 +80,10 @@ class Request {
 	/**
 	 * Return Arguments for Retrieving Webmention URLs
 	 *
-	 * @return array
+	 * This function is responsible for returning the arguments necessary for retrieving Webmention URLs.
+	 * It does not take any parameters and returns an array.
+	 *
+	 * @return array An array of arguments for retrieving Webmention URLs.
 	 */
 	protected static function get_arguments() {
 		$wp_version = get_bloginfo( 'version' );

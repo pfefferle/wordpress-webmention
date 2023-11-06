@@ -7,7 +7,10 @@ use DOMDocument;
 use DOMXPath;
 
 /**
- * Encapsulates all Webmention HTTP requests
+ * Class Response
+ *
+ * This class encapsulates all Webmention HTTP responses. It provides methods for parsing and handling responses,
+ * as well as for validating the response status and content.
  */
 class Response {
 
@@ -67,6 +70,14 @@ class Response {
 	 */
 	protected $content_type;
 
+	/**
+	 * Constructor.
+	 *
+	 * Initializes the Response object with the provided URL and response data.
+	 *
+	 * @param string|null $url      The URL of the response.
+	 * @param array       $response The HTTP response data.
+	 */
 	public function __construct( $url = null, $response = array() ) {
 		$this->url           = $url;
 		$this->response      = $response;
@@ -77,11 +88,14 @@ class Response {
 	}
 
 	/**
-	 * Magic function for getter/setter
+	 * Magic method for getter/setter.
 	 *
-	 * @param string $method
-	 * @param array  $params
-	 * @return void
+	 * Provides a way to get or set properties of the Response object.
+	 *
+	 * @param string $method The name of the method being called.
+	 * @param array  $params The parameters passed to the method.
+	 *
+	 * @return mixed If a getter is called, returns the value of the property. If a setter is called, sets the value of the property.
 	 */
 	public function __call( $method, $params ) {
 		$var = strtolower( substr( $method, 4 ) );
@@ -96,11 +110,11 @@ class Response {
 	}
 
 	/**
-	 * Check if response is a supportted content type
+	 * Check if response is a supported content type
 	 *
-	 * @param  string $content_type The content type
+	 * This function checks if the provided content type is supported.
 	 *
-	 * @return WP_Error|true return an error or that something is supported
+	 * @return WP_Error|true Returns true if the content type is supported; otherwise, returns a WP_Error object.
 	 */
 	protected function check_content_type() {
 		// not an (x)html, sgml, or xml page, no use going further
@@ -117,9 +131,9 @@ class Response {
 	}
 
 	/**
-	 * Strip charset off content type for matching purposes
+	 * Get content type of response.
 	 *
-	 * @return string|false return either false or the stripped string
+	 * @return string|false Return either false or the stripped string
 	 */
 	protected function get_content_type() {
 		$content_type = $this->content_type;
@@ -135,7 +149,7 @@ class Response {
 	}
 
 	/**
-	 *  Takes the body and generates a DOMDocument.
+	 * Takes the body and generates a DOMDocument.
 	 *
 	 * @param bool $validate_content_type Validate content type header
 	 *
@@ -235,7 +249,7 @@ class Response {
 	/**
 	 * Parses HTML links
 	 *
-	 * @return array
+	 * @return array An array of parsed HTML links.
 	 */
 	public function get_html_links() {
 		$dom   = $this->get_dom_document();
@@ -349,7 +363,7 @@ class Response {
 	/**
 	 * Get the HTTP Error if there is one
 	 *
-	 * @return WP_Error
+	 * @return WP_Error Returns a WP_Error object if the request fails; otherwise, returns false.
 	 */
 	public function get_error() {
 		if ( ! $this->is_error() ) {
