@@ -173,24 +173,10 @@ class Discovery {
 			return false;
 		}
 
-		$links = $response->get_header_links_by( array( 'rel' => 'webmention' ) );
+		$links = $response->get_links_by( array( 'rel' => 'webmention' ) );
 
 		if ( $links ) {
 			return WP_Http::make_absolute_url( $links[0]['uri'], $url );
-		}
-
-		$dom = $response->get_dom_document();
-
-		if ( is_wp_error( $dom ) ) {
-			return false;
-		}
-
-		$xpath = new DOMXPath( $dom );
-
-		// check <link> and <a> elements
-		// checks only body>a-links
-		foreach ( $xpath->query( '(//link|//a)[contains(concat(" ", @rel, " "), " webmention ") or contains(@rel, "webmention.org")]/@href' ) as $result ) {
-			return WP_Http::make_absolute_url( $result->value, $url );
 		}
 
 		return false;

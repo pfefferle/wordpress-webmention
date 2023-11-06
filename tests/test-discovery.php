@@ -147,6 +147,7 @@ class Discovery_Test extends WP_UnitTestCase {
 
 		add_filter( 'pre_http_request', array( $this, 'discover_multiple_htmllink' ) );
 		$endpoint = webmention_discover_endpoint( $url );
+
 		$this->assertSame( 'http://www.example.com/test/9/webmention', $endpoint );
 	}
 

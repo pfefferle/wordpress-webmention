@@ -31,10 +31,15 @@ class WP extends Base {
 	 * @return WP_Error|true Return error or true if successful.
 	 */
 	public function parse( Response $response, $target_url ) {
-		$site_api_links = $this->get_site_api_links( $response );
-		$post_api_links = $this->get_post_api_links( $response );
+		$site_api_links = $response->get_links_by( array( 'rel' => 'https://api.w.org/' ) );
+		$post_api_links = $response->get_links_by(
+			array(
+				'rel'  => 'alternate',
+				'type' => 'application/json',
+			)
+		);
 
-		if ( is_wp_error( $site_api_links ) || is_wp_error( $post_api_links ) ) {
+		if ( ! $site_api_links || ! $post_api_links ) {
 			return new WP_Error( 'no_api_link', __( 'No API link found in the source code', 'webmention' ) );
 		}
 
@@ -95,21 +100,12 @@ class WP extends Base {
 	 * @return string|WP_Error The API link or WP_Error if none found.
 	 */
 	public function get_post_api_links( Response $response ) {
-		$post_api_links = $response->get_header_links_by(
+		$post_api_links = $response->get_links_by(
 			array(
 				'rel'  => 'alternate',
 				'type' => 'application/json',
 			)
 		);
-
-		if ( ! $post_api_links || ! is_array( $post_api_links ) ) {
-			$post_api_links = $response->get_html_links_by(
-				array(
-					'rel'  => 'alternate',
-					'type' => 'application/json',
-				)
-			);
-		}
 
 		if ( ! $post_api_links || ! is_array( $post_api_links ) ) {
 			return new WP_Error( 'no_api_link', __( 'No API link found in the source code', 'webmention' ) );
