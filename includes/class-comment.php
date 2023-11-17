@@ -31,7 +31,13 @@ class Comment {
 	 * @return string $url The url of the source.
 	 */
 	public static function remote_comment_link( $comment_link, $comment ) {
-		return get_url_from_webmention( $comment );
+		$link = get_url_from_webmention( $comment );
+
+		if ( $link ) {
+			$comment_link = $link;
+		}
+
+		return $comment_link;
 	}
 
 	/**
