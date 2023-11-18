@@ -340,7 +340,6 @@ function webmention_extract_urls( $content, $support_media_urls = false ) {
 	return array_filter( $urls );
 }
 
-
 /**
  * Returns whether this is a Webmention Comment Type
  *
@@ -653,4 +652,27 @@ function webmention_refresh( $comment ) {
 	} else {
 		return $response;
 	}
+}
+
+/**
+ * Return whether a comment is a Webmention.
+ *
+ * @param int|WP_Comment $comment Comment object or ID.
+ *
+ * @return boolean Return true if comment is a Webmention.
+ */
+function is_webmention( $comment ) {
+	$comment = get_comment( $comment );
+
+	if ( ! $comment ) {
+		return false;
+	}
+
+	$protocol = get_comment_meta( $comment->comment_ID, 'protocol', true );
+
+	if ( 'webmention' === $protocol ) {
+		return true;
+	}
+
+	return false;
 }
