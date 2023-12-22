@@ -21,6 +21,11 @@ defined( 'WEBMENTION_COMMENT_APPROVE' ) || define( 'WEBMENTION_COMMENT_APPROVE',
 defined( 'WEBMENTION_COMMENT_TYPE' ) || define( 'WEBMENTION_COMMENT_TYPE', 'webmention' );
 defined( 'WEBMENTION_GRAVATAR_CACHE_TIME' ) || define( 'WEBMENTION_GRAVATAR_CACHE_TIME', WEEK_IN_SECONDS );
 
+
+defined( 'WEBMENTION_LOCAL_AVATAR_STORE' ) || define( 'WEBMENTION_LOCAL_AVATAR_STORE', false );
+defined( 'WEBMENTION_AVATAR_QUALITY' ) || define( 'WEBMENTION_AVATAR_QUALITY', null );
+defined( 'WEBMENTION_AVATAR_SIZE' ) || define( 'WEBMENTION_AVATAR_SIZE', 256 );
+
 define( 'WEBMENTION_PROCESS_TYPE_ASYNC', 'async' );
 define( 'WEBMENTION_PROCESS_TYPE_SYNC', 'sync' );
 
@@ -108,6 +113,12 @@ function init() {
 	// initialize Webmention Discovery.
 	require_once __DIR__ . '/includes/class-discovery.php';
 	add_action( 'init', array( '\Webmention\Discovery', 'init' ) );
+
+	// load local avatar store.
+	if ( WEBMENTION_LOCAL_AVATAR_STORE ) {
+		require_once __DIR__ . '/includes/class-avatar-store.php';
+		add_action( 'init', array( '\Webmention\Avatar_Store', 'init' ) );
+	}
 
 	// initialize Webmention Vouch
 	if ( WEBMENTION_VOUCH ) {
