@@ -595,17 +595,17 @@ class MF2 extends Base {
 	protected function get_class_mapper() {
 		$class_mapper = array();
 
-		/* 
+		/*
 		 * These classes represent the source sending a webmention based on its display of a mention sent by the target.
 		 * This sets the type to update, indicating that the purpose of the webmention is to notify of an update to the original webmention.
 		 */
-		$class_mapper['comment'] = 'update';
-		$class_mapper['like']    = 'update';
-		$class_mapper['favorite']    = 'update';
-		$class_mapper['repost']    = 'update';
-		$class_mapper['bookmark']    = 'update';
-		$class_mapper['read']    = 'read';
-		$class_mapper['listen']    = 'listen';
+		$class_mapper['comment']  = 'update';
+		$class_mapper['like']     = 'update';
+		$class_mapper['favorite'] = 'update';
+		$class_mapper['repost']   = 'update';
+		$class_mapper['bookmark'] = 'update';
+		$class_mapper['read']     = 'read';
+		$class_mapper['listen']   = 'listen';
 		$class_mapper['watch']    = 'watch';
 
 		/*
