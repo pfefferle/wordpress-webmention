@@ -341,6 +341,44 @@ class Receiver {
 			return $commentdata;
 		}
 
+		/*
+		 * The update comment type is currently representing when the mf2 markup in a source indicates the source link is 
+		 * actually a marked up response...so we treat the webmention as an update notification.
+		 * TODO: Something. Currently, below code adds a hook that allows for action but does nothing by default. Possible actions someone could code would be
+		 * notifying the author of the post to allow for manual action, throwing the post into a review status, updating a link preview embedded in the post, etc.
+		 */
+	
+		if ( 'update' === $commentdata['comment_type'] ) {
+			/**
+			 * Fires if the received webmention is not a response but just an update notification.
+			 *
+			 * @param array $commentdata
+			 */
+			do_action( 'webmention_post_updated_notification', $commentdata );
+			
+			// Still return that it was successful
+			$return = array(
+				'source'  => $commentdata['source'],
+				'target'  => $commentdata['target'],
+				'code'    => 'success',
+				'message' => apply_filters( 'webmention_success_message', esc_html__( 'Webmention was successful', 'webmention' ) ),
+			);
+			return new WP_REST_Response( $return, 200 );
+		}
+
+		/*
+		 * Rejects Adding Non-Registered Webmention Comment Types. Ensures any plugins that add extra handling register their comment types.
+		 */
+		if ( ! is_registered_webmention_comment_type( $commentdata['comment_type'] ) ) {
+			/**
+			 * Fires if an Unregistered Comment Type is About to Be Added
+			 *
+			 * @param array $commentdata
+			 */
+			do_action( 'webmention_unknown_type', $commentdata );
+			return new WP_Error( 'webmention_unknown_type', __( 'Unknown Webmention Type', 'webmention' ), $commentdata );
+		}
+
 		// disable flood control
 		remove_action( 'check_comment_flood', 'check_comment_flood_db', 10 );
 
