@@ -342,12 +342,12 @@ class Receiver {
 		}
 
 		/*
-		 * The update comment type is currently representing when the mf2 markup in a source indicates the source link is 
+		 * The update comment type is currently representing when the mf2 markup in a source indicates the source link is
 		 * actually a marked up response...so we treat the webmention as an update notification.
 		 * TODO: Something. Currently, below code adds a hook that allows for action but does nothing by default. Possible actions someone could code would be
 		 * notifying the author of the post to allow for manual action, throwing the post into a review status, updating a link preview embedded in the post, etc.
 		 */
-	
+
 		if ( 'update' === $commentdata['comment_type'] ) {
 			/**
 			 * Fires if the received webmention is not a response but just an update notification.
@@ -355,7 +355,7 @@ class Receiver {
 			 * @param array $commentdata
 			 */
 			do_action( 'webmention_post_updated_notification', $commentdata );
-			
+
 			// Still return that it was successful
 			$return = array(
 				'source'  => $commentdata['source'],
