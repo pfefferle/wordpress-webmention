@@ -684,7 +684,7 @@ class Receiver {
 			return 1;
 		}
 
-		return self::is_source_allowed( $commentdata['source'] ) ? 1 : 0;
+		return self::is_source_allowed( $commentdata['source'] ) ? 1 : $approved;
 	}
 
 	/**
