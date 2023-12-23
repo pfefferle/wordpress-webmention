@@ -348,13 +348,13 @@ class Receiver {
 		 * notifying the author of the post to allow for manual action, throwing the post into a review status, updating a link preview embedded in the post, etc.
 		 */
 
-		if ( 'update' === $commentdata['comment_type'] ) {
+		if ( 'target-update' === $commentdata['comment_type'] ) {
 			/**
 			 * Fires if the received webmention is not a response but just an update notification.
 			 *
 			 * @param array $commentdata
 			 */
-			do_action( 'webmention_post_updated_notification', $commentdata );
+			do_action( 'webmention_target_updated_notification', $commentdata );
 
 			// Still return that it was successful
 			$return = array(

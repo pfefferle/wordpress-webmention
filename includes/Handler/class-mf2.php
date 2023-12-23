@@ -597,16 +597,16 @@ class MF2 extends Base {
 
 		/*
 		 * These classes represent the source sending a webmention based on its display of a mention sent by the target.
-		 * This sets the type to update, indicating that the purpose of the webmention is to notify of an update to the original webmention.
+		 * This sets the type to target-update, indicating that the purpose of the webmention is to notify of an update to the original webmention.
 		 */
-		$class_mapper['comment']  = 'update';
-		$class_mapper['like']     = 'update';
-		$class_mapper['favorite'] = 'update';
-		$class_mapper['repost']   = 'update';
-		$class_mapper['bookmark'] = 'update';
-		$class_mapper['read']     = 'read';
-		$class_mapper['listen']   = 'listen';
-		$class_mapper['watch']    = 'watch';
+		$class_mapper['comment']  = 'target-update';
+		$class_mapper['like']     = 'target-update';
+		$class_mapper['favorite'] = 'target-update';
+		$class_mapper['repost']   = 'target-update';
+		$class_mapper['bookmark'] = 'target-update';
+		$class_mapper['read']     = 'target-update';
+		$class_mapper['listen']   = 'target-update';
+		$class_mapper['watch']    = 'target-update';
 
 		/*
 		 * rsvp
