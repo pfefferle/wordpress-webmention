@@ -56,6 +56,16 @@ class Comment {
 	}
 
 	/**
+	 * Is this a registered comment type
+	 *
+	 * @param string $slug The name of the type
+	 * @return boolean True if registered.
+	 */
+	public static function is_registered_comment_type( $slug ) {
+		return in_array( $slug, self::get_comment_type_names(), true );
+	}
+
+	/**
 	 * Return the registered custom comment types names plus Webmention for backcompat.
 	 *
 	 * @return array The registered custom comment type names

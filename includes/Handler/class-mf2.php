@@ -596,6 +596,19 @@ class MF2 extends Base {
 		$class_mapper = array();
 
 		/*
+		 * These classes represent the source sending a webmention based on its display of a mention sent by the target.
+		 * This sets the type to target-update, indicating that the purpose of the webmention is to notify of an update to the original webmention.
+		 */
+		$class_mapper['comment']  = 'target-update';
+		$class_mapper['like']     = 'target-update';
+		$class_mapper['favorite'] = 'target-update';
+		$class_mapper['repost']   = 'target-update';
+		$class_mapper['bookmark'] = 'target-update';
+		$class_mapper['read']     = 'target-update';
+		$class_mapper['listen']   = 'target-update';
+		$class_mapper['watch']    = 'target-update';
+
+		/*
 		 * rsvp
 		 * @link https://indieweb.org/rsvp
 		 */
@@ -611,28 +624,24 @@ class MF2 extends Base {
 		 * repost
 		 * @link https://indieweb.org/repost
 		 */
-		$class_mapper['repost']    = 'repost';
 		$class_mapper['repost-of'] = 'repost';
 
 		/*
 		 * likes
 		 * @link https://indieweb.org/likes
 		 */
-		$class_mapper['like']    = 'like';
 		$class_mapper['like-of'] = 'like';
 
 		/*
 		 * favorite
 		 * @link https://indieweb.org/favorite
 		 */
-		$class_mapper['favorite']    = 'favorite';
 		$class_mapper['favorite-of'] = 'favorite';
 
 		/*
 		 * bookmark
 		 * @link https://indieweb.org/bookmark
 		 */
-		$class_mapper['bookmark']    = 'bookmark';
 		$class_mapper['bookmark-of'] = 'bookmark';
 
 		/*
@@ -647,21 +656,18 @@ class MF2 extends Base {
 		 * @link https://indieweb.org/read
 		 */
 		$class_mapper['read-of'] = 'read';
-		$class_mapper['read']    = 'read';
 
 		/*
 		 * listen
 		 * @link https://indieweb.org/listen
 		 */
 		$class_mapper['listen-of'] = 'listen';
-		$class_mapper['listen']    = 'listen';
 
 		/*
 		 * watch
 		 * @link https://indieweb.org/watch
 		 */
 		$class_mapper['watch-of'] = 'watch';
-		$class_mapper['watch']    = 'watch';
 
 		/*
 		 * follow

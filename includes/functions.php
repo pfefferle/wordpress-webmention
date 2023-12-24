@@ -35,6 +35,19 @@ function register_webmention_comment_type( $comment_type, $args = array() ) {
 	return $comment_type_object;
 }
 
+
+
+/**
+ * Is this a registered comment type
+ *
+ * @param string $slug The name of the type
+ * @return boolean True if registered.
+ */
+function is_registered_webmention_comment_type( $slug ) {
+	return \Webmention\Comment::is_registered_comment_type( $slug );
+}
+
+
 /**
  * Return the registered custom comment types.
  *
