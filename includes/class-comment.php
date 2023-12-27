@@ -62,7 +62,7 @@ class Comment {
 	 * @return boolean True if registered.
 	 */
 	public static function is_registered_comment_type( $slug ) {
-		return in_array( $slug, self::get_comment_type_names(), true );
+		return in_array( $slug, array_merge( self::get_comment_type_names(), array( 'comment', 'pingback', 'trackback' ) ), true );
 	}
 
 	/**
