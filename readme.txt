@@ -4,7 +4,7 @@ Donate link: https://notiz.blog/donate/
 Tags: webmention, pingback, trackback, linkback, indieweb, comment, response
 Requires at least: 4.9
 Tested up to: 6.4
-Stable tag: 5.2.0
+Stable tag: 5.2.1
 Requires PHP: 5.6
 License: MIT
 License URI: https://opensource.org/licenses/MIT
@@ -99,10 +99,14 @@ While not all display options can be settings, we are looking to provide some si
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
 
+= 5.2.1 =
+* Fix issue where built in comment types were rejected
+
 = 5.2.0 =
 
 * Do not bypass the spam filters
 * Support Source Update Notifications
+* Add in experimental Avatar Store
 
 = 5.1.9 =
 
