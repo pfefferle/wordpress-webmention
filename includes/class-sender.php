@@ -150,6 +150,8 @@ class Sender {
 	 * </code>
 	 *
 	 * @param int $post_id the post_ID.
+	 *
+	 * @return array|bool array of results or false if failed.
 	 */
 	public static function send_webmentions( $post_id ) {
 		// get source url
@@ -160,6 +162,11 @@ class Sender {
 
 		// get post
 		$post = get_post( $post_id );
+
+		// check if post exists
+		if ( ! $post ) {
+			return false;
+		}
 
 		$support_media_urls = ( 0 === get_option( 'webmention_send_media_mentions' ) );
 
@@ -181,9 +188,11 @@ class Sender {
 			$response = self::send_webmention( $source, $target, $post_id );
 
 			// check response
-			if ( ! is_wp_error( $response ) &&
-				wp_remote_retrieve_response_code( $response ) < 400 ) {
-					$ping[] = $target;
+			if (
+				! is_wp_error( $response ) &&
+				wp_remote_retrieve_response_code( $response ) < 400
+			) {
+				$ping[] = $target;
 			}
 
 			// reschedule if server responds with a http error 5xx
