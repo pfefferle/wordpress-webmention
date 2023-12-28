@@ -66,7 +66,11 @@ abstract class Base {
 	 */
 	public function set_webmention_item( $webmention_item ) {
 		if ( ! ( $webmention_item instanceof Item ) ) {
-			return new WP_Error( 'wrong_data_format', __( '$webmention_item is not an instance of Webmention\Entity\Item', 'webmention' ), $webmention_item );
+			return new WP_Error(
+				'wrong_data_format',
+				__( '$webmention_item is not an instance of Webmention\Entity\Item', 'webmention' ),
+				$webmention_item
+			);
 		}
 
 		$this->webmention_item = $webmention_item;

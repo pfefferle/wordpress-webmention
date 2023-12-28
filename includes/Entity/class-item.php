@@ -24,7 +24,7 @@ class Item {
 	protected $updated;
 
 	/**
-	 * The source URL.
+	 * The URL.
 	 *
 	 * @var string
 	 */
@@ -256,6 +256,11 @@ class Item {
 	 * @return array|string
 	 */
 	public function get_author( $property = null ) {
+		$fallback = 'anonymous';
+		if ( $this->get_site_name() ) {
+			$fallback = $this->get_site_name();
+		}
+
 		if ( ! $property ) {
 			if ( $this->author ) {
 				return $this->author;
@@ -263,14 +268,14 @@ class Item {
 
 			return array(
 				'type' => 'card',
-				'name' => 'anonymous',
+				'name' => $fallback,
 			);
 		}
 
 		if ( isset( $this->author[ $property ] ) ) {
 			return $this->author[ $property ];
 		} elseif ( 'name' === $property ) {
-			return 'anonymous';
+			return $fallback;
 		} else {
 			return '';
 		}
@@ -369,9 +374,29 @@ class Item {
 	}
 
 	/**
+	 * Getter for "site_name".
+	 *
+	 * @return string The site name with host as fallback.
+	 */
+	public function get_site_name() {
+		if ( ! $this->site_name && $this->url ) {
+			return preg_replace(
+				'/^www\./',
+				'',
+				wp_parse_url(
+					$this->url,
+					PHP_URL_HOST
+				)
+			);
+		}
+
+		return $this->site_name;
+	}
+
+	/**
 	 * Check if all fields are set.
 	 *
-	 * @return boolean
+	 * @return boolean true if all fields are set.
 	 */
 	public function is_complete() {
 		$properties = get_object_vars( $this );
@@ -381,7 +406,7 @@ class Item {
 	/**
 	 * Check if all fields for a valid comment are available.
 	 *
-	 * @return boolean
+	 * @return boolean true if item has all required fields.
 	 */
 	public function verify() {
 		// If there is no author information then try something else.
@@ -473,5 +498,20 @@ class Item {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Add raw data to the webmention_item.
+	 *
+	 * @param array $raw The raw data used to parse the webmention_item.
+	 *
+	 * @return void
+	 */
+	public function add_raw( $raw ) {
+		if ( ! is_array( $this->raw ) ) {
+			$this->raw = $raw;
+		}
+
+		$this->raw = array_merge( $this->raw, $raw );
 	}
 }
