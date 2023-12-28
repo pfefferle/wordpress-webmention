@@ -310,10 +310,10 @@ endif;
  * @param string  $content            HTML Content to extract URLs from.
  * @param boolean $support_media_urls Extract media URLs not just traditional links
  *
- * @return array URLs found in passed string.
+ * @return array URLs found in passed string or empty array if none found.
  */
 function webmention_extract_urls( $content, $support_media_urls = false ) {
-
+	$content = trim( $content );
 	// If no content is provided, do not attempt to parse it for URLs.
 	if ( '' === $content ) {
 		return array();
@@ -322,6 +322,11 @@ function webmention_extract_urls( $content, $support_media_urls = false ) {
 	$response = new \Webmention\Response();
 	$response->set_body( $content );
 	$doc = $response->get_dom_document( false );
+
+	// check if we have a DOMDocument object
+	if ( ! $doc instanceof DOMDocument ) {
+		return array();
+	}
 
 	$xpath = new DOMXPath( $doc );
 
@@ -532,7 +537,7 @@ if ( ! function_exists( 'ifset' ) ) {
 	 *
 	 * @return mixed|false Return either $var or $return.
 	 */
-	function ifset( &$var, $return = false ) {
+	function ifset( &$var, $return = false ) { // phpcs:ignore Universal.NamingConventions.NoReservedKeywordParameterNames
 		return isset( $var ) ? $var : $return;
 	}
 }
@@ -688,4 +693,17 @@ function is_webmention( $comment ) {
 	}
 
 	return false;
+}
+
+if ( ! function_exists( 'is_html' ) ) {
+	/**
+	 * Check if a string contains HTML
+	 *
+	 * @param string $string String to check.
+	 *
+	 * @return boolean true if string contains HTML, false otherwise.
+	 */
+	function is_html( $string ) { // phpcs:ignore Universal.NamingConventions.NoReservedKeywordParameterNames.stringFound
+		return ( wp_strip_all_tags( $string ) !== $string );
+	}
 }

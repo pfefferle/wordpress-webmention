@@ -160,14 +160,22 @@ class Response {
 			return $this->dom_document;
 		}
 
-		if ( $validate_content_type && ( ! in_array( $this->get_content_type(), array( 'text/html', 'text/xml' ), true ) ) ) {
-			return new WP_Error( 'wrong_content_type', __( 'Cannot generate DOMDocument', 'webmention' ), array( $this->get_content_type() ) );
+		if ( $validate_content_type && ( ! in_array( $this->get_content_type(), array( 'text/html', 'text/xml', 'application/xhtml+xml' ), true ) ) ) {
+			return new WP_Error(
+				'wrong_content_type',
+				__( 'Cannot generate DOMDocument', 'webmention' ),
+				array( $this->get_content_type() )
+			);
 		}
 
 		$body = $this->body;
 
 		if ( ! $body ) {
 			return new WP_Error( 'empty_body', __( 'Request body has no data', 'webmention' ) );
+		}
+
+		if ( ! is_html( $body ) ) {
+			return new WP_Error( 'invalid_html', __( 'Request body is not valid HTML', 'webmention' ) );
 		}
 
 		libxml_use_internal_errors( true );
