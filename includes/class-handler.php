@@ -95,6 +95,9 @@ class Handler {
 				break;
 			}
 		}
+
+		$item->add_url( $response->get_url() );
+
 		return $item;
 	}
 

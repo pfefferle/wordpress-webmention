@@ -842,9 +842,7 @@ class MF2 extends Base {
 			),
 		);
 
-		if ( empty( $item ) || ! is_array( $item ) ) {
-			$author['properties']['name'] = array( __( 'Anonymous', 'webmention' ) );
-		} else {
+		if ( ! empty( $item ) || is_array( $item ) ) {
 			foreach ( array( 'name', 'nickname', 'given-name', 'family-name', 'email', 'photo' ) as $prop ) {
 				if ( array_key_exists( $prop, $item['properties'] ) ) {
 					$author['properties'][ $prop ] = $item['properties'][ $prop ];

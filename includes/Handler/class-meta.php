@@ -66,11 +66,6 @@ class Meta extends Base {
 		) {
 			$this->webmention_item->add_name( trim( $xpath->query( '//title' )->item( 0 )->textContent ) );
 		}
-
-		// If Site Name is not set use domain name less www
-		if ( ! $this->webmention_item->has_site_name() && $this->webmention_item->has_url() ) {
-			$this->webmention_item->add_site_name( preg_replace( '/^www\./', '', wp_parse_url( $this->webmention_item->get_url(), PHP_URL_HOST ) ) );
-		}
 	}
 
 	/**
