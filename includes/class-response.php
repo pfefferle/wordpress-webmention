@@ -260,7 +260,12 @@ class Response {
 	 * @return array An array of parsed HTML links.
 	 */
 	public function get_html_links() {
-		$dom   = $this->get_dom_document();
+		$dom = $this->get_dom_document();
+
+		if ( ! $dom instanceof DOMDocument ) {
+			return array();
+		}
+
 		$xpath = new DOMXPath( $dom );
 		$items = array();
 
