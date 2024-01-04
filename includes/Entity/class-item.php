@@ -321,7 +321,7 @@ class Item {
 		$response_type = $this->response_type ? $this->response_type : 'mention';
 		// Reclassify short mentions as comments
 		if ( 'mention' === $response_type ) {
-			$text     = $this->get_content();
+			$text     = $this->content;
 			$text_len = $this->str_length( $text );
 			if ( ( 0 < $text_len ) && ( $text_len <= MAX_INLINE_MENTION_LENGTH ) ) {
 				return 'comment';
