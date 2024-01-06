@@ -20,7 +20,7 @@ class Admin {
 
 		/* Add meta boxes on the 'add_meta_boxes' hook. */
 		add_action( 'add_meta_boxes', array( static::class, 'add_meta_boxes' ) );
-
+		add_action( 'admin_enqueue_scripts', array( static::class, 'enqueue_scripts' ) );
 		add_filter( 'plugin_action_links', array( static::class, 'plugin_action_links' ), 10, 2 );
 		add_filter( 'plugin_row_meta', array( static::class, 'plugin_row_meta' ), 10, 2 );
 
@@ -455,6 +455,16 @@ class Admin {
 
 		if ( function_exists( 'wp_add_privacy_policy_content' ) ) {
 			wp_add_privacy_policy_content( __( 'Webmention', 'webmention' ), $content );
+		}
+	}
+
+	/**
+	 * Enqueue admin styles.
+	 */
+	public static function enqueue_scripts() {
+		$current_screen = get_current_screen();
+		if ( isset( $current_screen->base ) && 'dashboard' === $current_screen->base ) {
+			wp_enqueue_style( 'webmention_admin', plugins_url( '/assets/css/admin.css', __DIR__ ), array(), version() );
 		}
 	}
 }
