@@ -464,7 +464,7 @@ class Admin {
 	public static function enqueue_scripts() {
 		$current_screen = get_current_screen();
 		if ( isset( $current_screen->base ) && 'dashboard' === $current_screen->base ) {
-			wp_enqueue_style( 'webmention_admin', plugins_url( '/assets/css/admin.css', __DIR__ ), array(), version() );
+			wp_enqueue_style( 'webmention-admin', plugins_url( '/assets/css/admin.css', __DIR__ ), array(), version() );
 		}
 	}
 }
