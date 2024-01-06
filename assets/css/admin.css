@@ -1,0 +1,27 @@
+.repost .dashboard-comment-wrap,
+.like .dashboard-comment-wrap,
+.favorite .dashboard-comment-wrap,
+.tag .dashboard-comment-wrap,
+.bookmark .dashboard-comment-wrap,
+.listen .dashboard-comment-wrap,
+.watch .dashboard-comment-wrap,
+.read .dashboard-comment-wrap,
+.follow .dashboard-comment-wrap,
+.mention .dashboard-comment-wrap,
+.reacji .dashboard-comment-wrap {
+	padding-inline-start: 63px;
+}
+
+.repost .dashboard-comment-wrap .comment-author,
+.like .dashboard-comment-wrap .comment-author,
+.favorite .dashboard-comment-wrap .comment-author,
+.tag .dashboard-comment-wrap .comment-author,
+.bookmark .dashboard-comment-wrap .comment-author,
+.listen .dashboard-comment-wrap .comment-author,
+.watch .dashboard-comment-wrap .comment-author,
+.read .dashboard-comment-wrap .comment-author,
+.follow .dashboard-comment-wrap .comment-author,
+.mention .dashboard-comment-wrap .comment-author,
+.reacji .dashboard-comment-wrap .comment-author {
+	margin-block: 0;
+}
