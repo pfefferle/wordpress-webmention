@@ -187,6 +187,10 @@ class Sender {
 			// send Webmention
 			$response = self::send_webmention( $source, $target, $post_id );
 
+			if ( ! $response ) {
+				continue;
+			}
+
 			// check response
 			if (
 				! is_wp_error( $response ) &&
