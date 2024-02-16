@@ -431,7 +431,7 @@ class MF2 extends Base {
 										// check content for the link
 										if (
 											'content' === $obj_key &&
-											isset( $obj_value['html'] ) &&
+											! empty( $obj_value['html'] ) &&
 											is_string( $obj_value['html'] ) &&
 											preg_match_all( '/<a[^>]+?' . preg_quote( $target, '/' ) . '[^>]*>([^>]+?)<\/a>/i', $obj_value['html'], $context )
 										) {
@@ -457,7 +457,7 @@ class MF2 extends Base {
 						// check content for the link
 						if (
 							'content' === $key &&
-							isset( $value['html'] ) &&
+							! empty( $value['html'] ) &&
 							is_string( $value['html'] ) &&
 							preg_match_all( '/<a[^>]+?' . preg_quote( $target, '/' ) . '[^>]*>([^>]+?)<\/a>/i', $value['html'], $context )
 						) {
