@@ -427,12 +427,20 @@ class MF2 extends Base {
 									}
 									// Make sure this is a numeric array before checking this.
 									if ( wp_is_numeric_array( $obj_values ) ) {
+										$obj_value = current( $obj_values );
 										// check content for the link
-										if ( 'content' === $obj_key &&
-											preg_match_all( '/<a[^>]+?' . preg_quote( $target, '/' ) . '[^>]*>([^>]+?)<\/a>/i', $obj_values[0]['html'], $context ) ) {
+										if (
+											'content' === $obj_key &&
+											! empty( $obj_value['html'] ) &&
+											is_string( $obj_value['html'] ) &&
+											preg_match_all( '/<a[^>]+?' . preg_quote( $target, '/' ) . '[^>]*>([^>]+?)<\/a>/i', $obj_value['html'], $context )
+										) {
 											return $item;
-										} elseif ( 'summary' === $obj_key &&
-											preg_match_all( '/<a[^>]+?' . preg_quote( $target, '/' ) . '[^>]*>([^>]+?)<\/a>/i', $obj_values[0], $context ) ) {
+										} elseif (
+											'summary' === $obj_key &&
+											is_string( $obj_value ) &&
+											preg_match_all( '/<a[^>]+?' . preg_quote( $target, '/' ) . '[^>]*>([^>]+?)<\/a>/i', $obj_value, $context )
+										) {
 											return $item;
 										}
 									}
@@ -444,13 +452,23 @@ class MF2 extends Base {
 
 				// check properties if target urls was mentioned
 				foreach ( $item['properties'] as $key => $values ) {
-					// check content for the link
-					if ( 'content' === $key &&
-						preg_match_all( '/<a[^>]+?' . preg_quote( $target, '/' ) . '[^>]*>([^>]+?)<\/a>/i', $values[0]['html'], $context ) ) {
-						return $item;
-					} elseif ( 'summary' === $key &&
-						preg_match_all( '/<a[^>]+?' . preg_quote( $target, '/' ) . '[^>]*>([^>]+?)<\/a>/i', $values[0], $context ) ) {
-						return $item;
+					if ( wp_is_numeric_array( $values ) ) {
+						$value = current( $values );
+						// check content for the link
+						if (
+							'content' === $key &&
+							! empty( $value['html'] ) &&
+							is_string( $value['html'] ) &&
+							preg_match_all( '/<a[^>]+?' . preg_quote( $target, '/' ) . '[^>]*>([^>]+?)<\/a>/i', $value['html'], $context )
+						) {
+							return $item;
+						} elseif (
+							'summary' === $key &&
+							is_string( $value ) &&
+							preg_match_all( '/<a[^>]+?' . preg_quote( $target, '/' ) . '[^>]*>([^>]+?)<\/a>/i', $value, $context )
+						) {
+							return $item;
+						}
 					}
 				}
 			}
