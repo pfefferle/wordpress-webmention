@@ -767,23 +767,38 @@ class MF2 extends Base {
 						// check url
 						if ( $this->has_property( $obj, 'url' ) ) {
 							// check target
-							if ( $this->compare_urls( $target, $obj['properties']['url'] ) ) {
+							if (
+								isset( $obj['properties']['url'] ) &&
+								$this->compare_urls( $target, $obj['properties']['url'] )
+							) {
 								return $classes[ $key ];
 							}
 						}
 
-						// check properties if target urls was mentioned
-						foreach ( $obj['properties'] as $obj_key => $obj_values ) {
-							if ( $this->compare_urls( $target, $obj_values ) ) {
-								return $classes[ $key ];
-							}
-							// check content for the link
-							if ( 'content' === $obj_key &&
-								preg_match_all( '/<a[^>]+?' . preg_quote( $target, '/' ) . '[^>]*>([^>]+?)<\/a>/i', $obj_values[0]['html'], $context ) ) {
-								return $classes[ $key ];
-							} elseif ( 'summary' === $obj_key &&
-								preg_match_all( '/<a[^>]+?' . preg_quote( $target, '/' ) . '[^>]*>([^>]+?)<\/a>/i', $obj_values[0], $context ) ) {
-								return $classes[ $key ];
+						if ( isset( $obj['properties'] ) && is_array( $obj['properties'] ) ) {
+							// check properties if target urls was mentioned
+							foreach ( $obj['properties'] as $obj_key => $obj_values ) {
+								if ( $this->compare_urls( $target, $obj_values ) ) {
+									return $classes[ $key ];
+								}
+
+								$obj_value = current( $obj_values );
+
+								// check content for the link
+								if (
+									'content' === $obj_key &&
+									! empty( $obj_value['html'] ) &&
+									is_string( $obj_value['html'] ) &&
+									preg_match_all( '/<a[^>]+?' . preg_quote( $target, '/' ) . '[^>]*>([^>]+?)<\/a>/i', $obj_value['html'], $context )
+								) {
+									return $classes[ $key ];
+								} elseif (
+									'summary' === $obj_key &&
+									is_string( $obj_value ) &&
+									preg_match_all( '/<a[^>]+?' . preg_quote( $target, '/' ) . '[^>]*>([^>]+?)<\/a>/i', $obj_value, $context )
+								) {
+									return $classes[ $key ];
+								}
 							}
 						}
 					}
