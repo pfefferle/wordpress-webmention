@@ -185,7 +185,7 @@ class Comment_Walker extends Walker_Comment {
 	protected function html5_comment( $comment, $depth, $args ) {
 		// Only call this local version for comments that are webmention based.
 		if ( 'webmention' !== get_comment_meta( $comment->comment_ID, 'protocol', true ) ) {
-			parent::comment( $comment, $depth, $args );
+			parent::html5_comment( $comment, $depth, $args );
 			return;
 		}
 
