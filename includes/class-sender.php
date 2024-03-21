@@ -56,6 +56,10 @@ class Sender {
 	public static function comment_post( $id ) {
 		$comment = get_comment( $id );
 
+		if ( ! $comment ) {
+			return;
+		}
+
 		// check parent comment
 		if ( $comment->comment_parent ) {
 			// get parent comment...
