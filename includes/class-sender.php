@@ -26,12 +26,15 @@ class Sender {
 		$post_types = get_post_types_by_support( 'webmentions' );
 		foreach ( $post_types as $post_type ) {
 			add_action( 'publish_' . $post_type, array( static::class, 'publish_hook' ), 3 );
+			add_action( 'trashed_' . $post_type, array( static::class, 'trash_hook' ) );
 		}
+
+		add_action( 'wp_trash_post', array( self::class, 'trash_post' ), 1 );
+		add_action( 'untrash_post', array( self::class, 'untrash_post' ), 1 );
 
 		add_action( 'comment_post', array( static::class, 'comment_post' ) );
 
 		// remote delete posts
-		add_action( 'trashed_post', array( static::class, 'trash_hook' ) );
 		add_action( 'webmention_delete', array( static::class, 'send_webmentions' ) );
 	}
 
@@ -82,6 +85,33 @@ class Sender {
 	 */
 	public static function trash_hook( $post_id ) {
 		wp_schedule_single_event( time() + wp_rand( 0, 120 ), 'webmention_delete', array( $post_id ) );
+	}
+
+	/**
+	 * Store permalink in meta, to send delete Webmention.
+	 *
+	 * @param string $post_id The Post ID.
+	 *
+	 * @return void
+	 */
+	public static function trash_post( $post_id ) {
+		add_post_meta(
+			$post_id,
+			'webmention_canonical_url',
+			get_permalink( $post_id ),
+			true
+		);
+	}
+
+	/**
+	 * Delete permalink from meta
+	 *
+	 * @param string $post_id The Post ID
+	 *
+	 * @return void
+	 */
+	public static function untrash_post( $post_id ) {
+		delete_post_meta( $post_id, 'webmention_canonical_url' );
 	}
 
 	/**
@@ -158,11 +188,11 @@ class Sender {
 	 * @return array|bool array of results or false if failed.
 	 */
 	public static function send_webmentions( $post_id ) {
-		// get source url
-		$source = get_permalink( $post_id );
+		$source = get_post_meta( $post_id, 'webmention_canonical_url', true );
 
-		// remove `__trashed` from the url
-		$source = str_replace( '__trashed', '', $source );
+		if ( ! $source ) {
+			$source = get_permalink( $post_id );
+		}
 
 		// get post
 		$post = get_post( $post_id );
