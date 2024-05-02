@@ -276,7 +276,9 @@ class Comment_Walker extends Walker_Comment {
 	/**
 	 * Excludes bookmarks, likes and reposts from comment queries.
 	 *
-	 * @todo: Use some kind of "comment taxonomy" instead?
+	 * @author Jan Boddez
+	 *
+	 * @see https://github.com/janboddez/indieblocks/blob/a2d59de358031056a649ee47a1332ce9e39d4ce2/includes/functions.php#L423-L432
 	 *
 	 * @param  WP_Comment_Query $query Comment count.
 	 */
