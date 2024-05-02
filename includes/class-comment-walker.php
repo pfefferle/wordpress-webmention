@@ -17,7 +17,7 @@ class Comment_Walker extends Walker_Comment {
 
 		// Remove Webmention types from the Comment Template Query
 		if ( separate_webmentions_from_comments() ) {
-			add_filter( 'comments_template_query_args', array( static::class, 'filter_comments_query_args' ) );
+			add_action( 'pre_get_comments', array( static::class, 'comment_query' ) );
 
 			add_action( 'comment_form_before', array( static::class, 'show_separated_reactions' ) );
 			add_action( 'comment_form_comments_closed', array( static::class, 'show_separated_reactions' ) );
@@ -33,19 +33,6 @@ class Comment_Walker extends Walker_Comment {
 	 */
 	public static function filter_comment_args( $args ) {
 		$args['walker'] = new Comment_Walker();
-
-		return $args;
-	}
-
-	/**
-	 * Filter the comment template query arguments to exclude Webmention comment types
-	 *
-	 * @param array $args an array of arguments for displaying comments
-	 *
-	 * @return array the filtered array
-	 */
-	public static function filter_comments_query_args( $args ) {
-		$args['type__not_in'] = get_webmention_comment_type_names();
 
 		return $args;
 	}
@@ -284,5 +271,33 @@ class Comment_Walker extends Walker_Comment {
 				?>
 			</article><!-- .comment-body -->
 		<?php
+	}
+
+	/**
+	 * Excludes bookmarks, likes and reposts from comment queries.
+	 *
+	 * @todo: Use some kind of "comment taxonomy" instead?
+	 *
+	 * @param  WP_Comment_Query $query Comment count.
+	 */
+	public static function comment_query( $query ) {
+		if ( is_admin() ) {
+			return;
+		}
+
+		if ( ! is_singular() ) {
+			return;
+		}
+
+		if ( ! empty( $query->query_vars['type__in'] ) ) {
+			return;
+		}
+
+		if ( isset( $query->query_vars['count'] ) && true === $query->query_vars['count'] ) {
+			return;
+		}
+
+		// Exclude likes and reposts by the Webmention plugin.
+		$query->query_vars['type__not_in'] = get_webmention_comment_type_names();
 	}
 }
