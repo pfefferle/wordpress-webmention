@@ -291,8 +291,12 @@ class Comment_Walker extends Walker_Comment {
 			return;
 		}
 
-		if ( ! empty( $query->query_vars['type__in'] ) ) {
-			return;
+		if ( ! empty( $query->query_vars['meta_query'] ) ) {
+			$query = current( $query->query_vars['meta_query'] );
+
+			if ( ! empty( $query['key'] ) && 'protocol' === $query['key'] ) {
+				return;
+			}
 		}
 
 		if ( isset( $query->query_vars['count'] ) && true === $query->query_vars['count'] ) {
