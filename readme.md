@@ -1,7 +1,7 @@
 # Webmention #
 **Contributors:** [pfefferle](https://profiles.wordpress.org/pfefferle/), [dshanske](https://profiles.wordpress.org/dshanske/)  
 **Donate link:** https://notiz.blog/donate/  
-**Tags:** webmention, pingback, trackback, linkback, indieweb, comment, response  
+**Tags:** webmention, pingback, trackback, linkback, indieweb  
 **Requires at least:** 4.9  
 **Tested up to:** 6.5  
 **Stable tag:** 5.2.6  
@@ -9,10 +9,11 @@
 **License:** MIT  
 **License URI:** https://opensource.org/licenses/MIT  
 
-Enable conversation across the web. When you link to a website you can send it a Webmention to notify it and then that website
-may display your post as a comment, like, or other response, and presto, you’re having a conversation from one site to another!
+Enable conversation across the web.
 
 ## Description ##
+
+When you link to a website you can send it a Webmention to notify it and then that website may display your post as a comment, like, or other response, and presto, you’re having a conversation from one site to another!
 
 A [Webmention](https://www.w3.org/TR/webmention/) is a notification that one URL links to another. Sending a Webmention is not limited to blog posts, and can be used for additional kinds of content and responses as well.
 
