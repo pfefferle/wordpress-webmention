@@ -100,7 +100,7 @@ While not all display options can be settings, we are looking to provide some si
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
 
-= 5.3.1=
+= 5.3.1 =
 
 * Fix fatal error
 
