@@ -4,6 +4,7 @@ namespace Webmention;
 
 use WP_Comment;
 use Walker_Comment;
+use WP_Comment_Query;
 
 class Comment_Walker extends Walker_Comment {
 	/**
@@ -283,6 +284,10 @@ class Comment_Walker extends Walker_Comment {
 	 * @param  WP_Comment_Query $query Comment count.
 	 */
 	public static function comment_query( $query ) {
+		if ( ! $query instanceof WP_Comment_Query ) {
+			return;
+		}
+
 		if ( is_admin() ) {
 			return;
 		}
@@ -292,9 +297,9 @@ class Comment_Walker extends Walker_Comment {
 		}
 
 		if ( ! empty( $query->query_vars['meta_query'] ) ) {
-			$query = current( $query->query_vars['meta_query'] );
+			$query_vars = current( $query->query_vars['meta_query'] );
 
-			if ( ! empty( $query['key'] ) && 'protocol' === $query['key'] ) {
+			if ( ! empty( $query_vars['key'] ) && 'protocol' === $query_vars['key'] ) {
 				return;
 			}
 		}
