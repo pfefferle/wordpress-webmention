@@ -1,7 +1,7 @@
 {
-  "author": {
-    "name": "Tantek Çelik",
-    "url": "http://tantek.com/"
-  },
-  "response_type": "rsvp:yes"
+	"author": {
+		"name": "Tantek Çelik",
+		"url": "http://tantek.com/"
+	},
+	"response_type": "rsvp:yes"
 }

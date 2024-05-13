@@ -1,27 +1,38 @@
 {
-  "name": "wordpress-webmention",
-  "description": "Webmention support for WordPress posts",
-  "main": "webmention.php",
-  "devDependencies": {
-    "grunt": "^1.6.1",
-    "grunt-checktextdomain": "^1.0.1",
-    "grunt-wp-i18n": "^1.0.3",
-    "grunt-wp-readme-to-markdown": "^2.1.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/pfefferle/wordpress-webmention.git"
-  },
-  "keywords": [
-    "webmention",
-    "pingback",
-    "trackback",
-    "linkback"
-  ],
-  "author": "Matthias Pfefferle",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/pfefferle/wordpress-webmention/issues"
-  },
-  "homepage": "https://github.com/pfefferle/wordpress-webmention"
+	"name": "wordpress-webmention",
+	"description": "Webmention support for WordPress posts",
+	"main": "webmention.php",
+	"devDependencies": {
+		"@wordpress/components": "^27.5.0",
+		"@wordpress/scripts": "^27.8.0",
+		"grunt": "^1.6.1",
+		"grunt-checktextdomain": "^1.0.1",
+		"grunt-wp-i18n": "^1.0.3",
+		"grunt-wp-readme-to-markdown": "^2.1.0"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/pfefferle/wordpress-webmention.git"
+	},
+	"keywords": [
+		"webmention",
+		"pingback",
+		"trackback",
+		"linkback"
+	],
+	"author": "Matthias Pfefferle",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/pfefferle/wordpress-webmention/issues"
+	},
+	"homepage": "https://github.com/pfefferle/wordpress-webmention",
+	"scripts": {
+		"build": "wp-scripts build --webpack-copy-php",
+		"format": "wp-scripts format",
+		"lint:css": "wp-scripts lint-style",
+		"lint:js": "wp-scripts lint-js",
+		"packages-update": "wp-scripts packages-update",
+		"plugin-zip": "wp-scripts plugin-zip",
+		"start": "wp-scripts start --webpack-copy-php"
+	}
 }

@@ -1,7 +1,7 @@
 {
-  "author": {
-    "name": "Ryan Barrett",
-    "url": "https://mastodon.technology/@snarfed"
-  },
-  "response_type": "like"
+	"author": {
+		"name": "Ryan Barrett",
+		"url": "https://mastodon.technology/@snarfed"
+	},
+	"response_type": "like"
 }

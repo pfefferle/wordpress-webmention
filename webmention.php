@@ -43,8 +43,8 @@ defined( 'MAX_INLINE_MENTION_LENGTH' ) || define( 'MAX_INLINE_MENTION_LENGTH', 3
 
 // initialize admin settings.
 require_once __DIR__ . '/includes/class-admin.php';
-add_action( 'admin_init', array( '\Webmention\Admin', 'admin_init' ) );
-add_action( 'admin_menu', array( '\Webmention\Admin', 'admin_menu' ) );
+add_action( 'admin_init', array( __NAMESPACE__ . '\Admin', 'admin_init' ) );
+add_action( 'admin_menu', array( __NAMESPACE__ . '\Admin', 'admin_menu' ) );
 
 /**
  * Plugin Version Number used for caching.
@@ -70,7 +70,7 @@ function init() {
 	}
 
 	require_once __DIR__ . '/includes/class-tools.php';
-	add_action( 'init', array( '\Webmention\Tools', 'init' ) );
+	add_action( 'init', array( __NAMESPACE__ . '\Tools', 'init' ) );
 
 	// Request Handler.
 	require_once __DIR__ . '/includes/class-request.php';
@@ -79,10 +79,10 @@ function init() {
 	// Comment Handler Classes.
 	require_once __DIR__ . '/includes/class-comment-type.php';
 	require_once __DIR__ . '/includes/class-comment.php';
-	add_action( 'init', array( '\Webmention\Comment', 'init' ) );
+	add_action( 'init', array( __NAMESPACE__ . '\Comment', 'init' ) );
 
 	require_once __DIR__ . '/includes/class-comment-walker.php';
-	add_action( 'init', array( '\Webmention\Comment_Walker', 'init' ) );
+	add_action( 'init', array( __NAMESPACE__ . '\Comment_Walker', 'init' ) );
 
 	// Handler Control Class.
 	require_once __DIR__ . '/includes/class-handler.php';
@@ -96,34 +96,34 @@ function init() {
 
 	// load local avatar support.
 	require_once __DIR__ . '/includes/class-avatar.php';
-	add_action( 'init', array( '\Webmention\Avatar', 'init' ) );
+	add_action( 'init', array( __NAMESPACE__ . '\Avatar', 'init' ) );
 
 	// load HTTP 410 support.
 	require_once __DIR__ . '/includes/class-http-gone.php';
-	add_action( 'init', array( '\Webmention\HTTP_Gone', 'init' ) );
+	add_action( 'init', array( __NAMESPACE__ . '\HTTP_Gone', 'init' ) );
 
 	// initialize Webmention Sender.
 	require_once __DIR__ . '/includes/class-sender.php';
-	add_action( 'init', array( '\Webmention\Sender', 'init' ) );
+	add_action( 'init', array( __NAMESPACE__ . '\Sender', 'init' ) );
 
 	// initialize Webmention Receiver.
 	require_once __DIR__ . '/includes/class-receiver.php';
-	add_action( 'init', array( '\Webmention\Receiver', 'init' ) );
+	add_action( 'init', array( __NAMESPACE__ . '\Receiver', 'init' ) );
 
 	// initialize Webmention Discovery.
 	require_once __DIR__ . '/includes/class-discovery.php';
-	add_action( 'init', array( '\Webmention\Discovery', 'init' ) );
+	add_action( 'init', array( __NAMESPACE__ . '\Discovery', 'init' ) );
 
 	// load local avatar store.
 	if ( WEBMENTION_LOCAL_AVATAR_STORE ) {
 		require_once __DIR__ . '/includes/class-avatar-store.php';
-		add_action( 'init', array( '\Webmention\Avatar_Store', 'init' ) );
+		add_action( 'init', array( __NAMESPACE__ . '\Avatar_Store', 'init' ) );
 	}
 
 	// initialize Webmention Vouch
 	if ( WEBMENTION_VOUCH ) {
 		require_once __DIR__ . '/includes/class-vouch.php';
-		add_action( 'init', array( '\Webmention\Vouch', 'init' ) );
+		add_action( 'init', array( __NAMESPACE__ . '\Vouch', 'init' ) );
 	}
 
 	// Default Comment Status.
@@ -144,9 +144,9 @@ function init() {
 	remove_action( 'plugins_loaded', array( 'Semantic_Linkbacks_Plugin', 'init' ), 11 );
 	remove_action( 'admin_init', array( 'Semantic_Linkbacks_Plugin', 'admin_init' ) );
 
-	add_action( 'wp_enqueue_scripts', '\Webmention\enqueue_scripts' );
+	add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\enqueue_scripts' );
 }
-add_action( 'plugins_loaded', '\Webmention\init' );
+add_action( 'plugins_loaded', __NAMESPACE__ . '\init' );
 
 /**
  * Activation Hook
@@ -159,7 +159,7 @@ function activation() {
 
 	\Webmention\remove_semantic_linkbacks();
 }
-register_activation_hook( __FILE__, '\Webmention\activation' );
+register_activation_hook( __FILE__, __NAMESPACE__ . '\activation' );
 
 /**
  * Add CSS and JavaScript
@@ -199,7 +199,7 @@ function get_plugin_meta( $default_headers = array() ) {
 // Check for CLI env, to add the CLI commands
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	require_once __DIR__ . '/includes/class-cli.php';
-	WP_CLI::add_command( 'webmention', '\Webmention\Cli' );
+	WP_CLI::add_command( 'webmention', __NAMESPACE__ . '\Cli' );
 }
 
 /**
@@ -221,3 +221,30 @@ function remove_semantic_linkbacks() {
 		\delete_plugins( array( $plugin_slug ) );
 	}
 }
+
+/**
+ * Registers the block using the metadata loaded from the `block.json` file.
+ * Behind the scenes, it registers also all assets so they can be enqueued
+ * through the block editor in the corresponding context.
+ *
+ * @see https://developer.wordpress.org/reference/functions/register_block_type/
+ */
+function reply_block_init() {
+	register_block_type( __DIR__ . '/build' );
+}
+add_action( 'init', __NAMESPACE__ . '\reply_block_init' );
+
+/**
+ * Enqueue Editor assets.
+ */
+function enqueue_editor_assets() {
+	$asset_file = include plugin_dir_path( __FILE__ ) . 'build/index.asset.php';
+
+	wp_enqueue_script(
+		'reply-block-editor',
+		plugins_url( 'build/index.js', __FILE__ ),
+		$asset_file['dependencies'],
+		$asset_file['version']
+	);
+}
+//add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_editor_assets' );

@@ -1,38 +1,36 @@
 {
-  "name": "pfefferle/wordpress-webmention",
-  "description": "A Webmention plugin for WordPress https://wordpress.org/plugins/webmention/",
-  "require": {
-    "php": ">=5.6"
-  },
-  "type": "wordpress-plugin",
-  "license": "MIT",
-  "authors": [
-    {
-      "name": "Matthias Pfefferle",
-      "homepage": "https://notiz.blog"
-    }
-  ],
-  "extra": {
-    "installer-name": "webmention"
-  },
-  "require-dev": {
-    "mf2/mf2": "^0.4.6",
-    "humbug/php-scoper": "^0.15.0",
-    "p3k/emoji-detector": "^0.3.1"
-  },
-  "scripts": {
-    "prefix": [
-		  "@php ./vendor/humbug/php-scoper/bin/php-scoper add-prefix --prefix=Webmention --output-dir=./libraries/mf2 --config=config/php-scoper/mf2.inc.php --force --quiet",
-		  "@php ./vendor/humbug/php-scoper/bin/php-scoper add-prefix --prefix=Webmention --output-dir=./libraries/emoji-detector --config=config/php-scoper/emoji-detector.inc.php --force --quiet"
-    ],
-    "post-update-cmd": [
-    	"@prefix"
-    ]
-  },
-  "config": {
-    "allow-plugins": {
-      "composer/installers": true,
-      "dealerdirect/phpcodesniffer-composer-installer": true
-    }
-  }
+	"name": "pfefferle/wordpress-webmention",
+	"description": "A Webmention plugin for WordPress https://wordpress.org/plugins/webmention/",
+	"require": {
+		"php": ">=5.6"
+	},
+	"type": "wordpress-plugin",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Matthias Pfefferle",
+			"homepage": "https://notiz.blog"
+		}
+	],
+	"extra": {
+		"installer-name": "webmention"
+	},
+	"require-dev": {
+		"mf2/mf2": "^0.4.6",
+		"humbug/php-scoper": "^0.15.0",
+		"p3k/emoji-detector": "^0.3.1"
+	},
+	"scripts": {
+		"prefix": [
+			"@php ./vendor/humbug/php-scoper/bin/php-scoper add-prefix --prefix=Webmention --output-dir=./libraries/mf2 --config=config/php-scoper/mf2.inc.php --force --quiet",
+			"@php ./vendor/humbug/php-scoper/bin/php-scoper add-prefix --prefix=Webmention --output-dir=./libraries/emoji-detector --config=config/php-scoper/emoji-detector.inc.php --force --quiet"
+		],
+		"post-update-cmd": [ "@prefix" ]
+	},
+	"config": {
+		"allow-plugins": {
+			"composer/installers": true,
+			"dealerdirect/phpcodesniffer-composer-installer": true
+		}
+	}
 }

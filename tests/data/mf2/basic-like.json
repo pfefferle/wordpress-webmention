@@ -1,6 +1,6 @@
 {
-  "author": {
-    "type": "card"
-  },
-  "response_type": "like"
+	"author": {
+		"type": "card"
+	},
+	"response_type": "like"
 }

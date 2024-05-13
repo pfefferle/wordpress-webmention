@@ -1,18 +1,18 @@
 name: PHP_CodeSniffer
 on: push
 jobs:
-  phpcs:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '7.4'
-          coverage: none
-          tools: composer, cs2pr
-      - name: Install Composer dependencies for PHP
-        uses: "ramsey/composer-install@v2"
-      - name: Detect coding standard violations
-        run: ./vendor/bin/phpcs -n -q
+    phpcs:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v3
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: '7.4'
+                  coverage: none
+                  tools: composer, cs2pr
+            - name: Install Composer dependencies for PHP
+              uses: 'ramsey/composer-install@v2'
+            - name: Detect coding standard violations
+              run: ./vendor/bin/phpcs -n -q

@@ -1,6 +1,6 @@
 {
-  "author": {
-    "name": "Does clicking me alert?"
-  },
-  "response_type": "comment"
+	"author": {
+		"name": "Does clicking me alert?"
+	},
+	"response_type": "comment"
 }

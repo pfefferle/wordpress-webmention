@@ -1,7 +1,7 @@
 {
-  "author": {
-    "name": "Matthias Pfefferle",
-    "url": "https://notiz.blog/author/matthias-pfefferle/"
-  },
-  "response_type": "bookmark"
+	"author": {
+		"name": "Matthias Pfefferle",
+		"url": "https://notiz.blog/author/matthias-pfefferle/"
+	},
+	"response_type": "bookmark"
 }

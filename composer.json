@@ -1,45 +1,45 @@
 {
-  "name": "pfefferle/wordpress-webmention",
-  "description": "A Webmention plugin for WordPress https://wordpress.org/plugins/webmention/",
-  "require": {
-    "php": ">=5.6.0",
-    "composer/installers": "^1.0 || ^2.0"
-  },
-  "type": "wordpress-plugin",
-  "license": "MIT",
-  "authors": [
-    {
-      "name": "Matthias Pfefferle",
-      "homepage": "https://notiz.blog"
-    }
-  ],
-  "extra": {
-    "installer-name": "webmention"
-  },
-  "require-dev": {
-    "mf2/mf2": "^0.5.0",
-    "phpcompatibility/php-compatibility": "*",
-    "phpcompatibility/phpcompatibility-wp": "*",
-    "squizlabs/php_codesniffer": "3.*",
-    "wp-coding-standards/wpcs": "*",
-    "yoast/phpunit-polyfills": "^2.0",
-    "dealerdirect/phpcodesniffer-composer-installer": "^1.0.0",
-    "dms/phpunit-arraysubset-asserts": "^0.4.0"
-  },
-  "scripts": {
-    "lint": "./vendor/bin/phpcs -n -q",
-    "phpunit": "./vendor/bin/phpunit",
-    "setup-local-tests": "bash bin/install-wp-tests.sh wordpress_test root root 127.0.0.1 latest",
-    "test": [
-      "composer install",
-      "bin/install-wp-tests.sh webmention-test root webmention-test test-db latest true",
-      "vendor/bin/phpunit"
-    ]
-  },
-  "config": {
-    "allow-plugins": {
-      "dealerdirect/phpcodesniffer-composer-installer": true,
-      "composer/installers": true
-    }
-  }
+	"name": "pfefferle/wordpress-webmention",
+	"description": "A Webmention plugin for WordPress https://wordpress.org/plugins/webmention/",
+	"require": {
+		"php": ">=5.6.0",
+		"composer/installers": "^1.0 || ^2.0"
+	},
+	"type": "wordpress-plugin",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Matthias Pfefferle",
+			"homepage": "https://notiz.blog"
+		}
+	],
+	"extra": {
+		"installer-name": "webmention"
+	},
+	"require-dev": {
+		"mf2/mf2": "^0.5.0",
+		"phpcompatibility/php-compatibility": "*",
+		"phpcompatibility/phpcompatibility-wp": "*",
+		"squizlabs/php_codesniffer": "3.*",
+		"wp-coding-standards/wpcs": "*",
+		"yoast/phpunit-polyfills": "^2.0",
+		"dealerdirect/phpcodesniffer-composer-installer": "^1.0.0",
+		"dms/phpunit-arraysubset-asserts": "^0.4.0"
+	},
+	"scripts": {
+		"lint": "./vendor/bin/phpcs -n -q",
+		"phpunit": "./vendor/bin/phpunit",
+		"setup-local-tests": "bash bin/install-wp-tests.sh wordpress_test root root 127.0.0.1 latest",
+		"test": [
+			"composer install",
+			"bin/install-wp-tests.sh webmention-test root webmention-test test-db latest true",
+			"vendor/bin/phpunit"
+		]
+	},
+	"config": {
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true,
+			"composer/installers": true
+		}
+	}
 }

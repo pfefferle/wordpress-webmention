@@ -1,6 +1,6 @@
 {
-  "author": {
-    "name": "Checkmention XSS test"
-  },
-  "response_type": "comment"
+	"author": {
+		"name": "Checkmention XSS test"
+	},
+	"response_type": "comment"
 }
