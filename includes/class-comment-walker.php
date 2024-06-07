@@ -288,20 +288,12 @@ class Comment_Walker extends Walker_Comment {
 			return;
 		}
 
-		if ( is_admin() ) {
+		if ( is_admin() || ! is_singular() ) {
 			return;
 		}
 
-		if ( ! is_singular() ) {
+		if ( ! empty( $query->query_vars['type__in'] ) ) {
 			return;
-		}
-
-		if ( ! empty( $query->query_vars['meta_query'] ) ) {
-			$query_vars = current( $query->query_vars['meta_query'] );
-
-			if ( ! empty( $query_vars['key'] ) && 'protocol' === $query_vars['key'] ) {
-				return;
-			}
 		}
 
 		if ( isset( $query->query_vars['count'] ) && true === $query->query_vars['count'] ) {
