@@ -138,6 +138,10 @@ class Response {
 	protected function get_content_type() {
 		$content_type = $this->content_type;
 
+		if ( is_array( $content_type ) ) {
+			$content_type = array_shift( $content_type );
+		}
+
 		// Strip any character set off the content type
 		$content_type = explode( ';', $content_type );
 
