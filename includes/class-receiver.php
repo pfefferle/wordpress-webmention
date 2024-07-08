@@ -653,6 +653,10 @@ class Receiver {
 
 		$response = Request::get( $commentdata['source'] );
 
+		if ( ! $response || is_wp_error( $response ) ) {
+			return $response;
+		}
+
 		$handler = new Handler();
 		$item    = $handler->parse_aggregated( $response, $commentdata['target'] );
 
