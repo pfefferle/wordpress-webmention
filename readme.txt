@@ -4,7 +4,7 @@ Donate link: https://notiz.blog/donate/
 Tags: webmention, pingback, trackback, linkback, indieweb
 Requires at least: 4.9
 Tested up to: 6.5
-Stable tag: 5.3.1
+Stable tag: 5.3.2
 Requires PHP: 5.6
 License: MIT
 License URI: https://opensource.org/licenses/MIT
@@ -99,6 +99,10 @@ While not all display options can be settings, we are looking to provide some si
 == Changelog ==
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
+
+= 5.3.2 =
+
+* Several small fixes
 
 = 5.3.1 =
 
