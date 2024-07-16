@@ -590,9 +590,12 @@ class MF2 extends Base {
 		}
 
 		// Flatten the haystack to ensure it only contains strings
-		$haystack = array_filter($haystack, function($element) {
-		    return is_string($element) && !is_array($element);
-		});
+		$haystack = array_filter(
+			$haystack,
+			function ( $element ) {
+				return is_string( $element ) && ! is_array( $element );
+			}
+		);
 
 		// Compare both arrays.
 		return array_intersect( $needle, $haystack );
