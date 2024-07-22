@@ -208,14 +208,15 @@ class Sender {
 		$urls = webmention_extract_urls( $post->post_content, $support_media_urls );
 
 		// filter links
-		$targets = apply_filters( 'webmention_links', $urls, $post_id );
-		$targets = array_unique( $targets );
-		$pung    = get_pung( $post );
+		$targets   = apply_filters( 'webmention_links', $urls, $post_id );
+		$targets   = array_unique( $targets );
+		$mentioned = get_post_meta( $post->ID, 'webmention_last_mentioned_urls', true );
+		$mentioned = empty( $mentioned ) ? array() : $mentioned;
 
 		// Find previously sent Webmentions and send them one last time.
-		$deletes = array_diff( $pung, $targets );
+		$deletes = array_diff( $mentioned, $targets );
 
-		$ping = array();
+		$mentions = array();
 
 		foreach ( $targets as $target ) {
 			// send Webmention
@@ -230,7 +231,7 @@ class Sender {
 				! is_wp_error( $response ) &&
 				wp_remote_retrieve_response_code( $response ) < 400
 			) {
-				$ping[] = $target;
+				$mentions[] = $target;
 			}
 
 			// reschedule if server responds with a http error 5xx
@@ -246,15 +247,15 @@ class Sender {
 			// reschedule if server responds with a http error 5xx
 			if ( wp_remote_retrieve_response_code( $response ) >= 500 ) {
 				self::reschedule( $post_id );
-				$ping[] = $deleted;
+				$mentions[] = $deleted;
 			}
 		}
 
-		if ( ! empty( $ping ) ) {
-			self::update_ping( $post, $ping );
+		if ( ! empty( $mentions ) ) {
+			update_post_meta( $post_id, 'webmention_last_mentioned_urls', $mentions );
 		}
 
-		return $ping;
+		return $mentions;
 	}
 
 	/*
