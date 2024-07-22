@@ -128,7 +128,6 @@ function init() {
 
 	// Default Comment Status.
 	add_filter( 'get_default_comment_status', 'webmention_get_default_comment_status', 11, 3 );
-	add_filter( 'pings_open', 'webmention_pings_open', 10, 2 );
 
 	// Load language files.
 	load_plugin_textdomain( 'webmention', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
