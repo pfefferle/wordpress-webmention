@@ -226,16 +226,13 @@ class Sender {
 				continue;
 			}
 
-			// check response
-			if (
-				! is_wp_error( $response ) &&
-				wp_remote_retrieve_response_code( $response ) < 400
-			) {
-				$mentions[] = $target;
-			}
+			$code = wp_remote_retrieve_response_code( $response );
 
-			// reschedule if server responds with a http error 5xx
-			if ( wp_remote_retrieve_response_code( $response ) >= 500 ) {
+			// check response
+			if ( ! is_wp_error( $response ) && $code < 400 ) {
+				$mentions[] = $target;
+			} elseif ( $code >= 500 ) {
+				// reschedule if server responds with a http error 5xx
 				self::reschedule( $post_id );
 			}
 		}
@@ -256,31 +253,6 @@ class Sender {
 		}
 
 		return $mentions;
-	}
-
-	/*
-	 * Update the Pinged List as Opposed to Adding to It.
-	 *
-	 * @param int|WP_Post $post_id Post.
-	 * @param array $pinged Array of URLs
-	*/
-	public static function update_ping( $post_id, $pinged ) {
-		global $wpdb;
-		$post = get_post( $post_id );
-		if ( ! $post ) {
-			return false;
-		}
-
-		if ( ! is_array( $pinged ) ) {
-			return false;
-		}
-
-		$new = implode( "\n", $pinged );
-
-		$wpdb->update( $wpdb->posts, array( 'pinged' => $new ), array( 'ID' => $post->ID ) );
-		clean_post_cache( $post->ID );
-
-		return $new;
 	}
 
 	/**
