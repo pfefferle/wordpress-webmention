@@ -4,7 +4,7 @@ Donate link: https://notiz.blog/donate/
 Tags: webmention, pingback, trackback, linkback, indieweb
 Requires at least: 4.9
 Tested up to: 6.6
-Stable tag: 5.3.2
+Stable tag: 5.3.3
 Requires PHP: 7.0
 License: MIT
 License URI: https://opensource.org/licenses/MIT
@@ -99,6 +99,11 @@ While not all display options can be settings, we are looking to provide some si
 == Changelog ==
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
+
+= 5.3.3 =
+
+* Load CSS also if comments are closed, because Webmentions ignore that setting
+* Improve `version()` method
 
 = 5.3.2 =
 
