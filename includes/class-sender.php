@@ -252,7 +252,32 @@ class Sender {
 			update_post_meta( $post_id, 'webmention_last_mentioned_urls', $mentions );
 		}
 
+		$pung    = get_pung( $post );
+
+		if ( ! empty( $ping ) ) {
+			self::update_ping( $post, array_merge( $pung, $ping ) );
+		}
+
 		return $mentions;
+	}
+
+	public static function update_ping( $post_id, $pinged ) {
+		global $wpdb;
+		$post = get_post( $post_id );
+		if ( ! $post ) {
+			return false;
+		}
+
+		if ( ! is_array( $pinged ) ) {
+			return false;
+		}
+
+		$new = implode( "\n", $pinged );
+
+		$wpdb->update( $wpdb->posts, array( 'pinged' => $new ), array( 'ID' => $post->ID ) );
+		clean_post_cache( $post->ID );
+
+		return $new;
 	}
 
 	/**

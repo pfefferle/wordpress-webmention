@@ -185,7 +185,7 @@ class Avatar_Store {
 		if ( empty( $author ) ) {
 			return false;
 		}
-		$host   = webmention_extract_domain( get_url_from_webmention( $comment ) );
+		$host       = webmention_extract_domain( get_url_from_webmention( $comment ) );
 		$avatar_url = self::sideload_avatar( $avatar, $host, $author );
 
 		if ( $avatar_url ) {

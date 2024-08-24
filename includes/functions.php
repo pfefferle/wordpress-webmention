@@ -550,8 +550,9 @@ if ( ! function_exists( 'ifset' ) ) {
  * @return boolean if webmentions are open
  */
 function webmentions_open( $post = null ) {
-	$post   = get_post( $post );
+	$post    = get_post( $post );
 	$post_id = $post ? $post->ID : 0;
+	$open    = false;
 	if ( $post ) {
 		// Always consider the home mention link page to be open.
 		if ( get_option( 'webmention_home_mentions' ) === $post->ID ) {
