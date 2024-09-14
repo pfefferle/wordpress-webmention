@@ -1,5 +1,5 @@
 === Webmention ===
-Contributors: pfefferle, dshanske
+Contributors: pfefferle, dshanske, indieweb
 Donate link: https://notiz.blog/donate/
 Tags: webmention, pingback, trackback, linkback, indieweb
 Requires at least: 4.9
