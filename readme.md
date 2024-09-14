@@ -1,5 +1,5 @@
 # Webmention #
-**Contributors:** [pfefferle](https://profiles.wordpress.org/pfefferle/), [dshanske](https://profiles.wordpress.org/dshanske/)  
+**Contributors:** [pfefferle](https://profiles.wordpress.org/pfefferle/), [dshanske](https://profiles.wordpress.org/dshanske/), [indieweb](https://profiles.wordpress.org/indieweb/)  
 **Donate link:** https://notiz.blog/donate/  
 **Tags:** webmention, pingback, trackback, linkback, indieweb  
 **Requires at least:** 4.9  
