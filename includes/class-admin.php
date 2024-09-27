@@ -203,7 +203,11 @@ class Admin {
 		}
 
 		if ( 'unapproved' === $status ) {
-			$actions['domainapprovelist'] = sprintf( '<a href="%1$s" aria-label="%2$s">%2$s</a>', esc_url( $approve_url ), esc_attr__( 'Approve & Always Allow', 'webmention' ) );
+			$actions['domainapprovelist'] = sprintf(
+				'<a href="%1$s" aria-label="%2$s">%2$s</a>',
+				esc_url( $approve_url ),
+				esc_attr__( 'Approve & Always Allow', 'webmention' )
+			);
 		}
 
 		return $actions;
