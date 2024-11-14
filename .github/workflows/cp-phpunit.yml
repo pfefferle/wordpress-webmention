@@ -1,4 +1,4 @@
-name: Unit Testing
+name: ClassicPress Unit Testing
 on:
     push:
     pull_request:
@@ -15,13 +15,9 @@ jobs:
        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=10s --health-retries=10
     strategy:
       matrix:
-        php-versions: ['7.0', '7.1', '7.2', '7.3', '7.4', '8.0', '8.1', '8.2', '8.3']
+        php-versions: ['7.4']
         include:
-          - wp-version: latest
-          - wp-version: '6.5'
-            php-versions: '7.0'
-          - wp-version: '6.5'
-            php-versions: '7.1'
+          - cp-version: latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -35,7 +31,7 @@ jobs:
       - name: Install Composer dependencies for PHP
         uses: "ramsey/composer-install@v2"
       - name: Setup Test Environment
-        run: bash ./bin/install-wp-tests.sh wordpress_test root root 127.0.0.1 ${{ matrix.wp-version }}
+        run: bash ./bin/install-cp-tests.sh cpc_test root root 127.0.0.1 ${{ matrix.cp-version }}
       - name: Unit Testing
         run: ./vendor/bin/phpunit
         env:
