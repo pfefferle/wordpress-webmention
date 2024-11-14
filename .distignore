@@ -4,6 +4,7 @@
 /node_modules
 /bin
 /sass
+/src
 /vendor
 /tests
 /config
