@@ -1,17 +1,18 @@
-# Webmention #
-**Contributors:** [pfefferle](https://profiles.wordpress.org/pfefferle/), [dshanske](https://profiles.wordpress.org/dshanske/), [indieweb](https://profiles.wordpress.org/indieweb/)  
-**Donate link:** https://notiz.blog/donate/  
-**Tags:** webmention, pingback, trackback, linkback, indieweb  
-**Requires at least:** 4.9  
-**Tested up to:** 6.6  
-**Stable tag:** 5.3.3  
-**Requires PHP:** 7.0  
-**License:** MIT  
-**License URI:** https://opensource.org/licenses/MIT  
+# Webmention
+
+- Contributors: pfefferle, dshanske, indieweb
+- Donate link: https://notiz.blog/donate/
+- Tags: webmention, pingback, trackback, linkback, indieweb
+- Requires at least: 4.9
+- Tested up to: 6.6
+- Stable tag: 5.3.3
+- Requires PHP: 7.0
+- License: MIT
+- License URI: https://opensource.org/licenses/MIT
 
 Enable conversation across the web.
 
-## Description ##
+## Description
 
 When you link to a website you can send it a Webmention to notify it and then that website may display your post as a comment, like, or other response, and presto, you’re having a conversation from one site to another!
 
@@ -21,17 +22,17 @@ For example, a response can be an RSVP to an event, an indication that someone "
 
 The Webmention plugin supports the Webmention protocol, giving you support for sending and receiving Webmentions. It offers a simple built in presentation.
 
-## Frequently Asked Questions ##
+## Frequently Asked Questions
 
-### What are Webmentions? ###
+### What are Webmentions?
 
 [Webmention](https://www.w3.org/TR/webmention/) is a simple way to automatically notify any URL when you link to it on your site. From the receivers perpective, it's a way to request notification when other sites link to it.
 
-### That Sounds Like a Pingback or a Trackback ###
+### That Sounds Like a Pingback or a Trackback
 
 Webmention is an update/replacement for Pingback or Trackback. Unlike the older protocols, the specification is recommended by the W3C as well as an active community of individuals using it on their sites.
 
-### How can I send and receive Webmentions? ###
+### How can I send and receive Webmentions?
 
 On the Settings --> Discussion Page in WordPress:
 
@@ -41,15 +42,15 @@ On the Settings --> Discussion Page in WordPress:
 
 You can use the `send_webmention($source, $target)` function and pass a source and a target or you can fire an action like `do_action('send_webmention', $source, $target)`.
 
-### How do I support Webmentions for my custom post type? ###
+### How do I support Webmentions for my custom post type?
 
 When declaring your custom post type, add post type support for Webmentions by either including it in your `register_post_type` entry. This can also be added in the Webmention settings.
 
-### How do I send/receive Webmentions for attachments? ###
+### How do I send/receive Webmentions for attachments?
 
 You can enable receiving Webmentions for attachments in Webmention settings. You can enable sending Webmentions for media links in the settings. Please note that most receivers of Webmentions do not support receiving them to image, audio, and video files. In order to support receiving them on WordPress, Webmention endpoint headers would have to be added at the webserver level.
 
-### How can I handle Webmentions to my Homepage or Archive Pages? ###
+### How can I handle Webmentions to my Homepage or Archive Pages?
 
 Webmentions should be allowed on all URLs of a blog, however WordPress does not support this as only posts can have comments attached to them. The plugin currently handles only Webmentions on posts and allows you to set a page to receive homepage mentions.
 
@@ -68,24 +69,24 @@ In the below example, if there is no page returned it will send mentions to a ca
     }
     add_filter("webmention_post_id", "handle_other_webmentions", 10, 2);
 
-### Will a caching plugin affect my ability to use this? ###
+### Will a caching plugin affect my ability to use this?
 
 The URL for the Webmention endpoint, which you can view in the source of your pages, should be excluded from any server or plugin caching.
 
 As Webmention uses the REST API endpoint system, most up to date caching plugins should exclude it by default.
 
-### Why does this plugin have settings about avatars? ###
+### Why does this plugin have settings about avatars?
 
 Webmentions have the ability to act as rich comments. This includes showing avatars. If there is an avatar discovered, the URL for it will be stored. This can either be reflect something from the media library or a URL of a file. If the file is broken, it will store a local
 copy of the default gravatar image.
 
-### There are no Webmention headers on some pages of my site ###
+### There are no Webmention headers on some pages of my site
 
 Webmention headers are only shown if Webmentions are available for that particular URL. If you want to show it regardless, you can add below to your wp-config.php file.
 
     define( 'WEBMENTION_ALWAYS_SHOW_HEADERS', 1 );
 
-### How do I customize the display of my webmentions? ###
+### How do I customize the display of my webmentions?
 
 This plugin includes several enhancements to the built-in WordPress commenting system to allow for enhancement, while allowing existing methods to offer customization. It customizes the classic defaults for WordPress to account for webmentions by using a custom comment walker that minimally changes to defaults.
 By default, many themes provide a custom callback to the `wp_list_comments` function. This plugin adds several enhancements to that. For one, the custom callbacks argument is usually a string with the function name. We enhance it to behave as normal in that case, but if an array is passed, to allow specific callbacks per the key of the array, or the 'all' key as a default. This means each comment type, which would be each webmention type or otherwise, can have its own custom callback.
@@ -96,76 +97,76 @@ There is an option within the plugin to show webmentions not determined to be re
 
 While not all display options can be settings, we are looking to provide some simple options which could be customized in a theme if needed.
 
-## Changelog ##
+## Changelog
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
 
-### 5.3.3 ###
+### 5.3.3
 
 * Load CSS also if comments are closed, because Webmentions ignore that setting
 * Improve `version()` method
 
-### 5.3.2 ###
+### 5.3.2
 
 * Several small fixes
 
-### 5.3.1 ###
+### 5.3.1
 
 * Fix fatal error
 
-### 5.3.0 ###
+### 5.3.0
 
 * Fix facepiles for FSE themes
 * Fix remote Delete
 * Updated Readme and Assets
 
-### 5.2.6 ###
+### 5.2.6
 
 * Fix null reference to comment_parent
 
-### 5.2.5 ###
+### 5.2.5
 
 * Comment Walker was calling regular not html5 version of comment function when falling back.
 
-### 5.2.4 ###
+### 5.2.4
 
 * Fix fatal PHP error
 
-### 5.2.3 ###
+### 5.2.3
 
 * Fix pingback fallback (and happy birthday Matt https://ma.tt/2024/01/birthday-gift/)
 
-### 5.2.2 ###
+### 5.2.2
 
 * Improve fallback handling to avoid "Anonymous" as post author
 
-### 5.2.1 ###
+### 5.2.1
 
 * Fix issue where built in comment types were rejected
 
-### 5.2.0 ###
+### 5.2.0
 
 * Do not bypass the spam filters
 * Support Source Update Notifications
 * Add in experimental Avatar Store
 
-### 5.1.9 ###
+### 5.1.9
 
 * Replace `comment_link` only for Webmentions and only in the frontend
 
-### 5.1.8 ###
+### 5.1.8
 
 * Replace `comment_link` only for Webmentions that have a source
 
-### 5.1.7 ###
+### 5.1.7
 
 * Fix fatal error in WP parser
 
-### 5.1.6 ###
+### 5.1.6
 
 * Allow variable to be null.
 
-### 5.1.5 ###
+### 5.1.5
 
 * Bring back overflow option for facepile this time using the details tag
 * Add html link discovery for finding WordPress REST API
@@ -174,30 +175,30 @@ Project and support maintained on github at [pfefferle/wordpress-webmention](htt
 * Introduce webmentions_open function which determines if webmentions are open for a post. Currently a wrapper around pings_open
 * Misc minor fixes
 
-### 5.1.4 ###
+### 5.1.4
 
 * Fixed: avoid enqueuing Webmention's CSS stylesheet when it is not needed.
 * Fixed: threaded comments support.
 * Added: client URL validation.
 
-### 5.1.3 ###
+### 5.1.3
 
 * Fix timezone issue causes exception
 
-### 5.1.2 ###
+### 5.1.2
 
 * Remove built-in WordPress filtering in favor of plugin filtering of incoming webmentions.
 * If content is long and type is a mention, try to use the summary or name insteasd of full content as the display.
 * Fix issue where meta was overriding mf2
 * Improve JSON-LD handler
 
-### 5.1.1 ###
+### 5.1.1
 
 * Several Parser/Handler fixes
 * Remove unnecessary loading of `comments.php`
 * Some Tool updates
 
-### 5.1.0 ###
+### 5.1.0
 
 * Add mf2 author migration
 * Include spam and trash statuses for dupe check
@@ -208,7 +209,7 @@ Project and support maintained on github at [pfefferle/wordpress-webmention](htt
 * Remove Gravatar Cache
 * A lot of small improvements and fixes
 
-### 5.0.0 ###
+### 5.0.0
 
 * Complete rewrite of the codebase
 * Introduce PHP namespaces
@@ -217,46 +218,46 @@ Project and support maintained on github at [pfefferle/wordpress-webmention](htt
 * Webmentions are no longer stored as comment type mention, but as custom comment types
 * New simplified presentation code, providing for optional custom templating in future
 
-### 4.0.9 ###
+### 4.0.9
 
 * Fix XSS issue
 
-### 4.0.8 ###
+### 4.0.8
 
 * Add `onerror` handling also for `srcset` ( props @florianbrinkmann for testing )
 
-### 4.0.7 ###
+### 4.0.7
 
 * Re-add `onerror` handling for broken images ( props @snarfed )
 
-### 4.0.6 ###
+### 4.0.6
 
 * Updated requirements
 
-### 4.0.5 ###
+### 4.0.5
 
 * Remov `Webmention_Notification` class until proper tested/used
 
-### 4.0.4 ###
+### 4.0.4
 
 * Update dependencies
 * Fix WordPress warnings
 
-### 4.0.3 ###
+### 4.0.3
 
 * Move comment approve list and auto approve to the `wp_allow_comment` function called by the `wp_new_comment` function.
 * Minor fix to avatar function to account for the fact comments have an empty comment type
 
-### 4.0.2 ###
+### 4.0.2
 
 * Cache in cases where stored avatar is a gravatar
 
-### 4.0.1 ###
+### 4.0.1
 
 * Show Webmention form only if `pings_open`
 * Show Webmention form also if comments are disabled
 
-### 4.0.0 ###
+### 4.0.0
 
 * Add settings for enabling Webmention support by public post type
 * Add setting for disabling sending media links...URLs attached to image, video, or audio tags
@@ -270,49 +271,49 @@ Project and support maintained on github at [pfefferle/wordpress-webmention](htt
 * For compatibility reasons, load a version of `is_avatar_comment_type` (introduced 5.1) and `get_self_link` (introduced 5.3) for use in this plugin
 * Improve all settings and template forms ( props @tw2113 )
 
-### 3.8.11 ###
+### 3.8.11
 
 * Minor bug fix
 
-### 3.8.10 ###
+### 3.8.10
 
 * Always enable Webmentions on basis that using plugin means you want Webmentions instead of using default pingback setting
 * Fix auto approve based on domain
 
-### 3.8.9 ###
+### 3.8.9
 
 * Small HTML template changes
 
-### 3.8.8 ###
+### 3.8.8
 
 * Added NodeInfo(2) support
 
-### 3.8.7 ###
+### 3.8.7
 
 * Fixed default value of `webmention_avatars` on the settings page
 
-### 3.8.6 ###
+### 3.8.6
 
 * Fixed default value of `webmention_avatars`
 
-### 3.8.5 ###
+### 3.8.5
 
 * Set correct default value for the "Show comment form" setting
 
-### 3.8.4 ###
+### 3.8.4
 
 * Store vouch property
 * Preliminary vouch support disabled by default. As Vouch is experimental can only be enabled by adding define( 'WEBMENTION_VOUCH', true )
 
-### 3.8.3 ###
+### 3.8.3
 
 * Changed setting for avatar to consider null to be the same as yes
 
-### 3.8.2 ###
+### 3.8.2
 
 * Fixed PHP issue
 
-### 3.8.1 ###
+### 3.8.1
 
 * Updated GDPR text suggestion
 * Fixed old settings links
@@ -321,7 +322,7 @@ Project and support maintained on github at [pfefferle/wordpress-webmention](htt
 
 Thanks Sebastian Greger
 
-### 3.8.0 ###
+### 3.8.0
 
 * Added GDPR recommendation text
 * Implemented help tab
@@ -332,46 +333,46 @@ Thanks Sebastian Greger
 
 Thanks Sebastian Greger, David Shanske and Chris Aldrich
 
-### 3.7.0 ###
+### 3.7.0
 
 * Added "threaded comments" support
 
-### 3.6.0 ###
+### 3.6.0
 
 * Send delete Webmentions
 * Receive delete Webmentions
 
-### 3.5.0 ###
+### 3.5.0
 
 * Added nicer HTML views for non API calls
 * Added german translations (thanks to @deponeWD)
 * Be sure to disable the old `webmention-for-comments` plugin
 
-### 3.4.1 ###
+### 3.4.1
 
 * Add filter to allow setting of Webmention form text
 * Move register settings to init due new default options not being set if admin only
 * Add `edit_webmention` hook due comment array filtering
 * Display Webmention Meta on Edit Comment page
 
-### 3.4.0 ###
+### 3.4.0
 
 * Added settings link
 * Added link to Homepage Webmention page
 * Enable pings for Homepage Webmentions
 
-### 3.3.0 ###
+### 3.3.0
 
 * Add setting for homepage mentions (thanks @dshanske)
 * Remove deprecated functions due 4.8 release
 
-### 3.2.1 ###
+### 3.2.1
 
 * moved endpoint discovery to functions.php
 * added missing i18n strings
 * removed polyfill
 
-### 3.2.0 ###
+### 3.2.0
 
 * Enable option for page support
 * Allow custom post types to declare support for Webmentions as a feature which will enable pings.
@@ -380,7 +381,7 @@ Thanks Sebastian Greger, David Shanske and Chris Aldrich
 * Store Webmention source in comment meta but fall back to checking `comment_author_url` if not set.
 * Store Webmention creation time in comment meta as comment time is overridden by Semantic Linkbacks allowing to determine if a comment has been modified.
 
-### 3.1.1 ###
+### 3.1.1
 
 * URLEncode/Decode source and target
 * Webmention Comment Type now declares support for avatars
@@ -388,18 +389,18 @@ Thanks Sebastian Greger, David Shanske and Chris Aldrich
 * Target URL is stored instead of derived from the permalink to ensure permanance
 * Target fragment is stored to support fragmentions. Can also suport comments when reply is to a comment.
 
-### 3.1.0 ###
+### 3.1.0
 
 * added page support (server and client)
 * moved `webmention_post_id` filter to a global function (thanks @dshanske)
 * fixed https://wordpress.org/support/topic/form-for-entering-manual-pings-stays-on/
 * fixed some typos
 
-### 3.0.1 ###
+### 3.0.1
 
 * Show endpoint discovery on every page again, to prevent several problems.
 
-### 3.0.0 ###
+### 3.0.0
 
 * Plugin refactored to use API infrastructure.
 * Visiting the endpoint in a web browser now returns a Webmention form.
@@ -409,42 +410,42 @@ Thanks Sebastian Greger, David Shanske and Chris Aldrich
 * Supports adding additional parameters when sending Webmentions
 * Fix incompatibility with Ultimate Category Excluder plugin.
 
-### 2.6.0 ###
+### 2.6.0
 
 * removed duplicate request for HTML via get_meta_tags
 * refactoring
 * limits to same domain
 
-### 2.5.0 ###
+### 2.5.0
 
 * add salmon/crossposting-extension support (props @singpolyma)
 * disable self-pings via settings
 * do not unapprove already-approved Webmention (props @singpolyma)
 * some code improvements
 
-### 2.4.0 ###
+### 2.4.0
 
 * switched to WordPress Coding Standard
 
-### 2.3.4 ###
+### 2.3.4
 
 * some fixes and improvements
 
-### 2.3.3 ###
+### 2.3.3
 
 * added filter for Webmention endpoint (to add/require additional paramaters: <https://github.com/pfefferle/wordpress-webmention/issues/39> or <https://github.com/pfefferle/wordpress-webmention/pull/41>)
 
-### 2.3.2 ###
+### 2.3.2
 
 * added more params to `webmention_post_send` (props to @snarfed)
 * removed rescedule of Webmentions (props to @snarfed)
 
-### 2.3.1 ###
+### 2.3.1
 
 * use error-code 403 instead of 500 if Pingbacks/Webmentions are disabled for a post (thanks @snarfed)
 * added `webmention_comment_parent` filter
 
-### 2.3.0 ###
+### 2.3.0
 
 * nicer `title` and `content` discovery
 * added post-id to `webmention_links` filter
@@ -455,48 +456,48 @@ Thanks Sebastian Greger, David Shanske and Chris Aldrich
 * added a default request "action" to be more flexible and to handle more than mentions on posts and pages
 * a lot of small fixes
 
-### 2.2.0 ###
+### 2.2.0
 
 * prevent selfpings
 * added support for https and http
 * optimized some methods
 
-### 2.1.4 ###
+### 2.1.4
 
 * fixed pseudo hook
 
-### 2.1.3 ###
+### 2.1.3
 
 * fixed some warnings
 
-### 2.1.2 ###
+### 2.1.2
 
 * now ready to use in a bundle
 
-### 2.1.1 ###
+### 2.1.1
 
 * nicer feedback for the Webmention endpoint
 
-### 2.1.0 ###
+### 2.1.0
 
 * nicer `title` and `content` discovery
 * added post-id to `webmention_links` filter
 * improved `publish_post_hook` function
 
-### 2.0.1 ###
+### 2.0.1
 
 * small fixes
 * nicer excerpt extractor
 
-### 2.0.0 ###
+### 2.0.0
 
 initial release
 
-## Installation ##
+## Installation
 
 Follow the normal instructions for [installing WordPress plugins](https://codex.wordpress.org/Managing_Plugins#Installing_Plugins).
 
-### Automatic Plugin Installation ###
+### Automatic Plugin Installation
 
 To add a WordPress Plugin using the [built-in plugin installer](https://codex.wordpress.org/Administration_Screens#Add_New_Plugins):
 
@@ -508,7 +509,7 @@ To add a WordPress Plugin using the [built-in plugin installer](https://codex.wo
 1. The resulting installation screen will list the installation as successful or note any problems during the install.
 1. If successful, click **Activate Plugin** to activate it, or **Return to Plugin Installer** for further actions.
 
-### Manual Plugin Installation ###
+### Manual Plugin Installation
 
 There are a few cases when manually installing a WordPress Plugin is appropriate.
 
@@ -530,20 +531,20 @@ To install a WordPress Plugin manually:
 * Go to [Plugins screen](https://codex.wordpress.org/Administration_Screens#Plugins) and find the newly uploaded Plugin in the list.
 * Click **Activate** to activate it.
 
-## Upgrade Notice ##
+## Upgrade Notice
 
-### 5.0.0 ###
+### 5.0.0
 
 This version is a complete rewrite of the code and a merge of the Semantic Linkbacks plugin. You should uninstall Semantic Linkbacks for this upgrade. Please file upgrade issues via Github.
 
 Warning: Please backup your database before upgrading. This version changes the storage method of Webmentions.
 
-### 3.0.0 ###
+### 3.0.0
 
 This update brings the plugin into compliance with the draft standard. As a result, some filters and
 actions have changed. Please check any dependent code before updating.
 
-### 2.0.0 ###
+### 2.0.0
 
 This plugin doesn't support the microformts stuff mentioned in the IndieWebCamp Wiki.
 To enable semantic linkbacks you have to use <https://github.com/pfefferle/wordpress-semantic-linkbacks>
