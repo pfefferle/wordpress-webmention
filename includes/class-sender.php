@@ -252,7 +252,7 @@ class Sender {
 			update_post_meta( $post_id, 'webmention_last_mentioned_urls', $mentions );
 		}
 
-		$pung    = get_pung( $post );
+		$pung = get_pung( $post );
 
 		if ( ! empty( $ping ) ) {
 			self::update_ping( $post, array_merge( $pung, $ping ) );
