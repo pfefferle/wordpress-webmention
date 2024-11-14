@@ -109,6 +109,11 @@ class Comment_Walker extends Walker_Comment {
 			add_filter( 'comment_text', array( $this, 'filter_comment_text' ), 40, 2 );
 		}
 
+		// ClassicPress cut the comment method and defaults to html5. So this will ensure that html5_comment is always called
+		if ( ! method_exists( $this, 'comment' ) || ! array_key_exists( 'format', $args ) ) {
+			$args['format'] = 'html5';
+		}
+
 		// Maintain the original pingback and trackback output.
 		if ( ( 'pingback' === $comment->comment_type || 'trackback' === $comment->comment_type ) && $args['short_ping'] ) {
 			ob_start();
