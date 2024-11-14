@@ -120,9 +120,11 @@ function init() {
 	require_once __DIR__ . '/includes/class-discovery.php';
 	add_action( 'init', array( '\Webmention\Discovery', 'init' ) );
 
-	// initialize Webmention Bloks.
-	require_once __DIR__ . '/includes/class-block.php';
-	add_action( 'init', array( '\Webmention\Block', 'init' ) );
+	if ( site_supports_blocks() ) {
+		// initialize Webmention Bloks.
+		require_once __DIR__ . '/includes/class-block.php';
+		add_action( 'init', array( '\Webmention\Block', 'init' ) );
+	}
 
 	// load local avatar store.
 	if ( WEBMENTION_LOCAL_AVATAR_STORE ) {

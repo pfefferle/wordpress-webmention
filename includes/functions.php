@@ -685,3 +685,31 @@ if ( ! function_exists( 'is_html' ) ) {
 		return ( wp_strip_all_tags( $string ) !== $string );
 	}
 }
+
+/**
+ * Check if a site supports the block editor.
+ *
+ * @return boolean True if the site supports the block editor, false otherwise.
+ */
+function site_supports_blocks() {
+	$return = true;
+
+	if ( \version_compare( \get_bloginfo( 'version' ), '5.9', '<' ) ) {
+		$return = false;
+	} elseif ( \function_exists( 'classicpress_version' ) ) {
+		$return = false;
+	} elseif (
+		! \function_exists( 'register_block_type_from_metadata' ) ||
+		! \function_exists( 'do_blocks' )
+	) {
+		$return = false;
+	}
+
+	/**
+	 * Allow plugins to disable block editor support,
+	 * thus disabling blocks registered by the Webmentions plugin.
+	 *
+	 * @param boolean $supports_blocks True if the site supports the block editor, false otherwise.
+	 */
+	return apply_filters( 'webmention_site_supports_blocks', $return );
+}
