@@ -120,6 +120,10 @@ function init() {
 	require_once __DIR__ . '/includes/class-discovery.php';
 	add_action( 'init', array( '\Webmention\Discovery', 'init' ) );
 
+	// initialize Webmention Bloks.
+	require_once __DIR__ . '/includes/class-block.php';
+	add_action( 'init', array( '\Webmention\Block', 'init' ) );
+
 	// load local avatar store.
 	if ( WEBMENTION_LOCAL_AVATAR_STORE ) {
 		require_once __DIR__ . '/includes/class-avatar-store.php';
@@ -158,7 +162,9 @@ function init() {
 			if ( 'webmentions_closed' === $meta_key && empty( $meta_value ) ) {
 				\delete_post_meta( $object_id, 'webmentions_closed' );
 			}
-		}
+		},
+		10,
+		4
 	);
 }
 add_action( 'plugins_loaded', '\Webmention\init' );
