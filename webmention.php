@@ -150,6 +150,16 @@ function init() {
 	remove_action( 'admin_init', array( 'Semantic_Linkbacks_Plugin', 'admin_init' ) );
 
 	add_action( 'wp_enqueue_scripts', '\Webmention\enqueue_scripts' );
+
+	// remove the "webmentions_closed" meta value if the post is updated
+	\add_action(
+		'updated_postmeta',
+		function ( $meta_id, $object_id, $meta_key, $meta_value ) {
+			if ( 'webmentions_closed' === $meta_key && empty( $meta_value ) ) {
+				\delete_post_meta( $object_id, 'webmentions_closed' );
+			}
+		}
+	);
 }
 add_action( 'plugins_loaded', '\Webmention\init' );
 
