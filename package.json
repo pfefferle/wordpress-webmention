@@ -3,14 +3,6 @@
   "description": "Webmention support for WordPress posts",
   "main": "webmention.php",
   "devDependencies": {
-    "@wordpress/components": "^28.0.0",
-    "@wordpress/data": "^10.0.0",
-    "@wordpress/env": "^10.10.0",
-    "@wordpress/icons": "^10.10.0",
-    "grunt": "^1.6.1",
-    "grunt-checktextdomain": "^1.0.1",
-    "grunt-wp-i18n": "^1.0.3",
-    "grunt-wp-readme-to-markdown": "^2.1.0"
   },
   "repository": {
     "type": "git",
