@@ -22,8 +22,6 @@ push.sh
 phpunit.xml
 phpunit.xml.dist
 phpcs.xml
-README.md
-readme.md
 .travis.yml
 .distignore
 .gitignore
