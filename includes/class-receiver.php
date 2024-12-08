@@ -218,10 +218,6 @@ class Receiver {
 	 * @param WP_REST_Request $request Full data about the request.
 	 *
 	 * @return WP_Error|WP_REST_Response
-	 *
-	 * @uses apply_filters calls "webmention_comment_data" on the comment data
-	 * @uses apply_filters calls "webmention_update" on the comment data
-	 * @uses apply_filters calls "webmention_success_message" on the success message
 	 */
 	public static function post( $request ) {
 		$source = $request->get_param( 'source' );
