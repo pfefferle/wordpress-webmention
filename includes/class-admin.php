@@ -419,6 +419,16 @@ class Admin {
 		);
 		register_setting(
 			'webmention',
+			'webmention_avatar_store_enable',
+			array(
+				'type'         => 'int',
+				'description'  => esc_html__( 'Store Avatars Locally', 'webmention' ),
+				'show_in_rest' => true,
+				'default'      => 1,
+			)
+		);
+		register_setting(
+			'webmention',
 			'webmention_separate_comment',
 			array(
 				'type'         => 'int',
