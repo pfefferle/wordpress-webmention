@@ -1,9 +1,9 @@
 <?php
 $mentions = get_comments(
 	array(
-		'post_id'    => get_the_ID(),
-		'type__in'   => get_webmention_comment_type_names(),
-		'status'     => 'approve',
+		'post_id'  => get_the_ID(),
+		'type__in' => get_webmention_comment_type_names(),
+		'status'   => 'approve',
 	)
 );
 
