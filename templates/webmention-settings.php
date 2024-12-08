@@ -127,12 +127,23 @@
 				</td>
 			</tr>
 			<tr>
-				<th scope="row"><?php esc_html_e( 'Avatars', 'webmention' ); ?></th>
+				<th scope="row"><?php esc_html_e( 'Use Avatars', 'webmention' ); ?></th>
 				<td>
 					<fieldset>
 						<label for="webmention_avatars">
 							<input type="checkbox" name="webmention_avatars" id="webmention_avatars" value="1" <?php echo checked( true, get_option( 'webmention_avatars', 1 ) ); ?> />
 							<?php esc_html_e( 'Show avatars on Webmentions if available.', 'webmention' ); ?>
+						</label>
+					</fieldset>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row"><?php esc_html_e( 'Store Avatars', 'webmention' ); ?></th>
+				<td>
+					<fieldset>
+						<label for="webmention_avatar_store_enable">
+							<input type="checkbox" name="webmention_avatar_store_enable" id="webmention_avatar_store_enable" value="1" <?php echo checked( true, get_option( 'webmention_avatar_store_enable', 1 ) ); ?> />
+							<?php esc_html_e( 'Enable Local Caching of Avatars.', 'webmention' ); ?>
 						</label>
 					</fieldset>
 				</td>
