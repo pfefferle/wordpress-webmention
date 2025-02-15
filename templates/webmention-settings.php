@@ -142,7 +142,7 @@
 				<td>
 					<fieldset>
 						<label for="webmention_avatar_store_enable">
-							<input type="checkbox" name="webmention_avatar_store_enable" id="webmention_avatar_store_enable" value="1" <?php echo checked( true, get_option( 'webmention_avatar_store_enable', 1 ) ); ?> />
+							<input type="checkbox" name="webmention_avatar_store_enable" id="webmention_avatar_store_enable" value="1" <?php checked( true, get_option( 'webmention_avatar_store_enable', 1 ) ); ?> />
 							<?php esc_html_e( 'Enable Local Caching of Avatars.', 'webmention' ); ?>
 						</label>
 					</fieldset>
