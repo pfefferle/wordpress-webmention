@@ -424,7 +424,7 @@ class Admin {
 				'type'         => 'int',
 				'description'  => esc_html__( 'Store Avatars Locally', 'webmention' ),
 				'show_in_rest' => true,
-				'default'      => 1,
+				'default'      => 0,
 			)
 		);
 		register_setting(

@@ -14,7 +14,7 @@
 				<td>
 					<fieldset>
 						<label for="webmention_disable_selfpings_same_url">
-							<input type="checkbox" name="webmention_disable_selfpings_same_url" id="webmention_disable_selfpings_same_url" value="1" <?php echo checked( true, get_option( 'webmention_disable_selfpings_same_url' ) ); ?> />
+							<input type="checkbox" name="webmention_disable_selfpings_same_url" id="webmention_disable_selfpings_same_url" value="1" <?php checked( true, get_option( 'webmention_disable_selfpings_same_url' ) ); ?> />
 							<?php esc_html_e( 'Disable self-pings on the same URL', 'webmention' ); ?>
 							<p class="description"><?php esc_html_e( '(for example "http://example.com/?p=123")', 'webmention' ); ?></p>
 						</label>
@@ -22,7 +22,7 @@
 						<br />
 
 						<label for="webmention_disable_selfpings_same_domain">
-							<input type="checkbox" name="webmention_disable_selfpings_same_domain" id="webmention_disable_selfpings_same_domain" value="1" <?php echo checked( true, get_option( 'webmention_disable_selfpings_same_domain' ) ); ?> />
+							<input type="checkbox" name="webmention_disable_selfpings_same_domain" id="webmention_disable_selfpings_same_domain" value="1" <?php checked( true, get_option( 'webmention_disable_selfpings_same_domain' ) ); ?> />
 							<?php esc_html_e( 'Disable self-pings on the same Domain', 'webmention' ); ?>
 							<p class="description"><?php esc_html_e( '(for example "example.com")', 'webmention' ); ?></p>
 						</label>
@@ -30,7 +30,7 @@
 						<br />
 
 						<label for="webmention_disable_media_mentions">
-							<input type="checkbox" name="webmention_disable_media_mentions" id="webmention_disable_media_mentions" value="1" <?php echo checked( true, get_option( 'webmention_disable_media_mentions' ) ); ?> />
+							<input type="checkbox" name="webmention_disable_media_mentions" id="webmention_disable_media_mentions" value="1" <?php checked( true, get_option( 'webmention_disable_media_mentions' ) ); ?> />
 							<?php esc_html_e( 'Disable sending Webmentions for media links (image, video, audio)', 'webmention' ); ?>
 						</label>
 					</fieldset>
@@ -57,7 +57,7 @@
 						<?php foreach ( $post_types as $post_type ) { ?>
 							<li>
 								<label for="webmention_support_post_types_<?php echo esc_attr( $post_type->name ); ?>">
-									<input type="checkbox" id="webmention_support_post_types_<?php echo esc_attr( $post_type->name ); ?>" name="webmention_support_post_types[]" value="<?php echo esc_attr( $post_type->name ); ?>" <?php echo checked( true, in_array( $post_type->name, $support_post_types, true ) ); ?> />
+									<input type="checkbox" id="webmention_support_post_types_<?php echo esc_attr( $post_type->name ); ?>" name="webmention_support_post_types[]" value="<?php echo esc_attr( $post_type->name ); ?>" <?php checked( true, in_array( $post_type->name, $support_post_types, true ) ); ?> />
 									<?php echo esc_html( $post_type->label ); ?>
 								</label>
 							</li>
@@ -110,7 +110,7 @@
 					<fieldset>
 						<p>
 							<label for="webmention_show_comment_form">
-								<input type="checkbox" name="webmention_show_comment_form" id="webmention_show_comment_form" value="1" <?php echo checked( true, get_option( 'webmention_show_comment_form' ) ); ?> />
+								<input type="checkbox" name="webmention_show_comment_form" id="webmention_show_comment_form" value="1" <?php checked( true, get_option( 'webmention_show_comment_form' ) ); ?> />
 								<?php esc_html_e( 'Show a Webmention form at the comment section, to allow anyone to notify you of a mention.', 'webmention' ); ?>
 							</label>
 						</p>
@@ -131,7 +131,7 @@
 				<td>
 					<fieldset>
 						<label for="webmention_avatars">
-							<input type="checkbox" name="webmention_avatars" id="webmention_avatars" value="1" <?php echo checked( true, get_option( 'webmention_avatars', 1 ) ); ?> />
+							<input type="checkbox" name="webmention_avatars" id="webmention_avatars" value="1" <?php checked( true, get_option( 'webmention_avatars', 1 ) ); ?> />
 							<?php esc_html_e( 'Show avatars on Webmentions if available.', 'webmention' ); ?>
 						</label>
 					</fieldset>
@@ -142,7 +142,7 @@
 				<td>
 					<fieldset>
 						<label for="webmention_avatar_store_enable">
-							<input type="checkbox" name="webmention_avatar_store_enable" id="webmention_avatar_store_enable" value="1" <?php checked( true, get_option( 'webmention_avatar_store_enable', 1 ) ); ?> />
+							<input type="checkbox" name="webmention_avatar_store_enable" id="webmention_avatar_store_enable" value="1" <?php checked( true, get_option( 'webmention_avatar_store_enable', 0 ) ); ?> />
 							<?php esc_html_e( 'Enable Local Caching of Avatars.', 'webmention' ); ?>
 						</label>
 					</fieldset>
@@ -154,7 +154,7 @@
 
 					<fieldset>
 						<label for="webmention_separate_comment">
-							<input type="checkbox" name="webmention_separate_comment" id="webmention_separate_comment" value="1" <?php echo checked( true, get_option( 'webmention_separate_comment', 1 ) ); ?> />
+							<input type="checkbox" name="webmention_separate_comment" id="webmention_separate_comment" value="1" <?php checked( true, get_option( 'webmention_separate_comment', 1 ) ); ?> />
 							<?php esc_html_e( 'Separate Webmention Types from Comments.', 'webmention' ); ?>
 						</label>
 					</fieldset>
