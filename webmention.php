@@ -118,6 +118,12 @@ function init() {
 	require_once __DIR__ . '/includes/class-discovery.php';
 	add_action( 'init', array( '\Webmention\Discovery', 'init' ) );
 
+	if ( site_supports_blocks() ) {
+		// initialize Webmention Bloks.
+		require_once __DIR__ . '/includes/class-block.php';
+		add_action( 'init', array( '\Webmention\Block', 'init' ) );
+	}
+
 	// load local avatar store.
 	if ( 1 === (int) get_option( 'webmention_avatar_store_enable', 0 ) ) {
 		require_once __DIR__ . '/includes/class-avatar-store.php';
@@ -132,7 +138,6 @@ function init() {
 
 	// Default Comment Status.
 	add_filter( 'get_default_comment_status', 'webmention_get_default_comment_status', 11, 3 );
-	add_filter( 'pings_open', 'webmention_pings_open', 10, 2 );
 
 	// Load language files.
 	load_plugin_textdomain( 'webmention', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
@@ -149,6 +154,18 @@ function init() {
 	remove_action( 'admin_init', array( 'Semantic_Linkbacks_Plugin', 'admin_init' ) );
 
 	add_action( 'wp_enqueue_scripts', '\Webmention\enqueue_scripts' );
+
+	// remove the "webmentions_disabled" meta value if the post is updated
+	\add_action(
+		'updated_postmeta',
+		function ( $meta_id, $object_id, $meta_key, $meta_value ) {
+			if ( 'webmentions_disabled' === $meta_key && empty( $meta_value ) ) {
+				\delete_post_meta( $object_id, 'webmentions_disabled' );
+			}
+		},
+		10,
+		4
+	);
 }
 add_action( 'plugins_loaded', '\Webmention\init' );
 
