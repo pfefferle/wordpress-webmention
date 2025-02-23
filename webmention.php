@@ -48,7 +48,7 @@ function version() {
  * Migrate DB if needed
  */
 function activation() {
-	\Webmention\DB::update_database();
+	\Webmention\Upgrade::maybe_upgrade();
 }
 register_activation_hook( __FILE__, '\Webmention\activation' );
 

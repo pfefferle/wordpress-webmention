@@ -24,11 +24,11 @@ class DB_Test extends WP_UnitTestCase {
 			)
 		);
 
-		$this->assertEquals( \Webmention\DB::get_version(), 0 );
+		$this->assertEquals( \Webmention\Upgrade::get_version(), 0 );
 
-		\Webmention\DB::update_database();
+		\Webmention\Upgrade::maybe_upgrade();
 
-		$this->assertEquals( \Webmention\DB::get_version(), '1.0.1' );
+		$this->assertEquals( \Webmention\Upgrade::get_version(), WEBMENTION_VERSION );
 
 		wp_cache_flush();
 

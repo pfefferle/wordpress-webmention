@@ -267,8 +267,8 @@ class Admin {
 	 * Load settings page
 	 */
 	public static function settings_page() {
-		require_once __DIR__ . '/class-db.php';
-		\Webmention\DB::update_database();
+		require_once __DIR__ . '/class-upgrade.php';
+		\Webmention\Upgrade::maybe_upgrade();
 		\Webmention\remove_semantic_linkbacks();
 
 		add_thickbox();
