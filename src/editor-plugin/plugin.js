@@ -20,7 +20,7 @@ const EditorPlugin = () => {
 		>
 			<CheckboxControl
 				__nextHasNoMarginBottom
-				label={ __( 'Close Webmentions', 'webmention' ) }
+				label={ __( 'Disable Webmentions', 'webmention' ) }
 				help={ __( 'Do not accept incoming Webmentions for this post.', 'webmention' ) }
 				checked={ meta.webmentions_closed }
 				onChange={ ( value ) => {
