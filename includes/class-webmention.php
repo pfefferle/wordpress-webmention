@@ -35,6 +35,13 @@ class Webmention {
 	private $default_post_types = array( 'post', 'page' );
 
 	/**
+	 * Whether the class has been initialized.
+	 *
+	 * @var boolean
+	 */
+	private $initialized = false;
+
+	/**
 	 * Get the instance of the class.
 	 *
 	 * @return Webmention
@@ -58,6 +65,10 @@ class Webmention {
 	 * Initialize the plugin.
 	 */
 	public function init() {
+		if ( $this->initialized ) {
+			return;
+		}
+
 		$this->register_constants();
 
 		$this->register_hooks();
@@ -67,6 +78,8 @@ class Webmention {
 
 		// Load language files.
 		load_plugin_textdomain( self::TEXT_DOMAIN, false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+
+		$this->initialized = true;
 	}
 
 	/**
