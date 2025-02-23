@@ -28,6 +28,13 @@ class Webmention {
 	const TEXT_DOMAIN = 'webmention';
 
 	/**
+	 * Default post types.
+	 *
+	 * @var array
+	 */
+	private $default_post_types = array( 'post', 'page' );
+
+	/**
 	 * Get the instance of the class.
 	 *
 	 * @return Webmention
@@ -55,6 +62,7 @@ class Webmention {
 
 		$this->register_hooks();
 		$this->register_admin_hooks();
+
 		$this->add_post_type_support();
 
 		// Load language files.
@@ -127,7 +135,7 @@ class Webmention {
 	 */
 	public function add_post_type_support() {
 		// Add support for Webmentions to custom post types.
-		$post_types = get_option( 'webmention_support_post_types', array( 'post', 'page' ) ) ? get_option( 'webmention_support_post_types', array( 'post', 'page' ) ) : array();
+		$post_types = get_option( 'webmention_support_post_types', $this->default_post_types ) ? get_option( 'webmention_support_post_types', $this->default_post_types ) : array();
 
 		foreach ( $post_types as $post_type ) {
 			add_post_type_support( $post_type, 'webmentions' );
@@ -137,7 +145,7 @@ class Webmention {
 	/**
 	 * Register constants.
 	 */
-	private function register_constants() {
+	public function register_constants() {
 		\defined( 'WEBMENTION_ALWAYS_SHOW_HEADERS' ) || \define( 'WEBMENTION_ALWAYS_SHOW_HEADERS', 0 );
 		\defined( 'WEBMENTION_COMMENT_APPROVE' ) || \define( 'WEBMENTION_COMMENT_APPROVE', 0 );
 		\defined( 'WEBMENTION_COMMENT_TYPE' ) || \define( 'WEBMENTION_COMMENT_TYPE', 'webmention' );
