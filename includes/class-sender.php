@@ -339,9 +339,9 @@ class Sender {
 		}
 
 		foreach ( $mentions as $mention ) {
-			delete_post_meta( $mention, '_mentionme' );
 			// send them Webmentions
 			self::send_webmentions( $mention );
+			delete_post_meta( $mention, '_mentionme' );
 		}
 	}
 }
