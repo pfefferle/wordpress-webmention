@@ -561,8 +561,8 @@ function webmentions_open( $post = null ) {
 			// If the post type does not support Webmentions do not even check further.
 			$open = false;
 		} else {
-			// If the webmentions_closed meta key exists then consider webmentions closed. Otherwise consider them open.
-			$open = ! ( metadata_exists( 'post', $post_id, 'webmentions_closed' ) ); // Invert the result, as exists is closed and not exists is open.
+			// If the webmentions_disabled meta key exists then consider webmentions closed. Otherwise consider them open.
+			$open = ! ( metadata_exists( 'post', $post_id, 'webmentions_disabled' ) ); // Invert the result, as exists is closed and not exists is open.
 		}
 	}
 

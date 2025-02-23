@@ -242,7 +242,7 @@ class Receiver {
 
 		// check if webmentions are allowed
 		if ( ! webmentions_open( $comment_post_id ) ) {
-			return new WP_Error( 'webmentions_closed', esc_html__( 'Webmentions are disabled for this post', 'webmention' ), array( 'status' => 400 ) );
+			return new WP_Error( 'webmentions_disabled', esc_html__( 'Webmentions are disabled for this post', 'webmention' ), array( 'status' => 400 ) );
 		}
 
 		$post = get_post( $comment_post_id );

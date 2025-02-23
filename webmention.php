@@ -155,12 +155,12 @@ function init() {
 
 	add_action( 'wp_enqueue_scripts', '\Webmention\enqueue_scripts' );
 
-	// remove the "webmentions_closed" meta value if the post is updated
+	// remove the "webmentions_disabled" meta value if the post is updated
 	\add_action(
 		'updated_postmeta',
 		function ( $meta_id, $object_id, $meta_key, $meta_value ) {
-			if ( 'webmentions_closed' === $meta_key && empty( $meta_value ) ) {
-				\delete_post_meta( $object_id, 'webmentions_closed' );
+			if ( 'webmentions_disabled' === $meta_key && empty( $meta_value ) ) {
+				\delete_post_meta( $object_id, 'webmentions_disabled' );
 			}
 		},
 		10,
