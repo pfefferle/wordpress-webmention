@@ -14,8 +14,6 @@
 
 namespace Webmention;
 
-use WP_CLI;
-
 \define( 'WEBMENTION_VERSION', '5.3.3' );
 
 \define( 'WEBMENTION_PLUGIN_DIR', \plugin_dir_path( __FILE__ ) );
@@ -30,10 +28,10 @@ if ( \WP_DEBUG ) {
 	require_once __DIR__ . '/includes/debug.php';
 }
 
-// Register the autoloader
+// Register the autoloader.
 Autoloader::register_path( __NAMESPACE__, __DIR__ . '/includes' );
 
-// Initialize the plugin
+// Initialize the plugin.
 $webmention = Webmention::get_instance();
 $webmention->init();
 
@@ -81,6 +79,6 @@ function get_plugin_meta( $default_headers = array() ) {
 }
 
 // Check for CLI env, to add the CLI commands
-if ( defined( 'WP_CLI' ) && WP_CLI ) {
-	WP_CLI::add_command( 'webmention', '\Webmention\Cli' );
+if ( \defined( 'WP_CLI' ) && \WP_CLI ) {
+	\WP_CLI::add_command( 'webmention', '\Webmention\Cli' );
 }

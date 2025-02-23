@@ -56,7 +56,6 @@ class Webmention {
 		$this->register_hooks();
 		$this->register_admin_hooks();
 		$this->add_post_type_support();
-		$this->unregister_legacy_hooks();
 
 		// Load language files.
 		load_plugin_textdomain( self::TEXT_DOMAIN, false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
@@ -179,18 +178,5 @@ class Webmention {
 		if ( 'webmentions_disabled' === $meta_key && empty( $meta_value ) ) {
 			\delete_post_meta( $object_id, 'webmentions_disabled' );
 		}
-	}
-
-	/**
-	 * Remove old Webmention/Semantic-Linkbacks code.
-	 */
-	public function unregister_legacy_hooks() {
-		// remove old Webmention code.
-		remove_action( 'init', array( '\WebMentionFormPlugin', 'init' ) );
-		remove_action( 'init', array( '\WebMentionForCommentsPlugin', 'init' ) );
-
-		// remove old Semantic Linkbacks code
-		remove_action( 'plugins_loaded', array( 'Semantic_Linkbacks_Plugin', 'init' ), 11 );
-		remove_action( 'admin_init', array( 'Semantic_Linkbacks_Plugin', 'admin_init' ) );
 	}
 }
