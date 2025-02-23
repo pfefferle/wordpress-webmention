@@ -5,7 +5,7 @@ use Webmention\Sender;
 class Test_Sender extends WP_UnitTestCase {
 	private $post;
 
-	public function setUp(): void {
+	public function setUp() {
 		parent::setUp();
 
 		// Erstelle einen Test-Beitrag
@@ -93,7 +93,7 @@ class Test_Sender extends WP_UnitTestCase {
 		$this->assertEquals( '1', get_post_meta( $this->post->ID, '_mentionme_tries', true ) );
 	}
 
-	public function tearDown(): void {
+	public function tearDown() {
 		parent::tearDown();
 		remove_all_filters( 'webmention_server_url' );
 		remove_all_filters( 'pre_http_request' );
