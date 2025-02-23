@@ -1,84 +1,30 @@
 <?php
 /**
- * Upgrade Class
+ * Database Class
  *
  * @package Webmention
  */
 namespace Webmention;
 
 /**
- * Upgrade Class
+ * Database Class
  *
  * @package Webmention
  */
-class Upgrade {
+class DB {
 	/**
-	 * Get the current version.
+	 * Which internal datastructure version we are running on.
 	 *
-	 * @return int
+	 * @var int
 	 */
+	private static $target_version = '1.0.1';
+
+	public static function get_target_version() {
+		return self::$target_version;
+	}
+
 	public static function get_version() {
 		return get_option( 'webmention_db_version', 0 );
-	}
-
-	/**
-	 * Whether the database structure is up to date.
-	 *
-	 * @return bool True if the database structure is up to date, false otherwise.
-	 */
-	public static function is_latest_version() {
-		return (bool) \version_compare(
-			self::get_version(),
-			WEBMENTION_VERSION,
-			'=='
-		);
-	}
-
-	/**
-	 * Locks the database migration process to prevent simultaneous migrations.
-	 *
-	 * @return bool|int True if the lock was successful, timestamp of existing lock otherwise.
-	 */
-	public static function lock() {
-		global $wpdb;
-
-		// Try to lock.
-		$lock_result = (bool) $wpdb->query( $wpdb->prepare( "INSERT IGNORE INTO `$wpdb->options` ( `option_name`, `option_value`, `autoload` ) VALUES (%s, %s, 'no') /* LOCK */", 'activitypub_migration_lock', \time() ) ); // phpcs:ignore WordPress.DB
-
-		if ( ! $lock_result ) {
-			$lock_result = \get_option( 'activitypub_migration_lock' );
-		}
-
-		return $lock_result;
-	}
-
-	/**
-	 * Unlocks the database migration process.
-	 */
-	public static function unlock() {
-		\delete_option( 'activitypub_migration_lock' );
-	}
-
-	/**
-	 * Whether the database migration process is locked.
-	 *
-	 * @return boolean
-	 */
-	public static function is_locked() {
-		$lock = \get_option( 'activitypub_migration_lock' );
-
-		if ( ! $lock ) {
-			return false;
-		}
-
-		$lock = (int) $lock;
-
-		if ( $lock < \time() - 1800 ) {
-			self::unlock();
-			return false;
-		}
-
-		return true;
 	}
 
 	/**

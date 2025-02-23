@@ -21,15 +21,15 @@ namespace Webmention;
 \define( 'WEBMENTION_PLUGIN_FILE', \plugin_dir_path( __FILE__ ) . '/' . \basename( __FILE__ ) );
 \define( 'WEBMENTION_PLUGIN_URL', \plugin_dir_url( __FILE__ ) );
 
-require_once __DIR__ . '/includes/class-autoloader.php';
-require_once __DIR__ . '/includes/functions.php';
+require_once WEBMENTION_PLUGIN_DIR . '/includes/class-autoloader.php';
+require_once WEBMENTION_PLUGIN_DIR . '/includes/functions.php';
 
 if ( \WP_DEBUG ) {
-	require_once __DIR__ . '/includes/debug.php';
+	require_once WEBMENTION_PLUGIN_DIR . '/includes/debug.php';
 }
 
 // Register the autoloader.
-Autoloader::register_path( __NAMESPACE__, __DIR__ . '/includes' );
+Autoloader::register_path( __NAMESPACE__, WEBMENTION_PLUGIN_DIR . '/includes' );
 
 // Initialize the plugin.
 $webmention = Webmention::get_instance();
@@ -39,7 +39,7 @@ $webmention->init();
  * Plugin Version Number used for caching.
  */
 function version() {
-	return $webmention->get_version();
+	return Webmention::get_instance()->get_version();
 }
 
 /**
@@ -80,5 +80,5 @@ function get_plugin_meta( $default_headers = array() ) {
 
 // Check for CLI env, to add the CLI commands
 if ( \defined( 'WP_CLI' ) && \WP_CLI ) {
-	\WP_CLI::add_command( 'webmention', '\Webmention\Cli' );
+	\WP_CLI::add_command( 'webmention', Cli::class );
 }
