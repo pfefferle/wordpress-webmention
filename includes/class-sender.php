@@ -210,7 +210,7 @@ class Sender {
 		// filter links
 		$targets   = apply_filters( 'webmention_links', $urls, $post_id );
 		$targets   = array_unique( $targets );
-		$mentioned = get_post_meta( $post->ID, 'webmention_last_mentioned_urls', true );
+		$mentioned = get_post_meta( $post->ID, '_webmentioned', true );
 		$mentioned = empty( $mentioned ) ? array() : $mentioned;
 
 		// Find previously sent Webmentions and send them one last time.
@@ -249,7 +249,7 @@ class Sender {
 		}
 
 		if ( ! empty( $mentions ) ) {
-			update_post_meta( $post_id, 'webmention_last_mentioned_urls', $mentions );
+			update_post_meta( $post_id, '_webmentioned', $mentions );
 		}
 
 		$pung = get_pung( $post );

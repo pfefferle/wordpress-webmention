@@ -35,7 +35,7 @@ class Test_Sender extends WP_UnitTestCase {
 		$this->assertContains( 'https://example.com', $result );
 
 		// Überprüfe, ob die URLs in den Post-Meta gespeichert wurden
-		$mentioned_urls = get_post_meta( $this->post->ID, 'webmention_last_mentioned_urls', true );
+		$mentioned_urls = get_post_meta( $this->post->ID, '_webmentioned', true );
 		$this->assertIsArray( $mentioned_urls );
 		$this->assertContains( 'https://example.com', $mentioned_urls );
 	}
