@@ -1,7 +1,7 @@
 <?php
-class DB_Test extends WP_UnitTestCase {
+class Upgrade_Test extends WP_UnitTestCase {
 	public function test_update_database() {
-		require_once( dirname( __FILE__ ) . '/../includes/class-db.php' );
+		require_once( dirname( __FILE__ ) . '/../includes/class-upgrade.php' );
 
 		$comment_id = wp_insert_comment(
 			array(
