@@ -1,19 +1,29 @@
 <?php
-
+/**
+ * Upgrade Class
+ *
+ * @package Webmention
+ */
 namespace Webmention;
 
-class DB {
+/**
+ * Upgrade Class
+ *
+ * @package Webmention
+ */
+class Upgrade {
 	/**
-	 * Which internal datastructure version we are running on.
-	 *
-	 * @var int
+	 * Initialize the upgrade class.
 	 */
-	private static $target_version = '1.0.1';
-
-	public static function get_target_version() {
-		return self::$target_version;
+	public static function init() {
+		add_action( 'init', array( self::class, 'maybe_upgrade' ) );
 	}
 
+	/**
+	 * Get the current version.
+	 *
+	 * @return int
+	 */
 	public static function get_version() {
 		return get_option( 'webmention_db_version', 0 );
 	}
@@ -21,23 +31,76 @@ class DB {
 	/**
 	 * Whether the database structure is up to date.
 	 *
-	 * @return bool
+	 * @return bool True if the database structure is up to date, false otherwise.
 	 */
 	public static function is_latest_version() {
-		return (bool) version_compare(
+		return (bool) \version_compare(
 			self::get_version(),
-			self::get_target_version(),
+			WEBMENTION_VERSION,
 			'=='
 		);
 	}
 
 	/**
+	 * Locks the database migration process to prevent simultaneous migrations.
+	 *
+	 * @return bool|int True if the lock was successful, timestamp of existing lock otherwise.
+	 */
+	public static function lock() {
+		global $wpdb;
+
+		// Try to lock.
+		$lock_result = (bool) $wpdb->query( $wpdb->prepare( "INSERT IGNORE INTO `$wpdb->options` ( `option_name`, `option_value`, `autoload` ) VALUES (%s, %s, 'no') /* LOCK */", 'webmention_migration_lock', \time() ) ); // phpcs:ignore WordPress.DB
+
+		if ( ! $lock_result ) {
+			$lock_result = \get_option( 'webmention_migration_lock' );
+		}
+
+		return $lock_result;
+	}
+
+	/**
+	 * Unlocks the database migration process.
+	 */
+	public static function unlock() {
+		\delete_option( 'webmention_migration_lock' );
+	}
+
+	/**
+	 * Whether the database migration process is locked.
+	 *
+	 * @return boolean
+	 */
+	public static function is_locked() {
+		$lock = \get_option( 'webmention_migration_lock' );
+
+		if ( ! $lock ) {
+			return false;
+		}
+
+		$lock = (int) $lock;
+
+		if ( $lock < \time() - 1800 ) {
+			self::unlock();
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
 	 * Updates the database structure if necessary.
 	 */
-	public static function update_database() {
+	public static function maybe_upgrade() {
 		if ( self::is_latest_version() ) {
 			return;
 		}
+
+		if ( self::is_locked() ) {
+			return;
+		}
+
+		self::lock();
 
 		$version_from_db = self::get_version();
 
@@ -48,7 +111,17 @@ class DB {
 			self::migrate_to_1_0_1();
 		}
 
-		update_option( 'webmention_db_version', self::$target_version );
+		/**
+		 * Fires when the system has to be migrated.
+		 *
+		 * @param string $version_from_db The version from which to migrate.
+		 * @param string $target_version  The target version to migrate to.
+		 */
+		\do_action( 'webmention_migrate', $version_from_db, WEBMENTION_VERSION );
+
+		\update_option( 'webmention_db_version', WEBMENTION_VERSION );
+
+		self::unlock();
 	}
 
 	/**

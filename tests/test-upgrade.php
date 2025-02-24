@@ -1,7 +1,7 @@
 <?php
-class DB_Test extends WP_UnitTestCase {
+class Upgrade_Test extends WP_UnitTestCase {
 	public function test_update_database() {
-		require_once( dirname( __FILE__ ) . '/../includes/class-db.php' );
+		require_once( dirname( __FILE__ ) . '/../includes/class-upgrade.php' );
 
 		$comment_id = wp_insert_comment(
 			array(
@@ -24,11 +24,11 @@ class DB_Test extends WP_UnitTestCase {
 			)
 		);
 
-		$this->assertEquals( \Webmention\DB::get_version(), 0 );
+		$this->assertEquals( \Webmention\Upgrade::get_version(), 0 );
 
-		\Webmention\DB::update_database();
+		\Webmention\Upgrade::maybe_upgrade();
 
-		$this->assertEquals( \Webmention\DB::get_version(), '1.0.1' );
+		$this->assertEquals( \Webmention\Upgrade::get_version(), WEBMENTION_VERSION );
 
 		wp_cache_flush();
 

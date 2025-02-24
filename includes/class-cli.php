@@ -315,9 +315,7 @@ class Cli extends WP_CLI_Command {
 	 * @return void
 	 */
 	public function db_migration( $args, $assoc_args ) {
-		require_once __DIR__ . '/class-db.php';
-
-		DB::update_database();
+		Upgrade::maybe_upgrade();
 
 		WP_CLI::success( __( 'DB Migration finished', 'webmention' ) );
 	}

@@ -20,6 +20,12 @@ class Comment {
 		add_filter( 'template_include', array( static::class, 'comment_template_include' ) );
 
 		add_filter( 'get_comment_link', array( static::class, 'remote_comment_link' ), 11, 2 );
+
+		// Default Comment Status.
+		add_filter( 'get_default_comment_status', 'webmention_get_default_comment_status', 11, 3 );
+
+		add_action( 'comment_form_after', 'webmention_comment_form', 11 );
+		add_action( 'comment_form_comments_closed', 'webmention_comment_form' );
 	}
 
 	/**
@@ -251,7 +257,7 @@ class Comment {
 
 		// replace template
 		if ( isset( $wp_query->query['replytocom'] ) ) {
-			return apply_filters( 'webmention_comment_template', __DIR__ . '/../templates/webmention-comment.php' );
+			return apply_filters( 'webmention_comment_template', WEBMENTION_PLUGIN_DIR . '/templates/webmention-comment.php' );
 		}
 
 		return $template;
