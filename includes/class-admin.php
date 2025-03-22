@@ -63,8 +63,8 @@ class Admin {
 	/**
 	 * Add comment-type as column in WP-Admin
 	 *
-	 * @param array $column the column to implement
-	 * @param int $comment_id the comment id
+	 * @param array $column     The column to implement.
+	 * @param int   $comment_id The comment id.
 	 */
 	public static function manage_comments_custom_column( $column, $comment_id ) {
 		if ( 'comment_type' !== $column ) {
@@ -74,7 +74,11 @@ class Admin {
 	}
 
 	/**
-	 * Add bulk option to bulk comment handler
+	 * Add bulk option to bulk comment handler.
+	 *
+	 * @param array $bulk_actions The bulk actions.
+	 *
+	 * @return array The bulk actions.
 	 */
 	public static function bulk_comment_actions( $bulk_actions ) {
 		$bulk_actions['refresh_webmention'] = __( 'Refresh Webmention', 'webmention' );
@@ -82,8 +86,13 @@ class Admin {
 	}
 
 	/**
-	 * Add bulk action handler to comments
+	 * Add bulk action handler to comments.
 	 *
+	 * @param string $redirect_to The redirect URL.
+	 * @param string $doaction    The action to perform.
+	 * @param array  $comment_ids The comment IDs.
+	 *
+	 * @return string The redirect URL.
 	 */
 	public static function bulk_comment_action_handler( $redirect_to, $doaction, $comment_ids ) {
 		if ( 'refresh_webmention' !== $doaction ) {
@@ -98,12 +107,12 @@ class Admin {
 	}
 
 	/**
-	 * Add an action link
+	 * Add an action link.
 	 *
-	 * @param array $links the settings links
-	 * @param string $file the plugin filename
+	 * @param array  $links The settings links.
+	 * @param string $file  The plugin filename.
 	 *
-	 * @return array the filtered array
+	 * @return array The filtered array.
 	 */
 	public static function plugin_action_links( $links, $file ) {
 		if ( stripos( $file, 'webmention' ) === false || ! function_exists( 'admin_url' ) ) {
@@ -120,12 +129,12 @@ class Admin {
 	}
 
 	/**
-	 * Add a plugin meta link
+	 * Add a plugin meta link.
 	 *
-	 * @param array $links the settings links
-	 * @param string $file the plugin filename
+	 * @param array  $links The settings links.
+	 * @param string $file  The plugin filename.
 	 *
-	 * @return array the filtered array
+	 * @return array The filtered array.
 	 */
 	public static function plugin_row_meta( $links, $file ) {
 		if ( stripos( $file, 'webmention' ) === false || ! function_exists( 'admin_url' ) ) {
@@ -175,9 +184,11 @@ class Admin {
 	}
 
 	/**
-	 * Add comment-type as column in WP-Admin
+	 * Add comment-type as column in WP-Admin.
 	 *
-	 * @param array $columns the list of column names
+	 * @param array $columns The list of column names.
+	 *
+	 * @return array The filtered columns.
 	 */
 	public static function comment_columns( $columns ) {
 		$columns['comment_type'] = esc_html__( 'Comment-Type', 'webmention' );
@@ -185,6 +196,14 @@ class Admin {
 		return $columns;
 	}
 
+	/**
+	 * Add comment-type as column in WP-Admin.
+	 *
+	 * @param array  $actions The actions.
+	 * @param object $comment The comment object.
+	 *
+	 * @return array The filtered actions.
+	 */
 	public static function comment_row_actions( $actions, $comment ) {
 		$query = array(
 			'_wpnonce' => wp_create_nonce( "approve-comment_$comment->comment_ID" ),
@@ -213,6 +232,11 @@ class Admin {
 		return $actions;
 	}
 
+	/**
+	 * Add a webmention approve domain.
+	 *
+	 * @param string $host The host.
+	 */
 	public static function add_webmention_approve_domain( $host ) {
 		$approvelist   = get_webmention_approve_domains();
 		$approvelist[] = $host;
@@ -221,6 +245,11 @@ class Admin {
 		update_option( 'webmention_approve_domains', $approvelist );
 	}
 
+	/**
+	 * Transition to approve list.
+	 *
+	 * @param object $comment The comment object.
+	 */
 	public static function transition_to_approvelist( $comment ) {
 		if ( ! current_user_can( 'moderate_comments' ) ) {
 			return;
@@ -267,9 +296,7 @@ class Admin {
 	 * Load settings page
 	 */
 	public static function settings_page() {
-		require_once __DIR__ . '/class-db.php';
-		\Webmention\DB::update_database();
-		\Webmention\remove_semantic_linkbacks();
+		Upgrade::maybe_upgrade();
 
 		add_thickbox();
 		wp_enqueue_script( 'plugin-install' );
@@ -326,6 +353,9 @@ class Admin {
 		);
 	}
 
+	/**
+	 * Register settings.
+	 */
 	public static function register_settings() {
 		register_setting(
 			'webmention',
@@ -450,7 +480,7 @@ class Admin {
 	}
 
 	/**
-	 * Add recommended privacy content
+	 * Add recommended privacy content.
 	 */
 	public static function add_privacy_policy_content() {
 		$content =
