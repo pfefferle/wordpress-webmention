@@ -40,6 +40,9 @@ class Receiver {
 		// Support Webmention delete
 		add_action( 'webmention_data_error', array( static::class, 'delete' ) );
 
+		// Add scheduler for async processing
+		add_action( 'webmention_process_schedule', array( static::class, 'process' ) );
+
 		self::register_meta();
 	}
 
@@ -215,10 +218,6 @@ class Receiver {
 	 * @param WP_REST_Request $request Full data about the request.
 	 *
 	 * @return WP_Error|WP_REST_Response
-	 *
-	 * @uses apply_filters calls "webmention_comment_data" on the comment data
-	 * @uses apply_filters calls "webmention_update" on the comment data
-	 * @uses apply_filters calls "webmention_success_message" on the success message
 	 */
 	public static function post( $request ) {
 		$source = $request->get_param( 'source' );
@@ -317,6 +316,17 @@ class Receiver {
 			return new WP_REST_Response( $return, 202 );
 		}
 
+		return self::process( $commentdata );
+	}
+
+	/**
+	 * Process the Webmention.
+	 *
+	 * @param array $commentdata The comment data.
+	 *
+	 * @return WP_REST_Response|WP_Error The response or an error.
+	 */
+	public static function process( $commentdata ) {
 		/**
 		 * Filter Comment Data for Webmentions.
 		 *
