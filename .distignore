@@ -8,7 +8,6 @@
 /vendor
 /tests
 /config
-readme.md
 package.json
 composer.json
 composer-php-scoper.json
