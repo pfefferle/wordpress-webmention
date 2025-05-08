@@ -3,7 +3,7 @@
 - Contributors: pfefferle, dshanske, indieweb
 - Donate link: https://notiz.blog/donate/
 - Tags: webmention, pingback, trackback, linkback, indieweb
-- Requires at least: 4.9
+- Requires at least: 6.3
 - Tested up to: 6.7
 - Stable tag: 5.3.3
 - Requires PHP: 7.0

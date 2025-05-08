@@ -208,14 +208,15 @@ class Sender {
 		$urls = webmention_extract_urls( $post->post_content, $support_media_urls );
 
 		// filter links
-		$targets = apply_filters( 'webmention_links', $urls, $post_id );
-		$targets = array_unique( $targets );
-		$pung    = get_pung( $post );
+		$targets   = apply_filters( 'webmention_links', $urls, $post_id );
+		$targets   = array_unique( $targets );
+		$mentioned = get_post_meta( $post->ID, '_webmentioned', true );
+		$mentioned = empty( $mentioned ) ? array() : $mentioned;
 
 		// Find previously sent Webmentions and send them one last time.
-		$deletes = array_diff( $pung, $targets );
+		$deletes = array_diff( $mentioned, $targets );
 
-		$ping = array();
+		$mentions = array();
 
 		foreach ( $targets as $target ) {
 			// send Webmention
@@ -225,16 +226,13 @@ class Sender {
 				continue;
 			}
 
-			// check response
-			if (
-				! is_wp_error( $response ) &&
-				wp_remote_retrieve_response_code( $response ) < 400
-			) {
-				$ping[] = $target;
-			}
+			$code = wp_remote_retrieve_response_code( $response );
 
-			// reschedule if server responds with a http error 5xx
-			if ( wp_remote_retrieve_response_code( $response ) >= 500 ) {
+			// check response
+			if ( ! is_wp_error( $response ) && $code < 400 ) {
+				$mentions[] = $target;
+			} elseif ( $code >= 500 ) {
+				// reschedule if server responds with a http error 5xx
 				self::reschedule( $post_id );
 			}
 		}
@@ -246,23 +244,23 @@ class Sender {
 			// reschedule if server responds with a http error 5xx
 			if ( wp_remote_retrieve_response_code( $response ) >= 500 ) {
 				self::reschedule( $post_id );
-				$ping[] = $deleted;
+				$mentions[] = $deleted;
 			}
 		}
 
-		if ( ! empty( $ping ) ) {
-			self::update_ping( $post, $ping );
+		if ( ! empty( $mentions ) ) {
+			update_post_meta( $post_id, '_webmentioned', $mentions );
 		}
 
-		return $ping;
+		$pung = get_pung( $post );
+
+		if ( ! empty( $ping ) ) {
+			self::update_ping( $post, array_merge( $pung, $ping ) );
+		}
+
+		return $mentions;
 	}
 
-	/*
-	 * Update the Pinged List as Opposed to Adding to It.
-	 *
-	 * @param int|WP_Post $post_id Post.
-	 * @param array $pinged Array of URLs
-	*/
 	public static function update_ping( $post_id, $pinged ) {
 		global $wpdb;
 		$post = get_post( $post_id );

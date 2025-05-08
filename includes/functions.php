@@ -550,18 +550,22 @@ if ( ! function_exists( 'ifset' ) ) {
  * @return boolean if webmentions are open
  */
 function webmentions_open( $post = null ) {
-	$_post   = get_post( $post );
-	$post_id = $_post ? $_post->ID : 0;
-
-	// If the post type does not support Webmentions do not even check further
-	if ( ! post_type_supports( get_post_type( $post_id ), 'webmentions' ) ) {
-		return false;
+	$post    = get_post( $post );
+	$post_id = $post ? $post->ID : 0;
+	$open    = false;
+	if ( $post ) {
+		// Always consider the home mention link page to be open.
+		if ( get_option( 'webmention_home_mentions' ) === $post->ID ) {
+			$open = true;
+		} elseif ( ! post_type_supports( get_post_type( $post ), 'webmentions' ) ) {
+			// If the post type does not support Webmentions do not even check further.
+			$open = false;
+		} else {
+			// If the webmentions_disabled meta key exists then consider webmentions closed. Otherwise consider them open.
+			$open = ! ( metadata_exists( 'post', $post_id, 'webmentions_disabled' ) ); // Invert the result, as exists is closed and not exists is open.
+		}
 	}
 
-	if ( get_option( 'webmention_home_mentions' ) === $post_id ) {
-		return true;
-	}
-	$open = ( $_post && ( pings_open( $post ) ) );
 	/**
 	 * Filters whether the current post is open for webmentions.
 	 *
@@ -570,23 +574,6 @@ function webmentions_open( $post = null ) {
 	 * @param int  $post_id    The post ID.
 	 */
 	return apply_filters( 'webmentions_open', $open, $post_id );
-}
-
-/**
- * Return enabled status of Homepage Webmentions.
- *
- * @since 3.8.9
- *
- * @param bool $open    Whether the current post is open for pings.
- * @param int  $post_id The post ID.
- * @return boolean if pings are open
- */
-function webmention_pings_open( $open, $post_id ) {
-	if ( get_option( 'webmention_home_mentions' ) === $post_id ) {
-		return true;
-	}
-
-	return $open;
 }
 
 /**
@@ -602,16 +589,7 @@ function webmention_pings_open( $open, $post_id ) {
  * @return string
  */
 function webmention_get_default_comment_status( $status, $post_type, $comment_type ) {
-	if ( 'webmention' === $comment_type ) {
-		return post_type_supports( $post_type, 'webmentions' ) ? 'open' : 'closed';
-	}
-
-	// Since support for the pingback comment type is used to keep pings open...
-	if ( ( 'pingback' === $comment_type ) ) {
-		return ( post_type_supports( $post_type, 'webmentions' ) ? 'open' : $status );
-	}
-
-	return $status;
+	return is_registered_webmention_comment_type( $comment_type ) ? 'open' : $status;
 }
 
 /**
@@ -706,4 +684,32 @@ if ( ! function_exists( 'is_html' ) ) {
 	function is_html( $string ) { // phpcs:ignore Universal.NamingConventions.NoReservedKeywordParameterNames.stringFound
 		return ( wp_strip_all_tags( $string ) !== $string );
 	}
+}
+
+/**
+ * Check if a site supports the block editor.
+ *
+ * @return boolean True if the site supports the block editor, false otherwise.
+ */
+function site_supports_blocks() {
+	$return = true;
+
+	if ( \version_compare( \get_bloginfo( 'version' ), '5.9', '<' ) ) {
+		$return = false;
+	} elseif ( \function_exists( 'classicpress_version' ) ) {
+		$return = false;
+	} elseif (
+		! \function_exists( 'register_block_type_from_metadata' ) ||
+		! \function_exists( 'do_blocks' )
+	) {
+		$return = false;
+	}
+
+	/**
+	 * Allow plugins to disable block editor support,
+	 * thus disabling blocks registered by the Webmentions plugin.
+	 *
+	 * @param boolean $supports_blocks True if the site supports the block editor, false otherwise.
+	 */
+	return apply_filters( 'webmention_site_supports_blocks', $return );
 }
