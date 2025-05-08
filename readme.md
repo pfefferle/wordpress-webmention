@@ -101,6 +101,20 @@ While not all display options can be settings, we are looking to provide some si
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
 
+### 5.4.0
+
+* Update yoast/phpunit-polyfills requirement from ^2.0 to ^3.0
+* Allow "Approve & Always Allow" only for Webmentions
+* Check for missing format property
+* Add single ClassicPress Unit Test
+* Use readme.md as main readme
+* Allow readme.md
+* Add setting for avatar store
+* Remove Webmention Dependence on Pings
+* Bump @wordpress/components from 28.13.0 to 29.4.0
+* Improve and simplify the plugin loader
+* Finally implement async processing
+
 ### 5.3.3
 
 * Load CSS also if comments are closed, because Webmentions ignore that setting
