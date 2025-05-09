@@ -87,6 +87,9 @@ class Autoloader {
 			$namespace  = \str_replace( '_', '-', $namespace );
 			$class_name = \substr( $class_name, $last_ns_pos + 1 );
 			$dir        = \str_replace( self::NS_SEPARATOR, DIRECTORY_SEPARATOR, $namespace ) . DIRECTORY_SEPARATOR;
+			if ( $dir ) {
+				$dir = ucfirst( $dir );
+			}
 		}
 
 		$path = $this->path . $dir . 'class-' . \str_replace( '_', '-', $class_name ) . '.php';
