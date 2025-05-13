@@ -121,7 +121,7 @@ function get_webmention_form_text( $post_id ) {
  * @return string
  */
 function get_default_webmention_form_text() {
-	return __( 'To respond on your own website, enter the URL of your response which should contain a link to this post\'s permalink URL. Your response will then appear (possibly after moderation) on this page. Want to update or remove your response? Update or delete your post and re-enter your post\'s URL again. (<a href="https://indieweb.org/webmention">Learn More</a>)', 'webmention' );
+	return __( 'To respond on your own website, enter the URL of your response which should contain a link to this post\'s permalink URL. Your response will then appear (possibly after moderation) on this page. Want to update or remove your response? Update or delete your post and re-enter your post\'s URL again. (<a href="https://indieweb.org/webmention">Learn more about webmention functionality</a>)', 'webmention' );
 }
 
 /**
