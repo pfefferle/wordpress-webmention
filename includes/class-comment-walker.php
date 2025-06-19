@@ -20,8 +20,10 @@ class Comment_Walker extends Walker_Comment {
 		if ( separate_webmentions_from_comments() ) {
 			add_action( 'pre_get_comments', array( static::class, 'comment_query' ) );
 
-			add_action( 'comment_form_before', array( static::class, 'show_separated_reactions' ) );
-			add_action( 'comment_form_comments_closed', array( static::class, 'show_separated_reactions' ) );
+			if ( \get_option( 'webmention_show_facepile', 1 ) ) {
+				add_action( 'comment_form_before', array( static::class, 'show_separated_reactions' ) );
+				add_action( 'comment_form_comments_closed', array( static::class, 'show_separated_reactions' ) );
+			}
 		}
 	}
 

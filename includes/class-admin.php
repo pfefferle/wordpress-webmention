@@ -51,7 +51,12 @@ class Admin {
 		printf( __( 'Based on your feedback and to improve the user experience, we decided to move the settings to a separate <a href="%1$s">settings-page</a>.', 'webmention' ), $path );
 	}
 
-	public static function meta_boxes( $object, $box ) {
+	/**
+	 * Add Webmention meta boxes to the comment editor screen.
+	 *
+	 * @param object $object The comment object.
+	 */
+	public static function meta_boxes( $object ) {
 		wp_nonce_field( 'webmention_comment_metabox', 'webmention_comment_nonce' );
 
 		if ( ! $object instanceof WP_Comment ) {
@@ -463,6 +468,16 @@ class Admin {
 			array(
 				'type'         => 'int',
 				'description'  => esc_html__( 'Separate Webmention Comment Types in Display from Comments', 'webmention' ),
+				'show_in_rest' => true,
+				'default'      => 1,
+			)
+		);
+		register_setting(
+			'webmention',
+			'webmention_show_facepile',
+			array(
+				'type'         => 'int',
+				'description'  => esc_html__( 'Show Facepile', 'webmention' ),
 				'show_in_rest' => true,
 				'default'      => 1,
 			)
