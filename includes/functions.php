@@ -563,7 +563,7 @@ function webmentions_open( $post = null ) {
 		} else {
 			$disabled = \get_post_meta( $post_id, 'webmentions_disabled', true );
 
-			if ( '1' === $disabled ) {
+			if ( $disabled ) {
 				$open = false;
 			} else {
 				$open = true;

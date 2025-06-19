@@ -131,9 +131,9 @@ class Webmention {
 
 		\add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 
-		// remove the "webmentions_disabled" meta value if the post is updated
-		\add_action( 'updated_post_meta', array( $this, 'maybe_remove_webmentions_disabled' ), 10, 4 );
-		\add_action( 'added_post_meta', array( $this, 'maybe_remove_webmentions_disabled' ), 10, 4 );
+		// Do not add the "webmentions_disabled" meta value if it is set to 0
+		\add_filter( 'update_post_metadata', array( $this, 'maybe_bypass_webmentions_disabled' ), 10, 4 );
+		\add_filter( 'add_post_metadata', array( $this, 'maybe_bypass_webmentions_disabled' ), 10, 4 );
 	}
 
 	/**
@@ -191,14 +191,20 @@ class Webmention {
 	/**
 	 * Delete the webmentions_disabled meta value if the post is updated.
 	 *
-	 * @param int    $meta_id    The meta ID.
+	 * @param bool   $check      The check.
 	 * @param int    $object_id  The object ID.
 	 * @param string $meta_key   The meta key.
 	 * @param mixed  $meta_value The meta value.
 	 */
-	public function maybe_remove_webmentions_disabled( $meta_id, $object_id, $meta_key, $meta_value ) {
+	public function maybe_bypass_webmentions_disabled( $check, $object_id, $meta_key, $meta_value ) {
 		if ( 'webmentions_disabled' === $meta_key && empty( $meta_value ) ) {
-			\delete_post_meta( $object_id, 'webmentions_disabled' );
+			if ( 'update_post_metadata' === current_action() ) {
+				\delete_post_meta( $object_id, $meta_key );
+			}
+
+			$check = true;
 		}
+
+		return $check;
 	}
 }
