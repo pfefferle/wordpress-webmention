@@ -162,7 +162,7 @@
 					<fieldset>
 						<label for="webmention_show_facepile">
 							<input type="checkbox" name="webmention_show_facepile" id="webmention_show_facepile" value="1" <?php checked( true, get_option( 'webmention_show_facepile', 1 ) ); ?> />
-							<?php esc_html_e( 'Show Facepile.', 'webmention' ); ?>
+							<?php esc_html_e( 'Automatically add Facepile to the comments section.', 'webmention' ); ?>
 						</label>
 					</fieldset>
 
