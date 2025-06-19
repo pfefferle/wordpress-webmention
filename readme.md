@@ -5,7 +5,7 @@
 - Tags: webmention, pingback, trackback, linkback, indieweb
 - Requires at least: 6.3
 - Tested up to: 6.8
-- Stable tag: 5.4.1
+- Stable tag: 5.5.0
 - Requires PHP: 7.2
 - License: MIT
 - License URI: https://opensource.org/licenses/MIT
@@ -100,6 +100,11 @@ While not all display options can be settings, we are looking to provide some si
 ## Changelog
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
+
+### 5.5.0
+
+* Fix `webmentions_disabled` meta value not being deleted.
+* Add `webmention_show_facepile` setting.
 
 ### 5.4.1
 
