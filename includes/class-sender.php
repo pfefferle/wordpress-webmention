@@ -44,7 +44,11 @@ class Sender {
 	 * @param int $post_id Post ID.
 	 */
 	public static function publish_hook( $post_id ) {
-		add_post_meta( $post_id, '_mentionme', '1', true );
+		if ( \get_post_meta( $post_id, 'webmention_send_disabled', 1 ) ) {
+			return;
+		}
+
+		\add_post_meta( $post_id, '_mentionme', '1', true );
 		// Post Types Other than Post Do Not Trigger Pings. This will unless it is already scheduled.
 		if ( ! wp_next_scheduled( 'do_pings' ) ) {
 			wp_schedule_single_event( time(), 'do_pings' );
@@ -188,6 +192,10 @@ class Sender {
 	 * @return array|bool array of results or false if failed.
 	 */
 	public static function send_webmentions( $post_id ) {
+		if ( \get_post_meta( $post_id, 'webmentions_disabled_pings', 1 ) ) {
+			return;
+		}
+
 		$source = get_post_meta( $post_id, 'webmention_canonical_url', true );
 
 		if ( ! $source ) {
@@ -321,7 +329,7 @@ class Sender {
 			remove_filter( 'pre_get_posts', 'ksuce_exclude_categories' );
 		}
 
-		$mentions = get_posts(
+		$post_ids = get_posts(
 			array(
 				'meta_key'  => '_mentionme',
 				'post_type' => get_post_types_by_support( 'webmentions' ),
@@ -334,14 +342,14 @@ class Sender {
 			add_filter( 'pre_get_posts', 'ksuce_exclude_categories' );
 		}
 
-		if ( empty( $mentions ) ) {
+		if ( empty( $post_ids ) ) {
 			return;
 		}
 
-		foreach ( $mentions as $mention ) {
-			delete_post_meta( $mention, '_mentionme' );
+		foreach ( $post_ids as $post_id ) {
+			\delete_post_meta( $post_id, '_mentionme' );
 			// send them Webmentions
-			self::send_webmentions( $mention );
+			self::send_webmentions( $post_id );
 		}
 	}
 }
