@@ -197,7 +197,9 @@ class Webmention {
 	 * @param mixed  $meta_value The meta value.
 	 */
 	public function maybe_bypass_webmentions_disabled( $check, $object_id, $meta_key, $meta_value ) {
-		if ( 'webmentions_disabled' === $meta_key && empty( $meta_value ) ) {
+		$meta_keys = array( 'webmentions_disabled', 'webmentions_send_disabled' );
+
+		if ( \in_array( $meta_key, $meta_keys, true ) && empty( $meta_value ) ) {
 			if ( 'update_post_metadata' === current_action() ) {
 				\delete_post_meta( $object_id, $meta_key );
 			}
