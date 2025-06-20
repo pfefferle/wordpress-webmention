@@ -31,9 +31,9 @@ const EditorPlugin = () => {
 				__nextHasNoMarginBottom
 				label={ __( 'Disable outgoing', 'webmention' ) }
 				help={ __( 'Do not send Webmentions for this post.', 'webmention' ) }
-				checked={ meta.webmentions_send_disabled }
+				checked={ meta.webmentions_disabled_pings }
 				onChange={ ( value ) => {
-					setMeta( { ...meta, webmentions_send_disabled: value } );
+					setMeta( { ...meta, webmentions_disabled_pings: value } );
 				} }
 			/>
 		</PluginDocumentSettingPanel>

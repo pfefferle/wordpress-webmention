@@ -29,7 +29,7 @@ class Block {
 			);
 			\register_post_meta(
 				$post_type,
-				'webmentions_send_disabled',
+				'webmentions_disabled_pings',
 				array(
 					'show_in_rest' => true,
 					'single'       => true,
