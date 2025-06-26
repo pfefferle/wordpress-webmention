@@ -44,7 +44,7 @@ class Sender {
 	 * @param int $post_id Post ID.
 	 */
 	public static function publish_hook( $post_id ) {
-		if ( \get_post_meta( $post_id, 'webmention_send_disabled', 1 ) ) {
+		if ( \get_post_meta( $post_id, 'webmentions_disabled_pings', 1 ) ) {
 			return;
 		}
 
