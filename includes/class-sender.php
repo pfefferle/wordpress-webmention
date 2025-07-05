@@ -25,6 +25,7 @@ class Sender {
 		// Send Webmentions from Every Type that Declared Webmention Support
 		$post_types = get_post_types_by_support( 'webmentions' );
 		foreach ( $post_types as $post_type ) {
+			add_action( 'save_' . $post_type, array( static::class, 'save_hook' ), 3 );
 			add_action( 'publish_' . $post_type, array( static::class, 'publish_hook' ), 3 );
 			add_action( 'trashed_' . $post_type, array( static::class, 'trash_hook' ) );
 		}
@@ -36,6 +37,41 @@ class Sender {
 
 		// remote delete posts
 		add_action( 'webmention_delete', array( static::class, 'send_webmentions' ) );
+		\add_action( 'init', array( self::class, 'register_postmeta' ), 11 );
+	}
+
+	/**
+	 * Register post meta
+	 */
+	public static function register_postmeta() {
+		$post_types = \get_post_types_by_support( 'webmentions' );
+		foreach ( $post_types as $post_type ) {
+			\register_post_meta(
+				$post_type,
+				'webmentions_disabled_pings',
+				array(
+					'show_in_rest' => true,
+					'single'       => true,
+					'type'         => 'boolean',
+				)
+			);
+		}
+	}
+
+	/**
+	 * Saves optional settings on save
+	 *
+	 * @param int $post_id Post ID.
+	 */
+	public static function save_hook( $post_id ) {
+		if ( array_key_exists( 'webmentions_disabled_pings', $_POST ) ) {
+			if ( 1 === intval( $_POST['webmentions_disabled_pings'] ) ) {
+				\add_post_meta( $post_id, 'webmentions_disabled_pings', '1', true );
+			} else {
+				\delete_post_meta( $post_id, 'webmentions_disabled_pings' );
+
+			}
+		}
 	}
 
 	/**

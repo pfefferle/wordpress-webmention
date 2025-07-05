@@ -43,6 +43,11 @@ class Receiver {
 		// Add scheduler for async processing
 		add_action( 'webmention_process_schedule', array( static::class, 'process' ) );
 
+		$post_types = get_post_types_by_support( 'webmentions' );
+		foreach ( $post_types as $post_type ) {
+			add_action( 'save_' . $post_type, array( static::class, 'save_hook' ), 3 );
+		}
+
 		self::register_meta();
 	}
 
@@ -50,6 +55,18 @@ class Receiver {
 	 * This is more to lay out the data structure than anything else.
 	 */
 	public static function register_meta() {
+		$post_types = \get_post_types_by_support( 'webmentions' );
+		foreach ( $post_types as $post_type ) {
+			\register_post_meta(
+				$post_type,
+				'webmentions_disabled',
+				array(
+					'show_in_rest' => true,
+					'single'       => true,
+					'type'         => 'boolean',
+				)
+			);
+		}
 		$args = array(
 			'type'         => 'string',
 			'description'  => esc_html__( 'Protocol Used to Receive', 'webmention' ),
@@ -125,6 +142,22 @@ class Receiver {
 			'show_in_rest' => true,
 		);
 		register_meta( 'comment', 'avatar', $args );
+	}
+
+	/**
+	 * Saves optional settings on save
+	 *
+	 * @param int $post_id Post ID.
+	 */
+	public static function save_hook( $post_id ) {
+		if ( array_key_exists( 'webmentions_disabled', $_POST ) ) {
+			if ( 1 === intval( $_POST['webmentions_disabled'] ) ) {
+				\add_post_meta( $post_id, 'webmentions_disabled', '1', true );
+			} else {
+				\delete_post_meta( $post_id, 'webmentions_disabled' );
+
+			}
+		}
 	}
 
 	/**

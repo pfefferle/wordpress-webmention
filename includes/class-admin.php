@@ -52,17 +52,27 @@ class Admin {
 	}
 
 	/**
-	 * Add Webmention meta boxes to the comment editor screen.
+	 * Add Webmention meta boxes to the omment editor screen.
 	 *
 	 * @param object $object The comment object.
 	 */
-	public static function meta_boxes( $object ) {
+	public static function comment_metabox( $object ) {
 		wp_nonce_field( 'webmention_comment_metabox', 'webmention_comment_nonce' );
 
 		if ( ! $object instanceof WP_Comment ) {
 			return;
 		}
 		load_template( __DIR__ . '/../templates/webmention-edit-comment-form.php' );
+	}
+
+	/**
+	 * Add Webmention settings meta box to the Classic editor screen.
+	 *
+	 * @param object $object The comment object.
+	 */
+	public static function post_metabox( $object ) {
+		wp_nonce_field( 'webmention_post_metabox', 'webmention_post_nonce' );
+		load_template( __DIR__ . '/../templates/webmention-edit-post-form.php' );
 	}
 
 	/**
@@ -162,10 +172,22 @@ class Admin {
 		add_meta_box(
 			'webmention-meta',
 			esc_html__( 'Webmention Data', 'webmention' ),
-			array( static::class, 'meta_boxes' ),
+			array( static::class, 'comment_metabox' ),
 			'comment',
 			'normal',
 			'default'
+		);
+		add_meta_box(
+			'webmention-meta',
+			esc_html__( 'Webmention Settings', 'webmention' ),
+			array( static::class, 'post_metabox' ),
+			get_option( 'webmention_support_post_types', array( 'post', 'page' ) ),
+			'side',
+			'default',
+			array(
+				'__block_editor_compatible_meta_box' => true,
+				'__back_compat_meta_box'             => true, // This should only be used in the Classic Editor.
+			)
 		);
 	}
 
