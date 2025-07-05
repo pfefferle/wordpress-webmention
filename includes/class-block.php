@@ -27,6 +27,15 @@ class Block {
 					'type'         => 'boolean',
 				)
 			);
+			\register_post_meta(
+				$post_type,
+				'webmentions_disabled_pings',
+				array(
+					'show_in_rest' => true,
+					'single'       => true,
+					'type'         => 'boolean',
+				)
+			);
 		}
 	}
 

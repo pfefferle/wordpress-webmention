@@ -20,11 +20,20 @@ const EditorPlugin = () => {
 		>
 			<CheckboxControl
 				__nextHasNoMarginBottom
-				label={ __( 'Disable Webmentions', 'webmention' ) }
+				label={ __( 'Disable incoming', 'webmention' ) }
 				help={ __( 'Do not accept incoming Webmentions for this post.', 'webmention' ) }
 				checked={ meta.webmentions_disabled }
 				onChange={ ( value ) => {
 					setMeta( { ...meta, webmentions_disabled: value } );
+				} }
+			/>
+			<CheckboxControl
+				__nextHasNoMarginBottom
+				label={ __( 'Disable outgoing', 'webmention' ) }
+				help={ __( 'Do not send Webmentions for this post.', 'webmention' ) }
+				checked={ meta.webmentions_disabled_pings }
+				onChange={ ( value ) => {
+					setMeta( { ...meta, webmentions_disabled_pings: value } );
 				} }
 			/>
 		</PluginDocumentSettingPanel>
