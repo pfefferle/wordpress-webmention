@@ -112,6 +112,15 @@ class MF2 extends Base {
 			foreach ( array( 'name', 'nickname', 'given-name', 'family-name', 'url', 'email', 'photo' ) as $prop ) {
 				$author[ $prop ] = $this->get_plaintext( $properties, $prop );
 			}
+
+			// If name is not available, use nickname or the combination of given name and family name as fallback
+			if ( empty( $author['name'] ) ) {
+				if ( ! empty( $author['nickname'] ) ) {
+					$author['name'] = $author['nickname'];
+				} elseif ( ! empty( $author['given-name'] ) || ! empty( $author['family-name'] ) ) {
+					$author['name'] = implode( ' ', array_filter( array( $author['given-name'], $author['family-name'] ) ) );
+				}
+			}
 		}
 
 		$this->webmention_item->add_author( array_filter( $author ) );
