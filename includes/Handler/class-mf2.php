@@ -473,13 +473,13 @@ class MF2 extends Base {
 							'content' === $key &&
 							! empty( $value['html'] ) &&
 							is_string( $value['html'] ) &&
-							preg_match_all( '/<a\b[^>]*href\s*=\s*["\']?' . preg_quote( $target, '/' ) . '["\']/i', $value['html'], $context )
+							preg_match_all( '/<a[^>]*href\s*=\s*["\']?' . preg_quote( $target, '/' ) . '["\']?/i', $value['html'] )
 						) {
 							return $item;
 						} elseif (
 							'summary' === $key &&
 							is_string( $value ) &&
-							preg_match_all( '/<a\b[^>]*href\s*=\s*["\']?' . preg_quote( $target, '/' ) . '["\']/i', $value, $context )
+							preg_match_all( '/<a[^>]*href\s*=\s*["\']?' . preg_quote( $target, '/' ) . '["\']?/i', $value )
 						) {
 							return $item;
 						}
@@ -815,13 +815,13 @@ class MF2 extends Base {
 									'content' === $obj_key &&
 									! empty( $obj_value['html'] ) &&
 									is_string( $obj_value['html'] ) &&
-									preg_match_all( '/<a[^>]+?' . preg_quote( $target, '/' ) . '[^>]*>([^>]+?)<\/a>/i', $obj_value['html'], $context )
+									preg_match_all( '/<a[^>]*href\s*=\s*["\']?' . preg_quote( $target, '/' ) . '["\']?/i', $obj_value['html'] )
 								) {
 									return $classes[ $key ];
 								} elseif (
 									'summary' === $obj_key &&
 									is_string( $obj_value ) &&
-									preg_match_all( '/<a[^>]+?' . preg_quote( $target, '/' ) . '[^>]*>([^>]+?)<\/a>/i', $obj_value, $context )
+									preg_match_all( '/<a[^>]*href\s*=\s*["\']?' . preg_quote( $target, '/' ) . '["\']?/i', $obj_value )
 								) {
 									return $classes[ $key ];
 								}
