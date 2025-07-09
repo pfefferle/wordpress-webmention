@@ -400,13 +400,18 @@ class MF2 extends Base {
 	 *
 	 * @return array the h-entry node or false
 	 */
-	public function find_representative_item( $mf_array, $target ) {
+	public function find_representative_item( $mf_array, $target, $ignore_hcards = true ) {
 		$items = $this->get_items( $mf_array );
 		if ( ! is_array( $items ) || empty( $items ) ) {
 			return false;
 		}
 
 		foreach ( $items as $item ) {
+			// we do not want to check h-cards as main items as they are not the content
+			if ( $this->is_type( $item, 'h-card' ) && $ignore_hcards ) {
+				continue;
+			}
+
 			// check properties
 			if ( isset( $item['properties'] ) ) {
 				// check properties if target urls was mentioned
@@ -468,13 +473,13 @@ class MF2 extends Base {
 							'content' === $key &&
 							! empty( $value['html'] ) &&
 							is_string( $value['html'] ) &&
-							preg_match_all( '/<a[^>]+?' . preg_quote( $target, '/' ) . '[^>]*>([^>]+?)<\/a>/i', $value['html'], $context )
+							preg_match_all( '/<a\b[^>]*href\s*=\s*["\']?' . preg_quote( $target, '/' ) . '["\']/i', $value['html'], $context )
 						) {
 							return $item;
 						} elseif (
 							'summary' === $key &&
 							is_string( $value ) &&
-							preg_match_all( '/<a[^>]+?' . preg_quote( $target, '/' ) . '[^>]*>([^>]+?)<\/a>/i', $value, $context )
+							preg_match_all( '/<a\b[^>]*href\s*=\s*["\']?' . preg_quote( $target, '/' ) . '["\']/i', $value, $context )
 						) {
 							return $item;
 						}
@@ -497,6 +502,10 @@ class MF2 extends Base {
 	 */
 	protected function get_representative_item( $mf_array, $url ) {
 		$item = $this->find_representative_item( $mf_array, $url );
+		if ( empty( $item ) || ! is_array( $item ) ) {
+			$item = $this->find_representative_item( $mf_array, $url, false );
+		}
+
 		if ( empty( $item ) || ! is_array( $item ) ) {
 			return array();
 		}
