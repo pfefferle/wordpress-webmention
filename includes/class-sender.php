@@ -43,7 +43,7 @@ class Sender {
 	/**
 	 * Register post meta
 	 */
-	public static function register_postmeta() {
+	public static function register_meta() {
 		$post_types = \get_post_types_by_support( 'webmentions' );
 		foreach ( $post_types as $post_type ) {
 			\register_post_meta(
