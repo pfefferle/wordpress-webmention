@@ -33,8 +33,6 @@ class Discovery {
 		}
 
 		printf( '<link rel="webmention" href="%s" />' . PHP_EOL, get_webmention_endpoint() );
-		// backwards compatibility with v0.1
-		printf( '<link rel="http://webmention.org/" href="%s" />' . PHP_EOL, get_webmention_endpoint() );
 	}
 
 	/**
@@ -46,8 +44,6 @@ class Discovery {
 		}
 
 		header( sprintf( 'Link: <%s>; rel="webmention"', get_webmention_endpoint() ), false );
-		// backwards compatibility with v0.1
-		header( sprintf( 'Link: <%s>; rel="http://webmention.org/"', get_webmention_endpoint() ), false );
 	}
 
 	/**
@@ -56,11 +52,6 @@ class Discovery {
 	public static function jrd_links( $array ) {
 		$array['links'][] = array(
 			'rel'  => 'webmention',
-			'href' => get_webmention_endpoint(),
-		);
-		// backwards compatibility with v0.1
-		$array['links'][] = array(
-			'rel'  => 'http://webmention.org/',
 			'href' => get_webmention_endpoint(),
 		);
 
