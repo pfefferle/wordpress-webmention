@@ -37,7 +37,7 @@ class Sender {
 
 		// remote delete posts
 		add_action( 'webmention_delete', array( static::class, 'send_webmentions' ) );
-		\add_action( 'init', array( self::class, 'register_postmeta' ), 11 );
+		self::register_postmeta();
 	}
 
 	/**
