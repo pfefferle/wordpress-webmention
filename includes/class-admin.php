@@ -52,7 +52,7 @@ class Admin {
 	}
 
 	/**
-	 * Add Webmention meta boxes to the omment editor screen.
+	 * Add Webmention meta boxes to the comment editor screen.
 	 *
 	 * @param object $object The comment object.
 	 */
