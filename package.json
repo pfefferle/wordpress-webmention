@@ -6,7 +6,7 @@
     "@wordpress/components": "^30.3.0",
     "@wordpress/data": "^10.0.0",
     "@wordpress/env": "^10.10.0",
-    "@wordpress/icons": "^10.10.0"
+    "@wordpress/icons": "^11.0.0"
   },
   "repository": {
     "type": "git",
