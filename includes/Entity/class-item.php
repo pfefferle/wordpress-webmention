@@ -340,12 +340,14 @@ class Item {
 		$url         = $this->url;
 		$domain      = $url ? preg_replace( '/^www\./', '', wp_parse_url( $url, PHP_URL_HOST ) ) : '';
 
-		return sprintf(
-			$excerpt,
-			esc_html( $author_name ),
-			'this',
-			esc_url( $url ),
-			esc_html( $domain )
+		return webmention_sanitize_html(
+			sprintf(
+				$excerpt,
+				esc_html( $author_name ),
+				'this',
+				esc_url( $url ),
+				esc_html( $domain )
+			)
 		);
 	}
 
