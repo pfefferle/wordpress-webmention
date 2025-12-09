@@ -135,6 +135,10 @@ class JSONLD extends Base {
 	}
 
 	protected function is_jsonld_type( $jsonld, $type ) {
-		return ( array_key_exists( '@type', $jsonld ) && $type === $jsonld['@type'] );
+		if ( $jsonld ) {
+			return ( array_key_exists( '@type', $jsonld ) && $type === $jsonld['@type'] );
+		} else {
+			return false;
+		}
 	}
 }
