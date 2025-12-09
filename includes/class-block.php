@@ -9,34 +9,6 @@ class Block {
 	public static function init() {
 		// Add editor plugin.
 		\add_action( 'enqueue_block_editor_assets', array( self::class, 'enqueue_editor_assets' ) );
-		\add_action( 'init', array( self::class, 'register_postmeta' ), 11 );
-	}
-
-	/**
-	 * Register post meta
-	 */
-	public static function register_postmeta() {
-		$post_types = \get_post_types_by_support( 'webmentions' );
-		foreach ( $post_types as $post_type ) {
-			\register_post_meta(
-				$post_type,
-				'webmentions_disabled',
-				array(
-					'show_in_rest' => true,
-					'single'       => true,
-					'type'         => 'boolean',
-				)
-			);
-			\register_post_meta(
-				$post_type,
-				'webmentions_disabled_pings',
-				array(
-					'show_in_rest' => true,
-					'single'       => true,
-					'type'         => 'boolean',
-				)
-			);
-		}
 	}
 
 	/**

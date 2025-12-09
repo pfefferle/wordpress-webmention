@@ -25,6 +25,7 @@ class Sender {
 		// Send Webmentions from Every Type that Declared Webmention Support
 		$post_types = get_post_types_by_support( 'webmentions' );
 		foreach ( $post_types as $post_type ) {
+			add_action( 'save_' . $post_type, array( static::class, 'save_hook' ), 3 );
 			add_action( 'publish_' . $post_type, array( static::class, 'publish_hook' ), 3 );
 			add_action( 'trashed_' . $post_type, array( static::class, 'trash_hook' ) );
 		}
@@ -36,6 +37,46 @@ class Sender {
 
 		// remote delete posts
 		add_action( 'webmention_delete', array( static::class, 'send_webmentions' ) );
+		self::register_meta();
+	}
+
+	/**
+	 * Register post meta.
+	 */
+	public static function register_meta() {
+		$post_types = \get_post_types_by_support( 'webmentions' );
+		foreach ( $post_types as $post_type ) {
+			\register_post_meta(
+				$post_type,
+				'webmentions_disabled_pings',
+				array(
+					'show_in_rest' => true,
+					'single'       => true,
+					'type'         => 'boolean',
+				)
+			);
+		}
+	}
+
+	/**
+	 * Saves optional settings on save.
+	 *
+	 * @param int $post_id Post ID.
+	 */
+	public static function save_hook( $post_id ) {
+		// Verify nonce.
+		if ( ! isset( $_POST['webmention_post_nonce'] ) || ! \wp_verify_nonce( $_POST['webmention_post_nonce'], 'webmention_post_metabox' ) ) {
+			return;
+		}
+
+		// Check user permissions.
+		if ( ! \current_user_can( 'edit_post', $post_id ) ) {
+			return;
+		}
+
+		if ( isset( $_POST['webmentions_disabled_pings'] ) ) {
+			\update_post_meta( $post_id, 'webmentions_disabled_pings', (bool) $_POST['webmentions_disabled_pings'] );
+		}
 	}
 
 	/**

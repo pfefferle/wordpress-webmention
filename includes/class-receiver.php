@@ -43,6 +43,11 @@ class Receiver {
 		// Add scheduler for async processing
 		add_action( 'webmention_process_schedule', array( static::class, 'process' ) );
 
+		$post_types = get_post_types_by_support( 'webmentions' );
+		foreach ( $post_types as $post_type ) {
+			add_action( 'save_' . $post_type, array( static::class, 'save_hook' ), 3 );
+		}
+
 		self::register_meta();
 	}
 
@@ -50,6 +55,18 @@ class Receiver {
 	 * This is more to lay out the data structure than anything else.
 	 */
 	public static function register_meta() {
+		$post_types = \get_post_types_by_support( 'webmentions' );
+		foreach ( $post_types as $post_type ) {
+			\register_post_meta(
+				$post_type,
+				'webmentions_disabled',
+				array(
+					'show_in_rest' => true,
+					'single'       => true,
+					'type'         => 'boolean',
+				)
+			);
+		}
 		$args = array(
 			'type'         => 'string',
 			'description'  => esc_html__( 'Protocol Used to Receive', 'webmention' ),
@@ -125,6 +142,27 @@ class Receiver {
 			'show_in_rest' => true,
 		);
 		register_meta( 'comment', 'avatar', $args );
+	}
+
+	/**
+	 * Saves optional settings on save.
+	 *
+	 * @param int $post_id Post ID.
+	 */
+	public static function save_hook( $post_id ) {
+		// Verify nonce.
+		if ( ! isset( $_POST['webmention_post_nonce'] ) || ! \wp_verify_nonce( $_POST['webmention_post_nonce'], 'webmention_post_metabox' ) ) {
+			return;
+		}
+
+		// Check user permissions.
+		if ( ! \current_user_can( 'edit_post', $post_id ) ) {
+			return;
+		}
+
+		if ( isset( $_POST['webmentions_disabled'] ) ) {
+			\update_post_meta( $post_id, 'webmentions_disabled', (bool) $_POST['webmentions_disabled'] );
+		}
 	}
 
 	/**
