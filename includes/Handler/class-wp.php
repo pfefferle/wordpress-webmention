@@ -176,6 +176,9 @@ class WP extends Base {
 		if ( ! is_array( $json ) || ! array_key_exists( '_embedded', $json ) ) {
 			return array();
 		}
+		if ( ! isset( $json['_embedded']['author'][0] ) ) {
+			return array();
+		}
 
 		$author_json = $json['_embedded']['author'][0];
 
