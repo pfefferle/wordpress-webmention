@@ -104,6 +104,7 @@ Project and support maintained on github at [pfefferle/wordpress-webmention](htt
 ### 5.5.1
 
 * Fix fatal error when parsing invalid date strings in webmentions.
+* Fix span tags inside anchor tags confusing WordPress auto-linking.
 
 ### 5.5.0
 
