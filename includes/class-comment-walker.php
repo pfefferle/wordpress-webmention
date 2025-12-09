@@ -150,19 +150,35 @@ class Comment_Walker extends Walker_Comment {
 	protected function avatar_only( $comment, $depth, $args ) {
 		$tag = ( 'div' === $args['style'] ) ? 'div' : 'li';
 
-		$title = get_comment_text( $comment, $args );
-		// Optionally overlay an icon.
+		$title  = get_comment_text( $comment, $args );
+		$avatar = get_avatar( $comment, $args['avatar_size'] );
+		$icon   = get_webmention_comment_type_attr( $comment->comment_type, 'icon' );
+
+		// Check if avatars are disabled or empty.
+		$has_avatar = ! empty( $avatar ) && get_option( 'show_avatars' );
+
+		// Optionally overlay an icon (only when avatar is present).
 		$overlay = '';
-		if ( $args['overlay'] ) {
-			$overlay = '<span class="emoji-overlay">' . get_webmention_comment_type_attr( $comment->comment_type, 'icon' ) . '</span>';
+		if ( $args['overlay'] && $has_avatar ) {
+			$overlay = '<span class="emoji-overlay">' . $icon . '</span>';
+		}
+
+		// Add class when no avatar is present.
+		$classes = array( get_webmention_comment_type_attr( $comment->comment_type, 'class' ), 'h-cite', 'avatar-only' );
+		if ( ! $has_avatar ) {
+			$classes[] = 'no-avatar';
 		}
 		?>
-		<<?php echo $tag; ?> id="comment-<?php comment_ID(); ?>" <?php comment_class( array( get_webmention_comment_type_attr( $comment->comment_type, 'class' ), 'h-cite', 'avatar-only' ), $comment ); ?>>
+		<<?php echo $tag; ?> id="comment-<?php comment_ID(); ?>" <?php comment_class( $classes, $comment ); ?>>
 			<div class="comment-body">
 				<span class="p-author h-card">
 					<a class="u-url" title="<?php esc_attr( $title ); ?>" href="<?php echo get_comment_author_url( $comment ); ?>">
-						<?php echo get_avatar( $comment, $args['avatar_size'] ); ?>
-						<?php echo $overlay; ?>
+						<?php if ( $has_avatar ) : ?>
+							<?php echo $avatar; ?>
+							<?php echo $overlay; ?>
+						<?php else : ?>
+							<span class="reaction-icon"><?php echo $icon; ?></span>
+						<?php endif; ?>
 					</a>
 					<span class="hide-name p-name"><?php echo get_comment_author( $comment ); ?></span>
 				</span>
