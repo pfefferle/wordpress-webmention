@@ -101,6 +101,10 @@ While not all display options can be settings, we are looking to provide some si
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
 
+### 5.5.1
+
+* Fix `array_merge()` error when `_embedded` key is missing in WordPress API response.
+
 ### 5.5.0
 
 * Fix `webmentions_disabled` meta value not being deleted.
