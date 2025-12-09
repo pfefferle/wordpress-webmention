@@ -145,18 +145,23 @@ class Receiver {
 	}
 
 	/**
-	 * Saves optional settings on save
+	 * Saves optional settings on save.
 	 *
 	 * @param int $post_id Post ID.
 	 */
 	public static function save_hook( $post_id ) {
-		if ( array_key_exists( 'webmentions_disabled', $_POST ) ) {
-			if ( 1 === intval( $_POST['webmentions_disabled'] ) ) {
-				\add_post_meta( $post_id, 'webmentions_disabled', '1', true );
-			} else {
-				\delete_post_meta( $post_id, 'webmentions_disabled' );
+		// Verify nonce.
+		if ( ! isset( $_POST['webmention_post_nonce'] ) || ! \wp_verify_nonce( $_POST['webmention_post_nonce'], 'webmention_post_metabox' ) ) {
+			return;
+		}
 
-			}
+		// Check user permissions.
+		if ( ! \current_user_can( 'edit_post', $post_id ) ) {
+			return;
+		}
+
+		if ( isset( $_POST['webmentions_disabled'] ) ) {
+			\update_post_meta( $post_id, 'webmentions_disabled', (bool) $_POST['webmentions_disabled'] );
 		}
 	}
 

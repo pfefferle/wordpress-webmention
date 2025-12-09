@@ -37,11 +37,11 @@ class Sender {
 
 		// remote delete posts
 		add_action( 'webmention_delete', array( static::class, 'send_webmentions' ) );
-		self::register_postmeta();
+		self::register_meta();
 	}
 
 	/**
-	 * Register post meta
+	 * Register post meta.
 	 */
 	public static function register_meta() {
 		$post_types = \get_post_types_by_support( 'webmentions' );
@@ -59,18 +59,23 @@ class Sender {
 	}
 
 	/**
-	 * Saves optional settings on save
+	 * Saves optional settings on save.
 	 *
 	 * @param int $post_id Post ID.
 	 */
 	public static function save_hook( $post_id ) {
-		if ( array_key_exists( 'webmentions_disabled_pings', $_POST ) ) {
-			if ( 1 === intval( $_POST['webmentions_disabled_pings'] ) ) {
-				\add_post_meta( $post_id, 'webmentions_disabled_pings', '1', true );
-			} else {
-				\delete_post_meta( $post_id, 'webmentions_disabled_pings' );
+		// Verify nonce.
+		if ( ! isset( $_POST['webmention_post_nonce'] ) || ! \wp_verify_nonce( $_POST['webmention_post_nonce'], 'webmention_post_metabox' ) ) {
+			return;
+		}
 
-			}
+		// Check user permissions.
+		if ( ! \current_user_can( 'edit_post', $post_id ) ) {
+			return;
+		}
+
+		if ( isset( $_POST['webmentions_disabled_pings'] ) ) {
+			\update_post_meta( $post_id, 'webmentions_disabled_pings', (bool) $_POST['webmentions_disabled_pings'] );
 		}
 	}
 

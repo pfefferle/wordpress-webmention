@@ -166,27 +166,29 @@ class Admin {
 	}
 
 	/**
-	 * Create a  meta boxes to be displayed on the comment editor screen.
+	 * Create meta boxes to be displayed on the comment and post editor screens.
 	 */
 	public static function add_meta_boxes() {
 		add_meta_box(
-			'webmention-meta',
+			'webmention-comment-meta',
 			esc_html__( 'Webmention Data', 'webmention' ),
 			array( static::class, 'comment_metabox' ),
 			'comment',
 			'normal',
 			'default'
 		);
+
+		$post_types = get_post_types_by_support( 'webmentions' );
 		add_meta_box(
-			'webmention-meta',
+			'webmention-post-meta',
 			esc_html__( 'Webmention Settings', 'webmention' ),
 			array( static::class, 'post_metabox' ),
-			get_option( 'webmention_support_post_types', array( 'post', 'page' ) ),
+			$post_types,
 			'side',
 			'default',
 			array(
 				'__block_editor_compatible_meta_box' => true,
-				'__back_compat_meta_box'             => true, // This should only be used in the Classic Editor.
+				'__back_compat_meta_box'             => true,
 			)
 		);
 	}
