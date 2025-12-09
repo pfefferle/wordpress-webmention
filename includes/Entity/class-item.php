@@ -309,7 +309,36 @@ class Item {
 			return $this->name;
 		}
 
-		return '';
+		// Fallback to excerpt template from registered comment type.
+		return $this->get_excerpt_fallback();
+	}
+
+	/**
+	 * Generate fallback content using the excerpt template from the registered comment type.
+	 *
+	 * @return string The generated excerpt or empty string.
+	 */
+	protected function get_excerpt_fallback() {
+		if ( ! function_exists( 'get_webmention_comment_type_attr' ) || ! $this->response_type ) {
+			return '';
+		}
+
+		$excerpt = get_webmention_comment_type_attr( $this->response_type, 'excerpt' );
+		if ( ! $excerpt ) {
+			return '';
+		}
+
+		$author_name = $this->get_author( 'name' );
+		$url         = $this->url;
+		$domain      = $url ? preg_replace( '/^www\./', '', wp_parse_url( $url, PHP_URL_HOST ) ) : '';
+
+		return sprintf(
+			$excerpt,
+			esc_html( $author_name ),
+			'this',
+			esc_url( $url ),
+			esc_html( $domain )
+		);
 	}
 
 	/**

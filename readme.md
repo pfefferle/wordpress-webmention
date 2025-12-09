@@ -101,6 +101,11 @@ While not all display options can be settings, we are looking to provide some si
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
 
+### 5.5.1
+
+* Add video/audio URL extraction as content fallback for webmentions without text content.
+* Use registered comment type excerpt templates as fallback for reactions (likes, reposts, etc.).
+
 ### 5.5.0
 
 * Fix `webmentions_disabled` meta value not being deleted.
