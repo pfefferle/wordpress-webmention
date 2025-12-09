@@ -22,8 +22,8 @@ class Sender {
 		// run webmentions before the other pinging stuff
 		add_action( 'do_pings', array( static::class, 'do_webmentions' ), 5, 1 );
 
-		// Send Webmentions from Every Type that Declared Webmention Support
-		$post_types = get_post_types_by_support( 'webmentions' );
+		// Send Webmentions from Every Type that Declared Webmention Send Support
+		$post_types = get_post_types_by_support( 'webmentions-send' );
 		foreach ( $post_types as $post_type ) {
 			add_action( 'save_' . $post_type, array( static::class, 'save_hook' ), 3 );
 			add_action( 'publish_' . $post_type, array( static::class, 'publish_hook' ), 3 );
@@ -44,7 +44,7 @@ class Sender {
 	 * Register post meta.
 	 */
 	public static function register_meta() {
-		$post_types = \get_post_types_by_support( 'webmentions' );
+		$post_types = \get_post_types_by_support( 'webmentions-send' );
 		foreach ( $post_types as $post_type ) {
 			\register_post_meta(
 				$post_type,

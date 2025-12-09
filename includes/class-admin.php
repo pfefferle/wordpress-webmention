@@ -421,9 +421,19 @@ class Admin {
 			'webmention_support_post_types',
 			array(
 				'type'         => 'string',
-				'description'  => esc_html__( 'Enable Webmention support for post types', 'webmention' ),
+				'description'  => esc_html__( 'Enable receiving Webmentions for post types', 'webmention' ),
 				'show_in_rest' => true,
-				'default'      => array( 'post', 'pages' ),
+				'default'      => array( 'post', 'page' ),
+			)
+		);
+		register_setting(
+			'webmention',
+			'webmention_send_post_types',
+			array(
+				'type'         => 'string',
+				'description'  => esc_html__( 'Enable sending Webmentions for post types', 'webmention' ),
+				'show_in_rest' => true,
+				'default'      => array( 'post', 'page' ),
 			)
 		);
 		register_setting(

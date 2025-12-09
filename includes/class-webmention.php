@@ -148,11 +148,18 @@ class Webmention {
 	 * Add support for Webmentions to custom post types.
 	 */
 	public function add_post_type_support() {
-		// Add support for Webmentions to custom post types.
+		// Add support for receiving Webmentions to custom post types.
 		$post_types = get_option( 'webmention_support_post_types', $this->default_post_types ) ? get_option( 'webmention_support_post_types', $this->default_post_types ) : array();
 
 		foreach ( $post_types as $post_type ) {
 			add_post_type_support( $post_type, 'webmentions' );
+		}
+
+		// Add support for sending Webmentions to custom post types.
+		$send_post_types = get_option( 'webmention_send_post_types', $this->default_post_types ) ? get_option( 'webmention_send_post_types', $this->default_post_types ) : array();
+
+		foreach ( $send_post_types as $post_type ) {
+			add_post_type_support( $post_type, 'webmentions-send' );
 		}
 	}
 

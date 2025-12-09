@@ -36,6 +36,27 @@
 					</fieldset>
 				</td>
 			</tr>
+			<tr>
+				<th scope="row"><?php esc_html_e( 'Send Webmentions for post types', 'webmention' ); ?></th>
+				<td>
+					<fieldset>
+						<?php esc_html_e( 'Enable sending Webmentions for the following post types:', 'webmention' ); ?>
+
+						<?php $post_types = get_post_types( array( 'public' => true ), 'objects' ); ?>
+						<?php $send_post_types = get_option( 'webmention_send_post_types', array( 'post', 'page' ) ) ? get_option( 'webmention_send_post_types', array( 'post', 'page' ) ) : array(); ?>
+						<ul>
+						<?php foreach ( $post_types as $post_type ) { ?>
+							<li>
+								<label for="webmention_send_post_types_<?php echo esc_attr( $post_type->name ); ?>">
+									<input type="checkbox" id="webmention_send_post_types_<?php echo esc_attr( $post_type->name ); ?>" name="webmention_send_post_types[]" value="<?php echo esc_attr( $post_type->name ); ?>" <?php checked( true, in_array( $post_type->name, $send_post_types, true ) ); ?> />
+									<?php echo esc_html( $post_type->label ); ?>
+								</label>
+							</li>
+						<?php } ?>
+						</ul>
+					</fieldset>
+				</td>
+			</tr>
 		</table>
 
 		<?php do_settings_fields( 'webmention', 'sender' ); ?>
@@ -46,10 +67,10 @@
 
 		<table class="form-table">
 			<tr>
-				<th scope="row"><?php esc_html_e( 'Webmention support for post types', 'webmention' ); ?></th>
+				<th scope="row"><?php esc_html_e( 'Receive Webmentions for post types', 'webmention' ); ?></th>
 				<td>
 					<fieldset>
-						<?php esc_html_e( 'Enable Webmention support for the following post types:', 'webmention' ); ?>
+						<?php esc_html_e( 'Enable receiving Webmentions for the following post types:', 'webmention' ); ?>
 
 						<?php $post_types = get_post_types( array( 'public' => true ), 'objects' ); ?>
 						<?php $support_post_types = get_option( 'webmention_support_post_types', array( 'post', 'page' ) ) ? get_option( 'webmention_support_post_types', array( 'post', 'page' ) ) : array(); ?>
