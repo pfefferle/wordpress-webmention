@@ -106,6 +106,7 @@ Project and support maintained on github at [pfefferle/wordpress-webmention](htt
 * Fix `array_merge()` error when `_embedded` key is missing in WordPress API response.
 * Fix fatal error when parsing invalid date strings in webmentions.
 * Fix span tags inside anchor tags confusing WordPress auto-linking.
+* Add `webmention_form_submit_text` filter to customize the "Ping me!" button text.
 
 ### 5.5.0
 
