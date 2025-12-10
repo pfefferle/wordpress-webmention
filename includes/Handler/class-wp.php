@@ -173,8 +173,11 @@ class WP extends Base {
 	 */
 	public function parse_author_json( Response $response ) {
 		$json = json_decode( $response->get_body(), true );
-		if ( ! array_key_exists( '_embedded', $json ) ) {
-			return null;
+		if ( ! is_array( $json ) || ! array_key_exists( '_embedded', $json ) ) {
+			return array();
+		}
+		if ( ! isset( $json['_embedded']['author'][0] ) ) {
+			return array();
 		}
 
 		$author_json = $json['_embedded']['author'][0];
