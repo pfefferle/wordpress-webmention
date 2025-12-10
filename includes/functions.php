@@ -434,6 +434,16 @@ function webmention_sanitize_html( $content ) {
 	// Strip HTML Comments.
 	$content = preg_replace( '/<!--(.|\s)*?-->/', '', $content );
 
+	// Remove span tags inside anchor tags to prevent WordPress auto-linking issues.
+	// Mastodon and other services wrap URL parts in spans, which confuses make_clickable().
+	$content = preg_replace_callback(
+		'/<a\b[^>]*>.*?<\/a>/is',
+		function ( $matches ) {
+			return preg_replace( '/<\/?span[^>]*>/i', '', $matches[0] );
+		},
+		$content
+	);
+
 	// Only allow approved HTML elements
 	$allowed = array(
 		'a'          => array(

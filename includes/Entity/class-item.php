@@ -179,7 +179,11 @@ class Item {
 		if ( $updated instanceof DateTimeImmutable ) {
 			$this->updated = $updated;
 		} else {
-			$this->updated = new DateTimeImmutable( $updated );
+			try {
+				$this->updated = new \DateTimeImmutable( $updated );
+			} catch ( \Exception $e ) {
+				$this->updated = new \DateTimeImmutable( 'now' );
+			}
 		}
 	}
 
@@ -219,7 +223,11 @@ class Item {
 		if ( $published instanceof DateTimeImmutable ) {
 			$this->published = $published;
 		} else {
-			$this->published = new DateTimeImmutable( $published );
+			try {
+				$this->published = new \DateTimeImmutable( $published );
+			} catch ( \Exception $e ) {
+				$this->published = new \DateTimeImmutable( 'now' );
+			}
 		}
 	}
 

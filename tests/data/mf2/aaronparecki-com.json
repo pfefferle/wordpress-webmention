@@ -4,7 +4,7 @@
     "url": "http://aaronparecki.com/"
   },
   "url": "http://example.com/webmention/source/placeholder",
-  "content": "<a href=\"http:\/\/adactio.com\/\">@adactio<\/a> Crossing my fingers that this post makes it! <a href=\"http:\/\/example.com\/tag\/indiewebcampuk\">#<span>indiewebcampuk<\/span><\/a> <a href=\"http:\/\/example.com\/tag\/webmention\">#<span>webmention<\/span><\/a>",
+  "content": "<a href=\"http:\/\/adactio.com\/\">@adactio<\/a> Crossing my fingers that this post makes it! <a href=\"http:\/\/example.com\/tag\/indiewebcampuk\">#indiewebcampuk<\/a> <a href=\"http:\/\/example.com\/tag\/webmention\">#webmention<\/a>",
   "summary": "@adactio Crossing my fingers that this post makes it! #indiewebcampuk #webmention",
   "response_type": "comment"
 }
