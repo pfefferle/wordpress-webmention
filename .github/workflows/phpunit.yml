@@ -38,6 +38,9 @@ jobs:
           - php-versions: '8.5'
             wp-version: 'trunk'
     steps:
+      - name: Install svn
+        run: sudo apt-get update && sudo apt-get install -y subversion
+
       - name: Checkout
         uses: actions/checkout@v6
 
@@ -71,6 +74,9 @@ jobs:
           - 3306:3306
         options: --health-cmd="healthcheck.sh --connect --innodb_initialized" --health-interval=10s --health-timeout=10s --health-retries=10
     steps:
+      - name: Install svn
+        run: sudo apt-get update && sudo apt-get install -y subversion
+
       - name: Checkout
         uses: actions/checkout@v6
 
