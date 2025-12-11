@@ -6,7 +6,6 @@ use WP_Comment;
 
 /**
  * Avatar Handler Class
- *
  */
 class Avatar {
 	/**
@@ -23,7 +22,6 @@ class Avatar {
 
 	/**
 	 * Function to retrieve Avatar if stored in meta
-	 *
 	 *
 	 * @param int|WP_Comment $comment
 	 *
