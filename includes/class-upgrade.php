@@ -177,7 +177,7 @@ class Upgrade {
 		// 2. migrate comment type
 		global $wpdb;
 
-		//Migrate Webmentions to comment types.
+		// Migrate Webmentions to comment types.
 		$wpdb->query(
 			"UPDATE {$wpdb->comments} comment SET comment_type = ( SELECT meta_value FROM {$wpdb->commentmeta} WHERE comment_id = comment.comment_ID AND meta_key = 'semantic_linkbacks_type' LIMIT 1 ) WHERE comment_type = 'webmention'"
 		);

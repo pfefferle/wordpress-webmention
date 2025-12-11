@@ -585,7 +585,7 @@ class Receiver {
 	/**
 	 * Disable the WordPress `check dupes` functionality
 	 *
-	 * @param int $dupe_id ID of the comment identified as a duplicate.
+	 * @param int   $dupe_id ID of the comment identified as a duplicate.
 	 * @param array $commentdata Data for the comment being created.
 	 *
 	 * @return int
@@ -752,7 +752,7 @@ class Receiver {
 	 * Use the approved check function to approve a comment if the source domain is on the approve list.
 	 *
 	 * @param int|string/WP_Error $approved The approval status. Accepts 1, 0, spam, or WP_Error.
-	 * @param array $commentdata
+	 * @param array               $commentdata
 	 *
 	 * @return array $commentdata
 	 */

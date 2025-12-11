@@ -6,7 +6,6 @@ use WP_Comment;
 
 /**
  * Avatar Store Class
- *
  */
 class Avatar_Store {
 	/**
@@ -21,7 +20,7 @@ class Avatar_Store {
 	/**
 	 * Return upload directory.
 	 *
-	 * @param string $filepath File Path. Optional
+	 * @param string  $filepath File Path. Optional
 	 * @param boolean $url Return a URL if true, otherwise the directory.
 	 * @return string URL of upload directory.
 	 */
@@ -40,7 +39,6 @@ class Avatar_Store {
 	 * @param string $host Host.
 	 * @param string $author Author
 	 * @return string URL to Downloaded Image.
-	 *
 	 */
 	public static function sideload_avatar( $url, $host, $author ) {
 		// If the URL is inside the upload directory.
