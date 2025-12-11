@@ -371,6 +371,7 @@ class Item {
 
 	/**
 	 * String length function
+	 *
 	 * @return int
 	 */
 	public function str_length( $text ) {

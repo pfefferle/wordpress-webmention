@@ -127,16 +127,16 @@ class Upgrade {
 	/**
 	 * Rename meta keys.
 	 *
-	 * @param string $old The old commentmeta key
-	 * @param string $new The new commentmeta key
+	 * @param string $old_key The old commentmeta key.
+	 * @param string $new_key The new commentmeta key.
 	 */
-	public static function update_commentmeta_key( $old, $new ) {
+	public static function update_commentmeta_key( $old_key, $new_key ) {
 		global $wpdb;
 
 		$wpdb->update(
 			$wpdb->commentmeta,
-			array( 'meta_key' => $new ),
-			array( 'meta_key' => $old ),
+			array( 'meta_key' => $new_key ),
+			array( 'meta_key' => $old_key ),
 			array( '%s' ),
 			array( '%s' )
 		);
@@ -145,16 +145,16 @@ class Upgrade {
 	/**
 	 * Rename option keys.
 	 *
-	 * @param string $old The old option key
-	 * @param string $new The new option key
+	 * @param string $old_key The old option key.
+	 * @param string $new_key The new option key.
 	 */
-	public static function update_options_key( $old, $new ) {
+	public static function update_options_key( $old_key, $new_key ) {
 		global $wpdb;
 
 		$wpdb->update(
 			$wpdb->options,
-			array( 'options_name' => $new ),
-			array( 'options_name' => $old ),
+			array( 'options_name' => $new_key ),
+			array( 'options_name' => $old_key ),
 			array( '%s' ),
 			array( '%s' )
 		);
@@ -177,7 +177,7 @@ class Upgrade {
 		// 2. migrate comment type
 		global $wpdb;
 
-		//Migrate Webmentions to comment types.
+		// Migrate Webmentions to comment types.
 		$wpdb->query(
 			"UPDATE {$wpdb->comments} comment SET comment_type = ( SELECT meta_value FROM {$wpdb->commentmeta} WHERE comment_id = comment.comment_ID AND meta_key = 'semantic_linkbacks_type' LIMIT 1 ) WHERE comment_type = 'webmention'"
 		);

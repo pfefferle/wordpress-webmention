@@ -1,23 +1,33 @@
 <?php
-class Upgrade_Test extends WP_UnitTestCase {
-	public function test_update_database() {
-		require_once( dirname( __FILE__ ) . '/../includes/class-upgrade.php' );
+/**
+ * Test Upgrade class.
+ *
+ * @package Webmention
+ */
 
+/**
+ * Test Upgrade class.
+ */
+class Test_Upgrade extends WP_UnitTestCase {
+	/**
+	 * Test update database.
+	 */
+	public function test_update_database() {
 		$comment_id = wp_insert_comment(
 			array(
-				'comment_author' => 'Test',
+				'comment_author'       => 'Test',
 				'comment_author_email' => 'test@example.org',
-				'comment_content' => 'test comment',
-				'comment_type' => 'webmention',
-				'comment_meta' => array(
-					'semantic_linkbacks_source' => 'https://example.org/source',
-					'semantic_linkbacks_avatar' => 'https://example.org/avatar',
-					'semantic_linkbacks_canonical' => 'https://example.org/canonical',
+				'comment_content'      => 'test comment',
+				'comment_type'         => 'webmention',
+				'comment_meta'         => array(
+					'semantic_linkbacks_source'     => 'https://example.org/source',
+					'semantic_linkbacks_avatar'     => 'https://example.org/avatar',
+					'semantic_linkbacks_canonical'  => 'https://example.org/canonical',
 					'semantic_linkbacks_author_url' => 'https://example.org/author_url',
-					'semantic_linkbacks_type' => 'reply',
-					'mf2_author' => array(
-						'name' => 'Test',
-						'url' => 'https://example.org/author_url',
+					'semantic_linkbacks_type'       => 'reply',
+					'mf2_author'                    => array(
+						'name'  => 'Test',
+						'url'   => 'https://example.org/author_url',
 						'photo' => 'https://example.org/avatar',
 					),
 				),

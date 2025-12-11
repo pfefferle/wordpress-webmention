@@ -68,7 +68,6 @@ final class Comment_Type {
 	 * Will populate object properties from the provided arguments and assign other
 	 * default properties based on that information.
 	 *
-	 *
 	 * @see register_webmention_comment_type()
 	 *
 	 * @param string       $post_type Post type key.
