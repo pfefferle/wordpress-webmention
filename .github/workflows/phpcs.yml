@@ -30,14 +30,10 @@ jobs:
         with:
           php-version: '7.4'
           coverage: none
-          tools: composer, cs2pr
+          tools: composer
 
       - name: Install Composer dependencies
         uses: ramsey/composer-install@v3
 
       - name: Detect coding standard violations
-        run: ./vendor/bin/phpcs --report-full --report-checkstyle=./phpcs-report.xml
-
-      - name: Show PHPCS results in PR
-        if: ${{ always() && github.event_name == 'pull_request' }}
-        run: cs2pr ./phpcs-report.xml
+        run: ./vendor/bin/phpcs
