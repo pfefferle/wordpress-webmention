@@ -87,6 +87,23 @@ class MF2 extends Base {
 		$this->webmention_item->add_photo( $this->get_plaintext( $mf_array, 'photo' ) );
 
 		$content = $this->get_html( $mf_array, 'content' );
+
+		// Fallback to video URL as link if no content.
+		if ( empty( $content ) ) {
+			$video = $this->get_plaintext( $mf_array, 'video' );
+			if ( $video && $this->is_url( $video ) ) {
+				$content = '<a href="' . esc_url( $video ) . '">' . esc_html( $video ) . '</a>';
+			}
+		}
+
+		// Fallback to audio URL as link if no content.
+		if ( empty( $content ) ) {
+			$audio = $this->get_plaintext( $mf_array, 'audio' );
+			if ( $audio && $this->is_url( $audio ) ) {
+				$content = '<a href="' . esc_url( $audio ) . '">' . esc_html( $audio ) . '</a>';
+			}
+		}
+
 		$this->webmention_item->add_content( $content );
 
 		$summary = $this->get_plaintext( $mf_array, 'summary' );

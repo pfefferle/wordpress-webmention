@@ -1,0 +1,8 @@
+{
+  "author": {
+    "name": "Video Author",
+    "url": "https://example.com/author"
+  },
+  "content": "<a href=\"https://video.example.com/video.mp4\">https://video.example.com/video.mp4</a>",
+  "response_type": "comment"
+}
