@@ -6,7 +6,8 @@
     "@wordpress/components": "^30.3.0",
     "@wordpress/data": "^10.0.0",
     "@wordpress/env": "^10.10.0",
-    "@wordpress/icons": "^11.0.0"
+    "@wordpress/icons": "^11.0.0",
+    "@wordpress/scripts": "^30.0.0"
   },
   "repository": {
     "type": "git",
@@ -27,8 +28,14 @@
   "scripts": {
     "dev": "wp-scripts start",
     "build": "wp-scripts build",
-    "readme": "grunt wp_readme_to_markdown",
-    "env-start": "wp-env start",
-    "env-stop": "wp-env stop"
+    "format": "wp-scripts format",
+    "lint:css": "wp-scripts lint-style",
+    "lint:js": "wp-scripts lint-js",
+    "env": "wp-env",
+    "env:start": "wp-env start",
+    "env:stop": "wp-env stop",
+    "env:destroy": "wp-env destroy",
+    "env:cli": "wp-env run cli",
+    "env:test": "wp-env run tests-cli --env-cwd=wp-content/plugins/webmention vendor/bin/phpunit"
   }
 }
