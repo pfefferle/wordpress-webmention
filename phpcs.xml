@@ -1,32 +1,55 @@
 <?xml version="1.0"?>
 <ruleset name="Webmention">
-	<description>WordPress Webmention Standards</description>
+	<description>WordPress Webmention Coding Standards</description>
 
+	<!-- What to scan -->
 	<file>./webmention.php</file>
 	<file>./includes/</file>
-	<exclude-pattern>*/includes/*\.(inc|css|js|svg)</exclude-pattern>
-	<exclude-pattern>*/vendor/*</exclude-pattern>
-	<exclude-pattern>*/libraries/*</exclude-pattern>
-	<exclude-pattern>*/config/*</exclude-pattern>
-	<exclude-pattern>*/node_modules/*</exclude-pattern>
-	<exclude-pattern>*/tests/*</exclude-pattern>
-	<rule ref="PHPCompatibility"/>
-	<config name="testVersion" value="7.2-"/>
-	<rule ref="WordPress-Core" />
+
+	<!-- Exclude patterns -->
+	<exclude-pattern>\.git/*</exclude-pattern>
+	<exclude-pattern>\.github/*</exclude-pattern>
+	<exclude-pattern>\.vscode/*</exclude-pattern>
+	<exclude-pattern>\.idea/*</exclude-pattern>
+	<exclude-pattern>\.wordpress-org/*</exclude-pattern>
+	<exclude-pattern>*\.(inc|css|js|svg)</exclude-pattern>
+	<exclude-pattern>vendor/*</exclude-pattern>
+	<exclude-pattern>node_modules/*</exclude-pattern>
+
+	<!-- How to scan -->
+	<arg value="sp"/>
+	<arg name="basepath" value="."/>
+	<arg name="colors"/>
+	<arg name="extensions" value="php"/>
+	<arg name="parallel" value="50"/>
+
+	<!-- Rules: WordPress Coding Standards -->
+	<rule ref="WordPress">
+		<exclude name="Universal.Operators.DisallowShortTernary.Found"/>
+	</rule>
+
+	<!-- Rules: PHP Compatibility -->
 	<rule ref="PHPCompatibilityWP"/>
-	<config name="minimum_supported_wp_version" value="6.3"/>
-	<rule ref="WordPress.WP.DeprecatedFunctions" />
-	<rule ref="WordPress.Files.FileName">
+	<config name="testVersion" value="7.2-"/>
+
+	<!-- Rules: WordPress specific -->
+	<config name="minimum_wp_version" value="6.5"/>
+
+	<rule ref="WordPress.WP.I18n">
 		<properties>
-			<property name="strict_class_file_names" value="false" />
+			<property name="text_domain" type="array">
+				<element value="webmention"/>
+				<element value="default"/>
+			</property>
 		</properties>
 	</rule>
-	<rule ref="WordPress-Extra" />
-	<rule ref="WordPress.WP.I18n"/>
-	<config name="text_domain" value="webmention,default"/>
-	<rule ref="WordPress.Security">
-		<exclude name="WordPress.Security.ValidatedSanitizedInput" />
-		<exclude name="WordPress.Security.NonceVerification" />
-		<exclude name="WordPress.Security.EscapeOutput" />
+
+	<rule ref="WordPress.Files.FileName">
+		<properties>
+			<property name="strict_class_file_names" value="false"/>
+		</properties>
 	</rule>
+
+	<!-- Rules: Variable Analysis -->
+	<rule ref="VariableAnalysis"/>
 </ruleset>

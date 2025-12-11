@@ -1,0 +1,98 @@
+name: Unit Tests
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '**.php'
+      - composer.json
+      - composer.lock
+      - .github/workflows/phpunit.yml
+  pull_request:
+    paths:
+      - '**.php'
+      - composer.json
+      - composer.lock
+      - .github/workflows/phpunit.yml
+
+jobs:
+  phpunit:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mariadb:10.4
+        env:
+          MARIADB_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: --health-cmd="healthcheck.sh --connect --innodb_initialized" --health-interval=10s --health-timeout=10s --health-retries=10
+    strategy:
+      fail-fast: false
+      matrix:
+        php-versions: ['7.2', '8.3', '8.5']
+        wp-version: ['latest']
+        include:
+          - php-versions: '7.2'
+            wp-version: '6.5'
+          - php-versions: '8.5'
+            wp-version: 'trunk'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          coverage: none
+          tools: composer
+          extensions: mysql
+
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@v3
+
+      - name: Setup Test Environment
+        run: bash ./bin/install-wp-tests.sh wordpress_test root root 127.0.0.1 ${{ matrix.wp-version }}
+
+      - name: Unit Testing
+        run: ./vendor/bin/phpunit
+        env:
+          PHP_VERSION: ${{ matrix.php-versions }}
+
+  coverage:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mariadb:10.4
+        env:
+          MARIADB_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: --health-cmd="healthcheck.sh --connect --innodb_initialized" --health-interval=10s --health-timeout=10s --health-retries=10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: xdebug
+          tools: composer, cs2pr
+          extensions: mysql
+
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@v3
+
+      - name: Setup Test Environment
+        run: bash ./bin/install-wp-tests.sh wordpress_test root root 127.0.0.1 latest
+
+      - name: Unit Testing with Coverage
+        run: ./vendor/bin/phpunit --coverage-clover coverage.xml
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage.xml
+          fail_ci_if_error: false

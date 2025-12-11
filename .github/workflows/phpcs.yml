@@ -1,20 +1,43 @@
 name: PHP_CodeSniffer
+
 on:
   push:
+    branches:
+      - main
+    paths:
+      - '**.php'
+      - phpcs.xml
+      - composer.json
+      - composer.lock
+      - .github/workflows/phpcs.yml
   pull_request:
+    paths:
+      - '**.php'
+      - phpcs.xml
+      - composer.json
+      - composer.lock
+      - .github/workflows/phpcs.yml
+
 jobs:
   phpcs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
+
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '7.4'
           coverage: none
           tools: composer, cs2pr
-      - name: Install Composer dependencies for PHP
-        uses: "ramsey/composer-install@v2"
+
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@v3
+
       - name: Detect coding standard violations
-        run: ./vendor/bin/phpcs -n -q
+        run: ./vendor/bin/phpcs --report-full --report-checkstyle=./phpcs-report.xml
+
+      - name: Show PHPCS results in PR
+        if: ${{ always() && github.event_name == 'pull_request' }}
+        run: cs2pr ./phpcs-report.xml
