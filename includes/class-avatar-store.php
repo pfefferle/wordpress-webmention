@@ -82,6 +82,7 @@ class Avatar_Store {
 			if ( is_wp_error( $file ) ) {
 				return false;
 			}
+			// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- Silencing is intentional as move may fail on some systems.
 			@move_uploaded_file( $file, $filepath );
 			return self::upload_directory( $filehandle, true );
 		}

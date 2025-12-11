@@ -263,7 +263,7 @@ class Comment_Walker extends Walker_Comment {
 				</div><!-- .comment-content -->
 
 				<?php
-				if ( '1' == $comment->comment_approved || $show_pending_links ) {
+				if ( $comment->comment_approved || $show_pending_links ) {
 					comment_reply_link(
 						array_merge(
 							$args,

@@ -244,7 +244,7 @@ class Receiver {
 	 *
 	 * @return true
 	 */
-	public static function get( $request ) {
+	public static function get( $request ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 		return true;
 	}
 
