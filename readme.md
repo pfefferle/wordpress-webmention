@@ -106,6 +106,7 @@ Project and support maintained on github at [pfefferle/wordpress-webmention](htt
 * Fix `array_merge()` error when `_embedded` key is missing in WordPress API response.
 * Fix fatal error when parsing invalid date strings in webmentions.
 * Fix span tags inside anchor tags confusing WordPress auto-linking.
+* Fix PHP warning for undefined array key `comment_content` when webmention has no content.
 
 ### 5.5.0
 
