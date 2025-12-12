@@ -54,12 +54,12 @@ class Admin {
 	/**
 	 * Add Webmention meta boxes to the comment editor screen.
 	 *
-	 * @param object $object The comment object.
+	 * @param WP_Comment $comment The comment object.
 	 */
-	public static function comment_metabox( $object ) {
+	public static function comment_metabox( $comment ) {
 		wp_nonce_field( 'webmention_comment_metabox', 'webmention_comment_nonce' );
 
-		if ( ! $object instanceof WP_Comment ) {
+		if ( ! $comment instanceof WP_Comment ) {
 			return;
 		}
 		load_template( __DIR__ . '/../templates/webmention-edit-comment-form.php' );
@@ -68,9 +68,9 @@ class Admin {
 	/**
 	 * Add Webmention settings meta box to the Classic editor screen.
 	 *
-	 * @param object $object The comment object.
+	 * @param WP_Post $post The post object.
 	 */
-	public static function post_metabox( $object ) {
+	public static function post_metabox( $post ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 		wp_nonce_field( 'webmention_post_metabox', 'webmention_post_nonce' );
 		load_template( __DIR__ . '/../templates/webmention-edit-post-form.php' );
 	}
@@ -244,7 +244,7 @@ class Admin {
 		$approve_url = admin_url( 'comment.php' );
 		$approve_url = add_query_arg( $query, $approve_url );
 		$status      = wp_get_comment_status( $comment );
-		$protocol    = get_comment_meta( $comment->comment_ID, 'protocol' );
+		$protocol    = get_comment_meta( $comment->comment_ID, 'protocol', false );
 
 		if ( ! $protocol || ! in_array( 'webmention', $protocol, true ) ) {
 			return $actions;

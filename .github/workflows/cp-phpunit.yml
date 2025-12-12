@@ -1,37 +1,54 @@
 name: ClassicPress Unit Testing
+
 on:
-    push:
-    pull_request:
+  push:
+    branches:
+      - main
+    paths:
+      - '**.php'
+      - composer.json
+      - composer.lock
+      - .github/workflows/cp-phpunit.yml
+  pull_request:
+    paths:
+      - '**.php'
+      - composer.json
+      - composer.lock
+      - .github/workflows/cp-phpunit.yml
+
 jobs:
   phpunit:
     runs-on: ubuntu-latest
     services:
-     mysql:
-       image: mariadb:10.4
-       env:
-         MYSQL_ROOT_PASSWORD: root
-       ports:
-         - 3306:3306
-       options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=10s --health-retries=10
+      mysql:
+        image: mariadb:10.4
+        env:
+          MARIADB_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: --health-cmd="healthcheck.sh --connect --innodb_initialized" --health-interval=10s --health-timeout=10s --health-retries=10
     strategy:
       matrix:
         php-versions: ['7.4']
-        include:
-          - cp-version: latest
+        cp-version: ['latest']
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
+
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-versions }}
           coverage: none
-          tools: composer, phpunit-polyfills
+          tools: composer
           extensions: mysql
-      - name: Install Composer dependencies for PHP
-        uses: "ramsey/composer-install@v2"
+
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@v3
+
       - name: Setup Test Environment
         run: bash ./bin/install-cp-tests.sh cpc_test root root 127.0.0.1 ${{ matrix.cp-version }}
+
       - name: Unit Testing
         run: ./vendor/bin/phpunit
         env:

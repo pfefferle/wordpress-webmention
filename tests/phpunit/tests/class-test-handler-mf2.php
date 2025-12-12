@@ -1,17 +1,24 @@
 <?php
+/**
+ * Test Handler MF2 class.
+ *
+ * @package Webmention
+ */
 
 use DMS\PHPUnitExtensions\ArraySubset\Assert;
 
-class Webmention_Handler_MF2_Test extends WP_UnitTestCase {
+/**
+ * Test Handler MF2 class.
+ */
+class Test_Handler_Mf2 extends WP_UnitTestCase {
 	/**
+	 * Test MF2 parsing.
+	 *
 	 * @dataProvider template_provider
+	 *
+	 * @param string $path Path to test file.
 	 */
 	public function test_mf2( $path ) {
-		require_once( dirname( __FILE__ ) . '/../includes/Handler/class-base.php' );
-		require_once( dirname( __FILE__ ) . '/../includes/Handler/class-mf2.php' );
-		require_once( dirname( __FILE__ ) . '/../includes/Entity/class-item.php' );
-		require_once( dirname( __FILE__ ) . '/../includes/class-response.php' );
-
 		$response = new \Webmention\Response( 'http://example.com/webmention/source/placeholder' );
 		$response->set_content_type( 'text/html' );
 		$response->set_body( file_get_contents( $path ) );
@@ -25,12 +32,17 @@ class Webmention_Handler_MF2_Test extends WP_UnitTestCase {
 		Assert::assertArraySubset( $subset, $handler->get_webmention_item()->to_array() );
 	}
 
+	/**
+	 * Data provider for test files.
+	 *
+	 * @return array Array of test file paths.
+	 */
 	public function template_provider() {
 		return array_map(
-			function( $path ) {
+			function ( $path ) {
 				return array( $path );
 			},
-			glob( dirname( __FILE__ ) . '/data/mf2/*.html' )
+			glob( WEBMENTION_TESTS_DIR . '/data/mf2/*.html' )
 		);
 	}
 }
