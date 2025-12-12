@@ -1,3 +1,24 @@
+/* Webmention Form Styles */
+#webmention-form {
+	margin: 1.5em 0;
+}
+
+#webmention-form label {
+	display: block;
+	margin-bottom: 0.5em;
+}
+
+#webmention-form .webmention-source {
+	width: 100%;
+	max-width: 100%;
+	padding: 0.5em;
+	font-size: inherit;
+	font-family: inherit;
+	border: 1px solid #949494;
+	box-sizing: border-box;
+}
+
+/* Reaction List Styles */
 .reaction-list ul {
 	border-style: solid;
 }

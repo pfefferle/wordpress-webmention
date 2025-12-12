@@ -10,10 +10,10 @@ do_action( 'webmention_comment_form_template_before' );
 	</p>
 	<p>
 		<label for="webmention-source"><?php esc_attr_e( 'URL/Permalink of your article', 'webmention' ); ?></label>
-		<input id="webmention-source" type="url" autocomplete="url" required pattern="^https?:\/\/(.*)" name="source" aria-describedby="webmention-source-description" />
+		<input id="webmention-source" class="webmention-source" type="url" autocomplete="url" required pattern="^https?:\/\/(.*)" name="source" aria-describedby="webmention-source-description" />
 	</p>
 	<p>
-		<input id="webmention-submit" type="submit" name="submit" value="<?php esc_attr_e( 'Ping me!', 'webmention' ); ?>" />
+		<input id="webmention-submit" class="wp-element-button" type="submit" name="submit" value="<?php echo esc_attr( apply_filters( 'webmention_form_submit_text', __( 'Ping me!', 'webmention' ) ) ); ?>" />
 	</p>
 	<input id="webmention-format" type="hidden" name="format" value="html" />
 	<input id="webmention-target" type="hidden" name="target" value="<?php the_permalink(); ?>" />
