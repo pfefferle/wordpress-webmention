@@ -33,6 +33,7 @@ class Admin {
 
 		add_filter( 'comment_row_actions', array( static::class, 'comment_row_actions' ), 13, 2 );
 		add_filter( 'comment_unapproved_to_approved', array( static::class, 'transition_to_approvelist' ), 10 );
+		add_action( 'edit_comment', array( static::class, 'save_comment' ) );
 
 		self::add_privacy_policy_content();
 	}
@@ -73,6 +74,21 @@ class Admin {
 	public static function post_metabox( $post ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 		wp_nonce_field( 'webmention_post_metabox', 'webmention_post_nonce' );
 		load_template( __DIR__ . '/../templates/webmention-edit-post-form.php' );
+	}
+
+	/**
+	 * Save the Webmention comment meta box.
+	 *
+	 * @param int $comment_id The comment ID.
+	 */
+	public static function save_comment( $comment_id ) {
+		if ( ! isset( $_POST['webmention_comment_nonce'] ) || ! wp_verify_nonce( $_POST['webmention_comment_nonce'], 'webmention_comment_metabox' ) ) {
+			return;
+		}
+
+		if ( isset( $_POST['webmention_avatar'] ) ) {
+			update_comment_meta( $comment_id, 'avatar', esc_url_raw( $_POST['webmention_avatar'] ) );
+		}
 	}
 
 	/**
@@ -549,11 +565,17 @@ class Admin {
 
 	/**
 	 * Enqueue admin styles.
+	 *
+	 * @param string $hook_suffix The hook suffix.
 	 */
-	public static function enqueue_scripts() {
+	public static function enqueue_scripts( $hook_suffix ) {
 		$current_screen = get_current_screen();
 		if ( isset( $current_screen->base ) && 'dashboard' === $current_screen->base ) {
 			wp_enqueue_style( 'webmention-admin', plugins_url( '/assets/css/admin.css', __DIR__ ), array(), version() );
+		}
+
+		if ( 'comment.php' === $hook_suffix ) {
+			wp_enqueue_media();
 		}
 	}
 }
