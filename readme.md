@@ -103,6 +103,7 @@ Project and support maintained on github at [pfefferle/wordpress-webmention](htt
 
 ### 5.5.1
 
+* Fix editor plugin error on custom post types without `custom-fields` support.
 * Add video/audio URL extraction as content fallback for webmentions without text content.
 * Use registered comment type excerpt templates as fallback for reactions (likes, reposts, etc.).
 * Fix `array_merge()` error when `_embedded` key is missing in WordPress API response.
