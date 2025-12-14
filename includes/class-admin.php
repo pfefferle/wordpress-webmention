@@ -85,10 +85,6 @@ class Admin {
 		if ( ! isset( $_POST['webmention_comment_nonce'] ) || ! wp_verify_nonce( $_POST['webmention_comment_nonce'], 'webmention_comment_metabox' ) ) {
 			return;
 		}
-
-		if ( isset( $_POST['webmention_avatar'] ) ) {
-			update_comment_meta( $comment_id, 'avatar', esc_url_raw( $_POST['webmention_avatar'] ) );
-		}
 	}
 
 	/**
@@ -574,8 +570,5 @@ class Admin {
 			wp_enqueue_style( 'webmention-admin', plugins_url( '/assets/css/admin.css', __DIR__ ), array(), version() );
 		}
 
-		if ( 'comment.php' === $hook_suffix ) {
-			wp_enqueue_media();
-		}
 	}
 }

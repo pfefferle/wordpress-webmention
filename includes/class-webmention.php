@@ -95,6 +95,8 @@ class Webmention {
 	 * Register hooks.
 	 */
 	public function register_hooks() {
+		// Register Tools REST routes early - before init
+		\add_action( 'rest_api_init', array( Tools::class, 'register_routes' ), 10 );
 		\add_action( 'init', array( Tools::class, 'init' ) );
 		\add_action( 'init', array( Comment::class, 'init' ) );
 		\add_action( 'init', array( Comment_Walker::class, 'init' ) );
