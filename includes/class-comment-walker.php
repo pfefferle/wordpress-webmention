@@ -78,7 +78,8 @@ class Comment_Walker extends Walker_Comment {
 		$GLOBALS['comment_depth'] = $depth; // phpcs:ignore
 		$GLOBALS['comment']       = $comment; // phpcs:ignore
 
-		/* Changes the signature of callbacks. Behaves as previous if string.
+		/*
+		Changes the signature of callbacks. Behaves as previous if string.
 		 * Now accepts an array of callbacks by comment type.
 		 * If no calback for the type or no general callback drops through to normal handler.
 		 */
@@ -146,7 +147,7 @@ class Comment_Walker extends Walker_Comment {
 	 * @param WP_Comment $comment The comment object.
 	 * @param int        $depth   Depth of the current comment.
 	 * @param array      $args    An array of arguments.
-	*/
+	 */
 	protected function avatar_only( $comment, $depth, $args ) {
 		$tag = ( 'div' === $args['style'] ) ? 'div' : 'li';
 
@@ -278,7 +279,7 @@ class Comment_Walker extends Walker_Comment {
 				</div><!-- .comment-content -->
 
 				<?php
-				if ( '1' == $comment->comment_approved || $show_pending_links ) {
+				if ( $comment->comment_approved || $show_pending_links ) {
 					comment_reply_link(
 						array_merge(
 							$args,

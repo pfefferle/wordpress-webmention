@@ -107,6 +107,7 @@ Project and support maintained on github at [pfefferle/wordpress-webmention](htt
 * Fix fatal error when parsing invalid date strings in webmentions.
 * Fix span tags inside anchor tags confusing WordPress auto-linking.
 * Fix distorted emoji display when avatars are disabled in Discussion settings.
+* Add basic styling for webmention form input and button elements.
 
 ### 5.5.0
 

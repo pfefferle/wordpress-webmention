@@ -49,13 +49,13 @@ class Discovery {
 	/**
 	 * Generates WebFinger/host-meta links
 	 */
-	public static function jrd_links( $array ) {
-		$array['links'][] = array(
+	public static function jrd_links( $jrd ) {
+		$jrd['links'][] = array(
 			'rel'  => 'webmention',
 			'href' => get_webmention_endpoint(),
 		);
 
-		return $array;
+		return $jrd;
 	}
 
 	/**
