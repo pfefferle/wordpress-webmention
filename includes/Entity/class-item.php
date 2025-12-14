@@ -516,7 +516,20 @@ class Item {
 			'remote_source_raw'    => $this->get_raw(),
 		);
 
-		return apply_filters( 'webmention_item_commentdata_array', array_filter( $comment ), $this );
+		// Define defaults to ensure required keys always exist (fixes PHP warning for empty comment_content)
+		$defaults = array(
+			'comment_author'       => '',
+			'comment_author_email' => '',
+			'comment_author_url'   => '',
+			'comment_content'      => '',
+			'comment_type'         => 'mention',
+			'comment_parent'       => 0,
+			'user_id'              => 0,
+		);
+
+		$comment = wp_parse_args( array_filter( $comment ), $defaults );
+
+		return apply_filters( 'webmention_item_commentdata_array', $comment, $this );
 	}
 
 	/**
