@@ -5,7 +5,7 @@ namespace Webmention;
 /**
  * Allow localhost URLs if WP_DEBUG is true.
  *
- * @param array  $r   Array of HTTP request args.
+ * @param array $r   Array of HTTP request args.
  *
  * @return array $args Array or string of HTTP request arguments.
  */

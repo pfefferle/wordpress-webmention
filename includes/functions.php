@@ -3,7 +3,6 @@
 /**
  * Registers a Webmention comment type.
  *
- *
  * @param string $comment_type Key for comment type.
  * @param array  $args         Arguments.
  *
@@ -25,7 +24,6 @@ function register_webmention_comment_type( $comment_type, $args = array() ) {
 
 	/**
 	 * Fires after a Webmention comment type is registered.
-	 *
 	 *
 	 * @param string                   $comment_type        Comment type.
 	 * @param \Webmention\Comment_Type $comment_type_object Arguments used to register the comment type.
@@ -375,6 +373,7 @@ function is_webmention_comment_type( $comment ) {
 
 /**
  * Returns a string indicating the comment type
+ *
  * @param int|WP_Comment $comment
  * @return string
  */
@@ -556,7 +555,7 @@ if ( ! function_exists( 'ifset' ) ) {
 /**
  * Return whether webmentions are open for a specific post id
  *
- * @param WP_Post|int  $post The post ID or Post Object.
+ * @param WP_Post|int $post The post ID or Post Object.
  * @return boolean if webmentions are open
  */
 function webmentions_open( $post = null ) {
@@ -583,7 +582,6 @@ function webmentions_open( $post = null ) {
 
 	/**
 	 * Filters whether the current post is open for webmentions.
-	 *
 	 *
 	 * @param bool $open Whether the current post is open.
 	 * @param int  $post_id    The post ID.
