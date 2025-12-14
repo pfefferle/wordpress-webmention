@@ -429,6 +429,19 @@ class Avatar_Store {
 	public static function update_comments_avatar( $old_avatar_url, $new_avatar_url ) {
 		global $wpdb;
 
+		// Get comment IDs that will be affected before updating.
+		$comment_ids = $wpdb->get_col(
+			$wpdb->prepare(
+				"SELECT comment_id FROM {$wpdb->commentmeta} WHERE meta_key = %s AND meta_value = %s",
+				'avatar',
+				$old_avatar_url
+			)
+		);
+
+		if ( empty( $comment_ids ) ) {
+			return 0;
+		}
+
 		$updated = $wpdb->update(
 			$wpdb->commentmeta,
 			array( 'meta_value' => $new_avatar_url ),
@@ -439,6 +452,15 @@ class Avatar_Store {
 			array( '%s' ),
 			array( '%s', '%s' )
 		);
+
+		// Clear comment meta cache for affected comments.
+		if ( $updated > 0 ) {
+			foreach ( $comment_ids as $comment_id ) {
+				clean_comment_cache( $comment_id );
+				// Also clear the meta cache specifically.
+				wp_cache_delete( $comment_id, 'comment_meta' );
+			}
+		}
 
 		return $updated;
 	}
