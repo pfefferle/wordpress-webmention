@@ -11,7 +11,7 @@ use Webmention\Handler\Jsonld;
 
 /**
  * Class for handling Webmention handlers
-*/
+ */
 class Handler {
 
 	protected $handlers = array();
