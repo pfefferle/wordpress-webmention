@@ -13,6 +13,11 @@ const EditorPlugin = () => {
 	);
 	const [ meta, setMeta ] = useEntityProp( 'postType', postType, 'meta' );
 
+	// Return null if meta is not available (e.g., CPT without 'custom-fields' support).
+	if ( ! meta ) {
+		return null;
+	}
+
 	return (
 		<PluginDocumentSettingPanel
 			name="webmention"
@@ -22,7 +27,7 @@ const EditorPlugin = () => {
 				__nextHasNoMarginBottom
 				label={ __( 'Disable incoming', 'webmention' ) }
 				help={ __( 'Do not accept incoming Webmentions for this post.', 'webmention' ) }
-				checked={ meta.webmentions_disabled }
+				checked={ meta.webmentions_disabled || false }
 				onChange={ ( value ) => {
 					setMeta( { ...meta, webmentions_disabled: value } );
 				} }
@@ -31,7 +36,7 @@ const EditorPlugin = () => {
 				__nextHasNoMarginBottom
 				label={ __( 'Disable outgoing', 'webmention' ) }
 				help={ __( 'Do not send Webmentions for this post.', 'webmention' ) }
-				checked={ meta.webmentions_disabled_pings }
+				checked={ meta.webmentions_disabled_pings || false }
 				onChange={ ( value ) => {
 					setMeta( { ...meta, webmentions_disabled_pings: value } );
 				} }

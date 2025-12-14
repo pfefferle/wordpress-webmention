@@ -134,7 +134,7 @@
 				<input id="webmention-target" type="url" autocomplete="url" required pattern="^https?:\/\/(.*)" name="target" placeholder="<?php esc_attr_e( 'URL/Permalink of my article', 'webmention' ); ?>" size="70" />
 			</p>
 			<p>
-				<input id="webmention-submit" type="submit" name="submit" value="<?php esc_attr_e( 'Ping me!', 'webmention' ); ?>" />
+				<input id="webmention-submit" type="submit" name="submit" value="<?php echo esc_attr( apply_filters( 'webmention_form_submit_text', __( 'Ping me!', 'webmention' ) ) ); ?>" />
 			</p>
 			<input id="webmention-format" type="hidden" name="format" value="html" />
 			<?php do_action( 'webmention_endpoint_form_after_input_fields' ); ?>

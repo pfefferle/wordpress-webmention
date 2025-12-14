@@ -103,10 +103,17 @@ Project and support maintained on github at [pfefferle/wordpress-webmention](htt
 
 ### 5.5.1
 
+* Fix editor plugin error on custom post types without `custom-fields` support.
+* Add video/audio URL extraction as content fallback for webmentions without text content.
+* Use registered comment type excerpt templates as fallback for reactions (likes, reposts, etc.).
 * Fix `array_merge()` error when `_embedded` key is missing in WordPress API response.
 * Fix fatal error when parsing invalid date strings in webmentions.
 * Fix span tags inside anchor tags confusing WordPress auto-linking.
 * Fix PHP warning for undefined array key `comment_content` when webmention has no content.
+* Add uninstall method to clean up plugin options on deletion.
+* Add `webmention_form_submit_text` filter to customize the "Ping me!" button text.
+* Fix distorted emoji display when avatars are disabled in Discussion settings.
+* Add basic styling for webmention form input and button elements.
 
 ### 5.5.0
 
