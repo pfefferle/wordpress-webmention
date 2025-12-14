@@ -33,6 +33,28 @@ class Avatar_Store {
 	}
 
 	/**
+	 * Determines if there is a file in the store for a specific host and URL
+	 *
+	 * @param string $host Host.
+	 * @param string $author Author.
+	 * @return string|boolean URL to image or false if not found
+	 */
+	public static function find_avatar( $host, $author ) {
+		$upload_dir = trailingslashit( self::upload_directory( $host ) );
+		$upload_url = trailingslashit( self::upload_directory( $host, true ) );
+		$results    = scandir( $upload_dir );
+		if ( ! $results ) {
+			return $results;
+		}
+		foreach ( $results as $result ) {
+			if ( str_contains( $result, md5( $author ) ) ) {
+				return $upload_url . $result;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Sideload Avatar
 	 *
 	 * @param string $url URL.
@@ -189,7 +211,8 @@ class Avatar_Store {
 
 		if ( $avatar_url ) {
 			delete_comment_meta( $comment->comment_ID, 'semantic_linkbacks_avatar' );
-			update_comment_meta( $comment->comment_ID, 'avatar', $avatar_url );
+			// disable updating this field as the original URL will be stored going forward and the store will overlay on top of that when the setting is enabled
+			// update_comment_meta( $comment->comment_ID, 'avatar', $avatar_url );
 		}
 	}
 }
