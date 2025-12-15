@@ -226,7 +226,7 @@ class Settings_Fields {
 			</p>
 
 			<p>
-				<textarea name="webmention_comment_form_text" id="webmention_comment_form_text" rows="10" cols="50" class="large-text code" placeholder="<?php echo \esc_attr( get_default_webmention_form_text() ); ?>"><?php echo \esc_textarea( \get_option( 'webmention_comment_form_text', '' ) ); ?></textarea>
+				<textarea name="webmention_comment_form_text" id="webmention_comment_form_text" rows="10" cols="50" class="large-text code" placeholder="<?php echo \esc_attr( \get_default_webmention_form_text() ); ?>"><?php echo \esc_textarea( \get_option( 'webmention_comment_form_text', '' ) ); ?></textarea>
 			</p>
 			<p class="description">
 				<label for="webmention_comment_form_text">
