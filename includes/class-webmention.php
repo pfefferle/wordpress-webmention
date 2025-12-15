@@ -7,6 +7,9 @@
 
 namespace Webmention;
 
+use Webmention\WP_Admin\Admin;
+use Webmention\WP_Admin\Settings_Fields;
+
 /**
  * Webmention Class
  *
@@ -142,8 +145,10 @@ class Webmention {
 	 * Register admin hooks.
 	 */
 	public function register_admin_hooks() {
-		add_action( 'admin_init', array( Admin::class, 'admin_init' ) );
-		add_action( 'admin_menu', array( Admin::class, 'admin_menu' ) );
+		\add_action( 'admin_init', array( Admin::class, 'admin_init' ) );
+		\add_action( 'admin_menu', array( Admin::class, 'admin_menu' ) );
+
+		Settings_Fields::init();
 	}
 
 	/**

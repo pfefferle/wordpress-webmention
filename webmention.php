@@ -21,15 +21,15 @@ namespace Webmention;
 \define( 'WEBMENTION_PLUGIN_FILE', \plugin_dir_path( __FILE__ ) . '/' . \basename( __FILE__ ) );
 \define( 'WEBMENTION_PLUGIN_URL', \plugin_dir_url( __FILE__ ) );
 
-require_once WEBMENTION_PLUGIN_DIR . '/includes/class-autoloader.php';
-require_once WEBMENTION_PLUGIN_DIR . '/includes/functions.php';
+require_once WEBMENTION_PLUGIN_DIR . 'includes/class-autoloader.php';
+require_once WEBMENTION_PLUGIN_DIR . 'includes/functions.php';
 
 if ( \WP_DEBUG ) {
-	require_once WEBMENTION_PLUGIN_DIR . '/includes/debug.php';
+	require_once WEBMENTION_PLUGIN_DIR . 'includes/debug.php';
 }
 
 // Register the autoloader.
-Autoloader::register_path( __NAMESPACE__, WEBMENTION_PLUGIN_DIR . '/includes' );
+Autoloader::register_path( __NAMESPACE__, WEBMENTION_PLUGIN_DIR . 'includes' );
 
 // Initialize the plugin.
 $webmention = Webmention::get_instance();
