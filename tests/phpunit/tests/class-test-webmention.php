@@ -29,7 +29,7 @@ class Test_Webmention extends WP_UnitTestCase {
 
 		// Test if some hooks are registered.
 		$this->assertEquals( has_action( 'init', array( \Webmention\Comment::class, 'init' ) ), 10 );
-		$this->assertEquals( has_action( 'admin_menu', array( \Webmention\Admin::class, 'admin_menu' ) ), 10 );
-		$this->assertEquals( has_action( 'admin_init', array( \Webmention\Admin::class, 'admin_init' ) ), 10 );
+		$this->assertEquals( has_action( 'admin_menu', array( \Webmention\WP_Admin\Admin::class, 'admin_menu' ) ), 10 );
+		$this->assertEquals( has_action( 'admin_init', array( \Webmention\WP_Admin\Admin::class, 'admin_init' ) ), 10 );
 	}
 }
