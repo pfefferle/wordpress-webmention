@@ -354,6 +354,7 @@ class Avatar_Store {
 
 	/**
 	 * Clean up orphaned avatar files (avatars not used by any comments).
+	 * Checks based on host and author URL properties used to generate the avatar URL.
 	 *
 	 * @return int Number of files deleted.
 	 */
@@ -366,17 +367,39 @@ class Avatar_Store {
 			return $deleted;
 		}
 
-		// Get all avatar URLs currently in use by comments
+		// Get all webmention comments with their host and author URL
 		global $wpdb;
-		$used_avatars = $wpdb->get_col(
-			$wpdb->prepare(
-				"SELECT DISTINCT meta_value FROM {$wpdb->commentmeta} WHERE meta_key = %s AND meta_value LIKE %s",
-				'avatar',
-				$wpdb->esc_like( $upload_url ) . '%'
-			)
+		$comments = $wpdb->get_results(
+			"SELECT c.comment_ID, c.comment_author_url, 
+				COALESCE(cm_url.meta_value, cm_source.meta_value, c.comment_author_url) as webmention_url
+			FROM {$wpdb->comments} c
+			LEFT JOIN {$wpdb->commentmeta} cm_url ON c.comment_ID = cm_url.comment_ID AND cm_url.meta_key = 'url'
+			LEFT JOIN {$wpdb->commentmeta} cm_source ON c.comment_ID = cm_source.comment_ID AND cm_source.meta_key = 'webmention_source_url'
+			WHERE c.comment_type = 'webmention'
+			AND c.user_id = 0"
 		);
 
-		$used_avatars = array_flip( $used_avatars );
+		// Build a map of used host + author_hash combinations
+		$used_combinations = array();
+		foreach ( $comments as $comment ) {
+			if ( ! $comment->webmention_url || ! $comment->comment_author_url ) {
+				continue;
+			}
+
+			$host = webmention_extract_domain( $comment->webmention_url );
+			if ( ! $host ) {
+				continue;
+			}
+
+			$author_url = normalize_url( $comment->comment_author_url );
+			if ( ! $author_url ) {
+				continue;
+			}
+
+			$author_hash = md5( $author_url );
+			$key = $host . '/' . $author_hash;
+			$used_combinations[ $key ] = true;
+		}
 
 		// Ensure we have a trailing slash for glob pattern.
 		$upload_dir = trailingslashit( $upload_dir );
@@ -403,12 +426,11 @@ class Avatar_Store {
 				}
 
 				$host     = basename( $host_dir );
-				$filename = basename( $file, '.jpg' );
-				$relative = $host . '/' . $filename . '.jpg';
-				$avatar_url = $upload_url . $relative;
+				$author_hash = basename( $file, '.jpg' );
+				$key = $host . '/' . $author_hash;
 
-				// Delete if not used by any comments
-				if ( ! isset( $used_avatars[ $avatar_url ] ) ) {
+				// Delete if no comments use this host + author_hash combination
+				if ( ! isset( $used_combinations[ $key ] ) ) {
 					if ( wp_delete_file( $file ) ) {
 						$deleted++;
 					}
