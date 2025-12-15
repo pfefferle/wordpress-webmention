@@ -257,7 +257,7 @@ class Comment {
 
 		// replace template
 		if ( isset( $wp_query->query['replytocom'] ) ) {
-			return apply_filters( 'webmention_comment_template', WEBMENTION_PLUGIN_DIR . '/templates/webmention-comment.php' );
+			return apply_filters( 'webmention_comment_template', WEBMENTION_PLUGIN_DIR . 'templates/comment.php' );
 		}
 
 		return $template;

@@ -63,7 +63,7 @@ class Admin {
 		if ( ! $comment instanceof WP_Comment ) {
 			return;
 		}
-		\load_template( WEBMENTION_PLUGIN_DIR . 'templates/webmention-edit-comment-form.php' );
+		\load_template( WEBMENTION_PLUGIN_DIR . 'templates/edit-comment-form.php' );
 	}
 
 	/**
@@ -73,7 +73,7 @@ class Admin {
 	 */
 	public static function post_metabox( $post ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 		\wp_nonce_field( 'webmention_post_metabox', 'webmention_post_nonce' );
-		\load_template( WEBMENTION_PLUGIN_DIR . 'templates/webmention-edit-post-form.php' );
+		\load_template( WEBMENTION_PLUGIN_DIR . 'templates/edit-post-form.php' );
 	}
 
 	/**
@@ -330,7 +330,7 @@ class Admin {
 
 		\add_thickbox();
 		\wp_enqueue_script( 'plugin-install' );
-		\load_template( WEBMENTION_PLUGIN_DIR . 'templates/webmention-settings.php' );
+		\load_template( WEBMENTION_PLUGIN_DIR . 'templates/settings.php' );
 	}
 
 	public static function add_help_tab() {
