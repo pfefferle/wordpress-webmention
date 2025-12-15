@@ -541,7 +541,7 @@ class Admin {
 				'<li>' . \esc_html__( 'The profile picture from your website', 'webmention' ) . '</li>' .
 				'<li>' . \esc_html__( 'The URL of your website', 'webmention' ) . '</li>' .
 				'<li>' . \esc_html__( 'Personal information you include in your post', 'webmention' ) . '</li>' .
-			'<ul>';
+			'</ul>';
 
 		if ( \function_exists( 'wp_add_privacy_policy_content' ) ) {
 			\wp_add_privacy_policy_content( \__( 'Webmention', 'webmention' ), $content );
