@@ -150,14 +150,18 @@ class WP extends Base {
 
 		$page_json = json_decode( $response->get_body(), true );
 
+		if ( ! is_array( $page_json ) ) {
+			return array();
+		}
+
 		return array_filter(
 			array(
 				'name'      => ifset( $page_json['title']['rendered'] ),
 				'summary'   => ifset( $page_json['excerpt']['rendered'] ),
 				'content'   => ifset( $page_json['content']['rendered'] ),
 				'url'       => ifset( $page_json['link'] ),
-				'published' => new DateTimeImmutable( $page_json['date'], $timezone ),
-				'updated'   => new DateTimeImmutable( $page_json['modified'], $timezone ),
+				'published' => isset( $page_json['date'] ) ? new DateTimeImmutable( $page_json['date'], $timezone ) : null,
+				'updated'   => isset( $page_json['modified'] ) ? new DateTimeImmutable( $page_json['modified'], $timezone ) : null,
 				'author'    => ifset( $page_json['_links']['author'][0]['href'] ),
 				'_pagedata' => $page_json,
 			)
