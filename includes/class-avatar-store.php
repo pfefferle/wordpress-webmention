@@ -25,10 +25,10 @@ class Avatar_Store {
 	 * @return string URL of upload directory.
 	 */
 	public static function upload_directory( $filepath = '', $url = false ) {
-		$upload_dir  = wp_get_upload_dir();
-		$upload_dir  = $url ? $upload_dir['baseurl'] : $upload_dir['basedir'];
-		$upload_dir .= '/webmention/avatars/';
-		$upload_dir  = apply_filters( 'webmention_avatar_directory', $upload_dir, $url );
+		$upload_dir = wp_get_upload_dir();
+		$upload_dir = $url ? $upload_dir['baseurl'] : $upload_dir['basedir'];
+		$upload_dir = trailingslashit( $upload_dir ) . '/webmention/avatars/';
+		$upload_dir = apply_filters( 'webmention_avatar_directory', $upload_dir, $url );
 		return $upload_dir . $filepath;
 	}
 
