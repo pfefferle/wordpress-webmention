@@ -103,6 +103,7 @@ Project and support maintained on github at [pfefferle/wordpress-webmention](htt
 
 ### 5.6.0
 
+* Fix undefined property warning in `Item::__call` magic method when accessing non-existent properties like `category`.
 * Search Avatar Store if enabled for match before trying meta field. Disable updating meta field when side loading allowing for more flexibility.
 * Fix editor plugin error on custom post types without `custom-fields` support.
 * Add video/audio URL extraction as content fallback for webmentions without text content.

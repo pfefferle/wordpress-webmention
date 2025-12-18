@@ -115,11 +115,11 @@ class Item {
 		$var = strtolower( substr( $method, 4 ) );
 
 		if ( strncasecmp( $method, 'get', 3 ) === 0 ) {
-			return $this->$var;
+			return property_exists( $this, $var ) ? $this->$var : '';
 		}
 
 		if ( strncasecmp( $method, 'has', 3 ) === 0 ) {
-			return ! empty( $this->$var );
+			return property_exists( $this, $var ) && ! empty( $this->$var );
 		}
 
 		if ( strncasecmp( $method, 'set', 3 ) === 0 ) {
@@ -127,7 +127,7 @@ class Item {
 		}
 
 		if ( strncasecmp( $method, 'add', 3 ) === 0 ) {
-			if ( ! $this->$var ) {
+			if ( ! property_exists( $this, $var ) || ! $this->$var ) {
 				call_user_func( array( $this, 'set_' . $var ), current( $params ) );
 				return true;
 			}
