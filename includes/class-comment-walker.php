@@ -44,7 +44,7 @@ class Comment_Walker extends Walker_Comment {
 	 * Show Facepile section
 	 */
 	public static function show_separated_reactions() {
-		load_template( plugin_dir_path( __DIR__ ) . 'templates/webmention-comments.php' );
+		load_template( WEBMENTION_PLUGIN_DIR . 'templates/comments.php' );
 	}
 
 	/**

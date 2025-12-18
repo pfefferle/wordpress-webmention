@@ -211,7 +211,7 @@ class Receiver {
 				$server->send_header( 'Content-Type', 'text/html; charset=' . get_option( 'blog_charset' ) );
 			}
 
-			$template = apply_filters( 'webmention_endpoint_form', plugin_dir_path( __FILE__ ) . '../templates/webmention-endpoint-form.php' );
+			$template = apply_filters( 'webmention_endpoint_form', WEBMENTION_PLUGIN_DIR . 'templates/endpoint-form.php' );
 
 			load_template( $template );
 
@@ -228,7 +228,7 @@ class Receiver {
 			// Embed links inside the request.
 			$data = $server->response_to_data( $result, false );
 
-			require_once plugin_dir_path( __FILE__ ) . '../templates/webmention-api-message.php';
+			require_once WEBMENTION_PLUGIN_DIR . 'templates/api-message.php';
 			return true;
 		}
 
