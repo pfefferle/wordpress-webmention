@@ -211,8 +211,14 @@ class Avatar_Store {
 
 		if ( $avatar_url ) {
 			delete_comment_meta( $comment->comment_ID, 'semantic_linkbacks_avatar' );
-			// disable updating this field as the original URL will be stored going forward and the store will overlay on top of that when the setting is enabled
-			// update_comment_meta( $comment->comment_ID, 'avatar', $avatar_url );
+			/**
+			 * Fires on a successful creation of a sideloaded avatar in the store
+			 *
+			 *
+			 * @param WP_Comment $comment
+			 * @param string $avatar_url The URL of the sideloaded avatar
+			 */
+			do_action( 'sideload_webmention_avatar', $comment, $avatar_url );
 		}
 	}
 }
