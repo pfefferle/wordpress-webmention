@@ -189,6 +189,11 @@ class Avatar_Store {
 			return false;
 		}
 
+		// Only store avatars for webmentions
+		if ( 'webmention' !== get_comment_meta( $comment->comment_ID, 'protocol', true ) ) {
+			return false;
+		}
+
 		// Do not try to store the avatar if there is a User ID. Let something else handle that.
 		if ( $comment->user_id ) {
 			return false;
