@@ -1,5 +1,5 @@
 {
-  "name": "rsvp",
+  "name": "webmention/rsvp",
   "title": "RSVP: Microformats2 RSVP format for event responses",
   "category": "widgets",
   "icon": "calendar-alt",

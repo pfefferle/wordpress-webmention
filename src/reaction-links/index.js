@@ -45,6 +45,11 @@ const REACTION_CLASSES = REACTION_TYPES
 	.filter( ( v ) => v );
 
 /**
+ * Debounce delay in milliseconds for MutationObserver callbacks.
+ */
+const DEBOUNCE_DELAY = 50;
+
+/**
  * Get the currently selected block
  */
 function getSelectedBlock() {
@@ -202,12 +207,14 @@ function createReactionDropdown( targetUrl, currentReaction ) {
 	container.className = 'block-editor-link-control__setting webmention-reaction-setting';
 	container.dataset.url = targetUrl || '';
 
-	const label = document.createElement( 'span' );
+	const label = document.createElement( 'label' );
 	label.className = 'webmention-reaction-setting__label';
+	label.setAttribute( 'for', 'webmention-reaction-select' );
 	label.textContent = __( 'Reaction', 'webmention' );
 	container.appendChild( label );
 
 	const selectEl = document.createElement( 'select' );
+	selectEl.id = 'webmention-reaction-select';
 	selectEl.className = 'webmention-reaction-setting__select components-select-control__input';
 
 	REACTION_TYPES.forEach( ( type ) => {
@@ -273,7 +280,7 @@ function debounce( func, wait ) {
  * Initialize
  */
 domReady( () => {
-	const debouncedInject = debounce( injectReactionDropdown, 50 );
+	const debouncedInject = debounce( injectReactionDropdown, DEBOUNCE_DELAY );
 
 	const observer = new MutationObserver( () => {
 		debouncedInject();
