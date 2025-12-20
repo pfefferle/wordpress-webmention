@@ -58,8 +58,11 @@ function parseReactionClass( classStr ) {
 	if ( ! classStr ) {
 		return '';
 	}
+
+	const classTokens = classStr.trim().split( /\s+/ );
+
 	for ( const cls of REACTION_CLASSES ) {
-		if ( classStr.includes( cls ) ) {
+		if ( classTokens.includes( cls ) ) {
 			return cls;
 		}
 	}
@@ -75,9 +78,12 @@ function getCurrentLinkUrl() {
 		return urlInput.value;
 	}
 
-	const urlDisplay = document.querySelector( '.block-editor-link-control__search-item-info' );
-	if ( urlDisplay ) {
-		return urlDisplay.textContent?.trim();
+	const urlDisplayLink = document.querySelector( '.block-editor-link-control__search-item-info a' );
+	if ( urlDisplayLink ) {
+		const href = urlDisplayLink.getAttribute( 'href' );
+		if ( href ) {
+			return href.trim();
+		}
 	}
 
 	return null;
@@ -136,7 +142,7 @@ function applyReaction( reaction ) {
 	const { clientId, attributes } = block;
 	const targetUrl = getCurrentLinkUrl();
 
-	if ( ! attributes.content ) {
+	if ( ! targetUrl || ! attributes.content ) {
 		return;
 	}
 
@@ -191,12 +197,10 @@ function applyReaction( reaction ) {
 /**
  * Create the reaction dropdown
  */
-function createReactionDropdown() {
-	const targetUrl = getCurrentLinkUrl();
-	const currentReaction = getCurrentReactionFromBlock( targetUrl );
-
+function createReactionDropdown( targetUrl, currentReaction ) {
 	const container = document.createElement( 'div' );
 	container.className = 'block-editor-link-control__setting webmention-reaction-setting';
+	container.dataset.url = targetUrl || '';
 
 	const label = document.createElement( 'span' );
 	label.className = 'webmention-reaction-setting__label';
@@ -232,24 +236,56 @@ function injectReactionDropdown() {
 		return;
 	}
 
-	if ( settingsDrawer.querySelector( '.webmention-reaction-setting' ) ) {
-		return;
+	const targetUrl = getCurrentLinkUrl();
+	const currentReaction = getCurrentReactionFromBlock( targetUrl );
+	const existingDropdown = settingsDrawer.querySelector( '.webmention-reaction-setting' );
+
+	if ( existingDropdown ) {
+		// Check if URL changed - if so, update the dropdown
+		if ( existingDropdown.dataset.url !== ( targetUrl || '' ) ) {
+			existingDropdown.remove();
+		} else {
+			// URL is same, just update the selected value if needed
+			const selectEl = existingDropdown.querySelector( 'select' );
+			if ( selectEl && selectEl.value !== currentReaction ) {
+				selectEl.value = currentReaction;
+			}
+			return;
+		}
 	}
 
-	const dropdown = createReactionDropdown();
+	const dropdown = createReactionDropdown( targetUrl, currentReaction );
 	settingsDrawer.appendChild( dropdown );
+}
+
+/**
+ * Debounce helper
+ */
+function debounce( func, wait ) {
+	let timeout;
+	return function ( ...args ) {
+		clearTimeout( timeout );
+		timeout = setTimeout( () => func.apply( this, args ), wait );
+	};
 }
 
 /**
  * Initialize
  */
 domReady( () => {
+	const debouncedInject = debounce( injectReactionDropdown, 50 );
+
 	const observer = new MutationObserver( () => {
-		setTimeout( injectReactionDropdown, 50 );
+		debouncedInject();
 	} );
 
 	observer.observe( document.body, {
 		childList: true,
 		subtree: true,
+	} );
+
+	// Cleanup on page unload
+	window.addEventListener( 'beforeunload', () => {
+		observer.disconnect();
 	} );
 } );
