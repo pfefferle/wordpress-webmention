@@ -1,0 +1,23 @@
+/**
+ * Microformats Reaction Links - Editor Styles
+ *
+ * Matches WordPress block-editor-link-control__setting design
+ */
+
+.webmention-reaction-setting.block-editor-link-control__setting {
+	flex-wrap: nowrap;
+	padding-top: 16px;
+	padding-bottom: 16px;
+	border-top: 1px solid #ddd;
+	margin-top: 0;
+
+	.webmention-reaction-setting__label {
+		flex-shrink: 0;
+		padding-right: 16px;
+	}
+
+	.webmention-reaction-setting__select {
+		flex: 1;
+		max-width: 180px;
+	}
+}

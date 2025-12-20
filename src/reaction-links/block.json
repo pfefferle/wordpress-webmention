@@ -1,0 +1,9 @@
+{
+	"name": "reaction-links",
+	"title": "Reaction Links: Microformats2 reaction classes for links",
+	"category": "widgets",
+	"icon": "format-status",
+	"keywords": [ "reaction", "microformats", "indieweb", "webmention" ],
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css"
+}
