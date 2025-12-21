@@ -5,7 +5,7 @@
 - Tags: webmention, pingback, trackback, linkback, indieweb
 - Requires at least: 6.3
 - Tested up to: 6.9
-- Stable tag: 5.6.0
+- Stable tag: 5.6.1
 - Requires PHP: 7.2
 - License: MIT
 - License URI: https://opensource.org/licenses/MIT
@@ -100,6 +100,11 @@ While not all display options can be settings, we are looking to provide some si
 ## Changelog
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
+
+### 5.6.1
+
+* Remove explicit `require_once` for Handler classes, rely on autoloader instead
+* Add autoloader tests to verify Handler classes load correctly
 
 ### 5.6.0
 
