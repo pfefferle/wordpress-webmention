@@ -25,9 +25,9 @@ class Test_Autoloader extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test that Handler classes can be instantiated.
+	 * Test that concrete Handler classes can be instantiated.
 	 *
-	 * @dataProvider handler_class_provider
+	 * @dataProvider concrete_handler_class_provider
 	 *
 	 * @param string $class_name Fully qualified class name.
 	 */
@@ -108,7 +108,7 @@ class Test_Autoloader extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Data provider for Handler classes.
+	 * Data provider for all Handler classes (including abstract).
 	 *
 	 * @return array Array of handler class names.
 	 */
@@ -119,6 +119,20 @@ class Test_Autoloader extends WP_UnitTestCase {
 			'Meta Handler'   => array( \Webmention\Handler\Meta::class ),
 			'Jsonld Handler' => array( \Webmention\Handler\Jsonld::class ),
 			'Base Handler'   => array( \Webmention\Handler\Base::class ),
+		);
+	}
+
+	/**
+	 * Data provider for concrete Handler classes only.
+	 *
+	 * @return array Array of handler class names.
+	 */
+	public function concrete_handler_class_provider() {
+		return array(
+			'MF2 Handler'    => array( \Webmention\Handler\MF2::class ),
+			'WP Handler'     => array( \Webmention\Handler\WP::class ),
+			'Meta Handler'   => array( \Webmention\Handler\Meta::class ),
+			'Jsonld Handler' => array( \Webmention\Handler\Jsonld::class ),
 		);
 	}
 }
