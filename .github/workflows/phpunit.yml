@@ -34,7 +34,7 @@ jobs:
         wp-version: ['latest']
         include:
           - php-versions: '7.2'
-            wp-version: '6.5'
+            wp-version: '6.2'
           - php-versions: '8.5'
             wp-version: 'trunk'
     steps:
