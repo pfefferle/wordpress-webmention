@@ -2,8 +2,9 @@
 
 namespace Webmention\WP_Admin;
 
-use WP_Comment;
 use Webmention\Upgrade;
+
+use function Webmention\version;
 
 /**
  * Webmention Admin Class
@@ -55,12 +56,12 @@ class Admin {
 	/**
 	 * Add Webmention meta boxes to the comment editor screen.
 	 *
-	 * @param WP_Comment $comment The comment object.
+	 * @param \WP_Comment $comment The comment object.
 	 */
 	public static function comment_metabox( $comment ) {
 		\wp_nonce_field( 'webmention_comment_metabox', 'webmention_comment_nonce' );
 
-		if ( ! $comment instanceof WP_Comment ) {
+		if ( ! $comment instanceof \WP_Comment ) {
 			return;
 		}
 		\load_template( WEBMENTION_PLUGIN_DIR . 'templates/edit-comment-form.php' );
@@ -554,7 +555,7 @@ class Admin {
 	public static function enqueue_scripts() {
 		$current_screen = \get_current_screen();
 		if ( isset( $current_screen->base ) && 'dashboard' === $current_screen->base ) {
-			\wp_enqueue_style( 'webmention-admin', \plugins_url( '/assets/css/admin.css', __DIR__ ), array(), \Webmention\version() );
+			\wp_enqueue_style( 'webmention-admin', WEBMENTION_PLUGIN_URL . 'assets/css/admin.css', array(), version() );
 		}
 	}
 }
