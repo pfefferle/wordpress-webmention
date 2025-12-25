@@ -2,8 +2,8 @@
 
 - Contributors: pfefferle, dshanske, indieweb
 - Donate link: https://notiz.blog/donate/
-- Tags: webmention, pingback, trackback, linkback, indieweb
-- Requires at least: 6.3
+- Tags: webmention, pingback, trackback, linkback, indieweb, classicpress
+- Requires at least: 6.2
 - Tested up to: 6.9
 - Stable tag: 5.6.1
 - Requires PHP: 7.2
