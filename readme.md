@@ -2,10 +2,10 @@
 
 - Contributors: pfefferle, dshanske, indieweb
 - Donate link: https://notiz.blog/donate/
-- Tags: webmention, pingback, trackback, linkback, indieweb
-- Requires at least: 6.3
-- Tested up to: 6.8
-- Stable tag: 5.5.0
+- Tags: webmention, pingback, trackback, linkback, indieweb, classicpress
+- Requires at least: 6.2
+- Tested up to: 6.9
+- Stable tag: 5.6.1
 - Requires PHP: 7.2
 - License: MIT
 - License URI: https://opensource.org/licenses/MIT
@@ -101,8 +101,15 @@ While not all display options can be settings, we are looking to provide some si
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
 
-### 5.5.1
+### 5.6.1
 
+* Remove explicit `require_once` for Handler classes, rely on autoloader instead
+* Add autoloader tests to verify Handler classes load correctly
+
+### 5.6.0
+
+* Fix undefined property warning in `Item::__call` magic method when accessing non-existent properties like `category`.
+* Search Avatar Store if enabled for match before trying meta field. Disable updating meta field when side loading allowing for more flexibility.
 * Fix editor plugin error on custom post types without `custom-fields` support.
 * Add video/audio URL extraction as content fallback for webmentions without text content.
 * Use registered comment type excerpt templates as fallback for reactions (likes, reposts, etc.).
@@ -114,6 +121,7 @@ Project and support maintained on github at [pfefferle/wordpress-webmention](htt
 * Add `webmention_form_submit_text` filter to customize the "Ping me!" button text.
 * Fix distorted emoji display when avatars are disabled in Discussion settings.
 * Add basic styling for webmention form input and button elements.
+* Fix PHP 8 TypeError in `parse_post_json` when JSON is invalid.
 
 ### 5.5.0
 
