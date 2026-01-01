@@ -5,7 +5,7 @@
 - Tags: webmention, pingback, trackback, linkback, indieweb, classicpress
 - Requires at least: 6.2
 - Tested up to: 6.9
-- Stable tag: 5.6.1
+- Stable tag: 5.6.2
 - Requires PHP: 7.2
 - License: MIT
 - License URI: https://opensource.org/licenses/MIT
@@ -100,6 +100,12 @@ While not all display options can be settings, we are looking to provide some si
 ## Changelog
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
+
+### 5.6.2
+
+* Fix incorrect asset URL in admin enqueue
+* Revert minimum WordPress version back to 6.2 for ClassicPress compatibility
+* Bump @wordpress/components from 30.9.0 to 31.0.0
 
 ### 5.6.1
 
