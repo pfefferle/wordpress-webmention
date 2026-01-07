@@ -308,7 +308,7 @@ class Comment_Walker extends Walker_Comment {
 	 * @param  WP_Comment_Query $query Comment count.
 	 */
 	public static function comment_query( $query ) {
-		if ( ! $query instanceof WP_Comment_Query ) {
+		if ( ! $query instanceof \WP_Comment_Query ) {
 			return;
 		}
 
@@ -316,7 +316,8 @@ class Comment_Walker extends Walker_Comment {
 			return;
 		}
 
-		if ( ! empty( $query->query_vars['type__in'] ) ) {
+		// Do not exclude likes and reposts if the query is for comments.
+		if ( ! empty( $query->query_vars['type__in'] ) || ! empty( $query->query_vars['type'] ) ) {
 			return;
 		}
 
