@@ -169,12 +169,15 @@ class Comment_Walker extends Walker_Comment {
 		if ( ! $has_avatar ) {
 			$classes[] = 'no-avatar';
 		}
+
+		// Check if avatars are enabled for webmentions.
+		$show_avatar = get_option( 'webmention_avatars', 1 );
 		?>
 		<<?php echo $tag; ?> id="comment-<?php comment_ID(); ?>" <?php comment_class( $classes, $comment ); ?>>
 			<div class="comment-body">
 				<span class="p-author h-card">
 					<a class="u-url" title="<?php esc_attr( $title ); ?>" href="<?php echo get_comment_author_url( $comment ); ?>">
-						<?php if ( $has_avatar ) : ?>
+						<?php if ( $show_avatar && $has_avatar ) : ?>
 							<?php echo $avatar; ?>
 							<?php echo $overlay; ?>
 						<?php else : ?>
@@ -226,7 +229,7 @@ class Comment_Walker extends Walker_Comment {
 				<footer class="comment-meta">
 					<div class="comment-author vcard h-card u-author">
 						<?php
-						if ( 0 !== $args['avatar_size'] ) {
+						if ( 0 !== $args['avatar_size'] && get_option( 'webmention_avatars', 1 ) ) {
 							echo get_avatar( $comment, $args['avatar_size'] );
 						}
 						?>
