@@ -5,7 +5,7 @@
 - Tags: webmention, pingback, trackback, linkback, indieweb, classicpress
 - Requires at least: 6.2
 - Tested up to: 6.9
-- Stable tag: 5.6.2
+- Stable tag: 5.6.3
 - Requires PHP: 7.2
 - License: MIT
 - License URI: https://opensource.org/licenses/MIT
@@ -101,6 +101,10 @@ While not all display options can be settings, we are looking to provide some si
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
 
+### 5.6.3
+
+* Fix "Show avatars on Webmentions" setting having no effect
+
 ### 5.6.2
 
 * Fix incorrect asset URL in admin enqueue
@@ -122,7 +126,6 @@ Project and support maintained on github at [pfefferle/wordpress-webmention](htt
 * Fix `array_merge()` error when `_embedded` key is missing in WordPress API response.
 * Fix fatal error when parsing invalid date strings in webmentions.
 * Fix span tags inside anchor tags confusing WordPress auto-linking.
-* Fix "Show avatars on Webmentions" setting having no effect.
 * Fix PHP warning for undefined array key `comment_content` when webmention has no content.
 * Add uninstall method to clean up plugin options on deletion.
 * Add `webmention_form_submit_text` filter to customize the "Ping me!" button text.
