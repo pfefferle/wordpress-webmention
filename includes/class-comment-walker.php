@@ -316,7 +316,7 @@ class Comment_Walker extends Walker_Comment {
 			return;
 		}
 
-		// Do not exclude likes and reposts if the query is for comments.
+		// Do not exclude webmention types if specific comment types are explicitly requested.
 		if ( ! empty( $query->query_vars['type__in'] ) || ! empty( $query->query_vars['type'] ) ) {
 			return;
 		}
