@@ -6,7 +6,6 @@ use WP_Comment;
 
 /**
  * Avatar Store Class
- *
  */
 class Avatar_Store {
 	/**
@@ -21,16 +20,38 @@ class Avatar_Store {
 	/**
 	 * Return upload directory.
 	 *
-	 * @param string $filepath File Path. Optional
+	 * @param string  $filepath File Path. Optional
 	 * @param boolean $url Return a URL if true, otherwise the directory.
 	 * @return string URL of upload directory.
 	 */
 	public static function upload_directory( $filepath = '', $url = false ) {
-		$upload_dir  = wp_get_upload_dir();
-		$upload_dir  = $url ? $upload_dir['baseurl'] : $upload_dir['basedir'];
-		$upload_dir .= '/webmention/avatars/';
-		$upload_dir  = apply_filters( 'webmention_avatar_directory', $upload_dir, $url );
+		$upload_dir = wp_get_upload_dir();
+		$upload_dir = $url ? $upload_dir['baseurl'] : $upload_dir['basedir'];
+		$upload_dir = trailingslashit( $upload_dir ) . '/webmention/avatars/';
+		$upload_dir = apply_filters( 'webmention_avatar_directory', $upload_dir, $url );
 		return $upload_dir . $filepath;
+	}
+
+	/**
+	 * Determines if there is a file in the store for a specific host and URL
+	 *
+	 * @param string $host Host.
+	 * @param string $author Author.
+	 * @return string|boolean URL to image or false if not found
+	 */
+	public static function find_avatar( $host, $author ) {
+		$upload_dir = trailingslashit( self::upload_directory( $host ) );
+		$upload_url = trailingslashit( self::upload_directory( $host, true ) );
+		$results    = scandir( $upload_dir );
+		if ( ! $results ) {
+			return $results;
+		}
+		foreach ( $results as $result ) {
+			if ( str_contains( $result, md5( $author ) ) ) {
+				return $upload_url . $result;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -40,7 +61,6 @@ class Avatar_Store {
 	 * @param string $host Host.
 	 * @param string $author Author
 	 * @return string URL to Downloaded Image.
-	 *
 	 */
 	public static function sideload_avatar( $url, $host, $author ) {
 		// If the URL is inside the upload directory.
@@ -84,6 +104,7 @@ class Avatar_Store {
 			if ( is_wp_error( $file ) ) {
 				return false;
 			}
+			// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- Silencing is intentional as move may fail on some systems.
 			@move_uploaded_file( $file, $filepath );
 			return self::upload_directory( $filehandle, true );
 		}
@@ -168,6 +189,11 @@ class Avatar_Store {
 			return false;
 		}
 
+		// Only store avatars for webmentions
+		if ( 'webmention' !== get_comment_meta( $comment->comment_ID, 'protocol', true ) ) {
+			return false;
+		}
+
 		// Do not try to store the avatar if there is a User ID. Let something else handle that.
 		if ( $comment->user_id ) {
 			return false;
@@ -190,7 +216,14 @@ class Avatar_Store {
 
 		if ( $avatar_url ) {
 			delete_comment_meta( $comment->comment_ID, 'semantic_linkbacks_avatar' );
-			update_comment_meta( $comment->comment_ID, 'avatar', $avatar_url );
+			/**
+			 * Fires on a successful creation of a sideloaded avatar in the store
+			 *
+			 *
+			 * @param WP_Comment $comment
+			 * @param string $avatar_url The URL of the sideloaded avatar
+			 */
+			do_action( 'sideload_webmention_avatar', $comment, $avatar_url );
 		}
 	}
 }

@@ -1,5 +1,14 @@
 <?php
-class Functions_Test extends WP_UnitTestCase {
+/**
+ * Test functions.
+ *
+ * @package Webmention
+ */
+
+/**
+ * Test functions class.
+ */
+class Test_Functions extends WP_UnitTestCase {
 
 	/**
 	 * Test that span tags inside anchor tags are removed.

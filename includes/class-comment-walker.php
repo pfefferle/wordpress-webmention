@@ -44,7 +44,7 @@ class Comment_Walker extends Walker_Comment {
 	 * Show Facepile section
 	 */
 	public static function show_separated_reactions() {
-		load_template( plugin_dir_path( __DIR__ ) . 'templates/webmention-comments.php' );
+		load_template( WEBMENTION_PLUGIN_DIR . 'templates/comments.php' );
 	}
 
 	/**
@@ -78,7 +78,8 @@ class Comment_Walker extends Walker_Comment {
 		$GLOBALS['comment_depth'] = $depth; // phpcs:ignore
 		$GLOBALS['comment']       = $comment; // phpcs:ignore
 
-		/* Changes the signature of callbacks. Behaves as previous if string.
+		/*
+		Changes the signature of callbacks. Behaves as previous if string.
 		 * Now accepts an array of callbacks by comment type.
 		 * If no calback for the type or no general callback drops through to normal handler.
 		 */
@@ -146,30 +147,42 @@ class Comment_Walker extends Walker_Comment {
 	 * @param WP_Comment $comment The comment object.
 	 * @param int        $depth   Depth of the current comment.
 	 * @param array      $args    An array of arguments.
-	*/
+	 */
 	protected function avatar_only( $comment, $depth, $args ) {
 		$tag = ( 'div' === $args['style'] ) ? 'div' : 'li';
 
-		$title = get_comment_text( $comment, $args );
-		// Optionally overlay an icon.
+		$title  = get_comment_text( $comment, $args );
+		$avatar = get_avatar( $comment, $args['avatar_size'] );
+		$icon   = get_webmention_comment_type_attr( $comment->comment_type, 'icon' );
+
+		// Check if avatars are disabled or empty.
+		$has_avatar = ! empty( $avatar ) && get_option( 'show_avatars' );
+
+		// Optionally overlay an icon (only when avatar is present).
 		$overlay = '';
-		if ( $args['overlay'] ) {
-			$overlay = '<span class="emoji-overlay">' . get_webmention_comment_type_attr( $comment->comment_type, 'icon' ) . '</span>';
+		if ( $args['overlay'] && $has_avatar ) {
+			$overlay = '<span class="emoji-overlay">' . $icon . '</span>';
 		}
 
-		// Check if avatars are enabled for webmentions
+		// Add class when no avatar is present.
+		$classes = array( get_webmention_comment_type_attr( $comment->comment_type, 'class' ), 'h-cite', 'avatar-only' );
+		if ( ! $has_avatar ) {
+			$classes[] = 'no-avatar';
+		}
+
+		// Check if avatars are enabled for webmentions.
 		$show_avatar = get_option( 'webmention_avatars', 1 );
 		?>
-		<<?php echo $tag; ?> id="comment-<?php comment_ID(); ?>" <?php comment_class( array( get_webmention_comment_type_attr( $comment->comment_type, 'class' ), 'h-cite', 'avatar-only' ), $comment ); ?>>
+		<<?php echo $tag; ?> id="comment-<?php comment_ID(); ?>" <?php comment_class( $classes, $comment ); ?>>
 			<div class="comment-body">
 				<span class="p-author h-card">
 					<a class="u-url" title="<?php esc_attr( $title ); ?>" href="<?php echo get_comment_author_url( $comment ); ?>">
-						<?php
-						if ( $show_avatar ) {
-							echo get_avatar( $comment, $args['avatar_size'] );
-						}
-						?>
-						<?php echo $overlay; ?>
+						<?php if ( $show_avatar && $has_avatar ) : ?>
+							<?php echo $avatar; ?>
+							<?php echo $overlay; ?>
+						<?php else : ?>
+							<span class="reaction-icon"><?php echo $icon; ?></span>
+						<?php endif; ?>
 					</a>
 					<span class="hide-name p-name"><?php echo get_comment_author( $comment ); ?></span>
 				</span>
@@ -269,7 +282,7 @@ class Comment_Walker extends Walker_Comment {
 				</div><!-- .comment-content -->
 
 				<?php
-				if ( '1' == $comment->comment_approved || $show_pending_links ) {
+				if ( $comment->comment_approved || $show_pending_links ) {
 					comment_reply_link(
 						array_merge(
 							$args,

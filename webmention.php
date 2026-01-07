@@ -5,7 +5,7 @@
  * Description: Webmention support for WordPress posts
  * Author: Matthias Pfefferle
  * Author URI: https://notiz.blog/
- * Version: 5.5.0
+ * Version: 5.6.2
  * License: MIT
  * License URI: https://opensource.org/licenses/MIT
  * Text Domain: webmention
@@ -14,22 +14,22 @@
 
 namespace Webmention;
 
-\define( 'WEBMENTION_VERSION', '5.5.0' );
+\define( 'WEBMENTION_VERSION', '5.6.2' );
 
 \define( 'WEBMENTION_PLUGIN_DIR', \plugin_dir_path( __FILE__ ) );
 \define( 'WEBMENTION_PLUGIN_BASENAME', \plugin_basename( __FILE__ ) );
 \define( 'WEBMENTION_PLUGIN_FILE', \plugin_dir_path( __FILE__ ) . '/' . \basename( __FILE__ ) );
 \define( 'WEBMENTION_PLUGIN_URL', \plugin_dir_url( __FILE__ ) );
 
-require_once WEBMENTION_PLUGIN_DIR . '/includes/class-autoloader.php';
-require_once WEBMENTION_PLUGIN_DIR . '/includes/functions.php';
+require_once WEBMENTION_PLUGIN_DIR . 'includes/class-autoloader.php';
+require_once WEBMENTION_PLUGIN_DIR . 'includes/functions.php';
 
 if ( \WP_DEBUG ) {
-	require_once WEBMENTION_PLUGIN_DIR . '/includes/debug.php';
+	require_once WEBMENTION_PLUGIN_DIR . 'includes/debug.php';
 }
 
 // Register the autoloader.
-Autoloader::register_path( __NAMESPACE__, WEBMENTION_PLUGIN_DIR . '/includes' );
+Autoloader::register_path( __NAMESPACE__, WEBMENTION_PLUGIN_DIR . 'includes' );
 
 // Initialize the plugin.
 $webmention = Webmention::get_instance();

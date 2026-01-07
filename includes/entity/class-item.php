@@ -115,11 +115,11 @@ class Item {
 		$var = strtolower( substr( $method, 4 ) );
 
 		if ( strncasecmp( $method, 'get', 3 ) === 0 ) {
-			return $this->$var;
+			return property_exists( $this, $var ) ? $this->$var : '';
 		}
 
 		if ( strncasecmp( $method, 'has', 3 ) === 0 ) {
-			return ! empty( $this->$var );
+			return property_exists( $this, $var ) && ! empty( $this->$var );
 		}
 
 		if ( strncasecmp( $method, 'set', 3 ) === 0 ) {
@@ -127,7 +127,7 @@ class Item {
 		}
 
 		if ( strncasecmp( $method, 'add', 3 ) === 0 ) {
-			if ( ! $this->$var ) {
+			if ( ! property_exists( $this, $var ) || ! $this->$var ) {
 				call_user_func( array( $this, 'set_' . $var ), current( $params ) );
 				return true;
 			}
@@ -317,7 +317,38 @@ class Item {
 			return $this->name;
 		}
 
-		return '';
+		// Fallback to excerpt template from registered comment type.
+		return $this->get_excerpt_fallback();
+	}
+
+	/**
+	 * Generate fallback content using the excerpt template from the registered comment type.
+	 *
+	 * @return string The generated excerpt or empty string.
+	 */
+	protected function get_excerpt_fallback() {
+		if ( ! function_exists( 'get_webmention_comment_type_attr' ) || ! $this->response_type ) {
+			return '';
+		}
+
+		$excerpt = get_webmention_comment_type_attr( $this->response_type, 'excerpt' );
+		if ( ! $excerpt ) {
+			return '';
+		}
+
+		$author_name = $this->get_author( 'name' );
+		$url         = $this->url;
+		$domain      = $url ? preg_replace( '/^www\./', '', wp_parse_url( $url, PHP_URL_HOST ) ) : '';
+
+		return webmention_sanitize_html(
+			sprintf(
+				$excerpt,
+				esc_html( $author_name ),
+				'this',
+				esc_url( $url ),
+				esc_html( $domain )
+			)
+		);
 	}
 
 	/**
@@ -340,6 +371,7 @@ class Item {
 
 	/**
 	 * String length function
+	 *
 	 * @return int
 	 */
 	public function str_length( $text ) {
@@ -484,7 +516,20 @@ class Item {
 			'remote_source_raw'    => $this->get_raw(),
 		);
 
-		return apply_filters( 'webmention_item_commentdata_array', array_filter( $comment ), $this );
+		// Define defaults to ensure required keys always exist (fixes PHP warning for empty comment_content)
+		$defaults = array(
+			'comment_author'       => '',
+			'comment_author_email' => '',
+			'comment_author_url'   => '',
+			'comment_content'      => '',
+			'comment_type'         => 'mention',
+			'comment_parent'       => 0,
+			'user_id'              => 0,
+		);
+
+		$comment = wp_parse_args( array_filter( $comment ), $defaults );
+
+		return apply_filters( 'webmention_item_commentdata_array', $comment, $this );
 	}
 
 	/**

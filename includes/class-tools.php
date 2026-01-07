@@ -103,6 +103,6 @@ class Tools {
 	 * Load tools page
 	 */
 	public static function tools_page() {
-		load_template( WEBMENTION_PLUGIN_DIR . '/templates/webmention-tools.php' );
+		load_template( WEBMENTION_PLUGIN_DIR . 'templates/tools.php' );
 	}
 }

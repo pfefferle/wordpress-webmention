@@ -1,0 +1,23 @@
+name: Extract WordPress Hooks
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '**.php'
+  workflow_dispatch:
+
+jobs:
+  extract-hooks:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Required to push to wiki repository
+    steps:
+      - uses: actions/checkout@v6
+      - uses: akirk/extract-wp-hooks@1.3.0
+        with:
+          namespace: 'Webmention'
+          wiki-directory: '../webmention.wiki'
+          github-blob-url: 'https://github.com/pfefferle/wordpress-webmention/blob/main/'
+          example-style: 'prefixed'
+          exclude-dirs: 'node_modules,tests,vendor'

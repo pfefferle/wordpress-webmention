@@ -6,7 +6,6 @@ use WP_Comment;
 
 /**
  * Avatar Handler Class
- *
  */
 class Avatar {
 	/**
@@ -23,7 +22,6 @@ class Avatar {
 
 	/**
 	 * Function to retrieve Avatar if stored in meta
-	 *
 	 *
 	 * @param int|WP_Comment $comment
 	 *
@@ -74,9 +72,19 @@ class Avatar {
 		if ( ! is_avatar_comment_type( get_comment_type( $comment ) ) || $comment->user_id ) {
 			return $args;
 		}
+		if ( get_option( 'webmention_avatar_store_enable' ) ) {
+			// check if avatar store has an avatar
+			$host   = webmention_extract_domain( get_url_from_webmention( $comment ) );
+			$author = normalize_url( get_comment_author_url( $comment ) );
+			$avatar = Avatar_Store::find_avatar( $host, $author );
+		} else {
+			$avatar = false;
+		}
 
-		// check if comment has an avatar
-		$avatar = self::get_avatar_meta( $comment->comment_ID );
+		if ( ! $avatar ) {
+			// check if comment has an avatar URL
+			$avatar = self::get_avatar_meta( $comment->comment_ID );
+		}
 
 		if ( $avatar ) {
 			if ( is_numeric( $avatar ) ) {

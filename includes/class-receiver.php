@@ -211,7 +211,7 @@ class Receiver {
 				$server->send_header( 'Content-Type', 'text/html; charset=' . get_option( 'blog_charset' ) );
 			}
 
-			$template = apply_filters( 'webmention_endpoint_form', plugin_dir_path( __FILE__ ) . '../templates/webmention-endpoint-form.php' );
+			$template = apply_filters( 'webmention_endpoint_form', WEBMENTION_PLUGIN_DIR . 'templates/endpoint-form.php' );
 
 			load_template( $template );
 
@@ -228,7 +228,7 @@ class Receiver {
 			// Embed links inside the request.
 			$data = $server->response_to_data( $result, false );
 
-			require_once plugin_dir_path( __FILE__ ) . '../templates/webmention-api-message.php';
+			require_once WEBMENTION_PLUGIN_DIR . 'templates/api-message.php';
 			return true;
 		}
 
@@ -244,7 +244,7 @@ class Receiver {
 	 *
 	 * @return true
 	 */
-	public static function get( $request ) {
+	public static function get() {
 		return true;
 	}
 
@@ -585,7 +585,7 @@ class Receiver {
 	/**
 	 * Disable the WordPress `check dupes` functionality
 	 *
-	 * @param int $dupe_id ID of the comment identified as a duplicate.
+	 * @param int   $dupe_id ID of the comment identified as a duplicate.
 	 * @param array $commentdata Data for the comment being created.
 	 *
 	 * @return int
@@ -752,7 +752,7 @@ class Receiver {
 	 * Use the approved check function to approve a comment if the source domain is on the approve list.
 	 *
 	 * @param int|string/WP_Error $approved The approval status. Accepts 1, 0, spam, or WP_Error.
-	 * @param array $commentdata
+	 * @param array               $commentdata
 	 *
 	 * @return array $commentdata
 	 */

@@ -3,7 +3,6 @@
 /**
  * Registers a Webmention comment type.
  *
- *
  * @param string $comment_type Key for comment type.
  * @param array  $args         Arguments.
  *
@@ -25,7 +24,6 @@ function register_webmention_comment_type( $comment_type, $args = array() ) {
 
 	/**
 	 * Fires after a Webmention comment type is registered.
-	 *
 	 *
 	 * @param string                   $comment_type        Comment type.
 	 * @param \Webmention\Comment_Type $comment_type_object Arguments used to register the comment type.
@@ -375,6 +373,7 @@ function is_webmention_comment_type( $comment ) {
 
 /**
  * Returns a string indicating the comment type
+ *
  * @param int|WP_Comment $comment
  * @return string
  */
@@ -556,7 +555,7 @@ if ( ! function_exists( 'ifset' ) ) {
 /**
  * Return whether webmentions are open for a specific post id
  *
- * @param WP_Post|int  $post The post ID or Post Object.
+ * @param WP_Post|int $post The post ID or Post Object.
  * @return boolean if webmentions are open
  */
 function webmentions_open( $post = null ) {
@@ -583,7 +582,6 @@ function webmentions_open( $post = null ) {
 
 	/**
 	 * Filters whether the current post is open for webmentions.
-	 *
 	 *
 	 * @param bool $open Whether the current post is open.
 	 * @param int  $post_id    The post ID.
@@ -615,7 +613,7 @@ function webmention_get_default_comment_status( $status, $post_type, $comment_ty
  * @since 3.8.9
  */
 function webmention_comment_form() {
-	$template = apply_filters( 'webmention_comment_form', plugin_dir_path( __FILE__ ) . '../templates/webmention-comment-form.php' );
+	$template = apply_filters( 'webmention_comment_form', WEBMENTION_PLUGIN_DIR . 'templates/comment-form.php' );
 
 	if ( ( 1 === (int) get_option( 'webmention_show_comment_form', 1 ) ) && webmentions_open() ) {
 		load_template( $template );
