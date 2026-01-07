@@ -59,10 +59,10 @@ if ( $comment->comment_parent ) {
 				<footer class="entry-meta">
 					<address class="p-author h-card">
 						<?php
-					if ( get_option( 'webmention_avatars', 1 ) ) {
-						echo get_avatar( $comment, 50 );
-					}
-					?>
+						if ( get_option( 'webmention_avatars', 1 ) ) {
+							echo get_avatar( $comment, 50 );
+						}
+						?>
 						<?php printf( '<cite class="p-name">%s</cite>', get_comment_author_link() ); ?>
 					</address><!-- .comment-author .vcard -->
 					<a href="<?php echo esc_url( get_comment_link( $comment->comment_ID ) ); ?>"><time datetime="<?php comment_time( 'c' ); ?>" class="dt-published dt-updated published updated">
