@@ -23,4 +23,5 @@
 		<p><?php submit_button( __( 'Parse', 'webmention' ), 'small', 'submit', false ); ?></p>
 		<?php wp_nonce_field( 'wp_rest' ); ?>
 	</form>
+
 </div>
