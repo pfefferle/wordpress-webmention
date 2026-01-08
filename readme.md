@@ -104,6 +104,7 @@ Project and support maintained on github at [pfefferle/wordpress-webmention](htt
 ### 5.6.3
 
 * Fix "Show avatars on Webmentions" setting having no effect
+* Fix comment query to respect explicit `type` parameter
 
 ### 5.6.2
 
