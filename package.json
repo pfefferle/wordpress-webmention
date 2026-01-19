@@ -3,7 +3,7 @@
   "description": "Webmention support for WordPress posts",
   "main": "webmention.php",
   "devDependencies": {
-    "@wordpress/components": "^31.0.0",
+    "@wordpress/components": "^32.0.0",
     "@wordpress/data": "^10.0.0",
     "@wordpress/env": "^10.10.0",
     "@wordpress/icons": "^11.0.0",
