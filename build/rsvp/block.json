@@ -1,0 +1,15 @@
+{
+  "name": "webmention/rsvp",
+  "title": "RSVP: Microformats2 RSVP format for event responses",
+  "category": "widgets",
+  "icon": "calendar-alt",
+  "keywords": [
+    "rsvp",
+    "microformats",
+    "indieweb",
+    "webmention",
+    "event"
+  ],
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css"
+}
