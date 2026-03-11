@@ -13,7 +13,6 @@ composer.json
 composer-php-scoper.json
 composer.lock
 composer-php-scoper.lock
-Gruntfile.js
 Dockerfile
 package.json
 package-lock.json
@@ -25,5 +24,4 @@ phpcs.xml
 .distignore
 .gitignore
 .gitattributes
-docker-compose.yml
-docker-compose-test.yml
+.wp-env.json
