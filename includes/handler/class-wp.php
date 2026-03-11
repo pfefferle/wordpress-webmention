@@ -70,7 +70,7 @@ class WP extends Base {
 
 		$response = Request::get( $api_link );
 		if ( is_wp_error( $response ) ) {
-			return response;
+			return $response;
 		}
 
 		$page = $this->parse_post_json( $response, $site_json['timezone'] );
