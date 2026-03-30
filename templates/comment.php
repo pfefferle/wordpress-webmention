@@ -6,7 +6,7 @@ if ( isset( $wp_query->query['c'] ) ) {
 } else {
 	$comment_id = esc_attr( $wp_query->query['replytocom'] );
 }
-$comment    = get_comment( $comment_id ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+$comment = get_comment( $comment_id ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
 // Load 404 if comment ID is not valid.
 if ( ! $comment ) {
