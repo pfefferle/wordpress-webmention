@@ -343,12 +343,27 @@ function webmention_extract_urls( $content, $support_media_urls = false ) {
 		$attributes = array_merge( $attributes, $media_attributes );
 	}
 
+	/**
+	 * Filters the CSS class name used to prevent sending Webmentions for a link.
+	 *
+	 * @param string $nomention_class The CSS class name. Default 'nomention'.
+	 */
+	$nomention_class = apply_filters( 'webmention_nomention_class', 'nomention' );
+
 	$urls = array();
 
 	foreach ( $attributes as $attribute => $elements ) {
 		foreach ( $elements as $element ) {
-			foreach ( $xpath->query( sprintf( '//%1$s[@%2$s]', $element, $attribute ) ) as $url ) {
-				$urls[] = $url->getAttribute( $attribute );
+			foreach ( $xpath->query( sprintf( '//%1$s[@%2$s]', $element, $attribute ) ) as $node ) {
+				// Skip elements that have the nomention class.
+				if ( $nomention_class && $node->hasAttribute( 'class' ) ) {
+					$classes = preg_split( '/\s+/', $node->getAttribute( 'class' ) );
+					if ( in_array( $nomention_class, $classes, true ) ) {
+						continue;
+					}
+				}
+
+				$urls[] = $node->getAttribute( $attribute );
 			}
 		}
 	}
