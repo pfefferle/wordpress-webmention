@@ -24,8 +24,8 @@ class Comment {
 		// Default Comment Status.
 		add_filter( 'get_default_comment_status', 'webmention_get_default_comment_status', 11, 3 );
 
-		add_action( 'comment_form_after', 'webmention_comment_form', 11 );
-		add_action( 'comment_form_comments_closed', 'webmention_comment_form' );
+		add_action( 'comment_form_after', 'c_form', 11 );
+		add_action( 'comment_form_comments_closed', 'c_form' );
 	}
 
 	/**
@@ -56,9 +56,9 @@ class Comment {
 	 * @return array The registered custom comment types
 	 */
 	public static function get_comment_types() {
-		global $webmention_comment_types;
+		global $c_types;
 
-		return $webmention_comment_types;
+		return $c_types;
 	}
 
 	/**
@@ -94,7 +94,7 @@ class Comment {
 
 		$return = $comment_type->get( $attr );
 
-		return apply_filters( "webmention_comment_type_{$attr}", $return, $type );
+		return apply_filters( "c_type_{$attr}", $return, $type );
 	}
 
 	/**
@@ -103,7 +103,7 @@ class Comment {
 	 * @return void
 	 */
 	public static function register_comment_types() {
-		register_webmention_comment_type(
+		register_c_type(
 			'repost',
 			array(
 				'label'       => __( 'Reposts', 'webmention' ),
@@ -116,7 +116,7 @@ class Comment {
 			)
 		);
 
-		register_webmention_comment_type(
+		register_c_type(
 			'like',
 			array(
 				'label'       => __( 'Likes', 'webmention' ),
@@ -129,7 +129,7 @@ class Comment {
 			)
 		);
 
-		register_webmention_comment_type(
+		register_c_type(
 			'favorite',
 			array(
 				'label'       => __( 'Favorites', 'webmention' ),
@@ -142,7 +142,7 @@ class Comment {
 			)
 		);
 
-		register_webmention_comment_type(
+		register_c_type(
 			'tag',
 			array(
 				'label'       => __( 'Tags', 'webmention' ),
@@ -155,7 +155,7 @@ class Comment {
 			)
 		);
 
-		register_webmention_comment_type(
+		register_c_type(
 			'bookmark',
 			array(
 				'label'       => __( 'Bookmarks', 'webmention' ),
@@ -168,7 +168,7 @@ class Comment {
 			)
 		);
 
-		register_webmention_comment_type(
+		register_c_type(
 			'listen',
 			array(
 				'label'       => __( 'Listens', 'webmention' ),
@@ -181,7 +181,7 @@ class Comment {
 			)
 		);
 
-		register_webmention_comment_type(
+		register_c_type(
 			'watch',
 			array(
 				'label'       => __( 'Watches', 'webmention' ),
@@ -194,7 +194,7 @@ class Comment {
 			)
 		);
 
-		register_webmention_comment_type(
+		register_c_type(
 			'read',
 			array(
 				'label'       => __( 'Reads', 'webmention' ),
@@ -207,7 +207,7 @@ class Comment {
 			)
 		);
 
-		register_webmention_comment_type(
+		register_c_type(
 			'follow',
 			array(
 				'label'       => __( 'Follows', 'webmention' ),
@@ -220,7 +220,7 @@ class Comment {
 			)
 		);
 
-		register_webmention_comment_type(
+		register_c_type(
 			'mention',
 			array(
 				'label'       => __( 'Mentions', 'webmention' ),
@@ -233,7 +233,7 @@ class Comment {
 			)
 		);
 
-		register_webmention_comment_type(
+		register_c_type(
 			'reacji',
 			array(
 				'label'       => __( 'Reacjis', 'webmention' ),
@@ -246,9 +246,9 @@ class Comment {
 	}
 
 	/**
-	 * Replace the template for all URLs with a "webmention_comment" query-param.
+	 * Replace the template for all URLs with a "c" query-param.
 	 *
-	 * Uses "webmention_comment" instead of "replytocom" to avoid conflicting with
+	 * Uses "c" instead of "replytocom" to avoid conflicting with
 	 * WordPress core's threaded/nested comment reply functionality. The "replytocom"
 	 * parameter is used by WordPress core for reply links on threaded comments, and
 	 * hijacking it breaks the "Reply" link UI and comment nesting.
@@ -263,7 +263,7 @@ class Comment {
 		global $wp_query;
 
 		// Replace template for webmention comment source URLs.
-		if ( isset( $wp_query->query['webmention_comment'] ) ) {
+		if ( isset( $wp_query->query['c'] ) ) {
 			return apply_filters( 'webmention_comment_template', WEBMENTION_PLUGIN_DIR . 'templates/comment.php' );
 		}
 
@@ -278,7 +278,7 @@ class Comment {
 	 * @return array
 	 */
 	public static function query_var( $vars ) {
-		$vars[] = 'webmention_comment';
+		$vars[] = 'c';
 		return $vars;
 	}
 }

@@ -1,8 +1,8 @@
 <?php
 global $wp_query, $post;
-// Support both the new "webmention_comment" and legacy "replytocom" query vars.
-if ( isset( $wp_query->query['webmention_comment'] ) ) {
-	$comment_id = esc_attr( $wp_query->query['webmention_comment'] );
+// Support both the new "c" and legacy "replytocom" query vars.
+if ( isset( $wp_query->query['c'] ) ) {
+	$comment_id = esc_attr( $wp_query->query['c'] );
 } else {
 	$comment_id = esc_attr( $wp_query->query['replytocom'] );
 }

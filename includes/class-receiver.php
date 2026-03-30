@@ -29,11 +29,11 @@ class Receiver {
 		add_filter( 'duplicate_comment_id', array( static::class, 'disable_wp_check_dupes' ), 20, 2 );
 
 		// Webmention helper
-		add_filter( 'webmention_comment_data', array( static::class, 'webmention_verify' ), 11, 1 );
-		add_filter( 'webmention_comment_data', array( static::class, 'check_dupes' ), 12, 1 );
+		add_filter( 'c_data', array( static::class, 'webmention_verify' ), 11, 1 );
+		add_filter( 'c_data', array( static::class, 'check_dupes' ), 12, 1 );
 
 		// Webmention data handler
-		add_filter( 'webmention_comment_data', array( static::class, 'default_commentdata' ), 21, 1 );
+		add_filter( 'c_data', array( static::class, 'default_commentdata' ), 21, 1 );
 
 		add_filter( 'pre_comment_approved', array( static::class, 'auto_approve' ), 11, 2 );
 
@@ -329,8 +329,8 @@ class Receiver {
 		if ( $query_string ) {
 			$query_array = array();
 			parse_str( $query_string, $query_array );
-			if ( isset( $query_array['webmention_comment'] ) && get_comment( $query_array['webmention_comment'] ) ) {
-				$commentdata['comment_parent'] = $query_array['webmention_comment'];
+			if ( isset( $query_array['c'] ) && get_comment( $query_array['c'] ) ) {
+				$commentdata['comment_parent'] = $query_array['c'];
 			} elseif ( isset( $query_array['replytocom'] ) && get_comment( $query_array['replytocom'] ) ) {
 				// Backward compatibility with older webmentions using "replytocom".
 				$commentdata['comment_parent'] = $query_array['replytocom'];
@@ -377,7 +377,7 @@ class Receiver {
 		 *
 		 * @return array|null|WP_Error $commentdata The Filtered Comment Array or a WP_Error object.
 		 */
-		$commentdata = apply_filters( 'webmention_comment_data', $commentdata );
+		$commentdata = apply_filters( 'c_data', $commentdata );
 
 		if ( ! $commentdata || is_wp_error( $commentdata ) ) {
 			/**
@@ -420,7 +420,7 @@ class Receiver {
 		/*
 		 * Rejects Adding Non-Registered Webmention Comment Types. Ensures any plugins that add extra handling register their comment types.
 		 */
-		if ( ! is_registered_webmention_comment_type( $commentdata['comment_type'] ) ) {
+		if ( ! is_registered_c_type( $commentdata['comment_type'] ) ) {
 			/**
 			 * Fires if an Unregistered Comment Type is About to Be Added
 			 *
