@@ -2,10 +2,10 @@
 
 - Contributors: pfefferle, dshanske, indieweb
 - Donate link: https://notiz.blog/donate/
-- Tags: webmention, pingback, trackback, linkback, indieweb, classicpress
+- Tags: webmention, pingback, trackback, linkback, indieweb
 - Requires at least: 6.2
-- Tested up to: 6.9
-- Stable tag: 5.6.3
+- Tested up to: 7.0
+- Stable tag: 5.7.0
 - Requires PHP: 7.2
 - License: MIT
 - License URI: https://opensource.org/licenses/MIT
@@ -101,8 +101,11 @@ While not all display options can be settings, we are looking to provide some si
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
 
-### 5.6.3
+### 5.7.0
 
+* Fix blind SSRF vulnerability by using `wp_safe_remote_get` for author page and tools requests
+* Fix undefined constant error in WP handler
+* Fix double slash in avatar upload directory path
 * Fix "Show avatars on Webmentions" setting having no effect
 * Fix comment query to respect explicit `type` parameter
 
