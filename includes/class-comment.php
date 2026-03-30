@@ -260,7 +260,7 @@ class Comment {
 	public static function comment_template_include( $template ) {
 		global $wp_query;
 
-		if ( isset( $wp_query->query['c'] ) ) {
+		if ( isset( $wp_query->query['c'] ) || isset( $wp_query->query['replytocom'] ) ) {
 			return apply_filters( 'webmention_comment_template', WEBMENTION_PLUGIN_DIR . 'templates/comment.php' );
 		}
 
@@ -276,6 +276,7 @@ class Comment {
 	 */
 	public static function query_var( $vars ) {
 		$vars[] = 'c';
+		$vars[] = 'replytocom';
 		return $vars;
 	}
 }
