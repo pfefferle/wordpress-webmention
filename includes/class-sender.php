@@ -116,7 +116,7 @@ class Sender {
 			$target = get_url_from_webmention( $parent );
 
 			if ( $target ) {
-				$source = add_query_arg( 'replytocom', $comment->comment_ID, get_permalink( $comment->comment_post_ID ) );
+				$source = add_query_arg( 'webmention_comment', $comment->comment_ID, get_permalink( $comment->comment_post_ID ) );
 
 				do_action( 'send_webmention', $source, $target );
 			}

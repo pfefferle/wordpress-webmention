@@ -329,7 +329,10 @@ class Receiver {
 		if ( $query_string ) {
 			$query_array = array();
 			parse_str( $query_string, $query_array );
-			if ( isset( $query_array['replytocom'] ) && get_comment( $query_array['replytocom'] ) ) {
+			if ( isset( $query_array['webmention_comment'] ) && get_comment( $query_array['webmention_comment'] ) ) {
+				$commentdata['comment_parent'] = $query_array['webmention_comment'];
+			} elseif ( isset( $query_array['replytocom'] ) && get_comment( $query_array['replytocom'] ) ) {
+				// Backward compatibility with older webmentions using "replytocom".
 				$commentdata['comment_parent'] = $query_array['replytocom'];
 			}
 		}

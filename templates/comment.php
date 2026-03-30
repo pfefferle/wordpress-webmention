@@ -1,9 +1,14 @@
 <?php
 global $wp_query, $post;
-$comment_id = esc_attr( $wp_query->query['replytocom'] );
+// Support both the new "webmention_comment" and legacy "replytocom" query vars.
+if ( isset( $wp_query->query['webmention_comment'] ) ) {
+	$comment_id = esc_attr( $wp_query->query['webmention_comment'] );
+} else {
+	$comment_id = esc_attr( $wp_query->query['replytocom'] );
+}
 $comment    = get_comment( $comment_id ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
-// load 404 if replytocom is not valid
+// Load 404 if comment ID is not valid.
 if ( ! $comment ) {
 	status_header( 404 );
 	nocache_headers();
