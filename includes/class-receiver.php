@@ -409,7 +409,7 @@ class Receiver {
 				'source'  => $commentdata['source'],
 				'target'  => $commentdata['target'],
 				'code'    => 'success',
-				'message' => apply_filters( 'webmention_success_message', esc_html__( 'Webmention was successful', 'webmention' ) ),
+				'message' => apply_filters( 'webmention_success_message', esc_html__( 'Thank you! Your Webmention has been received.', 'webmention' ) ),
 			);
 			return new WP_REST_Response( $return, 200 );
 		}
@@ -430,8 +430,11 @@ class Receiver {
 		// disable flood control
 		remove_action( 'check_comment_flood', 'check_comment_flood_db', 10 );
 
+		// if the comment ID is set, the Webmention already exists and will be updated
+		$is_update = ! empty( $commentdata['comment_ID'] );
+
 		// update or save webmention
-		if ( empty( $commentdata['comment_ID'] ) ) {
+		if ( ! $is_update ) {
 			if ( ! is_array( $commentdata['comment_meta'] ) ) {
 				$commentdata['comment_meta'] = array();
 			}
@@ -479,13 +482,29 @@ class Receiver {
 		// re-add flood control
 		add_action( 'check_comment_flood', 'check_comment_flood_db', 10, 4 );
 
+		if ( $is_update ) {
+			/**
+			 * Filters the message that is returned when a Webmention already exists and was updated.
+			 *
+			 * @param string $message The update message.
+			 */
+			$message = apply_filters( 'webmention_update_message', esc_html__( 'You already sent a Webmention for this target. The existing Webmention has been updated.', 'webmention' ) );
+		} else {
+			/**
+			 * Filters the message that is returned when a Webmention was received successfully.
+			 *
+			 * @param string $message The success message.
+			 */
+			$message = apply_filters( 'webmention_success_message', esc_html__( 'Thank you! Your Webmention has been received.', 'webmention' ) );
+		}
+
 		// Return select data
 		$return = array(
 			'link'    => get_comment_link( $commentdata['comment_ID'] ),
 			'source'  => $commentdata['source'],
 			'target'  => $commentdata['target'],
 			'code'    => 'success',
-			'message' => apply_filters( 'webmention_success_message', esc_html__( 'Webmention was successful', 'webmention' ) ),
+			'message' => $message,
 		);
 
 		return new WP_REST_Response( $return, 200 );

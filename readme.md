@@ -104,6 +104,8 @@ Project and support maintained on github at [pfefferle/wordpress-webmention](htt
 ### 5.8.0
 
 * Bump minimum required PHP version to 7.4
+* Return a distinct message when a Webmention already exists and was updated, filterable via `webmention_update_message`
+* Friendlier default success message for the Webmention endpoint
 * Fix `ValueError` in `DOMDocument::loadHTML()` when the post content is empty on PHP 8.1+
 
 ### 5.7.0
