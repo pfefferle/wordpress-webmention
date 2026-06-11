@@ -5,8 +5,8 @@
 - Tags: webmention, pingback, trackback, linkback, indieweb
 - Requires at least: 6.2
 - Tested up to: 7.0
-- Stable tag: 5.7.0
-- Requires PHP: 7.2
+- Stable tag: 5.8.0
+- Requires PHP: 7.4
 - License: MIT
 - License URI: https://opensource.org/licenses/MIT
 
@@ -100,6 +100,11 @@ While not all display options can be settings, we are looking to provide some si
 ## Changelog
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
+
+### 5.8.0
+
+* Bump minimum required PHP version to 7.4
+* Fix `ValueError` in `DOMDocument::loadHTML()` when the post content is empty on PHP 8.1+
 
 ### 5.7.0
 
