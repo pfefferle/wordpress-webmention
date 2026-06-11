@@ -101,6 +101,11 @@ While not all display options can be settings, we are looking to provide some si
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
 
+### 5.8.0
+
+* Return a distinct message when a Webmention already exists and was updated, filterable via `webmention_update_message`
+* Friendlier default success message for the Webmention endpoint
+
 ### 5.7.0
 
 * Fix blind SSRF vulnerability by using `wp_safe_remote_get` for author page and tools requests
