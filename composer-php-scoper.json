@@ -2,7 +2,7 @@
   "name": "pfefferle/wordpress-webmention",
   "description": "A Webmention plugin for WordPress https://wordpress.org/plugins/webmention/",
   "require": {
-    "php": ">=7.0"
+    "php": ">=7.4"
   },
   "type": "wordpress-plugin",
   "license": "MIT",
