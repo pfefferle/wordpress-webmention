@@ -409,7 +409,7 @@ class Receiver {
 				'source'  => $commentdata['source'],
 				'target'  => $commentdata['target'],
 				'code'    => 'success',
-				'message' => apply_filters( 'webmention_success_message', esc_html__( 'Webmention was successful', 'webmention' ) ),
+				'message' => apply_filters( 'webmention_success_message', esc_html__( 'Thank you! Your Webmention has been received.', 'webmention' ) ),
 			);
 			return new WP_REST_Response( $return, 200 );
 		}
@@ -488,14 +488,14 @@ class Receiver {
 			 *
 			 * @param string $message The update message.
 			 */
-			$message = apply_filters( 'webmention_update_message', esc_html__( 'Thanks! You already sent a Webmention for this post, so we updated the existing one with the latest information.', 'webmention' ) );
+			$message = apply_filters( 'webmention_update_message', esc_html__( 'You already sent a Webmention for this target. The existing Webmention has been updated.', 'webmention' ) );
 		} else {
 			/**
 			 * Filters the message that is returned when a Webmention was received successfully.
 			 *
 			 * @param string $message The success message.
 			 */
-			$message = apply_filters( 'webmention_success_message', esc_html__( 'Webmention was successful', 'webmention' ) );
+			$message = apply_filters( 'webmention_success_message', esc_html__( 'Thank you! Your Webmention has been received.', 'webmention' ) );
 		}
 
 		// Return select data
