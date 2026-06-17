@@ -30,10 +30,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-versions: ['7.2', '7.4', '8.3', '8.5']
+        php-versions: ['7.4', '8.3', '8.5']
         wp-version: ['latest']
         include:
-          - php-versions: '7.2'
+          - php-versions: '7.4'
             wp-version: '6.2'
           - php-versions: '8.5'
             wp-version: 'trunk'
@@ -98,7 +98,7 @@ jobs:
         run: ./vendor/bin/phpunit --coverage-clover coverage.xml
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v6
+        uses: codecov/codecov-action@v7
         with:
           files: ./coverage.xml
           fail_ci_if_error: false

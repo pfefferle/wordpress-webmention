@@ -187,6 +187,10 @@ class Response {
 			$body = mb_convert_encoding( $body, 'HTML-ENTITIES', mb_detect_encoding( $body ) );
 		}
 
+		if ( empty( $body ) ) {
+			return new WP_Error( 'empty_body', __( 'Request body has no data', 'webmention' ) );
+		}
+
 		$dom_document = new DOMDocument();
 		$dom_document->loadHTML( $body );
 
