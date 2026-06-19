@@ -42,7 +42,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y subversion
 
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -78,7 +78,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y subversion
 
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
