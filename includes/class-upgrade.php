@@ -110,6 +110,9 @@ class Upgrade {
 		if ( version_compare( $version_from_db, '1.0.1', '<' ) ) {
 			self::migrate_to_1_0_1();
 		}
+		if ( version_compare( $version_from_db, '5.7.0', '<' ) ) {
+			self::migrate_to_5_7_0();
+		}
 
 		/**
 		 * Fires when the system has to be migrated.
@@ -122,6 +125,24 @@ class Upgrade {
 		\update_option( 'webmention_db_version', WEBMENTION_VERSION );
 
 		self::unlock();
+	}
+
+	/**
+	 * Rename post meta keys.
+	 *
+	 * @param string $old_key The old postmeta key.
+	 * @param string $new_key The new postmeta key.
+	 */
+	public static function update_postmeta_key( $old_key, $new_key ) {
+		global $wpdb;
+
+		$wpdb->update(
+			$wpdb->postmeta,
+			array( 'meta_key' => $new_key ),
+			array( 'meta_key' => $old_key ),
+			array( '%s' ),
+			array( '%s' )
+		);
 	}
 
 	/**
@@ -225,5 +246,19 @@ class Upgrade {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Migrate to version 5.7.0
+	 *
+	 * Prefix the `webmention_canonical_url` post meta key with an underscore
+	 * so it is hidden from the Custom Fields UI dropdown.
+	 *
+	 * @since 5.7.0
+	 *
+	 * @return void
+	 */
+	public static function migrate_to_5_7_0() {
+		self::update_postmeta_key( 'webmention_canonical_url', '_webmention_canonical_url' );
 	}
 }
