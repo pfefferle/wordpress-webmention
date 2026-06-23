@@ -5,7 +5,7 @@
 - Tags: webmention, pingback, trackback, linkback, indieweb
 - Requires at least: 6.2
 - Tested up to: 7.0
-- Stable tag: 5.8.0
+- Stable tag: 5.8.1
 - Requires PHP: 7.4
 - License: MIT
 - License URI: https://opensource.org/licenses/MIT
@@ -100,6 +100,12 @@ While not all display options can be settings, we are looking to provide some si
 ## Changelog
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
+
+### 5.8.1
+
+* Security: Fix a stored XSS reachable from unauthenticated Webmentions where parser-derived author metadata (avatar, URL) was rendered unescaped in the comment edit metabox
+* Security: Sanitize Webmention comment meta on store via `register_meta` sanitize callbacks (`esc_url_raw` for URL meta, `sanitize_key`/`sanitize_text_field` for the rest) to keep the database clean
+* Security: Escape remaining template output (comment edit metabox, single-comment view, endpoint message and form, reaction headings)
 
 ### 5.8.0
 
