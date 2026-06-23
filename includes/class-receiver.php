@@ -68,27 +68,30 @@ class Receiver {
 			);
 		}
 		$args = array(
-			'type'         => 'string',
-			'description'  => esc_html__( 'Protocol Used to Receive', 'webmention' ),
-			'single'       => true,
-			'show_in_rest' => true,
+			'type'              => 'string',
+			'description'       => esc_html__( 'Protocol Used to Receive', 'webmention' ),
+			'single'            => true,
+			'show_in_rest'      => true,
+			'sanitize_callback' => 'sanitize_key',
 		);
 		register_meta( 'comment', 'protocol', $args );
 
 		$args = array(
-			'type'         => 'string',
-			'description'  => esc_html__( 'Target URL for the Webmention', 'webmention' ),
-			'single'       => true,
-			'show_in_rest' => true,
+			'type'              => 'string',
+			'description'       => esc_html__( 'Target URL for the Webmention', 'webmention' ),
+			'single'            => true,
+			'show_in_rest'      => true,
+			'sanitize_callback' => 'esc_url_raw',
 		);
 		register_meta( 'comment', 'webmention_target_url', $args );
 
 		// For pingbacks the source URL is stored in the author URL. This means you cannot have an author URL that is different than the source.
 		$args = array(
-			'type'         => 'string',
-			'description'  => esc_html__( 'Source URL for the Webmention', 'webmention' ),
-			'single'       => true,
-			'show_in_rest' => true,
+			'type'              => 'string',
+			'description'       => esc_html__( 'Source URL for the Webmention', 'webmention' ),
+			'single'            => true,
+			'show_in_rest'      => true,
+			'sanitize_callback' => 'esc_url_raw',
 		);
 		register_meta( 'comment', 'webmention_source_url', $args );
 
@@ -102,10 +105,11 @@ class Receiver {
 
 		// Purpose of this is to store the original time as there is no modified time in the comment table.
 		$args = array(
-			'type'         => 'string',
-			'description'  => esc_html__( 'Last Modified Time for the Webmention (GMT)', 'webmention' ),
-			'single'       => true,
-			'show_in_rest' => true,
+			'type'              => 'string',
+			'description'       => esc_html__( 'Last Modified Time for the Webmention (GMT)', 'webmention' ),
+			'single'            => true,
+			'show_in_rest'      => true,
+			'sanitize_callback' => 'sanitize_text_field',
 		);
 		register_meta( 'comment', 'webmention_last_modified', $args );
 
@@ -120,26 +124,29 @@ class Receiver {
 
 		// Purpose of this is to store a vouch URL
 		$args = array(
-			'type'         => 'string',
-			'description'  => esc_html__( 'Webmention Vouch URL', 'webmention' ),
-			'single'       => true,
-			'show_in_rest' => true,
+			'type'              => 'string',
+			'description'       => esc_html__( 'Webmention Vouch URL', 'webmention' ),
+			'single'            => true,
+			'show_in_rest'      => true,
+			'sanitize_callback' => 'esc_url_raw',
 		);
 		register_meta( 'comment', 'webmention_vouch_url', $args );
 
 		$args = array(
-			'type'         => 'string',
-			'description'  => esc_html__( 'Canonical URL for the Webmention', 'webmention' ),
-			'single'       => true,
-			'show_in_rest' => true,
+			'type'              => 'string',
+			'description'       => esc_html__( 'Canonical URL for the Webmention', 'webmention' ),
+			'single'            => true,
+			'show_in_rest'      => true,
+			'sanitize_callback' => 'esc_url_raw',
 		);
 		register_meta( 'comment', 'url', $args );
 
 		$args = array(
-			'type'         => 'string',
-			'description'  => esc_html__( 'Avatar URL', 'webmention' ),
-			'single'       => true,
-			'show_in_rest' => true,
+			'type'              => 'string',
+			'description'       => esc_html__( 'Avatar URL', 'webmention' ),
+			'single'            => true,
+			'show_in_rest'      => true,
+			'sanitize_callback' => 'esc_url_raw',
 		);
 		register_meta( 'comment', 'avatar', $args );
 	}
