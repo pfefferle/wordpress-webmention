@@ -95,6 +95,27 @@ class Webmention {
 	}
 
 	/**
+	 * Check if Webmentions should be disabled for the current environment.
+	 *
+	 * By default, Webmentions are disabled for 'local', 'development',
+	 * and 'staging' environments.
+	 *
+	 * @return bool Whether Webmentions are disabled for the current environment.
+	 */
+	public static function is_disabled_for_environment() {
+		$environment_type = \wp_get_environment_type();
+		$disabled         = \in_array( $environment_type, array( 'local', 'development', 'staging' ), true );
+
+		/**
+		 * Filter whether Webmentions should be disabled for the current environment.
+		 *
+		 * @param bool   $disabled         Whether Webmentions are disabled.
+		 * @param string $environment_type  The current environment type.
+		 */
+		return \apply_filters( 'webmention_disable_for_environment', $disabled, $environment_type );
+	}
+
+	/**
 	 * Register hooks.
 	 */
 	public function register_hooks() {
@@ -108,14 +129,17 @@ class Webmention {
 		// load HTTP 410 support.
 		\add_action( 'init', array( HTTP_Gone::class, 'init' ) );
 
-		// initialize Webmention Sender.
-		\add_action( 'init', array( Sender::class, 'init' ) );
+		// Disable sending, receiving, and discovery for non-production environments.
+		if ( ! self::is_disabled_for_environment() ) {
+			// initialize Webmention Sender.
+			\add_action( 'init', array( Sender::class, 'init' ) );
 
-		// initialize Webmention Receiver.
-		\add_action( 'init', array( Receiver::class, 'init' ) );
+			// initialize Webmention Receiver.
+			\add_action( 'init', array( Receiver::class, 'init' ) );
 
-		// initialize Webmention Discovery.
-		\add_action( 'init', array( Discovery::class, 'init' ) );
+			// initialize Webmention Discovery.
+			\add_action( 'init', array( Discovery::class, 'init' ) );
+		}
 
 		if ( site_supports_blocks() ) {
 			// initialize Webmention Bloks.
