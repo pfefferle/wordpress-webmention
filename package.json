@@ -6,7 +6,7 @@
     "@wordpress/components": "^35.0.0",
     "@wordpress/data": "^10.0.0",
     "@wordpress/env": "^11.0.0",
-    "@wordpress/icons": "^14.0.0",
+    "@wordpress/icons": "^15.0.0",
     "@wordpress/scripts": "^32.0.0"
   },
   "repository": {
