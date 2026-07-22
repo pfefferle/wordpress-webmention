@@ -199,6 +199,62 @@ class Test_Sender extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test that a target which fails during a content-change re-send is retried.
+	 *
+	 * A previously-notified target that returns HTTP 5xx while the post content is
+	 * being re-sent must not be recorded as notified, so the rescheduled run still
+	 * retries it instead of treating it as already delivered.
+	 */
+	public function test_send_webmentions_retries_target_that_fails_during_content_change() {
+		$response_code = 200;
+
+		add_filter(
+			'webmention_server_url',
+			function () {
+				return 'https://example.com/webmention';
+			}
+		);
+
+		add_filter(
+			'pre_http_request',
+			function ( $preempt, $args, $url ) use ( &$response_code ) {
+				// Endpoint discovery must always succeed; only the POST reflects the code.
+				if ( 'https://example.com/webmention' === $url ) {
+					return array(
+						'response' => array( 'code' => $response_code ),
+						'body'     => 'Webmention received',
+					);
+				}
+				return array(
+					'response' => array( 'code' => 200 ),
+					'body'     => 'Webmention received',
+				);
+			},
+			10,
+			3
+		);
+
+		// First run succeeds, so the target is recorded as notified.
+		Sender::send_webmentions( $this->post->ID );
+		$this->assertContains( 'https://example.com', get_post_meta( $this->post->ID, '_webmentioned', true ) );
+
+		// Change the content so the sender re-notifies every target, but the re-send fails.
+		wp_update_post(
+			array(
+				'ID'           => $this->post->ID,
+				'post_content' => 'Updated body linking to <a href="https://example.com">Example</a>',
+			)
+		);
+		$response_code = 500;
+
+		Sender::send_webmentions( $this->post->ID );
+
+		$mentioned = get_post_meta( $this->post->ID, '_webmentioned', true );
+		$mentioned = empty( $mentioned ) ? array() : $mentioned;
+		$this->assertNotContains( 'https://example.com', $mentioned, 'A target that fails during a content-change re-send must not be marked as notified.' );
+	}
+
+	/**
 	 * Test that the post `pinged` column is populated after sending.
 	 *
 	 * Regression test for the dead "restore update punged" block that referenced

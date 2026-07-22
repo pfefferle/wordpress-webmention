@@ -316,12 +316,18 @@ class Sender {
 			}
 		}
 
-		// Persist the set of notified targets: previously notified targets that are still
-		// linked, plus targets notified this run, plus deletes still awaiting retry.
+		// On a content change every target is re-sent, so only targets confirmed this run
+		// count as notified; a previously-notified target that fails must be retried, not
+		// carried forward. On unchanged content the targets we did not re-send this run
+		// remain notified.
+		$carried = $content_changed ? array() : array_intersect( $mentioned, $targets );
+
+		// Persist the set of notified targets: carried-forward targets, plus targets
+		// notified this run, plus deletes still awaiting retry.
 		$notified = array_values(
 			array_unique(
 				array_merge(
-					array_intersect( $mentioned, $targets ),
+					$carried,
 					$mentions,
 					$retained_deletes
 				)
