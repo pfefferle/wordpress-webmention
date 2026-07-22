@@ -875,7 +875,7 @@ class MF2 extends Base {
 	 * @return WP_Error|array Return error or author array if successful.
 	 */
 	public function parse_authorpage( $url ) {
-		$response = Request::get( $url, false );
+		$response = Request::get( $url );
 
 		if ( is_wp_error( $response ) ) {
 			return $response;

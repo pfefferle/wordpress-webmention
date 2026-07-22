@@ -78,7 +78,7 @@ class Tools {
 		$target = $request->get_param( 'target' );
 		$mode   = $request->get_param( 'mode' );
 
-		$response = Request::get( $source, false );
+		$response = Request::get( $source );
 
 		if ( is_wp_error( $response ) ) {
 			return $response;

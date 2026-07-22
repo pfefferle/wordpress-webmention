@@ -2,11 +2,11 @@
 
 - Contributors: pfefferle, dshanske, indieweb
 - Donate link: https://notiz.blog/donate/
-- Tags: webmention, pingback, trackback, linkback, indieweb, classicpress
+- Tags: webmention, pingback, trackback, linkback, indieweb
 - Requires at least: 6.2
-- Tested up to: 6.9
-- Stable tag: 5.6.3
-- Requires PHP: 7.2
+- Tested up to: 7.0
+- Stable tag: 5.8.1
+- Requires PHP: 7.4
 - License: MIT
 - License URI: https://opensource.org/licenses/MIT
 
@@ -101,8 +101,24 @@ While not all display options can be settings, we are looking to provide some si
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
 
-### 5.6.3
+### 5.8.1
 
+* Security: Fix a stored XSS reachable from unauthenticated Webmentions where parser-derived author metadata (avatar, URL) was rendered unescaped in the comment edit metabox
+* Security: Sanitize Webmention comment meta on store via `register_meta` sanitize callbacks (`esc_url_raw` for URL meta, `sanitize_key`/`sanitize_text_field` for the rest) to keep the database clean
+* Security: Escape remaining template output (comment edit metabox, single-comment view, endpoint message and form, reaction headings)
+
+### 5.8.0
+
+* Bump minimum required PHP version to 7.4
+* Return a distinct message when a Webmention already exists and was updated, filterable via `webmention_update_message`
+* Friendlier default success message for the Webmention endpoint
+* Fix `ValueError` in `DOMDocument::loadHTML()` when the post content is empty on PHP 8.1+
+
+### 5.7.0
+
+* Fix blind SSRF vulnerability by using `wp_safe_remote_get` for author page and tools requests
+* Fix undefined constant error in WP handler
+* Fix double slash in avatar upload directory path
 * Fix "Show avatars on Webmentions" setting having no effect
 * Fix comment query to respect explicit `type` parameter
 

@@ -123,7 +123,7 @@
 
 		<?php do_action( 'webmention_endpoint_form_before_form' ); ?>
 
-		<form id="webmention-form" action="<?php echo get_webmention_endpoint(); ?>" method="post">
+		<form id="webmention-form" action="<?php echo esc_url( get_webmention_endpoint() ); ?>" method="post">
 			<?php do_action( 'webmention_endpoint_form_before_input_fields' ); ?>
 			<p>
 				<label for="webmention-source"><?php esc_html_e( 'Source URL', 'webmention' ); ?>:</label><br />
