@@ -54,4 +54,21 @@ class Test_Upgrade extends WP_UnitTestCase {
 		$this->assertEquals( $comment->comment_type, 'reply' );
 		$this->assertEquals( $comment->comment_author_url, 'https://example.org/author_url' );
 	}
+
+	/**
+	 * Test that the 5.7.0 migration prefixes the canonical URL meta key.
+	 */
+	public function test_migrate_to_5_7_0_prefixes_canonical_url_meta_key() {
+		$post_id = self::factory()->post->create();
+
+		add_post_meta( $post_id, 'webmention_canonical_url', 'https://example.org/canonical', true );
+
+		\Webmention\Upgrade::migrate_to_5_7_0();
+
+		// The cached meta needs to be refreshed after the direct database update.
+		wp_cache_flush();
+
+		$this->assertSame( '', get_post_meta( $post_id, 'webmention_canonical_url', true ), 'The old meta key should no longer exist.' );
+		$this->assertSame( 'https://example.org/canonical', get_post_meta( $post_id, '_webmention_canonical_url', true ), 'The value should be stored under the prefixed key.' );
+	}
 }
