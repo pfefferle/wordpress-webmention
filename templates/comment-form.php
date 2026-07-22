@@ -4,7 +4,7 @@
  */
 do_action( 'webmention_comment_form_template_before' );
 ?>
-<form id="webmention-form" action="<?php echo get_webmention_endpoint(); ?>" method="post">
+<form id="webmention-form" action="<?php echo esc_url( get_webmention_endpoint() ); ?>" method="post">
 	<p id="webmention-source-description">
 		<?php echo get_webmention_form_text( get_the_ID() ); ?>
 	</p>
