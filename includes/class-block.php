@@ -87,14 +87,22 @@ class Block {
 	}
 
 	/**
-	 * Enqueue block assets for editor content area (inside iframe).
+	 * Enqueue block assets for the RSVP format.
 	 *
-	 * RSVP styles need to load inside the editor iframe to style
-	 * the data.p-rsvp elements in the content.
+	 * The RSVP styles need to load both inside the editor iframe (to style the
+	 * `data.p-rsvp` elements while editing) and on the front end (to style the
+	 * same elements in published content). On the front end they are always
+	 * enqueued; in the admin editor they are limited to post types that support
+	 * Webmentions, matching the gate applied to the RSVP script.
 	 */
 	public static function enqueue_block_assets() {
-		if ( ! is_admin() ) {
-			return;
+		if ( is_admin() ) {
+			$current_screen = \get_current_screen();
+			$post_types     = \get_post_types_by_support( 'webmentions' );
+
+			if ( ! $current_screen || ! in_array( $current_screen->post_type, $post_types, true ) ) {
+				return;
+			}
 		}
 
 		$asset_file = WEBMENTION_PLUGIN_DIR . 'build/rsvp/index.asset.php';
@@ -106,7 +114,7 @@ class Block {
 		$asset_data = include $asset_file;
 
 		wp_enqueue_style(
-			'webmention-rsvp-editor',
+			'webmention-rsvp',
 			plugins_url( 'build/rsvp/index.css', WEBMENTION_PLUGIN_FILE ),
 			array(),
 			$asset_data['version']

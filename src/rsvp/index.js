@@ -4,12 +4,24 @@
  * Adds <data class="p-rsvp" value="yes|maybe|no|interested">text</data> markup
  * for microformats2 RSVP responses to events.
  */
-import { registerFormatType, applyFormat, removeFormat, getActiveFormat } from '@wordpress/rich-text';
+import {
+	registerFormatType,
+	applyFormat,
+	removeFormat,
+	getActiveFormat,
+} from '@wordpress/rich-text';
 import { RichTextToolbarButton } from '@wordpress/block-editor';
 import { useState } from '@wordpress/element';
 import { Popover, Button } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
-import { check, close, help, starEmpty, cancelCircleFilled } from '@wordpress/icons';
+import { __, sprintf } from '@wordpress/i18n';
+import {
+	calendar,
+	check,
+	close,
+	help,
+	starEmpty,
+	cancelCircleFilled,
+} from '@wordpress/icons';
 
 import './editor.scss';
 
@@ -40,6 +52,9 @@ const RSVP_VALUES = [
 
 /**
  * Get current RSVP value from format
+ *
+ * @param {Object} value Rich text value.
+ * @return {string} Current RSVP value, or an empty string.
  */
 function getCurrentRsvpValue( value ) {
 	const format = getActiveFormat( value, FORMAT_NAME );
@@ -54,6 +69,12 @@ function getCurrentRsvpValue( value ) {
 
 /**
  * RSVP Format Edit Component
+ *
+ * @param {Object}   root0          Component props.
+ * @param {boolean}  root0.isActive Whether the format is active on the selection.
+ * @param {Object}   root0.value    Rich text value.
+ * @param {Function} root0.onChange Change handler for the rich text value.
+ * @return {Element} The RSVP toolbar control.
  */
 const RsvpFormatEdit = ( { isActive, value, onChange } ) => {
 	const [ isOpen, setIsOpen ] = useState( false );
@@ -61,13 +82,17 @@ const RsvpFormatEdit = ( { isActive, value, onChange } ) => {
 
 	const currentItem = RSVP_VALUES.find( ( v ) => v.value === currentValue );
 	const buttonTitle = currentItem
-		? `RSVP: ${ currentItem.label }`
-		: 'RSVP';
+		? sprintf(
+				/* translators: %s: RSVP response label (e.g. Yes, No, Maybe, Interested). */
+				__( 'RSVP: %s', 'webmention' ),
+				currentItem.label
+		  )
+		: __( 'RSVP', 'webmention' );
 
 	return (
 		<>
 			<RichTextToolbarButton
-				icon="calendar-alt"
+				icon={ calendar }
 				title={ buttonTitle }
 				onClick={ () => setIsOpen( ! isOpen ) }
 				isActive={ isActive }
@@ -105,7 +130,9 @@ const RsvpFormatEdit = ( { isActive, value, onChange } ) => {
 								label={ __( 'Remove', 'webmention' ) }
 								showTooltip
 								onClick={ () => {
-									onChange( removeFormat( value, FORMAT_NAME ) );
+									onChange(
+										removeFormat( value, FORMAT_NAME )
+									);
 									setIsOpen( false );
 								} }
 							/>
@@ -121,7 +148,7 @@ const RsvpFormatEdit = ( { isActive, value, onChange } ) => {
  * Register the RSVP format type
  */
 registerFormatType( FORMAT_NAME, {
-	title: 'RSVP',
+	title: __( 'RSVP', 'webmention' ),
 	tagName: 'data',
 	className: 'p-rsvp',
 	attributes: {

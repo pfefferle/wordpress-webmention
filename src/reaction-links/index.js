@@ -517,16 +517,36 @@ function debounce( func, wait ) {
  */
 domReady( () => {
 	const debouncedInject = debounce( injectReactionDropdown, DEBOUNCE_DELAY );
-	const debouncedSelectionCache = debounce(
-		getReactionContext,
-		DEBOUNCE_DELAY
-	);
+
+	// getReactionContext() refreshes the cached rich-text/anchor selection as a
+	// side effect (lastRichTextSelection / lastAnchorSelection). Re-run it whenever
+	// the caret moves so the dropdown reflects the currently focused link even when
+	// the link popover re-renders. The return value is intentionally discarded.
+	const cacheSelection = debounce( () => {
+		getReactionContext();
+	}, DEBOUNCE_DELAY );
+
+	// The block editor canvas runs in an iframe (WP 6.3+), so a caret moving inside
+	// the editor fires `selectionchange` on the iframe document rather than the top
+	// document. Attach the listener to every relevant document exactly once.
+	const trackedDocuments = new Set();
+
+	const trackSelectionOn = ( doc ) => {
+		if ( ! doc || trackedDocuments.has( doc ) ) {
+			return;
+		}
+		trackedDocuments.add( doc );
+		doc.addEventListener( 'selectionchange', cacheSelection );
+	};
+
+	trackSelectionOn( document );
 
 	const observer = new window.MutationObserver( () => {
 		debouncedInject();
+		// The editor iframe is created asynchronously; attach once it exists.
+		const canvas = document.querySelector( 'iframe[name="editor-canvas"]' );
+		trackSelectionOn( canvas?.contentDocument );
 	} );
-
-	document.addEventListener( 'selectionchange', debouncedSelectionCache );
 
 	observer.observe( document.body, {
 		childList: true,
@@ -536,9 +556,9 @@ domReady( () => {
 	// Cleanup on page unload
 	window.addEventListener( 'beforeunload', () => {
 		observer.disconnect();
-		document.removeEventListener(
-			'selectionchange',
-			debouncedSelectionCache
-		);
+		trackedDocuments.forEach( ( doc ) => {
+			doc.removeEventListener( 'selectionchange', cacheSelection );
+		} );
+		trackedDocuments.clear();
 	} );
 } );
