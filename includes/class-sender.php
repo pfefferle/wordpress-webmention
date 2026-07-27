@@ -262,12 +262,28 @@ class Sender {
 		$mentioned = get_post_meta( $post->ID, '_webmentioned', true );
 		$mentioned = empty( $mentioned ) ? array() : $mentioned;
 
-		// Find previously sent Webmentions and send them one last time.
+		// Detect whether the post content changed since the last send. Re-sending the
+		// same, unchanged post to already-notified targets caused the repeated
+		// Webmentions reported in https://github.com/pfefferle/wordpress-webmention/issues/619.
+		$content_hash    = md5( $post->post_content );
+		$last_hash       = get_post_meta( $post->ID, '_webmention_content_hash', true );
+		$content_changed = ( $content_hash !== $last_hash );
+
+		// Find previously sent Webmentions that are no longer linked and send them one last time.
 		$deletes = array_diff( $mentioned, $targets );
+
+		// When the content changed, notify every current target so receivers re-fetch the
+		// updated post. Otherwise only (re)send to targets we have not yet confirmed as sent,
+		// which lets HTTP 5xx retries through while skipping already-notified targets.
+		if ( $content_changed ) {
+			$to_send = $targets;
+		} else {
+			$to_send = array_diff( $targets, $mentioned );
+		}
 
 		$mentions = array();
 
-		foreach ( $targets as $target ) {
+		foreach ( $to_send as $target ) {
 			// send Webmention
 			$response = self::send_webmention( $source, $target, $post_id );
 
@@ -286,6 +302,9 @@ class Sender {
 			}
 		}
 
+		// Deletes that fail with a 5xx are retained so the delete is retried next run.
+		$retained_deletes = array();
+
 		foreach ( $deletes as $deleted ) {
 			// send delete Webmention
 			$response = self::send_webmention( $source, $deleted, $post_id );
@@ -293,18 +312,36 @@ class Sender {
 			// reschedule if server responds with a http error 5xx
 			if ( wp_remote_retrieve_response_code( $response ) >= 500 ) {
 				self::reschedule( $post_id );
-				$mentions[] = $deleted;
+				$retained_deletes[] = $deleted;
 			}
 		}
 
-		if ( ! empty( $mentions ) ) {
-			update_post_meta( $post_id, '_webmentioned', $mentions );
-		}
+		// On a content change every target is re-sent, so only targets confirmed this run
+		// count as notified; a previously-notified target that fails must be retried, not
+		// carried forward. On unchanged content the targets we did not re-send this run
+		// remain notified.
+		$carried = $content_changed ? array() : array_intersect( $mentioned, $targets );
 
-		$pung = get_pung( $post );
+		// Persist the set of notified targets: carried-forward targets, plus targets
+		// notified this run, plus deletes still awaiting retry.
+		$notified = array_values(
+			array_unique(
+				array_merge(
+					$carried,
+					$mentions,
+					$retained_deletes
+				)
+			)
+		);
 
-		if ( ! empty( $ping ) ) {
-			self::update_ping( $post, array_merge( $pung, $ping ) );
+		update_post_meta( $post->ID, '_webmentioned', $notified );
+		update_post_meta( $post->ID, '_webmention_content_hash', $content_hash );
+
+		// Keep WordPress' own `pinged` list in sync so the core pinging subsystem does
+		// not treat these links as un-pinged.
+		if ( ! empty( $notified ) ) {
+			$pung = get_pung( $post );
+			self::update_ping( $post, array_values( array_unique( array_merge( $pung, $notified ) ) ) );
 		}
 
 		return $mentions;
