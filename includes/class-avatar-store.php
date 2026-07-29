@@ -42,6 +42,9 @@ class Avatar_Store {
 	public static function find_avatar( $host, $author ) {
 		$upload_dir = trailingslashit( self::upload_directory( $host ) );
 		$upload_url = trailingslashit( self::upload_directory( $host, true ) );
+		if ( ! is_dir( $upload_dir ) ) {
+			return false;
+		}
 		$results    = scandir( $upload_dir );
 		if ( ! $results ) {
 			return $results;
