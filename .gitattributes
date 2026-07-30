@@ -24,6 +24,10 @@
 /src/                    export-ignore
 /tests/                  export-ignore
 
+# Build metadata: these block.json files are build entry points, not registered
+# blocks. Keep them out of the archive so WordPress.org does not list them as blocks.
+/build/*/block.json      export-ignore
+
 # GitHub linguist attributes
 /build/**                linguist-generated
 /package-lock.json       linguist-generated
