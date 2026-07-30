@@ -45,7 +45,7 @@ class Avatar_Store {
 		if ( ! is_dir( $upload_dir ) ) {
 			return false;
 		}
-		$results    = scandir( $upload_dir );
+		$results = scandir( $upload_dir );
 		if ( ! $results ) {
 			return $results;
 		}
