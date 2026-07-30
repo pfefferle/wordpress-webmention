@@ -116,7 +116,7 @@
 	</style>
 	</head>
 	<body id="webmention-endpint-page">
-		<p><?php echo $data['message']; ?></p>
+		<p><?php echo esc_html( $data['message'] ); ?></p>
 
 		<p id="backtoblog"><a href="<?php echo esc_url( home_url( '/' ) ); ?>">
 			<?php

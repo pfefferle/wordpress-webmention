@@ -4,7 +4,7 @@
  */
 do_action( 'webmention_comment_form_template_before' );
 ?>
-<form id="webmention-form" action="<?php echo get_webmention_endpoint(); ?>" method="post">
+<form id="webmention-form" action="<?php echo esc_url( get_webmention_endpoint() ); ?>" method="post">
 	<p id="webmention-source-description">
 		<?php echo get_webmention_form_text( get_the_ID() ); ?>
 	</p>
@@ -13,7 +13,7 @@ do_action( 'webmention_comment_form_template_before' );
 		<input id="webmention-source" class="webmention-source" type="url" autocomplete="url" required pattern="^https?:\/\/(.*)" name="source" aria-describedby="webmention-source-description" />
 	</p>
 	<p>
-		<input id="webmention-submit" class="wp-element-button" type="submit" name="submit" value="<?php echo esc_attr( apply_filters( 'webmention_form_submit_text', __( 'Ping me!', 'webmention' ) ) ); ?>" />
+		<input id="webmention-submit" class="wp-element-button wp-block-button__link" type="submit" name="submit" value="<?php echo esc_attr( apply_filters( 'webmention_form_submit_text', __( 'Ping me!', 'webmention' ) ) ); ?>" />
 	</p>
 	<input id="webmention-format" type="hidden" name="format" value="html" />
 	<input id="webmention-target" type="hidden" name="target" value="<?php the_permalink(); ?>" />

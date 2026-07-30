@@ -1,7 +1,33 @@
-# Directories
-/.wordpress-org export-ignore
-/.github export-ignore
+# Distribution ignores (excluded from release archives)
+# Dotfiles and directories
+/.editorconfig            export-ignore
+/.gitattributes          export-ignore
+/.github/                export-ignore
+/.gitignore              export-ignore
+/.wordpress-org/         export-ignore
+/.wp-env.json            export-ignore
 
-# Files
-/.gitattributes export-ignore
-/.gitignore export-ignore
+# Build, test, and config files
+/bin/                    export-ignore
+/composer-php-scoper.json export-ignore
+/composer.json           export-ignore
+/config/                 export-ignore
+/docker-compose-test.yml export-ignore
+/Dockerfile              export-ignore
+/jest.config.js          export-ignore
+/package-lock.json       export-ignore
+/package.json            export-ignore
+/phpcs.xml               export-ignore
+/phpunit.xml.dist        export-ignore
+
+# Source and tests (build/ is distributed, src/ is not)
+/src/                    export-ignore
+/tests/                  export-ignore
+
+# Build metadata: these block.json files are build entry points, not registered
+# blocks. Keep them out of the archive so WordPress.org does not list them as blocks.
+/build/*/block.json      export-ignore
+
+# GitHub linguist attributes
+/build/**                linguist-generated
+/package-lock.json       linguist-generated
