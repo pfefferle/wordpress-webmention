@@ -6,10 +6,11 @@
 
 .webmention-reaction-setting.block-editor-link-control__setting {
 	flex-wrap: nowrap;
-	padding-top: 16px;
-	padding-bottom: 16px;
+	// Trade the row's horizontal padding for margin so the separator lines up
+	// with the setting fields above it instead of spanning the whole drawer.
+	margin: 8px 24px 0;
+	padding: 12px 0 0;
 	border-top: 1px solid #ddd;
-	margin-top: 0;
 
 	.webmention-reaction-setting__label {
 		flex-shrink: 0;

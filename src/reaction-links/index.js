@@ -1,11 +1,16 @@
 /**
  * Microformats Reaction Links Extension
  *
- * Extends the WordPress block editor link popover to add microformats2
- * reaction classes (u-in-reply-to, u-like-of, etc.) directly to anchor elements.
+ * Adds a friendly picker for microformats2 reaction classes (u-in-reply-to,
+ * u-like-of, etc.) to the WordPress block editor link popover.
+ *
+ * The picker drives WordPress core's own "Additional CSS class(es)" link
+ * setting instead of editing the anchor directly. That keeps reactions on the
+ * native link-editing pipeline: choosing one stages the change, highlights the
+ * popover's "Apply" button, and is committed to (or discarded from) the anchor
+ * exactly like every other link setting.
  */
 import domReady from '@wordpress/dom-ready';
-import { select, dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 
 import './editor.scss';
@@ -48,15 +53,12 @@ const REACTION_CLASSES = REACTION_TYPES.map( ( t ) => t.value ).filter(
  * Debounce delay in milliseconds for MutationObserver callbacks.
  */
 const DEBOUNCE_DELAY = 50;
-let lastRichTextSelection = null;
-let lastAnchorSelection = null;
 
 /**
- * Get the currently selected block
+ * Maximum time in milliseconds to wait for the native CSS-classes input to
+ * render after the setting is activated.
  */
-function getSelectedBlock() {
-	return select( 'core/block-editor' ).getSelectedBlock();
-}
+const INPUT_RENDER_TIMEOUT = 500;
 
 /**
  * Parse reaction class from a class string
@@ -80,351 +82,192 @@ function parseReactionClass( classStr ) {
 }
 
 /**
- * Get the URL being edited from the link popover
+ * Get the settings drawer of the currently open link popover.
+ *
+ * @return {?HTMLElement} Settings drawer, or null when no link is being edited.
  */
-function getCurrentLinkUrl() {
-	const urlInput = document.querySelector(
-		'.block-editor-link-control__search-input input'
-	);
-	if ( urlInput && urlInput.value ) {
-		return urlInput.value;
-	}
+function getLinkSettingsDrawer() {
+	return document.querySelector( '.block-editor-link-control__settings' );
+}
 
-	const urlDisplayLink = document.querySelector(
-		'.block-editor-link-control__search-item-info a'
+/**
+ * Locate core's "Additional CSS class(es)" setting row within the drawer.
+ *
+ * It is the only link setting rendered as a fieldset (the toggle settings such
+ * as "Open in new tab" are plain checkboxes), which lets us find it without
+ * relying on translated label text.
+ *
+ * @param {HTMLElement} settings Link settings drawer element.
+ * @return {?HTMLElement} CSS-classes setting row, or null when not present.
+ */
+function getCssClassesRow( settings ) {
+	const rows = settings.querySelectorAll(
+		'.block-editor-link-control__setting'
 	);
-	if ( urlDisplayLink ) {
-		const href = urlDisplayLink.getAttribute( 'href' );
-		if ( href ) {
-			return href.trim();
+
+	for ( const row of rows ) {
+		if ( row.classList.contains( 'webmention-reaction-setting' ) ) {
+			continue;
+		}
+		if ( row.querySelector( 'fieldset' ) ) {
+			return row;
 		}
 	}
-
 	return null;
 }
 
 /**
- * Normalize rich text values to an HTML string.
+ * Get the text input for the CSS-classes setting, when it is rendered.
  *
- * @param {*} value Raw attribute value.
- * @return {?string} HTML string when supported, otherwise null.
+ * The input only exists once the setting has been activated.
+ *
+ * @param {HTMLElement} cssRow CSS-classes setting row.
+ * @return {?HTMLInputElement} Input element, or null when the setting is inactive.
  */
-function getHtmlString( value ) {
-	let content = value;
-
-	if ( typeof content === 'object' && content?.toHTMLString ) {
-		content = content.toHTMLString();
-	}
-
-	return typeof content === 'string' ? content : null;
+function getCssClassesInput( cssRow ) {
+	return cssRow.querySelector( 'input.components-input-control__input' );
 }
 
 /**
- * Get the selected rich text attribute and its HTML content.
+ * Set a React-controlled input's value so the component registers the change.
+ *
+ * @param {HTMLInputElement} input Target input.
+ * @param {string}           value New value.
  */
-function getEditableRichTextContext() {
-	const block = getSelectedBlock();
-	if ( ! block ) {
-		return null;
-	}
+function setControlledInputValue( input, value ) {
+	const descriptor = Object.getOwnPropertyDescriptor(
+		window.HTMLInputElement.prototype,
+		'value'
+	);
+	descriptor.set.call( input, value );
+	input.dispatchEvent( new Event( 'input', { bubbles: true } ) );
+	input.dispatchEvent( new Event( 'change', { bubbles: true } ) );
+}
 
-	const { clientId, attributes } = block;
-	const blockEditorStore = select( 'core/block-editor' );
-	const hasSelectionApi =
-		typeof blockEditorStore.getSelectionStart === 'function';
-	const selectionStart = hasSelectionApi
-		? blockEditorStore.getSelectionStart()
-		: null;
-	let attributeKey = selectionStart?.attributeKey;
-
-	if ( selectionStart?.clientId && selectionStart.clientId !== clientId ) {
-		return null;
-	}
-
-	if ( attributeKey ) {
-		lastRichTextSelection = {
-			clientId,
-			attributeKey,
+/**
+ * Wait for an element to appear, polling on animation frames.
+ *
+ * @param {Function} getter  Returns the element or a falsy value.
+ * @param {number}   timeout Maximum wait in milliseconds.
+ * @return {Promise<?HTMLElement>} Resolves with the element, or null on timeout.
+ */
+function waitForElement( getter, timeout ) {
+	return new Promise( ( resolve ) => {
+		const start = Date.now();
+		const poll = () => {
+			const element = getter();
+			if ( element ) {
+				resolve( element );
+				return;
+			}
+			if ( Date.now() - start >= timeout ) {
+				resolve( null );
+				return;
+			}
+			window.requestAnimationFrame( poll );
 		};
-	}
-
-	if ( ! attributeKey ) {
-		if ( lastRichTextSelection?.clientId === clientId ) {
-			attributeKey = lastRichTextSelection.attributeKey;
-		}
-	}
-
-	if ( ! attributeKey ) {
-		// If the selection API is available but there is no rich-text attribute,
-		// this block shape is not supported by this extension.
-		if ( hasSelectionApi ) {
-			return null;
-		}
-
-		if ( ! Object.prototype.hasOwnProperty.call( attributes, 'content' ) ) {
-			return null;
-		}
-
-		attributeKey = 'content';
-	}
-
-	const content = getHtmlString( attributes[ attributeKey ] );
-	if ( ! content ) {
-		return null;
-	}
-
-	return {
-		clientId,
-		attributeKey,
-		content,
-	};
+		poll();
+	} );
 }
 
 /**
- * Parse anchors from an HTML string.
+ * Read the reaction currently reflected in the CSS-classes setting.
  *
- * @param {string} content HTML content from a rich-text attribute.
- * @return {?Object} Parsed container and anchor list.
+ * @param {HTMLElement} settings Link settings drawer element.
+ * @return {string} Active reaction class, or an empty string for "None".
  */
-function parseContentAnchors( content ) {
-	const parser = new window.DOMParser();
-	const doc = parser.parseFromString(
-		`<div>${ content }</div>`,
-		'text/html'
-	);
-	const container = doc.body.firstChild;
-
-	if ( ! container ) {
-		return null;
-	}
-
-	return {
-		container,
-		anchors: Array.from( container.querySelectorAll( 'a' ) ),
-	};
-}
-
-/**
- * Get the currently selected anchor from the editor and its index.
- *
- * @param {string} clientId Current block client ID.
- * @return {?Object} Selected anchor position and href.
- */
-function getSelectedAnchorInEditor( clientId ) {
-	const selectedBlockEl = document.querySelector(
-		`[data-block="${ clientId }"]`
-	);
-	const view =
-		selectedBlockEl?.ownerDocument?.defaultView || document.defaultView;
-	const selection = view?.getSelection ? view.getSelection() : null;
-
-	if ( ! selection || selection.rangeCount === 0 ) {
-		return null;
-	}
-
-	let node = selection.anchorNode;
-
-	if ( ! node || ( selectedBlockEl && ! selectedBlockEl.contains( node ) ) ) {
-		return null;
-	}
-
-	if ( node.nodeType === 3 ) {
-		node = node.parentElement;
-	}
-
-	if ( ! node || node.nodeType !== 1 || typeof node.closest !== 'function' ) {
-		return null;
-	}
-
-	const anchor = node.closest( 'a' );
-	if ( ! anchor ) {
-		return null;
-	}
-
-	const editableRoot = anchor.closest( '[contenteditable="true"]' );
-	if ( ! editableRoot ) {
-		return null;
-	}
-
-	const anchorIndex = Array.from(
-		editableRoot.querySelectorAll( 'a' )
-	).indexOf( anchor );
-	if ( anchorIndex < 0 ) {
-		return null;
-	}
-
-	return {
-		index: anchorIndex,
-		href: anchor.getAttribute( 'href' )?.trim() || '',
-	};
-}
-
-/**
- * Resolve the single target anchor index in parsed content.
- *
- * @param {Array}   anchors        Parsed anchor elements from block attributes.
- * @param {?Object} selectedAnchor Selected anchor position from editor DOM.
- * @param {?string} targetUrl      URL currently shown in the link popover.
- * @return {number} Anchor index, or -1 when not resolvable.
- */
-function getTargetAnchorIndex( anchors, selectedAnchor, targetUrl ) {
-	if ( selectedAnchor && selectedAnchor.index < anchors.length ) {
-		const indexedAnchorHref = (
-			anchors[ selectedAnchor.index ].getAttribute( 'href' ) || ''
-		).trim();
-		if (
-			! selectedAnchor.href ||
-			indexedAnchorHref === selectedAnchor.href
-		) {
-			return selectedAnchor.index;
-		}
-	}
-
-	if ( selectedAnchor?.href ) {
-		const selectedHrefIndex = anchors.findIndex(
-			( anchor ) =>
-				( anchor.getAttribute( 'href' ) || '' ).trim() ===
-				selectedAnchor.href
-		);
-		if ( selectedHrefIndex >= 0 ) {
-			return selectedHrefIndex;
-		}
-	}
-
-	if ( targetUrl ) {
-		return anchors.findIndex(
-			( anchor ) =>
-				( anchor.getAttribute( 'href' ) || '' ).trim() ===
-				targetUrl.trim()
-		);
-	}
-
-	return -1;
-}
-
-/**
- * Build a full reaction editing context for the selected link.
- */
-function getReactionContext() {
-	const richTextContext = getEditableRichTextContext();
-	if ( ! richTextContext ) {
-		return null;
-	}
-
-	const parsed = parseContentAnchors( richTextContext.content );
-	if ( ! parsed ) {
-		return null;
-	}
-
-	const targetUrl = getCurrentLinkUrl();
-	let selectedAnchor = getSelectedAnchorInEditor( richTextContext.clientId );
-
-	if ( selectedAnchor ) {
-		lastAnchorSelection = {
-			clientId: richTextContext.clientId,
-			attributeKey: richTextContext.attributeKey,
-			...selectedAnchor,
-		};
-	} else if (
-		lastAnchorSelection?.clientId === richTextContext.clientId &&
-		lastAnchorSelection?.attributeKey === richTextContext.attributeKey
-	) {
-		selectedAnchor = lastAnchorSelection;
-	}
-
-	const targetAnchorIndex = getTargetAnchorIndex(
-		parsed.anchors,
-		selectedAnchor,
-		targetUrl
-	);
-
-	if ( targetAnchorIndex < 0 ) {
-		return null;
-	}
-
-	return {
-		...richTextContext,
-		...parsed,
-		targetAnchorIndex,
-	};
-}
-
-/**
- * Get current reaction from the selected anchor in block content.
- *
- * @param {Object} reactionContext Reaction context for the selected link.
- * @return {string} Active reaction class.
- */
-function getCurrentReactionFromBlock( reactionContext ) {
-	const targetAnchor =
-		reactionContext.anchors[ reactionContext.targetAnchorIndex ];
-	if ( ! targetAnchor ) {
+function getCurrentReaction( settings ) {
+	const cssRow = getCssClassesRow( settings );
+	if ( ! cssRow ) {
 		return '';
 	}
 
-	return parseReactionClass( targetAnchor.getAttribute( 'class' ) );
+	const input = getCssClassesInput( cssRow );
+	return input ? parseReactionClass( input.value ) : '';
 }
 
 /**
- * Apply reaction class to the anchor in block content
+ * Build the CSS class string for a link after switching its reaction.
  *
- * @param {string} reaction Reaction class to apply.
+ * Any non-reaction classes the author added are preserved; the reaction token
+ * is swapped in or removed.
+ *
+ * @param {string} currentClasses Existing class attribute value.
+ * @param {string} reaction       New reaction class, or empty string to remove it.
+ * @return {string} Updated class attribute value.
  */
-function applyReaction( reaction ) {
-	const reactionContext = getReactionContext();
-	if ( ! reactionContext ) {
-		return;
-	}
+function buildClassValue( currentClasses, reaction ) {
+	const tokens = ( currentClasses || '' )
+		.trim()
+		.split( /\s+/ )
+		.filter( ( token ) => token && ! REACTION_CLASSES.includes( token ) );
 
-	const targetAnchor =
-		reactionContext.anchors[ reactionContext.targetAnchorIndex ];
-	if ( ! targetAnchor ) {
-		return;
-	}
-
-	const previousClassAttribute = targetAnchor.getAttribute( 'class' ) || '';
-
-	// Remove existing reaction classes
-	REACTION_CLASSES.forEach( ( cls ) => {
-		targetAnchor.classList.remove( cls );
-	} );
-
-	// Add new reaction class
 	if ( reaction ) {
-		targetAnchor.classList.add( reaction );
+		tokens.push( reaction );
 	}
 
-	// Clean up empty class attribute
-	if ( targetAnchor.classList.length === 0 ) {
-		targetAnchor.removeAttribute( 'class' );
+	return tokens.join( ' ' );
+}
+
+/**
+ * Apply a reaction by writing it into core's "Additional CSS class(es)" setting.
+ *
+ * Activates the setting on demand, then updates its input. Core takes over from
+ * there: the change is staged, the popover's "Apply" button lights up, and the
+ * reaction is written to the anchor only when the author applies the link.
+ *
+ * @param {string} reaction Reaction class to apply, or empty string for "None".
+ */
+async function applyReaction( reaction ) {
+	const settings = getLinkSettingsDrawer();
+	if ( ! settings ) {
+		return;
 	}
 
-	const updatedClassAttribute = targetAnchor.getAttribute( 'class' ) || '';
-	const modified = previousClassAttribute !== updatedClassAttribute;
-
-	if ( modified ) {
-		dispatch( 'core/block-editor' ).updateBlockAttributes(
-			reactionContext.clientId,
-			{
-				[ reactionContext.attributeKey ]:
-					reactionContext.container.innerHTML,
-			}
-		);
+	const cssRow = getCssClassesRow( settings );
+	if ( ! cssRow ) {
+		return;
 	}
+
+	let input = getCssClassesInput( cssRow );
+	const currentClasses = input ? input.value : '';
+	const nextValue = buildClassValue( currentClasses, reaction );
+
+	// Nothing to write and the setting is inactive: leave it untouched so we do
+	// not needlessly enable the "Apply" button.
+	if ( ! nextValue && ! input ) {
+		return;
+	}
+
+	// The input only exists once the setting is active; activate it on demand.
+	if ( ! input ) {
+		const activator = cssRow.querySelector( 'input[type="checkbox"]' );
+		if ( activator ) {
+			activator.click();
+			input = await waitForElement(
+				() => getCssClassesInput( cssRow ),
+				INPUT_RENDER_TIMEOUT
+			);
+		}
+	}
+
+	if ( ! input ) {
+		return;
+	}
+
+	setControlledInputValue( input, nextValue );
 }
 
 /**
  * Create the reaction dropdown
  *
- * @param {string} targetKey       Unique key for selected anchor context.
  * @param {string} currentReaction Current reaction class.
  * @return {HTMLElement} Dropdown container element.
  */
-function createReactionDropdown( targetKey, currentReaction ) {
+function createReactionDropdown( currentReaction ) {
 	const container = document.createElement( 'div' );
 	container.className =
 		'block-editor-link-control__setting webmention-reaction-setting';
-	container.dataset.target = targetKey;
 
 	const label = document.createElement( 'label' );
 	label.className = 'webmention-reaction-setting__label';
@@ -445,8 +288,8 @@ function createReactionDropdown( targetKey, currentReaction ) {
 		selectEl.appendChild( option );
 	} );
 
-	selectEl.addEventListener( 'change', ( e ) => {
-		applyReaction( e.target.value );
+	selectEl.addEventListener( 'change', ( event ) => {
+		applyReaction( event.target.value );
 	} );
 
 	container.appendChild( selectEl );
@@ -454,47 +297,40 @@ function createReactionDropdown( targetKey, currentReaction ) {
 }
 
 /**
- * Inject the reaction dropdown into the link popover
+ * Inject or refresh the reaction dropdown inside the link settings drawer.
  */
 function injectReactionDropdown() {
-	const settingsDrawer = document.querySelector(
-		'.block-editor-link-control__settings'
-	);
+	const settings = getLinkSettingsDrawer();
+	const existingDropdown = settings
+		? settings.querySelector( '.webmention-reaction-setting' )
+		: null;
 
-	if ( ! settingsDrawer ) {
-		return;
-	}
-
-	const reactionContext = getReactionContext();
-	const existingDropdown = settingsDrawer.querySelector(
-		'.webmention-reaction-setting'
-	);
-	if ( ! reactionContext ) {
+	// Only offer reactions when core exposes its CSS-classes setting, which is
+	// the mechanism the picker builds on.
+	if ( ! settings || ! getCssClassesRow( settings ) ) {
 		if ( existingDropdown ) {
 			existingDropdown.remove();
 		}
 		return;
 	}
 
-	const targetKey = `${ reactionContext.clientId }:${ reactionContext.attributeKey }:${ reactionContext.targetAnchorIndex }`;
-	const currentReaction = getCurrentReactionFromBlock( reactionContext );
+	const currentReaction = getCurrentReaction( settings );
 
 	if ( existingDropdown ) {
-		// Recreate the dropdown if another link or attribute is selected.
-		if ( existingDropdown.dataset.target !== targetKey ) {
-			existingDropdown.remove();
-		} else {
-			// Selection is the same, just update the selected value if needed.
-			const selectEl = existingDropdown.querySelector( 'select' );
-			if ( selectEl && selectEl.value !== currentReaction ) {
-				selectEl.value = currentReaction;
-			}
-			return;
+		const selectEl = existingDropdown.querySelector( 'select' );
+		// Keep the picker in sync with the link's classes, but do not fight the
+		// author while they have the dropdown focused.
+		if (
+			selectEl &&
+			selectEl.value !== currentReaction &&
+			settings.ownerDocument.activeElement !== selectEl
+		) {
+			selectEl.value = currentReaction;
 		}
+		return;
 	}
 
-	const dropdown = createReactionDropdown( targetKey, currentReaction );
-	settingsDrawer.appendChild( dropdown );
+	settings.appendChild( createReactionDropdown( currentReaction ) );
 }
 
 /**
@@ -518,35 +354,9 @@ function debounce( func, wait ) {
 domReady( () => {
 	const debouncedInject = debounce( injectReactionDropdown, DEBOUNCE_DELAY );
 
-	// getReactionContext() refreshes the cached rich-text/anchor selection as a
-	// side effect (lastRichTextSelection / lastAnchorSelection). Re-run it whenever
-	// the caret moves so the dropdown reflects the currently focused link even when
-	// the link popover re-renders. The return value is intentionally discarded.
-	const cacheSelection = debounce( () => {
-		getReactionContext();
-	}, DEBOUNCE_DELAY );
-
-	// The block editor canvas runs in an iframe (WP 6.3+), so a caret moving inside
-	// the editor fires `selectionchange` on the iframe document rather than the top
-	// document. Attach the listener to every relevant document exactly once.
-	const trackedDocuments = new Set();
-
-	const trackSelectionOn = ( doc ) => {
-		if ( ! doc || trackedDocuments.has( doc ) ) {
-			return;
-		}
-		trackedDocuments.add( doc );
-		doc.addEventListener( 'selectionchange', cacheSelection );
-	};
-
-	trackSelectionOn( document );
-
-	const observer = new window.MutationObserver( () => {
-		debouncedInject();
-		// The editor iframe is created asynchronously; attach once it exists.
-		const canvas = document.querySelector( 'iframe[name="editor-canvas"]' );
-		trackSelectionOn( canvas?.contentDocument );
-	} );
+	// The link popover mounts and updates as the author edits links; re-run the
+	// injection on DOM changes so the dropdown appears and stays in sync.
+	const observer = new window.MutationObserver( debouncedInject );
 
 	observer.observe( document.body, {
 		childList: true,
@@ -556,9 +366,5 @@ domReady( () => {
 	// Cleanup on page unload
 	window.addEventListener( 'beforeunload', () => {
 		observer.disconnect();
-		trackedDocuments.forEach( ( doc ) => {
-			doc.removeEventListener( 'selectionchange', cacheSelection );
-		} );
-		trackedDocuments.clear();
 	} );
 } );
