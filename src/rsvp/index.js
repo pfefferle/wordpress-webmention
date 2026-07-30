@@ -8,64 +8,20 @@ import {
 	registerFormatType,
 	applyFormat,
 	removeFormat,
-	getActiveFormat,
 } from '@wordpress/rich-text';
 import { RichTextToolbarButton } from '@wordpress/block-editor';
 import { useState } from '@wordpress/element';
 import { Popover, Button } from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
-import {
-	calendar,
-	check,
-	close,
-	help,
-	starEmpty,
-	cancelCircleFilled,
-} from '@wordpress/icons';
+import { __ } from '@wordpress/i18n';
+import { calendar, cancelCircleFilled } from '@wordpress/icons';
 
 import './editor.scss';
-
-const FORMAT_NAME = 'webmention/rsvp';
-
-const RSVP_VALUES = [
-	{
-		value: 'yes',
-		label: __( 'Yes', 'webmention' ),
-		icon: check,
-	},
-	{
-		value: 'no',
-		label: __( 'No', 'webmention' ),
-		icon: close,
-	},
-	{
-		value: 'maybe',
-		label: __( 'Maybe', 'webmention' ),
-		icon: help,
-	},
-	{
-		value: 'interested',
-		label: __( 'Interested', 'webmention' ),
-		icon: starEmpty,
-	},
-];
-
-/**
- * Get current RSVP value from format
- *
- * @param {Object} value Rich text value.
- * @return {string} Current RSVP value, or an empty string.
- */
-function getCurrentRsvpValue( value ) {
-	const format = getActiveFormat( value, FORMAT_NAME );
-	if ( format?.attributes?.value ) {
-		return format.attributes.value;
-	}
-	if ( format?.unregisteredAttributes?.value ) {
-		return format.unregisteredAttributes.value;
-	}
-	return '';
-}
+import {
+	FORMAT_NAME,
+	RSVP_VALUES,
+	getCurrentRsvpValue,
+	getRsvpButtonTitle,
+} from './rsvp';
 
 /**
  * RSVP Format Edit Component
@@ -79,15 +35,7 @@ function getCurrentRsvpValue( value ) {
 const RsvpFormatEdit = ( { isActive, value, onChange } ) => {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const currentValue = getCurrentRsvpValue( value );
-
-	const currentItem = RSVP_VALUES.find( ( v ) => v.value === currentValue );
-	const buttonTitle = currentItem
-		? sprintf(
-				/* translators: %s: RSVP response label (e.g. Yes, No, Maybe, Interested). */
-				__( 'RSVP: %s', 'webmention' ),
-				currentItem.label
-		  )
-		: __( 'RSVP', 'webmention' );
+	const buttonTitle = getRsvpButtonTitle( currentValue );
 
 	return (
 		<>
