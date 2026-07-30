@@ -31,6 +31,8 @@
     "format": "wp-scripts format",
     "lint:css": "wp-scripts lint-style",
     "lint:js": "wp-scripts lint-js",
+    "test:unit": "wp-scripts test-unit-js",
+    "test:unit:watch": "wp-scripts test-unit-js --watch",
     "env": "wp-env",
     "env:start": "wp-env start",
     "env:stop": "wp-env stop",
