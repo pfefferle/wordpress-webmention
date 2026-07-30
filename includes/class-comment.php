@@ -248,8 +248,8 @@ class Comment {
 	/**
 	 * Replace the template for all URLs with a "c" query-param.
 	 *
-	 * Uses "c" instead of "replytocom" to avoid conflicting with
-	 * WordPress core's threaded/nested comment reply functionality.
+	 * Uses "c" instead of "replytocom" so we no longer hijack WordPress core's
+	 * threaded/nested comment reply links, which rely on "replytocom".
 	 *
 	 * @see https://github.com/pfefferle/wordpress-webmention/issues/487
 	 *
@@ -260,7 +260,7 @@ class Comment {
 	public static function comment_template_include( $template ) {
 		global $wp_query;
 
-		if ( isset( $wp_query->query['c'] ) || isset( $wp_query->query['replytocom'] ) ) {
+		if ( isset( $wp_query->query['c'] ) ) {
 			return apply_filters( 'webmention_comment_template', WEBMENTION_PLUGIN_DIR . 'templates/comment.php' );
 		}
 
@@ -276,7 +276,6 @@ class Comment {
 	 */
 	public static function query_var( $vars ) {
 		$vars[] = 'c';
-		$vars[] = 'replytocom';
 		return $vars;
 	}
 }

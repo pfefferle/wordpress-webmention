@@ -1,12 +1,7 @@
 <?php
 global $wp_query, $post;
-// Support both the new "c" and legacy "replytocom" query vars.
-if ( isset( $wp_query->query['c'] ) ) {
-	$comment_id = esc_attr( $wp_query->query['c'] );
-} else {
-	$comment_id = esc_attr( $wp_query->query['replytocom'] );
-}
-$comment = get_comment( $comment_id ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+$comment_id = isset( $wp_query->query['c'] ) ? esc_attr( $wp_query->query['c'] ) : '';
+$comment    = get_comment( $comment_id ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
 // Load 404 if comment ID is not valid.
 if ( ! $comment ) {
