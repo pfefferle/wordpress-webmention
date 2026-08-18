@@ -7,7 +7,7 @@
     "@wordpress/data": "^10.0.0",
     "@wordpress/env": "^11.13.0",
     "@wordpress/icons": "^15.0.0",
-    "@wordpress/scripts": "^34.0.0"
+    "@wordpress/scripts": "^34.1.0"
   },
   "repository": {
     "type": "git",
