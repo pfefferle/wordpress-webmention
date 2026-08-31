@@ -4,7 +4,7 @@
 - Donate link: https://notiz.blog/donate/
 - Tags: webmention, pingback, trackback, linkback, indieweb
 - Requires at least: 6.2
-- Tested up to: 7.0
+- Tested up to: 7.1
 - Stable tag: 5.9.0
 - Requires PHP: 7.4
 - License: MIT
