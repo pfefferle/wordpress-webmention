@@ -4,7 +4,7 @@
   "main": "webmention.php",
   "devDependencies": {
     "@wordpress/components": "^39.0.0",
-    "@wordpress/data": "^10.53.0",
+    "@wordpress/data": "^10.54.0",
     "@wordpress/env": "^11.14.0",
     "@wordpress/icons": "^15.5.0",
     "@wordpress/scripts": "^34.2.0"
