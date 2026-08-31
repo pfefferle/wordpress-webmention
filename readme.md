@@ -5,7 +5,7 @@
 - Tags: webmention, pingback, trackback, linkback, indieweb
 - Requires at least: 6.2
 - Tested up to: 7.1
-- Stable tag: 5.9.0
+- Stable tag: 5.9.1
 - Requires PHP: 7.4
 - License: MIT
 - License URI: https://opensource.org/licenses/MIT
@@ -100,6 +100,13 @@ While not all display options can be settings, we are looking to provide some si
 ## Changelog
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
+
+### 5.9.1
+
+* Fix the deletion of Webmentions: if the source page is gone (HTTP 404, 410 or 451), the matching comment is now really removed instead of being kept forever
+* Add a `webmention_http_error_codes` filter to customize which HTTP status codes count as a deleted source
+* Keep internal build files out of the release, so the WordPress.org plugin directory no longer lists them as blocks
+* Update dependencies and add more JavaScript unit tests
 
 ### 5.9.0
 
