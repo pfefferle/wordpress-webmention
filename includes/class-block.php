@@ -84,40 +84,42 @@ class Block {
 			$asset_data['version'],
 			true
 		);
-	}
-
-	/**
-	 * Enqueue block assets for the RSVP format.
-	 *
-	 * The RSVP styles need to load both inside the editor iframe (to style the
-	 * `data.p-rsvp` elements while editing) and on the front end (to style the
-	 * same elements in published content). On the front end they are always
-	 * enqueued; in the admin editor they are limited to post types that support
-	 * Webmentions, matching the gate applied to the RSVP script.
-	 */
-	public static function enqueue_block_assets() {
-		if ( is_admin() ) {
-			$current_screen = \get_current_screen();
-			$post_types     = \get_post_types_by_support( 'webmentions' );
-
-			if ( ! $current_screen || ! in_array( $current_screen->post_type, $post_types, true ) ) {
-				return;
-			}
-		}
-
-		$asset_file = WEBMENTION_PLUGIN_DIR . 'build/rsvp/index.asset.php';
-
-		if ( ! file_exists( $asset_file ) ) {
-			return;
-		}
-
-		$asset_data = include $asset_file;
 
 		wp_enqueue_style(
 			'webmention-rsvp',
 			plugins_url( 'build/rsvp/index.css', WEBMENTION_PLUGIN_FILE ),
 			array(),
 			$asset_data['version']
+		);
+	}
+
+	/**
+	 * Enqueue the front end stylesheet inside the block editor iframe.
+	 *
+	 * `data.p-rsvp` markup lives in the post content, so it is styled by the
+	 * front end stylesheet rather than by an editor specific one. Loading that
+	 * same stylesheet inside the iframe keeps the editor in sync with the
+	 * published output and keeps the front end down to a single, dequeueable
+	 * `webmention` stylesheet.
+	 */
+	public static function enqueue_block_assets() {
+		// The front end enqueues this stylesheet itself, see Webmention::enqueue_scripts().
+		if ( ! is_admin() ) {
+			return;
+		}
+
+		$current_screen = \get_current_screen();
+		$post_types     = \get_post_types_by_support( 'webmentions' );
+
+		if ( ! $current_screen || ! in_array( $current_screen->post_type, $post_types, true ) ) {
+			return;
+		}
+
+		wp_enqueue_style(
+			'webmention',
+			WEBMENTION_PLUGIN_URL . 'assets/css/webmention.css',
+			array(),
+			\Webmention\version()
 		);
 	}
 }
