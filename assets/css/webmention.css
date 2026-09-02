@@ -76,3 +76,10 @@
 	width: .75em;
 	height: 0;
 }
+
+/* RSVP Styles */
+data.p-rsvp {
+	text-decoration: underline dotted;
+	text-decoration-thickness: 2px;
+	text-underline-offset: 2px;
+}
