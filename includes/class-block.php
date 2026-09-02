@@ -119,7 +119,7 @@ class Block {
 			'webmention',
 			WEBMENTION_PLUGIN_URL . 'assets/css/webmention.css',
 			array(),
-			\Webmention\version()
+			version()
 		);
 	}
 }
