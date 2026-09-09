@@ -1,5 +1,10 @@
 /**
  * RSVP Format - Editor Styles
+ *
+ * Only styles for the toolbar popover, which React renders into the main
+ * editor document. The `data.p-rsvp` markup itself lives inside the editor
+ * iframe and is styled by `assets/css/webmention.css`, the same stylesheet
+ * that styles it on the front end.
  */
 
 .webmention-rsvp-popover {
@@ -8,11 +13,4 @@
 		padding: 8px;
 		gap: 4px;
 	}
-}
-
-/* Style RSVP text in the editor */
-data.p-rsvp {
-	text-decoration: underline dotted;
-	text-decoration-thickness: 2px;
-	text-underline-offset: 2px;
 }
