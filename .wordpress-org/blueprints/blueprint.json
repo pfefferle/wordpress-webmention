@@ -1,0 +1,45 @@
+{
+	"$schema": "https://playground.wordpress.net/blueprint-schema.json",
+	"landingPage": "/hello-indieweb/",
+	"preferredVersions": {
+		"php": "8.2",
+		"wp": "latest"
+	},
+	"features": {
+		"networking": true
+	},
+	"login": true,
+	"steps": [
+		{
+			"step": "setSiteOptions",
+			"options": {
+				"permalink_structure": "/%postname%/",
+				"blogname": "Webmention Demo",
+				"blogdescription": "Enable conversation across the web"
+			}
+		},
+		{
+			"step": "installPlugin",
+			"pluginData": {
+				"resource": "wordpress.org/plugins",
+				"slug": "webmention"
+			},
+			"options": {
+				"activate": true
+			}
+		},
+		{
+			"step": "mkdir",
+			"path": "/wordpress/wp-content/mu-plugins"
+		},
+		{
+			"step": "writeFile",
+			"path": "/wordpress/wp-content/mu-plugins/show-admin-notice.php",
+			"data": "<?php\nadd_action(\n'admin_notices',\nfunction() {\n$dismissed = get_user_option( 'dismissed_webmention_blueprint_notice', get_current_user_id() );\nif ( $dismissed ) {\nreturn;\n}\necho '<div class=\"notice notice-info is-dismissible\" id=\"webmention-admin-notice\"><p>' . esc_html( 'Welcome to Webmention! The demo post “Hello IndieWeb!” has some example likes, reposts and replies from other websites. 👋' ) . '</p></div>';\n}\n);\nadd_action('wp_ajax_dismiss_webmention-admin-notice', function() {\ncheck_ajax_referer('webmention-admin-notice', 'nonce');\n$user_id = get_current_user_id();\nif ( $user_id ) {\nupdate_user_option($user_id, 'dismissed_webmention_blueprint_notice', 1, false);\nwp_send_json_success();\n} else {\nwp_send_json_error('User not found');\n}\n} );\nadd_action('admin_footer', function() {\n?>\n<script type=\"text/javascript\">\njQuery(document).ready( function($) {\nvar ajaxurl = '<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>';\nvar nonce = '<?php echo esc_js( wp_create_nonce( 'webmention-admin-notice' ) ); ?>';\n$( '#webmention-admin-notice' ).on( 'click', '.notice-dismiss', function() {\n$.ajax({\nurl: ajaxurl,\ntype: 'POST',\ndata: {\naction: 'dismiss_webmention-admin-notice',\nnonce: nonce\n}\n});\n});\n});\n</script>\n<?php\n} );"
+		},
+		{
+			"step": "runPHP",
+			"code": "<?php\nrequire_once '/wordpress/wp-load.php';\n$post_id = wp_insert_post(\n\tarray(\n\t\t'post_title'   => 'Hello IndieWeb!',\n\t\t'post_name'    => 'hello-indieweb',\n\t\t'post_content' => '<!-- wp:paragraph --><p>This is a demo post. Own your content, publish on your own site and syndicate elsewhere.</p><!-- /wp:paragraph -->',\n\t\t'post_status'  => 'publish',\n\t\t'post_author'  => 1,\n\t)\n);\n\n$reactions = array(\n\tarray( 'like', 'Ada Lovelace', 'ada' ),\n\tarray( 'like', 'Tim Berners-Lee', 'tim' ),\n\tarray( 'like', 'Grace Hopper', 'grace' ),\n\tarray( 'like', 'Alan Turing', 'alan' ),\n\tarray( 'repost', 'Margaret Hamilton', 'margaret' ),\n\tarray( 'repost', 'Linus Torvalds', 'linus' ),\n\tarray( 'bookmark', 'Radia Perlman', 'radia' ),\n\tarray( 'comment', 'Katherine Johnson', 'katherine', 'Great post! I just replied from my own website using Webmention.' ),\n\tarray( 'comment', 'Dennis Ritchie', 'dennis', 'Love this. Nice to see conversations across the web without a central platform.' ),\n\tarray( 'mention', 'Barbara Liskov', 'barbara', 'I mentioned this post in my weekly link roundup.' ),\n);\nforeach ( $reactions as $i => $reaction ) {\n\tlist( $type, $author, $handle ) = $reaction;\n\t$content = isset( $reaction[3] ) ? $reaction[3] : '';\n\twp_insert_comment(\n\t\tarray(\n\t\t\t'comment_post_ID'      => $post_id,\n\t\t\t'comment_type'         => $type,\n\t\t\t'comment_author'       => $author,\n\t\t\t'comment_author_url'   => 'https://' . $handle . '.example.com/',\n\t\t\t'comment_content'      => $content,\n\t\t\t'comment_approved'     => 1,\n\t\t\t'comment_date'         => gmdate( 'Y-m-d H:i:s', time() - ( 10 - $i ) * HOUR_IN_SECONDS ),\n\t\t\t'comment_date_gmt'     => gmdate( 'Y-m-d H:i:s', time() - ( 10 - $i ) * HOUR_IN_SECONDS ),\n\t\t\t'comment_meta'         => array(\n\t\t\t\t'protocol'                 => 'webmention',\n\t\t\t\t'avatar'                   => 'https://i.pravatar.cc/80?u=' . $handle,\n\t\t\t\t'url'                      => 'https://' . $handle . '.example.com/' . $type . '/',\n\t\t\t\t'webmention_source_url'    => 'https://' . $handle . '.example.com/' . $type . '/',\n\t\t\t\t'webmention_last_modified' => current_time( 'mysql', 1 ),\n\t\t\t),\n\t\t)\n\t);\n}\nwp_update_comment_count( $post_id );\nflush_rewrite_rules();\n"
+		}
+	]
+}
