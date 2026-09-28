@@ -70,6 +70,10 @@ class Test_Form extends WP_UnitTestCase {
 	 * Test that the classic form is skipped if the post contains the block.
 	 */
 	public function test_classic_form_skipped_with_block() {
+		if ( ! site_supports_blocks() ) {
+			$this->markTestSkipped( 'Blocks are not supported.' );
+		}
+
 		$post_id = self::factory()->post->create( array( 'post_content' => '<!-- wp:webmention/form /-->' ) );
 		$this->go_to( get_permalink( $post_id ) );
 		the_post();
@@ -77,6 +81,25 @@ class Test_Form extends WP_UnitTestCase {
 		ob_start();
 		webmention_comment_form();
 		$this->assertSame( '', ob_get_clean() );
+	}
+
+	/**
+	 * Test that the classic form is rendered if blocks are not supported, e.g. on ClassicPress.
+	 */
+	public function test_classic_form_rendered_without_block_support() {
+		add_filter( 'webmention_site_supports_blocks', '__return_false' );
+
+		$post_id = self::factory()->post->create( array( 'post_content' => '<!-- wp:webmention/form /-->' ) );
+		$this->go_to( get_permalink( $post_id ) );
+		the_post();
+
+		ob_start();
+		webmention_comment_form();
+		$output = ob_get_clean();
+
+		remove_filter( 'webmention_site_supports_blocks', '__return_false' );
+
+		$this->assertStringContainsString( 'webmention-form', $output );
 	}
 
 	/**

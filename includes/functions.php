@@ -672,7 +672,7 @@ function webmention_comment_form() {
 	}
 
 	// Don't show the form twice, if the post already contains the block.
-	if ( has_block( 'webmention/form' ) ) {
+	if ( site_supports_blocks() && has_block( 'webmention/form' ) ) {
 		return;
 	}
 
