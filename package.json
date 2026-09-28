@@ -10,7 +10,7 @@
     "@wordpress/env": "^11.16.0",
     "@wordpress/icons": "^17.0.0",
     "@wordpress/jest-preset-default": "^14.2.0",
-    "@wordpress/scripts": "^35.0.0",
+    "@wordpress/scripts": "^36.0.0",
     "babel-jest": "^30.5.2",
     "jest": "^30.5.2",
     "jest-environment-jsdom": "^30.5.2"
