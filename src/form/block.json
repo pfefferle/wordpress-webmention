@@ -9,6 +9,9 @@
 	"keywords": [ "webmention", "indieweb", "reply", "comment" ],
 	"textdomain": "webmention",
 	"usesContext": [ "postId", "postType" ],
+	"blockHooks": {
+		"core/comments": "after"
+	},
 	"supports": {
 		"html": false,
 		"align": [ "wide", "full" ],

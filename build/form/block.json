@@ -17,6 +17,9 @@
     "postId",
     "postType"
   ],
+  "blockHooks": {
+    "core/comments": "after"
+  },
   "supports": {
     "html": false,
     "align": [

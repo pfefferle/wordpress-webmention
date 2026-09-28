@@ -11,5 +11,7 @@ echo get_webmention_form( // phpcs:ignore WordPress.Security.EscapeOutput.Output
 	array(
 		'post'               => isset( $block->context['postId'] ) ? $block->context['postId'] : null,
 		'wrapper_attributes' => get_block_wrapper_attributes( array( 'class' => 'webmention-form' ) ),
+		// The block can be in the post content and hooked into the template.
+		'once'               => true,
 	)
 );
