@@ -110,7 +110,7 @@ function get_webmention_form_text( $post_id ) {
 	if ( empty( $text ) ) {
 		$text = get_default_webmention_form_text();
 	}
-	return wp_kses_post( apply_filters( 'webmention_form_text', $text ), $post_id );
+	return wp_kses_post( apply_filters( 'webmention_form_text', $text, $post_id ) );
 }
 
 /**
@@ -119,7 +119,7 @@ function get_webmention_form_text( $post_id ) {
  * @return string
  */
 function get_default_webmention_form_text() {
-	return __( 'To respond on your own website, enter the URL of your response which should contain a link to this post\'s permalink URL. Your response will then appear (possibly after moderation) on this page. Want to update or remove your response? Update or delete your post and re-enter your post\'s URL again. (<a href="https://indieweb.org/webmention">Find out more about Webmentions.</a>)', 'webmention' );
+	return __( 'Write a post on your own website that links to this one, then enter the URL of your post above. Your reply will show up here, possibly after moderation. To update or remove it, edit or delete your post and send its URL again. <a href="https://indieweb.org/Webmention">Learn more about Webmentions.</a>', 'webmention' );
 }
 
 /**
@@ -606,6 +606,60 @@ function webmention_get_default_comment_status( $status, $post_type, $comment_ty
 }
 
 /**
+ * Return the markup of a Webmention form.
+ *
+ * Shared by the classic comment form and the `webmention/form` block, so it
+ * can be reused anywhere a form should be shown.
+ *
+ * @since unreleased
+ *
+ * @param array $args {
+ *     Optional. Arguments to render the form.
+ *
+ *     @type int|WP_Post $post               The post the Webmention targets. Default current post.
+ *     @type string      $target             The target URL. Default the permalink of `$post`.
+ *     @type string      $wrapper_attributes Extra HTML attributes for the form, e.g. from `get_block_wrapper_attributes()`.
+ * }
+ * @return string The form markup, or an empty string if Webmentions are closed.
+ */
+function get_webmention_form( $args = array() ) {
+	static $instance = 0;
+
+	$post = get_post( isset( $args['post'] ) ? $args['post'] : null );
+
+	if ( ! $post || ! webmentions_open( $post ) ) {
+		return '';
+	}
+
+	++$instance;
+
+	// The first form keeps the legacy IDs, later ones get a unique suffix.
+	$suffix = 1 === $instance ? '' : '-' . $instance;
+
+	$args = wp_parse_args(
+		$args,
+		array(
+			'target'             => get_permalink( $post ),
+			'wrapper_attributes' => '',
+		)
+	);
+
+	$args['post']      = $post;
+	$args['id_suffix'] = $suffix;
+
+	/**
+	 * Filter the template used to render the Webmention form.
+	 *
+	 * @param string $template The template path.
+	 */
+	$template = apply_filters( 'webmention_comment_form', WEBMENTION_PLUGIN_DIR . 'templates/comment-form.php' );
+
+	ob_start();
+	load_template( $template, false, $args );
+	return ob_get_clean();
+}
+
+/**
  * Render the Webmention comment form.
  *
  * Can be filtered to load a custom template of your choosing.
@@ -613,11 +667,16 @@ function webmention_get_default_comment_status( $status, $post_type, $comment_ty
  * @since 3.8.9
  */
 function webmention_comment_form() {
-	$template = apply_filters( 'webmention_comment_form', WEBMENTION_PLUGIN_DIR . 'templates/comment-form.php' );
-
-	if ( ( 1 === (int) get_option( 'webmention_show_comment_form', 1 ) ) && webmentions_open() ) {
-		load_template( $template );
+	if ( 1 !== (int) get_option( 'webmention_show_comment_form', 1 ) ) {
+		return;
 	}
+
+	// Don't show the form twice, if the post already contains the block.
+	if ( has_block( 'webmention/form' ) ) {
+		return;
+	}
+
+	echo get_webmention_form(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 }
 
 /**
