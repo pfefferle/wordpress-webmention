@@ -3,11 +3,17 @@
   "description": "Webmention support for WordPress posts",
   "main": "webmention.php",
   "devDependencies": {
+    "@babel/core": "^7.29.7",
+    "@wordpress/babel-preset-default": "^8.56.0",
     "@wordpress/components": "^41.0.0",
     "@wordpress/data": "^10.56.0",
     "@wordpress/env": "^11.16.0",
     "@wordpress/icons": "^17.0.0",
-    "@wordpress/scripts": "^35.0.0"
+    "@wordpress/jest-preset-default": "^14.2.0",
+    "@wordpress/scripts": "^35.0.0",
+    "babel-jest": "^30.5.2",
+    "jest": "^30.5.2",
+    "jest-environment-jsdom": "^30.5.2"
   },
   "repository": {
     "type": "git",
@@ -31,8 +37,8 @@
     "format": "wp-scripts format",
     "lint:css": "wp-scripts lint-style",
     "lint:js": "wp-scripts lint-js",
-    "test:unit": "wp-scripts test-unit-js",
-    "test:unit:watch": "wp-scripts test-unit-js --watch",
+    "test:unit": "wp-scripts test-unit-jest",
+    "test:unit:watch": "wp-scripts test-unit-jest --watch",
     "env": "wp-env",
     "env:start": "wp-env start",
     "env:stop": "wp-env stop",
