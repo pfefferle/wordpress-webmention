@@ -144,8 +144,8 @@ export function setControlledInputValue( input, value ) {
 /**
  * Wait for an element to appear, polling on animation frames.
  *
- * @param {Function} getter  Returns the element or a falsy value.
- * @param {number}   timeout Maximum wait in milliseconds.
+ * @param {() => ?HTMLElement} getter  Returns the element or a falsy value.
+ * @param {number}             timeout Maximum wait in milliseconds.
  * @return {Promise<?HTMLElement>} Resolves with the element, or null on timeout.
  */
 export function waitForElement( getter, timeout ) {
@@ -333,9 +333,9 @@ export function injectReactionDropdown() {
 /**
  * Debounce helper
  *
- * @param {Function} func Function to debounce.
- * @param {number}   wait Debounce delay in milliseconds.
- * @return {Function} Debounced function.
+ * @param {(...args: unknown[]) => void} func Function to debounce.
+ * @param {number}                       wait Debounce delay in milliseconds.
+ * @return {(...args: unknown[]) => void} Debounced function.
  */
 export function debounce( func, wait ) {
 	let timeout;
