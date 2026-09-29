@@ -7,11 +7,48 @@ class Block {
 	 * Initialize the class, registering WordPress hooks.
 	 */
 	public static function init() {
+		self::register_blocks();
+
+		// Only hook the form block into block themes, and only if the form is enabled.
+		\add_filter( 'hooked_block_types', array( self::class, 'hooked_block_types' ) );
+
 		// Add editor plugin.
 		\add_action( 'enqueue_block_editor_assets', array( self::class, 'enqueue_editor_assets' ) );
 
 		// Add RSVP styles inside editor iframe.
 		\add_action( 'enqueue_block_assets', array( self::class, 'enqueue_block_assets' ) );
+	}
+
+	/**
+	 * Register the blocks and the shared front end stylesheet they use.
+	 */
+	public static function register_blocks() {
+		\wp_register_style(
+			'webmention',
+			WEBMENTION_PLUGIN_URL . 'assets/css/webmention.css',
+			array(),
+			version()
+		);
+
+		\register_block_type_from_metadata( WEBMENTION_PLUGIN_DIR . 'build/form' );
+	}
+
+	/**
+	 * Remove the form block from the hooked blocks, if it should not be added automatically.
+	 *
+	 * @param string[] $hooked_block_types The hooked block types.
+	 *
+	 * @return string[] The filtered hooked block types.
+	 */
+	public static function hooked_block_types( $hooked_block_types ) {
+		if (
+			webmention_use_block_hooks() &&
+			1 === (int) \get_option( 'webmention_show_comment_form', 1 )
+		) {
+			return $hooked_block_types;
+		}
+
+		return \array_values( \array_diff( $hooked_block_types, array( 'webmention/form' ) ) );
 	}
 
 	/**
