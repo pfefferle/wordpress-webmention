@@ -1,3 +1,8 @@
+/*
+ * @jsxRuntime classic
+ * @jsx createElement
+ */
+
 /**
  * Webmention Form block.
  *
@@ -5,6 +10,7 @@
  * the editor only shows a static preview.
  */
 import { registerBlockType } from '@wordpress/blocks';
+import { createElement } from '@wordpress/element';
 import { useBlockProps } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 
