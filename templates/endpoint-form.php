@@ -118,7 +118,7 @@
 	<body id="webmention-endpint-page">
 		<h1><?php esc_html_e( 'Send a Webmention', 'webmention' ); ?></h1>
 		<p>
-			<?php echo get_webmention_form_text( get_the_ID() ); ?>
+			<?php echo wp_kses_post( __( 'Write a response on your own website and include a link to the post you’re responding to. Then submit your response’s URL here. Your response may appear after moderation. To update or remove it, edit or delete your original post and submit the same URL again. <a href="https://indieweb.org/Webmention">Learn more about Webmentions.</a>', 'webmention' ) ); ?>
 		</p>
 
 		<?php do_action( 'webmention_endpoint_form_before_form' ); ?>
@@ -126,21 +126,22 @@
 		<form id="webmention-form" action="<?php echo esc_url( get_webmention_endpoint() ); ?>" method="post">
 			<?php do_action( 'webmention_endpoint_form_before_input_fields' ); ?>
 			<p>
-				<label for="webmention-source"><?php esc_html_e( 'Source URL', 'webmention' ); ?>:</label><br />
-				<input id="webmention-source" type="url" autocomplete="url" required pattern="^https?:\/\/(.*)" name="source" placeholder="<?php esc_attr_e( 'URL of your post that links to mine', 'webmention' ); ?>" size="70" />
+				<label for="webmention-source"><?php esc_html_e( 'Your post’s URL', 'webmention' ); ?>:</label><br />
+				<input id="webmention-source" type="url" autocomplete="url" required pattern="^https?:\/\/(.*)" name="source" placeholder="https://" aria-describedby="webmention-source-description" size="70" />
+				<br /><small id="webmention-source-description"><?php esc_html_e( 'Your post must include a link to the post you’re responding to.', 'webmention' ); ?></small>
 			</p>
 			<p>
-				<label for="webmention-target"><?php esc_html_e( 'Target URL', 'webmention' ); ?>:</label><br />
-				<input id="webmention-target" type="url" autocomplete="url" required pattern="^https?:\/\/(.*)" name="target" placeholder="<?php esc_attr_e( 'URL of my post you replied to', 'webmention' ); ?>" size="70" />
+				<label for="webmention-target"><?php esc_html_e( 'URL of the post you’re responding to', 'webmention' ); ?>:</label><br />
+				<input id="webmention-target" type="url" autocomplete="url" required pattern="^https?:\/\/(.*)" name="target" placeholder="https://" size="70" />
 			</p>
 			<p>
-				<input id="webmention-submit" type="submit" name="submit" value="<?php echo esc_attr( apply_filters( 'webmention_form_submit_text', __( 'Ping me!', 'webmention' ) ) ); ?>" />
+				<input id="webmention-submit" type="submit" name="submit" value="<?php echo esc_attr( apply_filters( 'webmention_form_submit_text', __( 'Send Webmention', 'webmention' ) ) ); ?>" />
 			</p>
 			<input id="webmention-format" type="hidden" name="format" value="html" />
 			<?php do_action( 'webmention_endpoint_form_after_input_fields' ); ?>
 		</form>
 
-		<p><?php esc_html_e( 'Webmention is a way for you to tell me "Hey, I have written a response to your post."', 'webmention' ); ?> </p>
+		<p><?php esc_html_e( 'Webmention lets you notify a website when you publish a post that links to it.', 'webmention' ); ?> </p>
 		<p>
 			<?php
 			/* Translators: placeholder will be an html link to webmention.net */

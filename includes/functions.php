@@ -119,7 +119,7 @@ function get_webmention_form_text( $post_id ) {
  * @return string
  */
 function get_default_webmention_form_text() {
-	return __( 'Write a post on your own website that links to this one, then enter the URL of your post above. Your reply will show up here, possibly after moderation. To update or remove it, edit or delete your post and send its URL again. <a href="https://indieweb.org/Webmention">Learn more about Webmentions.</a>', 'webmention' );
+	return __( 'Write a response on your own website and include a link to this post. Then submit your response’s URL here. Your response may appear here after moderation. To update or remove it, edit or delete your original post and submit the same URL again. <a href="https://indieweb.org/Webmention">Learn more about Webmentions.</a>', 'webmention' );
 }
 
 /**

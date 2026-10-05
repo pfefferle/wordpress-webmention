@@ -24,7 +24,7 @@ const Edit = () => {
 			<p className="webmention-form__source">
 				<label htmlFor="webmention-source-preview">
 					{ __(
-						'Replied on your own website? Enter the URL of your post to let me know:',
+						'Posted a response on your own website? Share the link here:',
 						'webmention'
 					) }
 				</label>
@@ -35,6 +35,12 @@ const Edit = () => {
 					placeholder="https://"
 					disabled
 				/>
+				<small>
+					{ __(
+						'Your post must include a link to this post.',
+						'webmention'
+					) }
+				</small>
 			</p>
 			<div className="webmention-form__submit">
 				<button
@@ -42,7 +48,7 @@ const Edit = () => {
 					type="button"
 					disabled
 				>
-					{ __( 'Ping me!', 'webmention' ) }
+					{ __( 'Send Webmention', 'webmention' ) }
 				</button>
 				<details className="webmention-form__help">
 					<summary>
