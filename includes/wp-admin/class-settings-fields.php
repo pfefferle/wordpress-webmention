@@ -218,12 +218,14 @@ class Settings_Fields {
 	public static function render_comment_settings_field() {
 		?>
 		<fieldset>
+			<?php if ( ! function_exists( 'wp_is_block_theme' ) || ! \wp_is_block_theme() ) : ?>
 			<p>
 				<label for="webmention_show_comment_form">
 					<input type="checkbox" name="webmention_show_comment_form" id="webmention_show_comment_form" value="1" <?php \checked( true, \get_option( 'webmention_show_comment_form' ) ); ?> />
 					<?php \esc_html_e( 'Show a Webmention form at the comment section, to allow anyone to notify you of a mention.', 'webmention' ); ?>
 				</label>
 			</p>
+			<?php endif; ?>
 
 			<p>
 				<textarea name="webmention_comment_form_text" id="webmention_comment_form_text" rows="10" cols="50" class="large-text code" placeholder="<?php echo \esc_attr( \get_default_webmention_form_text() ); ?>"><?php echo \esc_textarea( \get_option( 'webmention_comment_form_text', '' ) ); ?></textarea>

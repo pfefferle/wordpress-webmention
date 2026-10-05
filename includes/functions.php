@@ -679,7 +679,7 @@ function get_webmention_form( $args = array() ) {
  * @return bool True if the block is hooked, false if the classic form is used.
  */
 function webmention_use_block_hooks() {
-	$use_block_hooks = site_supports_blocks() && function_exists( 'get_hooked_blocks' ) && wp_is_block_theme();
+	$use_block_hooks = site_supports_blocks() && function_exists( 'get_hooked_blocks' ) && wp_is_block_theme() && WP_Block_Type_Registry::get_instance()->is_registered( 'webmention/form' );
 
 	/**
 	 * Filter whether the Webmention form block is added through Block Hooks.
@@ -697,12 +697,12 @@ function webmention_use_block_hooks() {
  * @since 3.8.9
  */
 function webmention_comment_form() {
-	if ( 1 !== (int) get_option( 'webmention_show_comment_form', 1 ) ) {
+	// Block themes get the block through Block Hooks.
+	if ( webmention_use_block_hooks() ) {
 		return;
 	}
 
-	// Block themes get the block through Block Hooks.
-	if ( webmention_use_block_hooks() ) {
+	if ( 1 !== (int) get_option( 'webmention_show_comment_form', 1 ) ) {
 		return;
 	}
 

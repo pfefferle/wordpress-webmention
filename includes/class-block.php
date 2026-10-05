@@ -9,7 +9,7 @@ class Block {
 	public static function init() {
 		self::register_blocks();
 
-		// Only hook the form block into block themes, and only if the form is enabled.
+		// Only hook the form block into block themes.
 		\add_filter( 'hooked_block_types', array( self::class, 'hooked_block_types' ) );
 
 		// Add editor plugin.
@@ -34,17 +34,14 @@ class Block {
 	}
 
 	/**
-	 * Remove the form block from the hooked blocks, if it should not be added automatically.
+	 * Remove the form block from the hooked blocks when the classic form is used.
 	 *
 	 * @param string[] $hooked_block_types The hooked block types.
 	 *
 	 * @return string[] The filtered hooked block types.
 	 */
 	public static function hooked_block_types( $hooked_block_types ) {
-		if (
-			webmention_use_block_hooks() &&
-			1 === (int) \get_option( 'webmention_show_comment_form', 1 )
-		) {
+		if ( webmention_use_block_hooks() ) {
 			return $hooked_block_types;
 		}
 
