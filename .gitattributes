@@ -17,6 +17,7 @@
 /jest.config.js          export-ignore
 /package-lock.json       export-ignore
 /package.json            export-ignore
+/webpack.config.js       export-ignore
 /phpcs.xml               export-ignore
 /phpunit.xml.dist        export-ignore
 

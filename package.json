@@ -10,6 +10,7 @@
     "@wordpress/components": "^41.0.0",
     "@wordpress/core-data": "^8.1.0",
     "@wordpress/data": "^10.56.0",
+    "@wordpress/dependency-extraction-webpack-plugin": "^6.56.0",
     "@wordpress/dom-ready": "^4.56.0",
     "@wordpress/editor": "^15.1.0",
     "@wordpress/element": "^8.8.0",
@@ -22,7 +23,8 @@
     "@wordpress/scripts": "^36.0.0",
     "babel-jest": "^30.5.2",
     "jest": "^30.5.2",
-    "jest-environment-jsdom": "^30.5.2"
+    "jest-environment-jsdom": "^30.5.2",
+    "react": "18.3.1"
   },
   "repository": {
     "type": "git",
