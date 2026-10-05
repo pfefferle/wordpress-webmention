@@ -611,7 +611,7 @@ function webmention_get_default_comment_status( $status, $post_type, $comment_ty
  * Shared by the classic comment form and the `webmention/form` block, so it
  * can be reused anywhere a form should be shown.
  *
- * @since unreleased
+ * @since 5.10.0
  *
  * @param array $args {
  *     Optional. Arguments to render the form.
@@ -674,7 +674,7 @@ function get_webmention_form( $args = array() ) {
  * Block themes (WordPress 6.4+) get the block after the Comments block, and can
  * move or remove it in the Site Editor. All other sites use the classic form.
  *
- * @since unreleased
+ * @since 5.10.0
  *
  * @return bool True if the block is hooked, false if the classic form is used.
  */

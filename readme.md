@@ -5,7 +5,7 @@
 - Tags: webmention, pingback, trackback, linkback, indieweb
 - Requires at least: 6.2
 - Tested up to: 7.1
-- Stable tag: 5.9.1
+- Stable tag: 5.10.0
 - Requires PHP: 7.4
 - License: MIT
 - License URI: https://opensource.org/licenses/MIT
@@ -38,7 +38,10 @@ On the Settings --> Discussion Page in WordPress:
 
 * On the Webmention Settings page, decide which post types you want to enable Webmentions for. By default, posts and pages.
 * Set a page to redirect homepage mentions to. This will automatically enable Webmentions for that page.
-* If you want to enable a Webmention form in the comment section, check the box.
+* On classic themes, enable or disable the Webmention form using the checkbox in Webmention settings.
+* On block themes with WordPress 6.4 or newer, the Webmention Form block is automatically added after the Comments block. Move or remove it in the Site Editor. If Block Hooks are unavailable or disabled, use the settings checkbox to control the classic form.
+
+You can also insert the Webmention Form block manually in the block editor. It displays a form when Webmentions are open for the post and avoids duplicate forms for the same post. The help text can be customized in Webmention settings.
 
 You can use the `send_webmention($source, $target)` function and pass a source and a target or you can fire an action like `do_action('send_webmention', $source, $target)`.
 
@@ -100,6 +103,19 @@ While not all display options can be settings, we are looking to provide some si
 ## Changelog
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
+
+### 5.10.0
+
+* Add a reusable Webmention Form block with automatic placement after the Comments block in block themes that support Block Hooks
+* Keep the classic form and its settings available when Block Hooks are unavailable or disabled, including on WordPress 6.2–6.3 and ClassicPress
+* Improve form wording, explain the required backlink, and let submit buttons fit translated labels
+* Prevent duplicate forms for the same post and give multiple forms unique element IDs
+* Preserve RSVP styling on home and archive pages and share the front-end stylesheet with the block editor
+* Fix editor script compatibility with WordPress 6.2–6.5 by bundling the JSX runtime used by the RSVP and document settings scripts
+* Replace deprecated HTML encoding conversion while preserving Unicode text and links
+* Pass the post ID to the `webmention_form_text` filter
+* Include the form block metadata in release archives and add a WordPress Playground demo
+* Update dependencies, build configuration, and regression tests
 
 ### 5.9.1
 
