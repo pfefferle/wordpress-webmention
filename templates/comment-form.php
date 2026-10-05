@@ -38,7 +38,8 @@ do_action( 'webmention_comment_form_template_before' );
 		<small id="<?php echo $webmention_id( 'source-description' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>"><?php esc_html_e( 'Your post must include a link to this post.', 'webmention' ); ?></small>
 	</p>
 	<div class="webmention-form__submit">
-		<input id="<?php echo $webmention_id( 'submit' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" class="webmention-submit wp-element-button wp-block-button__link" type="submit" name="submit" value="<?php echo esc_attr( apply_filters( 'webmention_form_submit_text', __( 'Send Webmention', 'webmention' ) ) ); ?>" />
+		<?php $webmention_submit_text = apply_filters( 'webmention_form_submit_text', __( 'Send Webmention', 'webmention' ) ); ?>
+		<button id="<?php echo $webmention_id( 'submit' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" class="webmention-submit wp-element-button wp-block-button__link" type="submit" name="submit" value="<?php echo esc_attr( $webmention_submit_text ); ?>"><?php echo esc_html( $webmention_submit_text ); ?></button>
 		<details class="webmention-form__help">
 			<summary><?php esc_html_e( 'How does this work?', 'webmention' ); ?></summary>
 			<div>
