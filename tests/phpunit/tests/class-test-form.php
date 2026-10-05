@@ -29,6 +29,10 @@ class Test_Form extends WP_UnitTestCase {
 			$registry->unregister( 'webmention/form' );
 			$this->assertFalse( webmention_use_block_hooks() );
 
+			ob_start();
+			\Webmention\WP_Admin\Settings_Fields::render_comment_settings_field();
+			$this->assertStringContainsString( 'name="webmention_show_comment_form"', ob_get_clean() );
+
 			$post_id = self::factory()->post->create();
 			$this->go_to( get_permalink( $post_id ) );
 			the_post();
@@ -40,6 +44,32 @@ class Test_Form extends WP_UnitTestCase {
 			$registry->register( $block_type );
 			switch_theme( $stylesheet );
 			delete_option( 'webmention_show_comment_form' );
+		}
+	}
+
+	/**
+	 * Test that disabling Block Hooks preserves the classic form setting in block themes.
+	 */
+	public function test_block_theme_shows_form_setting_when_hooks_are_disabled() {
+		if ( ! site_supports_blocks() ) {
+			$this->markTestSkipped( 'Block themes are not supported.' );
+		}
+
+		$stylesheet = get_stylesheet();
+		register_theme_directory( DIR_TESTDATA . '/themedir1' );
+		switch_theme( 'block-theme' );
+		add_filter( 'webmention_use_block_hooks', '__return_false' );
+
+		try {
+			$this->assertFalse( webmention_use_block_hooks() );
+			ob_start();
+			\Webmention\WP_Admin\Settings_Fields::render_comment_settings_field();
+			$settings = ob_get_clean();
+			$this->assertStringContainsString( 'name="webmention_show_comment_form"', $settings );
+			$this->assertStringContainsString( 'name="webmention_comment_form_text"', $settings );
+		} finally {
+			remove_filter( 'webmention_use_block_hooks', '__return_false' );
+			switch_theme( $stylesheet );
 		}
 	}
 

@@ -218,7 +218,7 @@ class Settings_Fields {
 	public static function render_comment_settings_field() {
 		?>
 		<fieldset>
-			<?php if ( ! function_exists( 'wp_is_block_theme' ) || ! \wp_is_block_theme() ) : ?>
+			<?php if ( ! \webmention_use_block_hooks() ) : ?>
 			<p>
 				<label for="webmention_show_comment_form">
 					<input type="checkbox" name="webmention_show_comment_form" id="webmention_show_comment_form" value="1" <?php \checked( true, \get_option( 'webmention_show_comment_form' ) ); ?> />
