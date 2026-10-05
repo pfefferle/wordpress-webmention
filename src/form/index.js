@@ -18,7 +18,7 @@ const Edit = () => {
 			<p className="webmention-form__source">
 				<label htmlFor="webmention-source-preview">
 					{ __(
-						'Replied on your own website? Enter the URL of your post:',
+						'Replied on your own website? Enter the URL of your post to let me know:',
 						'webmention'
 					) }
 				</label>
