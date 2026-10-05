@@ -10,6 +10,40 @@
  */
 class Test_Form extends WP_UnitTestCase {
 	/**
+	 * Test that a missing form block does not disable the classic fallback.
+	 */
+	public function test_block_theme_falls_back_when_form_block_is_missing() {
+		if ( ! site_supports_blocks() || ! function_exists( 'get_hooked_blocks' ) ) {
+			$this->markTestSkipped( 'Block Hooks are not supported.' );
+		}
+
+		$stylesheet = get_stylesheet();
+		register_theme_directory( DIR_TESTDATA . '/themedir1' );
+		switch_theme( 'block-theme' );
+		update_option( 'webmention_show_comment_form', 1 );
+		$registry   = WP_Block_Type_Registry::get_instance();
+		$block_type = $registry->get_registered( 'webmention/form' );
+
+		try {
+			$this->assertTrue( webmention_use_block_hooks() );
+			$registry->unregister( 'webmention/form' );
+			$this->assertFalse( webmention_use_block_hooks() );
+
+			$post_id = self::factory()->post->create();
+			$this->go_to( get_permalink( $post_id ) );
+			the_post();
+
+			ob_start();
+			webmention_comment_form();
+			$this->assertStringContainsString( 'name="source"', ob_get_clean() );
+		} finally {
+			$registry->register( $block_type );
+			switch_theme( $stylesheet );
+			delete_option( 'webmention_show_comment_form' );
+		}
+	}
+
+	/**
 	 * Test actual hook insertion and rendering with a block theme and a disabled legacy option.
 	 */
 	public function test_block_theme_inserts_form_with_legacy_option_disabled() {

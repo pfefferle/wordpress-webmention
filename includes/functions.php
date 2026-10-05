@@ -679,7 +679,7 @@ function get_webmention_form( $args = array() ) {
  * @return bool True if the block is hooked, false if the classic form is used.
  */
 function webmention_use_block_hooks() {
-	$use_block_hooks = site_supports_blocks() && function_exists( 'get_hooked_blocks' ) && wp_is_block_theme();
+	$use_block_hooks = site_supports_blocks() && function_exists( 'get_hooked_blocks' ) && wp_is_block_theme() && WP_Block_Type_Registry::get_instance()->is_registered( 'webmention/form' );
 
 	/**
 	 * Filter whether the Webmention form block is added through Block Hooks.
