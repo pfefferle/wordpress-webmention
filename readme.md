@@ -10,23 +10,30 @@
 - License: MIT
 - License URI: https://opensource.org/licenses/MIT
 
-Enable conversation across the web.
+Send and receive Webmentions in WordPress.
 
 ## Description
 
-When you link to a website you can send it a Webmention to notify it and then that website may display your post as a comment, like, or other response, and presto, you’re having a conversation from one site to another!
+Bring conversations from across the web to your WordPress site. Webmention lets you notify another website when you link to it and receive notifications when other websites link to yours.
 
-A [Webmention](https://www.w3.org/TR/webmention/) is a notification that one URL links to another. Sending a Webmention is not limited to blog posts, and can be used for additional kinds of content and responses as well.
+A [Webmention](https://www.w3.org/TR/webmention/) is a notification that one URL links to another. For example, someone can publish a response on their own blog, link to your post, and send a Webmention so that their response appears in your comments after moderation.
 
-For example, a response can be an RSVP to an event, an indication that someone "likes" another post, a "bookmark" of another post, and many others. Webmention enables these interactions to happen across different websites, enabling a distributed social web.
+Responses can also be likes, reposts, bookmarks, RSVPs, and other interactions. The plugin recognizes these response types and can display reactions as facepiles: groups of avatars beneath your post.
 
-The Webmention plugin supports the Webmention protocol, giving you support for sending and receiving Webmentions. It offers a simple built in presentation.
+### Features
+
+* Send Webmentions to linked websites that support the protocol.
+* Receive replies and reactions through WordPress's comment system.
+* Display reactions separately as facepiles or alongside comments.
+* Let visitors submit a response URL through the Webmention Form block, the classic comment form, or the standalone endpoint form.
+* Choose supported post types and a page to collect mentions of your homepage.
+* Customize form help text, avatar display, and automatic approval for selected domains.
 
 ## Frequently Asked Questions
 
 ### What are Webmentions?
 
-[Webmention](https://www.w3.org/TR/webmention/) is a simple way to automatically notify any URL when you link to it on your site. From the receivers perpective, it's a way to request notification when other sites link to it.
+[Webmention](https://www.w3.org/TR/webmention/) is a way to notify a website when you link to it on your site. The receiving website can then display your post as a reply or reaction.
 
 ### That Sounds Like a Pingback or a Trackback
 
@@ -34,7 +41,7 @@ Webmention is an update/replacement for Pingback or Trackback. Unlike the older 
 
 ### How can I send and receive Webmentions?
 
-On the Settings --> Discussion Page in WordPress:
+Open **Settings → Webmention**, or **IndieWeb → Webmention** if the IndieWeb plugin is active:
 
 * On the Webmention Settings page, decide which post types you want to enable Webmentions for. By default, posts and pages.
 * Set a page to redirect homepage mentions to. This will automatically enable Webmentions for that page.
@@ -53,11 +60,11 @@ When declaring your custom post type, add post type support for Webmentions by e
 
 You can enable receiving Webmentions for attachments in Webmention settings. You can enable sending Webmentions for media links in the settings. Please note that most receivers of Webmentions do not support receiving them to image, audio, and video files. In order to support receiving them on WordPress, Webmention endpoint headers would have to be added at the webserver level.
 
-### How can I handle Webmentions to my Homepage or Archive Pages?
+### How can I handle Webmentions to my homepage or archive pages?
 
-Webmentions should be allowed on all URLs of a blog, however WordPress does not support this as only posts can have comments attached to them. The plugin currently handles only Webmentions on posts and allows you to set a page to receive homepage mentions.
+WordPress stores comments against individual posts, pages, or other post types. To collect mentions of your homepage, choose a page in Webmention settings.
 
-Even though it is not done automatically, it is very simple to add support for archives and URLs on your site by providing a post/page to show collect mentions. The plugin provides a simple filter for that.
+For archive pages and other URLs, use the `webmention_post_id` filter to assign incoming mentions to a post or page.
 
 In the below example, if there is no page returned it will send mentions to a catch-all post. You can also have unique posts per URL.
 
@@ -99,6 +106,14 @@ It introduces a new version of the default function for html5 comments, adding c
 There is an option within the plugin to show webmentions not determined to be replies or comments inline, or to display them separately as avatar only lists. The `wp_list_comments` function is overridden to allow for the `avatar_only` option, which will render this, with a second option of `overlay` to overlay an icon reflecting the reaction type. Reactions are webmention types such as like, which there is no textual component to it. If you opt to display them as comments, the text will read that the author `likes this post`.
 
 While not all display options can be settings, we are looking to provide some simple options which could be customized in a theme if needed.
+
+## Screenshots
+
+1. Replies received through Webmention appear as normal comments in your theme's comments section.
+2. Reaction facepiles group bookmarks, reposts, and likes by response type.
+3. The Webmention comment form lets visitors submit a response URL, with expandable help explaining the required link.
+4. The standalone endpoint form accepts both a source URL and a target URL.
+5. Webmention settings control sending, receiving, avatars, and reaction display.
 
 ## Changelog
 
@@ -633,6 +648,15 @@ To install a WordPress Plugin manually:
 * With your FTP program, upload the Plugin folder to the `wp-content/plugins` folder in your WordPress directory online.
 * Go to [Plugins screen](https://codex.wordpress.org/Administration_Screens#Plugins) and find the newly uploaded Plugin in the list.
 * Click **Activate** to activate it.
+
+### Setup
+
+1. Open **Settings → Webmention**, or **IndieWeb → Webmention** if the IndieWeb plugin is active.
+2. Choose which post types can receive Webmentions and how replies and reactions should appear.
+3. Publish a post linking to another Webmention-enabled website. The plugin sends a notification in the background.
+4. Review incoming responses under **Comments**. Webmentions from domains in your automatic approval list can appear without manual approval.
+
+On block themes with WordPress 6.4 or newer, the Webmention Form block is automatically placed after the Comments block when Block Hooks are available. You can move or remove it in the Site Editor, or insert it manually in the block editor. Classic themes use the form setting instead.
 
 ## Upgrade Notice
 
