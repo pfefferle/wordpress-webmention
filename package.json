@@ -15,7 +15,7 @@
     "@wordpress/editor": "^15.1.0",
     "@wordpress/element": "^8.8.0",
     "@wordpress/env": "^11.16.0",
-    "@wordpress/i18n": "^6.29.0",
+    "@wordpress/i18n": "^6.30.0",
     "@wordpress/icons": "^17.0.0",
     "@wordpress/jest-preset-default": "^14.2.0",
     "@wordpress/plugins": "^7.56.0",
