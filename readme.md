@@ -5,7 +5,7 @@
 - Tags: webmention, pingback, trackback, linkback, indieweb
 - Requires at least: 6.2
 - Tested up to: 7.1
-- Stable tag: 5.10.1
+- Stable tag: 5.10.2
 - Requires PHP: 7.4
 - License: MIT
 - License URI: https://opensource.org/licenses/MIT
@@ -118,6 +118,13 @@ While not all display options can be settings, we are looking to provide some si
 ## Changelog
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
+
+### 5.10.2
+
+* Security: Fix a stored XSS reachable from unauthenticated Webmentions where the parsed entry name (from `og:title`) was stored in the comment without sanitizing, unlike content and summary
+* Security: Escape the parsed source URL in the comment walker, it was printed into an `href` without `esc_url()`
+* Fix PHP 8.5 deprecations in the bundled mf2 parser
+* Update dependencies
 
 ### 5.10.1
 
