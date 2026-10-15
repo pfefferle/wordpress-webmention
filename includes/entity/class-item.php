@@ -210,6 +210,17 @@ class Item {
 	}
 
 	/**
+	 * Setter for "name".
+	 *
+	 * @param string $name
+	 *
+	 * @return void
+	 */
+	public function set_name( $name ) {
+		$this->name = webmention_sanitize_html( $name );
+	}
+
+	/**
 	 * Setter for "published".
 	 *
 	 * @param mixed $published
