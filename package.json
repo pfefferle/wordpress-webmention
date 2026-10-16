@@ -20,7 +20,7 @@
     "@wordpress/jest-preset-default": "^14.2.0",
     "@wordpress/plugins": "^7.57.0",
     "@wordpress/rich-text": "^7.56.0",
-    "@wordpress/scripts": "^36.0.0",
+    "@wordpress/scripts": "^36.1.0",
     "babel-jest": "^30.5.2",
     "jest": "^30.5.2",
     "jest-environment-jsdom": "^30.5.2",
