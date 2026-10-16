@@ -12,7 +12,7 @@
     "@wordpress/data": "^10.56.0",
     "@wordpress/dependency-extraction-webpack-plugin": "^6.57.0",
     "@wordpress/dom-ready": "^4.56.0",
-    "@wordpress/editor": "^15.1.0",
+    "@wordpress/editor": "^15.2.0",
     "@wordpress/element": "^9.0.0",
     "@wordpress/env": "^11.16.0",
     "@wordpress/i18n": "^6.30.0",
