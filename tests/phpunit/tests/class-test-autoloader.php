@@ -68,7 +68,9 @@ class Test_Autoloader extends WP_UnitTestCase {
 
 		$reflection = new ReflectionClass( $autoloader );
 		$method     = $reflection->getMethod( 'load' );
-		$method->setAccessible( true );
+		if ( PHP_VERSION_ID < 80100 ) {
+			$method->setAccessible( true );
+		}
 
 		// Test that loading a Handler class doesn't throw an error
 		// (the class should already be loaded, but this verifies the path resolution)

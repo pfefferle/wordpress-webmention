@@ -26,10 +26,10 @@ import {
 /**
  * RSVP Format Edit Component
  *
- * @param {Object}   root0          Component props.
- * @param {boolean}  root0.isActive Whether the format is active on the selection.
- * @param {Object}   root0.value    Rich text value.
- * @param {Function} root0.onChange Change handler for the rich text value.
+ * @param {Object}                  root0          Component props.
+ * @param {boolean}                 root0.isActive Whether the format is active on the selection.
+ * @param {Object}                  root0.value    Rich text value.
+ * @param {(value: Object) => void} root0.onChange Change handler for the rich text value.
  * @return {Element} The RSVP toolbar control.
  */
 const RsvpFormatEdit = ( { isActive, value, onChange } ) => {

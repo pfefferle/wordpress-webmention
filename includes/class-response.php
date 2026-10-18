@@ -183,8 +183,11 @@ class Response {
 		}
 
 		libxml_use_internal_errors( true );
-		if ( function_exists( 'mb_convert_encoding' ) ) {
-			$body = mb_convert_encoding( $body, 'HTML-ENTITIES', mb_detect_encoding( $body ) );
+		if ( function_exists( 'mb_encode_numericentity' ) ) {
+			// Encode every non-ASCII character as a numeric entity, so DOMDocument::loadHTML() (which assumes ISO-8859-1) keeps it intact.
+			// Replaces mb_convert_encoding( ..., 'HTML-ENTITIES' ), deprecated in PHP 8.2.
+			$encoding = mb_detect_encoding( $body, mb_detect_order(), true );
+			$body     = mb_encode_numericentity( $body, array( 0x80, 0x10FFFF, 0, 0x1FFFFF ), $encoding ? $encoding : 'UTF-8' );
 		}
 
 		if ( empty( $body ) ) {
