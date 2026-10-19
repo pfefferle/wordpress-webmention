@@ -33,6 +33,8 @@ if ( \WP_DEBUG ) {
 // Register the autoloader.
 Autoloader::register_path( __NAMESPACE__, WEBMENTION_PLUGIN_DIR . 'includes' );
 
+require_once WEBMENTION_PLUGIN_DIR . 'integration/load.php';
+
 // Initialize the plugin.
 $webmention = Webmention::get_instance();
 $webmention->init();

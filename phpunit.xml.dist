@@ -16,6 +16,7 @@
 	<source>
 		<include>
 			<directory suffix=".php">./includes</directory>
+			<directory suffix=".php">./integration</directory>
 		</include>
 	</source>
 </phpunit>
