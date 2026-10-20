@@ -56,4 +56,13 @@ class Test_Webmention extends WP_UnitTestCase {
 		$this->assertEquals( has_action( 'admin_menu', array( \Webmention\WP_Admin\Admin::class, 'admin_menu' ) ), 10 );
 		$this->assertEquals( has_action( 'admin_init', array( \Webmention\WP_Admin\Admin::class, 'admin_init' ) ), 10 );
 	}
+
+	/**
+	 * The test suite must not run as a local environment, otherwise the
+	 * development tools in `local/` (which disable SSRF protection) are loaded.
+	 */
+	public function test_local_tools_are_not_loaded() {
+		$this->assertSame( 'production', \wp_get_environment_type() );
+		$this->assertFalse( \function_exists( 'Webmention\Development\allow_unsafe_http_request_urls' ) );
+	}
 }
