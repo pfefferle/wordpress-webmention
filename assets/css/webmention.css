@@ -72,6 +72,17 @@
 	position: absolute;
 	bottom: 0;
 	right: 0;
+	line-height: 0;
+	color: #1e1e1e;
+	background-color: #fff;
+	border-radius: 50%;
+}
+
+.emoji-overlay svg,
+.reaction-icon svg {
+	width: 1em;
+	height: 1em;
+	vertical-align: middle;
 }
 
 .hide-name {
