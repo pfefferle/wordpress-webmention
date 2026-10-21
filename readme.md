@@ -5,7 +5,7 @@
 - Tags: webmention, pingback, trackback, linkback, indieweb
 - Requires at least: 6.2
 - Tested up to: 7.1
-- Stable tag: 5.10.2
+- Stable tag: 5.11.0
 - Requires PHP: 7.4
 - License: MIT
 - License URI: https://opensource.org/licenses/MIT
@@ -118,6 +118,14 @@ While not all display options can be settings, we are looking to provide some si
 ## Changelog
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
+
+### 5.11.0
+
+* Security: Move the debug helpers to `local/`, with `WP_DEBUG` on they turned off `reject_unsafe_urls` for every outbound request on the site and let `MF2::is_url()` accept every well-formed URL
+* Integrate with the ActivityPub reactions block: it shows all Webmention types and replaces the Webmention facepile where it is used
+* Use SVG icons from `@wordpress/icons` instead of emojis for the comment types
+* Replace the deprecated `wp_no_robots()` with the `wp_robots` filter
+* Update dependencies
 
 ### 5.10.2
 
