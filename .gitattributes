@@ -22,6 +22,7 @@
 /phpunit.xml.dist        export-ignore
 
 # Source and tests (build/ is distributed, src/ is not)
+/local/                  export-ignore
 /src/                    export-ignore
 /tests/                  export-ignore
 

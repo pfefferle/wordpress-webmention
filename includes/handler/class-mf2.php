@@ -146,12 +146,6 @@ class MF2 extends Base {
 			return false;
 		}
 
-		// If debugging is on just validate that URL is validly formatted
-		if ( WP_DEBUG ) {
-			return filter_var( $str, FILTER_VALIDATE_URL ) !== false;
-		}
-
-		// If debugging is off limit based on WordPress parameters
 		return wp_http_validate_url( $str );
 	}
 

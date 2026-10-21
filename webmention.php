@@ -26,8 +26,12 @@ namespace Webmention;
 require_once WEBMENTION_PLUGIN_DIR . 'includes/class-autoloader.php';
 require_once WEBMENTION_PLUGIN_DIR . 'includes/functions.php';
 
-if ( \WP_DEBUG ) {
-	require_once WEBMENTION_PLUGIN_DIR . 'includes/debug.php';
+// Load development tools.
+if ( 'local' === \wp_get_environment_type() ) {
+	$loader_file = WEBMENTION_PLUGIN_DIR . 'local/load.php';
+	if ( \file_exists( $loader_file ) && \is_readable( $loader_file ) ) {
+		require_once $loader_file;
+	}
 }
 
 // Register the autoloader.
