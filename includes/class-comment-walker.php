@@ -161,7 +161,7 @@ class Comment_Walker extends Walker_Comment {
 		// Optionally overlay an icon (only when avatar is present).
 		$overlay = '';
 		if ( $args['overlay'] && $has_avatar ) {
-			$overlay = '<span class="emoji-overlay">' . $icon . '</span>';
+			$overlay = '<span class="emoji-overlay" aria-hidden="true">' . $icon . '</span>';
 		}
 
 		// Add class when no avatar is present.
@@ -181,7 +181,7 @@ class Comment_Walker extends Walker_Comment {
 							<?php echo $avatar; ?>
 							<?php echo $overlay; ?>
 						<?php else : ?>
-							<span class="reaction-icon"><?php echo $icon; ?></span>
+							<span class="reaction-icon" aria-hidden="true"><?php echo $icon; ?></span>
 						<?php endif; ?>
 					</a>
 					<span class="hide-name p-name"><?php echo get_comment_author( $comment ); ?></span>
