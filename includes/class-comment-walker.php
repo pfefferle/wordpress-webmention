@@ -161,7 +161,7 @@ class Comment_Walker extends Walker_Comment {
 		// Optionally overlay an icon (only when avatar is present).
 		$overlay = '';
 		if ( $args['overlay'] && $has_avatar ) {
-			$overlay = '<span class="emoji-overlay">' . $icon . '</span>';
+			$overlay = '<span class="emoji-overlay" aria-hidden="true">' . $icon . '</span>';
 		}
 
 		// Add class when no avatar is present.
@@ -176,12 +176,12 @@ class Comment_Walker extends Walker_Comment {
 		<<?php echo $tag; ?> id="comment-<?php comment_ID(); ?>" <?php comment_class( $classes, $comment ); ?>>
 			<div class="comment-body">
 				<span class="p-author h-card">
-					<a class="u-url" title="<?php esc_attr( $title ); ?>" href="<?php echo get_comment_author_url( $comment ); ?>">
+					<a class="u-url" title="<?php echo esc_attr( $title ); ?>" href="<?php echo esc_url( get_comment_author_url( $comment ) ); ?>">
 						<?php if ( $show_avatar && $has_avatar ) : ?>
 							<?php echo $avatar; ?>
 							<?php echo $overlay; ?>
 						<?php else : ?>
-							<span class="reaction-icon"><?php echo $icon; ?></span>
+							<span class="reaction-icon" aria-hidden="true"><?php echo $icon; ?></span>
 						<?php endif; ?>
 					</a>
 					<span class="hide-name p-name"><?php echo get_comment_author( $comment ); ?></span>
@@ -206,7 +206,7 @@ class Comment_Walker extends Walker_Comment {
 
 		$tag = ( 'div' === $args['style'] ) ? 'div' : 'li';
 
-		$cite = apply_filters( 'webmention_cite', '<small>&nbsp;@&nbsp;<cite><a href="%1s">%2s</a></cite></small>' );
+		$cite = apply_filters( 'webmention_cite', '<small>&nbsp;@&nbsp;<cite><a href="%1$s">%2$s</a></cite></small>' );
 		$url  = get_url_from_webmention( $comment );
 		$host = wp_parse_url( $url, PHP_URL_HOST );
 		$host = preg_replace( '/^www\./', '', $host );
@@ -246,7 +246,7 @@ class Comment_Walker extends Walker_Comment {
 							sprintf( '<b class="fn">%s</b>', $comment_author )
 						);
 						if ( ! empty( $cite ) && 'webmention' === get_comment_meta( $comment->comment_ID, 'protocol', true ) ) {
-							printf( $cite, $url, $host );
+							printf( $cite, esc_url( $url ), esc_html( $host ) );
 						}
 
 						?>

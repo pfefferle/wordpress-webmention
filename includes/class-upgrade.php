@@ -110,8 +110,8 @@ class Upgrade {
 		if ( version_compare( $version_from_db, '1.0.1', '<' ) ) {
 			self::migrate_to_1_0_1();
 		}
-		if ( version_compare( $version_from_db, '5.8.2', '<' ) ) {
-			self::migrate_to_5_8_2();
+		if ( version_compare( $version_from_db, '5.11.1', '<' ) ) {
+			self::migrate_to_5_11_1();
 		}
 
 		/**
@@ -249,16 +249,16 @@ class Upgrade {
 	}
 
 	/**
-	 * Migrate to version 5.8.2
+	 * Migrate to version 5.11.1
 	 *
 	 * Prefix the `webmention_canonical_url` post meta key with an underscore
 	 * so it is hidden from the Custom Fields UI dropdown.
 	 *
-	 * @since 5.8.2
+	 * @since 5.11.1
 	 *
 	 * @return void
 	 */
-	public static function migrate_to_5_8_2() {
+	public static function migrate_to_5_11_1() {
 		wp_cache_flush();
 
 		self::update_postmeta_key( 'webmention_canonical_url', '_webmention_canonical_url' );

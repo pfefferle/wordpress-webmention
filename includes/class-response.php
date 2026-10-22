@@ -183,8 +183,11 @@ class Response {
 		}
 
 		libxml_use_internal_errors( true );
-		if ( function_exists( 'mb_convert_encoding' ) ) {
-			$body = mb_convert_encoding( $body, 'HTML-ENTITIES', mb_detect_encoding( $body ) );
+		if ( function_exists( 'mb_encode_numericentity' ) ) {
+			// Encode every non-ASCII character as a numeric entity, so DOMDocument::loadHTML() (which assumes ISO-8859-1) keeps it intact.
+			// Replaces mb_convert_encoding( ..., 'HTML-ENTITIES' ), deprecated in PHP 8.2.
+			$encoding = mb_detect_encoding( $body, mb_detect_order(), true );
+			$body     = mb_encode_numericentity( $body, array( 0x80, 0x10FFFF, 0, 0x1FFFFF ), $encoding ? $encoding : 'UTF-8' );
 		}
 
 		if ( empty( $body ) ) {
@@ -384,6 +387,10 @@ class Response {
 	/**
 	 * Get the HTTP Error if there is one
 	 *
+	 * Status codes that tell us the source is gone for good get a dedicated error code,
+	 * so that consumers like `Webmention\Receiver::delete()` can tell them apart from a
+	 * source that is only temporarily unavailable.
+	 *
 	 * @return WP_Error Returns a WP_Error object if the request fails; otherwise, returns false.
 	 */
 	public function get_error() {
@@ -391,11 +398,27 @@ class Response {
 			return false;
 		}
 
+		$code = $this->get_response_code();
+
+		/**
+		 * Filter the mapping of HTTP status codes to Webmention error codes.
+		 *
+		 * @param array $error_codes Map of HTTP status code to `WP_Error` code.
+		 */
+		$error_codes = apply_filters(
+			'webmention_http_error_codes',
+			array(
+				404 => 'resource_not_found',
+				410 => 'resource_deleted',
+				451 => 'resource_removed',
+			)
+		);
+
 		return new WP_Error(
-			'http_error',
+			isset( $error_codes[ $code ] ) ? $error_codes[ $code ] : 'http_error',
 			wp_remote_retrieve_response_message( $this->get_response() ),
 			array(
-				'status' => $this->get_response_code(),
+				'status' => $code,
 			)
 		);
 	}

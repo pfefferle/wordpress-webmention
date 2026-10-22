@@ -1,8 +1,12 @@
 {
-  "name": "editor-plugin",
-  "title": "Editor Plugin: not a block, but block.json is very useful.",
+  "name": "webmention/settings",
+  "title": "Webmention Settings",
+  "description": "Per-post controls to disable incoming or outgoing Webmentions.",
   "category": "widgets",
   "icon": "admin-comments",
-  "keywords": [],
+  "keywords": [
+    "webmention",
+    "settings"
+  ],
   "editorScript": "file:./plugin.js"
 }

@@ -568,6 +568,15 @@ class Receiver {
 		$response = Request::get( $data['source'] );
 
 		if ( is_wp_error( $response ) ) {
+			// Pass the comment data along, so that handlers of `webmention_data_error`,
+			// like `self::delete()`, can find the comment the failed source belongs to.
+			$error_data = $response->get_error_data();
+			$error_data = is_array( $error_data ) ? $error_data : array();
+
+			$error_data['data'] = $data;
+
+			$response->add_data( $error_data );
+
 			return $response;
 		}
 
@@ -744,7 +753,7 @@ class Receiver {
 	}
 
 	/**
-	 * Delete comment if source returns error 410 or 452
+	 * Delete comment if source returns error 404, 410 or 451
 	 *
 	 * @param WP_Error $error
 	 */
@@ -766,7 +775,16 @@ class Receiver {
 			return;
 		}
 
-		$commentdata = $error->get_error_data();
+		$error_data = $error->get_error_data();
+
+		// The comment data is stored in the `data` key, but fall back to the error data
+		// itself for errors raised outside of `self::webmention_verify()`.
+		$commentdata = isset( $error_data['data'] ) ? $error_data['data'] : $error_data;
+
+		if ( ! is_array( $commentdata ) || empty( $commentdata['comment_meta']['webmention_source_url'] ) ) {
+			return;
+		}
+
 		$commentdata = self::check_dupes( $commentdata );
 
 		if ( isset( $commentdata['comment_ID'] ) ) {
