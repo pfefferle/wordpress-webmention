@@ -253,8 +253,8 @@ class Sender {
 
 		$support_media_urls = ( 0 === get_option( 'webmention_send_media_mentions' ) );
 
-		// initialize links array
-		$urls = webmention_extract_urls( $post->post_content, $support_media_urls );
+		// initialize links array, including links added by blocks and shortcodes
+		$urls = webmention_extract_urls( \do_shortcode( \do_blocks( $post->post_content ) ), $support_media_urls );
 
 		// filter links
 		$targets   = apply_filters( 'webmention_links', $urls, $post_id );

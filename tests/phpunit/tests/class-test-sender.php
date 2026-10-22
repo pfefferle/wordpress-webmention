@@ -72,6 +72,90 @@ class Test_Sender extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test that links added by shortcodes are sent Webmentions.
+	 */
+	public function test_send_webmentions_includes_shortcode_links() {
+		add_shortcode(
+			'webmention_test_link',
+			function () {
+				return '<a href="https://example.org/from-shortcode">Shortcode link</a>';
+			}
+		);
+
+		$post_id = self::factory()->post->create(
+			array(
+				'post_content' => 'Test post with [webmention_test_link]',
+			)
+		);
+
+		add_filter(
+			'webmention_server_url',
+			function () {
+				return 'https://example.org/webmention';
+			}
+		);
+
+		add_filter(
+			'pre_http_request',
+			function () {
+				return array(
+					'response' => array( 'code' => 200 ),
+					'body'     => 'Webmention received',
+				);
+			}
+		);
+
+		$result = Sender::send_webmentions( $post_id );
+
+		remove_shortcode( 'webmention_test_link' );
+
+		$this->assertContains( 'https://example.org/from-shortcode', $result );
+	}
+
+	/**
+	 * Test that links rendered by dynamic blocks are sent Webmentions.
+	 */
+	public function test_send_webmentions_includes_dynamic_block_links() {
+		register_block_type(
+			'webmention-test/link',
+			array(
+				'render_callback' => function () {
+					return '<a href="https://example.org/from-block">Block link</a>';
+				},
+			)
+		);
+
+		$post_id = self::factory()->post->create(
+			array(
+				'post_content' => '<!-- wp:webmention-test/link /-->',
+			)
+		);
+
+		add_filter(
+			'webmention_server_url',
+			function () {
+				return 'https://example.org/webmention';
+			}
+		);
+
+		add_filter(
+			'pre_http_request',
+			function () {
+				return array(
+					'response' => array( 'code' => 200 ),
+					'body'     => 'Webmention received',
+				);
+			}
+		);
+
+		$result = Sender::send_webmentions( $post_id );
+
+		unregister_block_type( 'webmention-test/link' );
+
+		$this->assertContains( 'https://example.org/from-block', $result );
+	}
+
+	/**
 	 * Test update ping.
 	 */
 	public function test_update_ping() {
