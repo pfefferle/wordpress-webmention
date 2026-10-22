@@ -253,8 +253,11 @@ class Sender {
 
 		$support_media_urls = ( 0 === get_option( 'webmention_send_media_mentions' ) );
 
-		// initialize links array, including links added by blocks and shortcodes
-		$urls = webmention_extract_urls( \do_shortcode( \do_blocks( $post->post_content ) ), $support_media_urls );
+		// render blocks (not available on ClassicPress) and shortcodes, so their links are included
+		$content = \site_supports_blocks() ? \do_blocks( $post->post_content ) : $post->post_content;
+
+		// initialize links array
+		$urls = webmention_extract_urls( \do_shortcode( $content ), $support_media_urls );
 
 		// filter links
 		$targets   = apply_filters( 'webmention_links', $urls, $post_id );
