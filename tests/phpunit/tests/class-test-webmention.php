@@ -10,6 +10,30 @@
  */
 class Test_Webmention extends WP_UnitTestCase {
 	/**
+	 * Test that post content keeps its styles on singular, home, and archive views.
+	 */
+	public function test_content_styles_are_enqueued() {
+		$category_id = self::factory()->category->create();
+		$post_id     = self::factory()->post->create( array( 'post_category' => array( $category_id ) ) );
+		$urls        = array(
+			get_permalink( $post_id ),
+			home_url( '/?post_type=post' ),
+			get_category_link( $category_id ),
+		);
+
+		try {
+			foreach ( $urls as $url ) {
+				wp_dequeue_style( 'webmention' );
+				$this->go_to( $url );
+				\Webmention\Webmention::get_instance()->enqueue_scripts();
+				$this->assertTrue( wp_style_is( 'webmention', 'enqueued' ), $url );
+			}
+		} finally {
+			wp_dequeue_style( 'webmention' );
+		}
+	}
+
+	/**
 	 * Test that constants are registered.
 	 */
 	public function test_register_constants() {
@@ -31,5 +55,14 @@ class Test_Webmention extends WP_UnitTestCase {
 		$this->assertEquals( has_action( 'init', array( \Webmention\Comment::class, 'init' ) ), 10 );
 		$this->assertEquals( has_action( 'admin_menu', array( \Webmention\WP_Admin\Admin::class, 'admin_menu' ) ), 10 );
 		$this->assertEquals( has_action( 'admin_init', array( \Webmention\WP_Admin\Admin::class, 'admin_init' ) ), 10 );
+	}
+
+	/**
+	 * The test suite must not run as a local environment, otherwise the
+	 * development tools in `local/` (which disable SSRF protection) are loaded.
+	 */
+	public function test_local_tools_are_not_loaded() {
+		$this->assertSame( 'production', \wp_get_environment_type() );
+		$this->assertFalse( \function_exists( 'Webmention\Development\allow_unsafe_http_request_urls' ) );
 	}
 }

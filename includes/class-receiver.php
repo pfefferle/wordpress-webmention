@@ -68,27 +68,30 @@ class Receiver {
 			);
 		}
 		$args = array(
-			'type'         => 'string',
-			'description'  => esc_html__( 'Protocol Used to Receive', 'webmention' ),
-			'single'       => true,
-			'show_in_rest' => true,
+			'type'              => 'string',
+			'description'       => esc_html__( 'Protocol Used to Receive', 'webmention' ),
+			'single'            => true,
+			'show_in_rest'      => true,
+			'sanitize_callback' => 'sanitize_key',
 		);
 		register_meta( 'comment', 'protocol', $args );
 
 		$args = array(
-			'type'         => 'string',
-			'description'  => esc_html__( 'Target URL for the Webmention', 'webmention' ),
-			'single'       => true,
-			'show_in_rest' => true,
+			'type'              => 'string',
+			'description'       => esc_html__( 'Target URL for the Webmention', 'webmention' ),
+			'single'            => true,
+			'show_in_rest'      => true,
+			'sanitize_callback' => 'esc_url_raw',
 		);
 		register_meta( 'comment', 'webmention_target_url', $args );
 
 		// For pingbacks the source URL is stored in the author URL. This means you cannot have an author URL that is different than the source.
 		$args = array(
-			'type'         => 'string',
-			'description'  => esc_html__( 'Source URL for the Webmention', 'webmention' ),
-			'single'       => true,
-			'show_in_rest' => true,
+			'type'              => 'string',
+			'description'       => esc_html__( 'Source URL for the Webmention', 'webmention' ),
+			'single'            => true,
+			'show_in_rest'      => true,
+			'sanitize_callback' => 'esc_url_raw',
 		);
 		register_meta( 'comment', 'webmention_source_url', $args );
 
@@ -102,10 +105,11 @@ class Receiver {
 
 		// Purpose of this is to store the original time as there is no modified time in the comment table.
 		$args = array(
-			'type'         => 'string',
-			'description'  => esc_html__( 'Last Modified Time for the Webmention (GMT)', 'webmention' ),
-			'single'       => true,
-			'show_in_rest' => true,
+			'type'              => 'string',
+			'description'       => esc_html__( 'Last Modified Time for the Webmention (GMT)', 'webmention' ),
+			'single'            => true,
+			'show_in_rest'      => true,
+			'sanitize_callback' => 'sanitize_text_field',
 		);
 		register_meta( 'comment', 'webmention_last_modified', $args );
 
@@ -120,26 +124,29 @@ class Receiver {
 
 		// Purpose of this is to store a vouch URL
 		$args = array(
-			'type'         => 'string',
-			'description'  => esc_html__( 'Webmention Vouch URL', 'webmention' ),
-			'single'       => true,
-			'show_in_rest' => true,
+			'type'              => 'string',
+			'description'       => esc_html__( 'Webmention Vouch URL', 'webmention' ),
+			'single'            => true,
+			'show_in_rest'      => true,
+			'sanitize_callback' => 'esc_url_raw',
 		);
 		register_meta( 'comment', 'webmention_vouch_url', $args );
 
 		$args = array(
-			'type'         => 'string',
-			'description'  => esc_html__( 'Canonical URL for the Webmention', 'webmention' ),
-			'single'       => true,
-			'show_in_rest' => true,
+			'type'              => 'string',
+			'description'       => esc_html__( 'Canonical URL for the Webmention', 'webmention' ),
+			'single'            => true,
+			'show_in_rest'      => true,
+			'sanitize_callback' => 'esc_url_raw',
 		);
 		register_meta( 'comment', 'url', $args );
 
 		$args = array(
-			'type'         => 'string',
-			'description'  => esc_html__( 'Avatar URL', 'webmention' ),
-			'single'       => true,
-			'show_in_rest' => true,
+			'type'              => 'string',
+			'description'       => esc_html__( 'Avatar URL', 'webmention' ),
+			'single'            => true,
+			'show_in_rest'      => true,
+			'sanitize_callback' => 'esc_url_raw',
 		);
 		register_meta( 'comment', 'avatar', $args );
 	}
@@ -409,7 +416,7 @@ class Receiver {
 				'source'  => $commentdata['source'],
 				'target'  => $commentdata['target'],
 				'code'    => 'success',
-				'message' => apply_filters( 'webmention_success_message', esc_html__( 'Webmention was successful', 'webmention' ) ),
+				'message' => apply_filters( 'webmention_success_message', esc_html__( 'Thank you! Your Webmention has been received.', 'webmention' ) ),
 			);
 			return new WP_REST_Response( $return, 200 );
 		}
@@ -430,8 +437,11 @@ class Receiver {
 		// disable flood control
 		remove_action( 'check_comment_flood', 'check_comment_flood_db', 10 );
 
+		// if the comment ID is set, the Webmention already exists and will be updated
+		$is_update = ! empty( $commentdata['comment_ID'] );
+
 		// update or save webmention
-		if ( empty( $commentdata['comment_ID'] ) ) {
+		if ( ! $is_update ) {
 			if ( ! is_array( $commentdata['comment_meta'] ) ) {
 				$commentdata['comment_meta'] = array();
 			}
@@ -479,13 +489,29 @@ class Receiver {
 		// re-add flood control
 		add_action( 'check_comment_flood', 'check_comment_flood_db', 10, 4 );
 
+		if ( $is_update ) {
+			/**
+			 * Filters the message that is returned when a Webmention already exists and was updated.
+			 *
+			 * @param string $message The update message.
+			 */
+			$message = apply_filters( 'webmention_update_message', esc_html__( 'You already sent a Webmention for this target. The existing Webmention has been updated.', 'webmention' ) );
+		} else {
+			/**
+			 * Filters the message that is returned when a Webmention was received successfully.
+			 *
+			 * @param string $message The success message.
+			 */
+			$message = apply_filters( 'webmention_success_message', esc_html__( 'Thank you! Your Webmention has been received.', 'webmention' ) );
+		}
+
 		// Return select data
 		$return = array(
 			'link'    => get_comment_link( $commentdata['comment_ID'] ),
 			'source'  => $commentdata['source'],
 			'target'  => $commentdata['target'],
 			'code'    => 'success',
-			'message' => apply_filters( 'webmention_success_message', esc_html__( 'Webmention was successful', 'webmention' ) ),
+			'message' => $message,
 		);
 
 		return new WP_REST_Response( $return, 200 );
@@ -542,6 +568,15 @@ class Receiver {
 		$response = Request::get( $data['source'] );
 
 		if ( is_wp_error( $response ) ) {
+			// Pass the comment data along, so that handlers of `webmention_data_error`,
+			// like `self::delete()`, can find the comment the failed source belongs to.
+			$error_data = $response->get_error_data();
+			$error_data = is_array( $error_data ) ? $error_data : array();
+
+			$error_data['data'] = $data;
+
+			$response->add_data( $error_data );
+
 			return $response;
 		}
 
@@ -718,7 +753,7 @@ class Receiver {
 	}
 
 	/**
-	 * Delete comment if source returns error 410 or 452
+	 * Delete comment if source returns error 404, 410 or 451
 	 *
 	 * @param WP_Error $error
 	 */
@@ -740,7 +775,16 @@ class Receiver {
 			return;
 		}
 
-		$commentdata = $error->get_error_data();
+		$error_data = $error->get_error_data();
+
+		// The comment data is stored in the `data` key, but fall back to the error data
+		// itself for errors raised outside of `self::webmention_verify()`.
+		$commentdata = isset( $error_data['data'] ) ? $error_data['data'] : $error_data;
+
+		if ( ! is_array( $commentdata ) || empty( $commentdata['comment_meta']['webmention_source_url'] ) ) {
+			return;
+		}
+
 		$commentdata = self::check_dupes( $commentdata );
 
 		if ( isset( $commentdata['comment_ID'] ) ) {

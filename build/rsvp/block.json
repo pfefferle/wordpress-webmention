@@ -1,0 +1,16 @@
+{
+  "name": "webmention/rsvp",
+  "title": "RSVP",
+  "description": "Mark an event response as yes, no, maybe, or interested using microformats2.",
+  "category": "widgets",
+  "icon": "calendar-alt",
+  "keywords": [
+    "webmention",
+    "microformats",
+    "rsvp",
+    "event",
+    "indieweb"
+  ],
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css"
+}

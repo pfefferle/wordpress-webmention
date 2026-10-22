@@ -5,6 +5,7 @@ import { useSelect } from '@wordpress/data';
 import { useEntityProp } from '@wordpress/core-data';
 import { __ } from '@wordpress/i18n';
 
+import { WEBMENTION_FIELDS, getFieldValue, setFieldValue } from './fields';
 
 const EditorPlugin = () => {
 	const postType = useSelect(
@@ -23,26 +24,20 @@ const EditorPlugin = () => {
 			name="webmention"
 			title={ __( 'Webmentions', 'webmention' ) }
 		>
-			<CheckboxControl
-				__nextHasNoMarginBottom
-				label={ __( 'Disable incoming', 'webmention' ) }
-				help={ __( 'Do not accept incoming Webmentions for this post.', 'webmention' ) }
-				checked={ meta.webmentions_disabled || false }
-				onChange={ ( value ) => {
-					setMeta( { ...meta, webmentions_disabled: value } );
-				} }
-			/>
-			<CheckboxControl
-				__nextHasNoMarginBottom
-				label={ __( 'Disable outgoing', 'webmention' ) }
-				help={ __( 'Do not send Webmentions for this post.', 'webmention' ) }
-				checked={ meta.webmentions_disabled_pings || false }
-				onChange={ ( value ) => {
-					setMeta( { ...meta, webmentions_disabled_pings: value } );
-				} }
-			/>
+			{ WEBMENTION_FIELDS.map( ( field ) => (
+				<CheckboxControl
+					key={ field.metaKey }
+					__nextHasNoMarginBottom
+					label={ field.label }
+					help={ field.help }
+					checked={ getFieldValue( meta, field.metaKey ) }
+					onChange={ ( value ) =>
+						setMeta( setFieldValue( meta, field.metaKey, value ) )
+					}
+				/>
+			) ) }
 		</PluginDocumentSettingPanel>
 	);
-}
+};
 
 registerPlugin( 'webmention-editor-plugin', { render: EditorPlugin } );

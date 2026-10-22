@@ -4,9 +4,8 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta name="viewport" content="width=device-width">
 	<?php
-	if ( function_exists( 'wp_no_robots' ) ) {
-		wp_no_robots();
-	}
+	add_filter( 'wp_robots', 'wp_robots_no_robots' );
+	wp_robots();
 	?>
 	<title><?php _e( 'Webmention Endpoint', 'webmention' ); ?></title>
 	<style type="text/css">
@@ -116,7 +115,7 @@
 	</style>
 	</head>
 	<body id="webmention-endpint-page">
-		<p><?php echo $data['message']; ?></p>
+		<p><?php echo esc_html( $data['message'] ); ?></p>
 
 		<p id="backtoblog"><a href="<?php echo esc_url( home_url( '/' ) ); ?>">
 			<?php

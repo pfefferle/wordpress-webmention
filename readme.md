@@ -4,29 +4,36 @@
 - Donate link: https://notiz.blog/donate/
 - Tags: webmention, pingback, trackback, linkback, indieweb
 - Requires at least: 6.2
-- Tested up to: 7.0
-- Stable tag: 5.7.0
-- Requires PHP: 7.2
+- Tested up to: 7.1
+- Stable tag: 5.11.0
+- Requires PHP: 7.4
 - License: MIT
 - License URI: https://opensource.org/licenses/MIT
 
-Enable conversation across the web.
+Send and receive Webmentions in WordPress.
 
 ## Description
 
-When you link to a website you can send it a Webmention to notify it and then that website may display your post as a comment, like, or other response, and presto, you’re having a conversation from one site to another!
+Bring conversations from across the web to your WordPress site. Webmention lets you notify another website when you link to it and receive notifications when other websites link to yours.
 
-A [Webmention](https://www.w3.org/TR/webmention/) is a notification that one URL links to another. Sending a Webmention is not limited to blog posts, and can be used for additional kinds of content and responses as well.
+A [Webmention](https://www.w3.org/TR/webmention/) is a notification that one URL links to another. For example, someone can publish a response on their own blog, link to your post, and send a Webmention so that their response appears in your comments after moderation.
 
-For example, a response can be an RSVP to an event, an indication that someone "likes" another post, a "bookmark" of another post, and many others. Webmention enables these interactions to happen across different websites, enabling a distributed social web.
+Responses can also be likes, reposts, bookmarks, RSVPs, and other interactions. The plugin recognizes these response types and can display reactions as facepiles: groups of avatars beneath your post.
 
-The Webmention plugin supports the Webmention protocol, giving you support for sending and receiving Webmentions. It offers a simple built in presentation.
+### Features
+
+* Send Webmentions to linked websites that support the protocol.
+* Receive replies and reactions through WordPress's comment system.
+* Display reactions separately as facepiles or alongside comments.
+* Let visitors submit a response URL through the Webmention Form block, the classic comment form, or the standalone endpoint form.
+* Choose supported post types and a page to collect mentions of your homepage.
+* Customize form help text, avatar display, and automatic approval for selected domains.
 
 ## Frequently Asked Questions
 
 ### What are Webmentions?
 
-[Webmention](https://www.w3.org/TR/webmention/) is a simple way to automatically notify any URL when you link to it on your site. From the receivers perpective, it's a way to request notification when other sites link to it.
+[Webmention](https://www.w3.org/TR/webmention/) is a way to notify a website when you link to it on your site. The receiving website can then display your post as a reply or reaction.
 
 ### That Sounds Like a Pingback or a Trackback
 
@@ -34,11 +41,14 @@ Webmention is an update/replacement for Pingback or Trackback. Unlike the older 
 
 ### How can I send and receive Webmentions?
 
-On the Settings --> Discussion Page in WordPress:
+Open **Settings → Webmention**, or **IndieWeb → Webmention** if the IndieWeb plugin is active:
 
 * On the Webmention Settings page, decide which post types you want to enable Webmentions for. By default, posts and pages.
 * Set a page to redirect homepage mentions to. This will automatically enable Webmentions for that page.
-* If you want to enable a Webmention form in the comment section, check the box.
+* On classic themes, enable or disable the Webmention form using the checkbox in Webmention settings.
+* On block themes with WordPress 6.4 or newer, the Webmention Form block is automatically added after the Comments block. Move or remove it in the Site Editor. If Block Hooks are unavailable or disabled, use the settings checkbox to control the classic form.
+
+You can also insert the Webmention Form block manually in the block editor. It displays a form when Webmentions are open for the post and avoids duplicate forms for the same post. The help text can be customized in Webmention settings.
 
 You can use the `send_webmention($source, $target)` function and pass a source and a target or you can fire an action like `do_action('send_webmention', $source, $target)`.
 
@@ -50,11 +60,11 @@ When declaring your custom post type, add post type support for Webmentions by e
 
 You can enable receiving Webmentions for attachments in Webmention settings. You can enable sending Webmentions for media links in the settings. Please note that most receivers of Webmentions do not support receiving them to image, audio, and video files. In order to support receiving them on WordPress, Webmention endpoint headers would have to be added at the webserver level.
 
-### How can I handle Webmentions to my Homepage or Archive Pages?
+### How can I handle Webmentions to my homepage or archive pages?
 
-Webmentions should be allowed on all URLs of a blog, however WordPress does not support this as only posts can have comments attached to them. The plugin currently handles only Webmentions on posts and allows you to set a page to receive homepage mentions.
+WordPress stores comments against individual posts, pages, or other post types. To collect mentions of your homepage, choose a page in Webmention settings.
 
-Even though it is not done automatically, it is very simple to add support for archives and URLs on your site by providing a post/page to show collect mentions. The plugin provides a simple filter for that.
+For archive pages and other URLs, use the `webmention_post_id` filter to assign incoming mentions to a post or page.
 
 In the below example, if there is no page returned it will send mentions to a catch-all post. You can also have unique posts per URL.
 
@@ -97,9 +107,77 @@ There is an option within the plugin to show webmentions not determined to be re
 
 While not all display options can be settings, we are looking to provide some simple options which could be customized in a theme if needed.
 
+## Screenshots
+
+1. Replies received through Webmention appear as normal comments in your theme's comments section.
+2. Reaction facepiles group bookmarks, reposts, and likes by response type.
+3. The Webmention comment form lets visitors submit a response URL, with expandable help explaining the required link.
+4. The standalone endpoint form accepts both a source URL and a target URL.
+5. Webmention settings control sending, receiving, avatars, and reaction display.
+
 ## Changelog
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
+
+### 5.11.0
+
+* Security: Move the debug helpers to `local/`, with `WP_DEBUG` on they turned off `reject_unsafe_urls` for every outbound request on the site and let `MF2::is_url()` accept every well-formed URL
+* Integrate with the ActivityPub reactions block: it shows all Webmention types and replaces the Webmention facepile where it is used
+* Use SVG icons from `@wordpress/icons` instead of emojis for the comment types
+* Replace the deprecated `wp_no_robots()` with the `wp_robots` filter
+* Update dependencies
+
+### 5.10.2
+
+* Security: Fix a stored XSS reachable from unauthenticated Webmentions where the parsed entry name (from `og:title`) was stored in the comment without sanitizing, unlike content and summary
+* Security: Escape the parsed source URL in the comment walker, it was printed into an `href` without `esc_url()`
+* Fix PHP 8.5 deprecations in the bundled mf2 parser
+* Update dependencies
+
+### 5.10.1
+
+* Keep the Webmention form's URL hint below the input when themes constrain the field width
+
+### 5.10.0
+
+* Add a reusable Webmention Form block with automatic placement after the Comments block in block themes that support Block Hooks
+* Keep the classic form and its settings available when Block Hooks are unavailable or disabled, including on WordPress 6.2–6.3 and ClassicPress
+* Improve form wording, explain the required backlink, and let submit buttons fit translated labels
+* Prevent duplicate forms for the same post and give multiple forms unique element IDs
+* Preserve RSVP styling on home and archive pages and share the front-end stylesheet with the block editor
+* Fix editor script compatibility with WordPress 6.2–6.5 by bundling the JSX runtime used by the RSVP and document settings scripts
+* Replace deprecated HTML encoding conversion while preserving Unicode text and links
+* Pass the post ID to the `webmention_form_text` filter
+* Include the form block metadata in release archives and add a WordPress Playground demo
+* Update dependencies, build configuration, and regression tests
+
+### 5.9.1
+
+* Fix the deletion of Webmentions: if the source page is gone (HTTP 404, 410 or 451), the matching comment is now really removed instead of being kept forever
+* Add a `webmention_http_error_codes` filter to customize which HTTP status codes count as a deleted source
+* Keep internal build files out of the release, so the WordPress.org plugin directory no longer lists them as blocks
+* Update dependencies and add more JavaScript unit tests
+
+### 5.9.0
+
+* Add a reaction picker to the block editor link popover for marking a link as a reply, like, repost, bookmark, or tag
+* Add an RSVP rich text format for marking event responses as yes, no, maybe, or interested
+* Stop sending repeated Webmentions for posts that have not changed, and retry targets that failed during an earlier send
+* Guard the avatar lookup against a missing upload directory to stop `scandir` warnings from filling the logs, props @edent
+* Add JavaScript unit tests and a GitHub Actions workflow to run them
+
+### 5.8.1
+
+* Security: Fix a stored XSS reachable from unauthenticated Webmentions where parser-derived author metadata (avatar, URL) was rendered unescaped in the comment edit metabox
+* Security: Sanitize Webmention comment meta on store via `register_meta` sanitize callbacks (`esc_url_raw` for URL meta, `sanitize_key`/`sanitize_text_field` for the rest) to keep the database clean
+* Security: Escape remaining template output (comment edit metabox, single-comment view, endpoint message and form, reaction headings)
+
+### 5.8.0
+
+* Bump minimum required PHP version to 7.4
+* Return a distinct message when a Webmention already exists and was updated, filterable via `webmention_update_message`
+* Friendlier default success message for the Webmention endpoint
+* Fix `ValueError` in `DOMDocument::loadHTML()` when the post content is empty on PHP 8.1+
 
 ### 5.7.0
 
@@ -589,6 +667,15 @@ To install a WordPress Plugin manually:
 * With your FTP program, upload the Plugin folder to the `wp-content/plugins` folder in your WordPress directory online.
 * Go to [Plugins screen](https://codex.wordpress.org/Administration_Screens#Plugins) and find the newly uploaded Plugin in the list.
 * Click **Activate** to activate it.
+
+### Setup
+
+1. Open **Settings → Webmention**, or **IndieWeb → Webmention** if the IndieWeb plugin is active.
+2. Choose which post types can receive Webmentions and how replies and reactions should appear.
+3. Publish a post linking to another Webmention-enabled website. The plugin sends a notification in the background.
+4. Review incoming responses under **Comments**. Webmentions from domains in your automatic approval list can appear without manual approval.
+
+On block themes with WordPress 6.4 or newer, the Webmention Form block is automatically placed after the Comments block when Block Hooks are available. You can move or remove it in the Site Editor, or insert it manually in the block editor. Classic themes use the form setting instead.
 
 ## Upgrade Notice
 

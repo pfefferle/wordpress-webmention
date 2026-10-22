@@ -5,7 +5,9 @@
  * Description: Webmention support for WordPress posts
  * Author: Matthias Pfefferle
  * Author URI: https://notiz.blog/
- * Version: 5.7.0
+ * Version: 5.11.0
+ * Requires at least: 6.2
+ * Requires PHP: 7.4
  * License: MIT
  * License URI: https://opensource.org/licenses/MIT
  * Text Domain: webmention
@@ -14,7 +16,7 @@
 
 namespace Webmention;
 
-\define( 'WEBMENTION_VERSION', '5.7.0' );
+\define( 'WEBMENTION_VERSION', '5.11.0' );
 
 \define( 'WEBMENTION_PLUGIN_DIR', \plugin_dir_path( __FILE__ ) );
 \define( 'WEBMENTION_PLUGIN_BASENAME', \plugin_basename( __FILE__ ) );
@@ -24,12 +26,18 @@ namespace Webmention;
 require_once WEBMENTION_PLUGIN_DIR . 'includes/class-autoloader.php';
 require_once WEBMENTION_PLUGIN_DIR . 'includes/functions.php';
 
-if ( \WP_DEBUG ) {
-	require_once WEBMENTION_PLUGIN_DIR . 'includes/debug.php';
+// Load development tools.
+if ( 'local' === \wp_get_environment_type() ) {
+	$loader_file = WEBMENTION_PLUGIN_DIR . 'local/load.php';
+	if ( \file_exists( $loader_file ) && \is_readable( $loader_file ) ) {
+		require_once $loader_file;
+	}
 }
 
 // Register the autoloader.
 Autoloader::register_path( __NAMESPACE__, WEBMENTION_PLUGIN_DIR . 'includes' );
+
+require_once WEBMENTION_PLUGIN_DIR . 'integration/load.php';
 
 // Initialize the plugin.
 $webmention = Webmention::get_instance();

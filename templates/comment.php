@@ -45,7 +45,7 @@ if ( $comment->comment_parent ) {
 		<script type="text/javascript">
 			<!--
 			// redirect to comment-page and scroll to comment
-			window.location = "<?php echo get_permalink( $comment->comment_post_ID ) . '#comment-' . $comment->comment_ID; ?>";
+			window.location = "<?php echo esc_url( get_permalink( $comment->comment_post_ID ) . '#comment-' . $comment->comment_ID ); ?>";
 			//–>
 		</script>
 	</head>
@@ -73,7 +73,7 @@ if ( $comment->comment_parent ) {
 					</time></a>
 					<ul>
 					<?php if ( $target ) { ?>
-						<li><a href="<?php echo $target; ?>" rel="in-reply-to" class="u-in-reply-to u-reply-of"><?php echo $target; ?></a></li>
+						<li><a href="<?php echo esc_url( $target ); ?>" rel="in-reply-to" class="u-in-reply-to u-reply-of"><?php echo esc_html( $target ); ?></a></li>
 					<?php } ?>
 					</ul>
 				</footer>

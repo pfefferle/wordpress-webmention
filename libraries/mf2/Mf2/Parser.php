@@ -72,7 +72,9 @@ function fetch($url, $convertClassic = \true, &$curlInfo = null)
     \curl_setopt($ch, \CURLOPT_HTTPHEADER, array('Accept: text/html'));
     $html = \curl_exec($ch);
     $info = $curlInfo = \curl_getinfo($ch);
-    \curl_close($ch);
+    if (\PHP_VERSION_ID < 80000) {
+        \curl_close($ch);
+    }
     if (\strpos(\strtolower($info['content_type']), 'html') === \false) {
         // The content was not delivered as HTML, do not attempt to parse it.
         return null;
@@ -368,8 +370,8 @@ class Parser
     }
     private function elementPrefixParsed(\DOMElement $e, $prefix)
     {
-        if (!$this->parsed->contains($e)) {
-            $this->parsed->attach($e, array());
+        if (!$this->parsed->offsetExists($e)) {
+            $this->parsed->offsetSet($e, array());
         }
         $prefixes = $this->parsed[$e];
         $prefixes[] = $prefix;
@@ -383,7 +385,7 @@ class Parser
      */
     private function isElementParsed(\DOMElement $e, $prefix)
     {
-        if (!$this->parsed->contains($e)) {
+        if (!$this->parsed->offsetExists($e)) {
             return \false;
         }
         $prefixes = $this->parsed[$e];
@@ -400,7 +402,7 @@ class Parser
      */
     private function isElementUpgraded(\DOMElement $el, $property)
     {
-        if ($this->upgraded->contains($el)) {
+        if ($this->upgraded->offsetExists($el)) {
             if (\in_array($property, $this->upgraded[$el])) {
                 return \true;
             }
@@ -832,7 +834,7 @@ class Parser
     public function parseH(\DOMElement $e, $is_backcompat = \false, $has_nested_mf = \false)
     {
         // If it’s already been parsed (e.g. is a child mf), skip
-        if ($this->parsed->contains($e)) {
+        if ($this->parsed->offsetExists($e)) {
             return null;
         }
         // Get current µf name
@@ -1195,7 +1197,7 @@ class Parser
      * @param DOMElement $context optionally specify an element from which to parse microformats
      * @return array An array containing all the microformats found in the current document
      */
-    public function parse($convertClassic = \true, DOMElement $context = null)
+    public function parse($convertClassic = \true, ?DOMElement $context = null)
     {
         $this->convertClassic = $convertClassic;
         $mfs = $this->parse_recursive($context);
@@ -1214,7 +1216,7 @@ class Parser
      * @param int $depth: recursion depth
      * @return array
      */
-    public function parse_recursive(DOMElement $context = null, $depth = 0)
+    public function parse_recursive(?DOMElement $context = null, $depth = 0)
     {
         $mfs = array();
         $mfElements = $this->getRootMF($context);
@@ -1302,7 +1304,7 @@ class Parser
      * @param DOMElement $context
      * @return DOMNodeList
      */
-    public function getRootMF(DOMElement $context = null)
+    public function getRootMF(?DOMElement $context = null)
     {
         // start with mf2 root class name xpath
         $xpaths = array('contains(concat(" ",normalize-space(@class)), " h-")');
@@ -1426,8 +1428,8 @@ class Parser
             $property = array($property);
         }
         // add element to list of upgraded elements
-        if (!$this->upgraded->contains($el)) {
-            $this->upgraded->attach($el, $property);
+        if (!$this->upgraded->offsetExists($el)) {
+            $this->upgraded->offsetSet($el, $property);
         } else {
             $this->upgraded[$el] = \array_merge($this->upgraded[$el], $property);
         }

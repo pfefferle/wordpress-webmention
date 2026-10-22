@@ -1,0 +1,15 @@
+{
+  "name": "webmention/reaction-links",
+  "title": "Reaction Links",
+  "description": "Mark a link in the editor as a reply, like, repost, bookmark, or tag using microformats2.",
+  "category": "widgets",
+  "icon": "admin-links",
+  "keywords": [
+    "webmention",
+    "microformats",
+    "reaction",
+    "indieweb"
+  ],
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css"
+}

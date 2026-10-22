@@ -188,7 +188,7 @@ class Webmention {
 	 * Enqueue scripts.
 	 */
 	public function enqueue_scripts() {
-		if ( is_singular() ) {
+		if ( is_singular() || is_home() || is_archive() ) {
 			wp_enqueue_style( self::TEXT_DOMAIN, WEBMENTION_PLUGIN_URL . 'assets/css/webmention.css', array(), $this->get_version() );
 		}
 	}

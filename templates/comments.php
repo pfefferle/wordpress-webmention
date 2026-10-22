@@ -18,7 +18,7 @@ foreach ( $grouped_mentions as $mention_type => $mentions ) {
 	}
 	?>
 
-<h2><?php echo get_webmention_comment_type_attr( $mention_type, 'label' ); ?></h2>
+<h2><?php echo esc_html( get_webmention_comment_type_attr( $mention_type, 'label' ) ); ?></h2>
 <ul class="reaction-list reaction-list--<?php echo esc_attr( $mention_type ); ?>">
 	<?php
 	if ( ( $fold_limit > 0 ) && $fold_limit < count( $mentions ) ) {
