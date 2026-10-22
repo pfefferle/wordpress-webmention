@@ -230,9 +230,14 @@ class Settings_Fields {
 			<p>
 				<textarea name="webmention_comment_form_text" id="webmention_comment_form_text" rows="10" cols="50" class="large-text code" placeholder="<?php echo \esc_attr( \get_default_webmention_form_text() ); ?>"><?php echo \esc_textarea( \get_option( 'webmention_comment_form_text', '' ) ); ?></textarea>
 			</p>
+			<p>
+				<button type="button" class="button" onclick="var field = document.getElementById( 'webmention_comment_form_text' ); field.value = field.placeholder; field.focus();">
+					<?php \esc_html_e( 'Use default text', 'webmention' ); ?>
+				</button>
+			</p>
 			<p class="description">
 				<label for="webmention_comment_form_text">
-					<?php \esc_html_e( 'Change the default help text of the Webmention form', 'webmention' ); ?>
+					<?php \esc_html_e( 'The help text of the Webmention form. Leave it empty to use the default text, or click "Use default text" to copy the default text into the field and change it.', 'webmention' ); ?>
 				</label>
 			</p>
 		</fieldset>
