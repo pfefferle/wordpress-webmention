@@ -363,6 +363,14 @@ function webmention_extract_urls( $content, $support_media_urls = false ) {
 					}
 				}
 
+				// Skip links marked with the experimental rel-nomention microformat.
+				if ( $node->hasAttribute( 'rel' ) ) {
+					$rels = preg_split( '/\s+/', strtolower( $node->getAttribute( 'rel' ) ) );
+					if ( in_array( 'nomention', $rels, true ) ) {
+						continue;
+					}
+				}
+
 				$urls[] = $node->getAttribute( $attribute );
 			}
 		}

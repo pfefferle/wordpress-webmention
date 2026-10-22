@@ -5,8 +5,9 @@
 		'wp-core-data',
 		'wp-data',
 		'wp-editor',
+		'wp-element',
 		'wp-i18n',
 		'wp-plugins'
 	),
-	'version' => '15911a59fb46bfaa3184'
+	'version' => '941a07912dfd93b106ed'
 );
