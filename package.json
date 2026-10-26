@@ -4,7 +4,7 @@
   "main": "webmention.php",
   "devDependencies": {
     "@babel/core": "^7.29.7",
-    "@wordpress/babel-preset-default": "^9.0.0",
+    "@wordpress/babel-preset-default": "^10.0.0",
     "@wordpress/block-editor": "^18.0.0",
     "@wordpress/blocks": "^16.1.0",
     "@wordpress/components": "^42.0.0",
