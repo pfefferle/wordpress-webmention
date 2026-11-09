@@ -10,7 +10,7 @@
     "@wordpress/components": "^43.0.0",
     "@wordpress/core-data": "^9.0.0",
     "@wordpress/data": "^11.0.0",
-    "@wordpress/dependency-extraction-webpack-plugin": "^7.0.0",
+    "@wordpress/dependency-extraction-webpack-plugin": "^7.1.0",
     "@wordpress/dom-ready": "^5.0.0",
     "@wordpress/editor": "^16.0.0",
     "@wordpress/element": "^10.0.0",
