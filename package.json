@@ -18,7 +18,7 @@
     "@wordpress/i18n": "^7.0.0",
     "@wordpress/icons": "^19.0.0",
     "@wordpress/jest-preset-default": "^14.2.0",
-    "@wordpress/plugins": "^8.0.0",
+    "@wordpress/plugins": "^8.1.0",
     "@wordpress/rich-text": "^8.0.0",
     "@wordpress/scripts": "^37.0.0",
     "babel-jest": "^30.5.2",
