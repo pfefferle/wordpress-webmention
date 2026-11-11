@@ -142,7 +142,7 @@ class Sender {
 	public static function trash_post( $post_id ) {
 		add_post_meta(
 			$post_id,
-			'webmention_canonical_url',
+			'_webmention_canonical_url',
 			get_permalink( $post_id ),
 			true
 		);
@@ -156,7 +156,7 @@ class Sender {
 	 * @return void
 	 */
 	public static function untrash_post( $post_id ) {
-		delete_post_meta( $post_id, 'webmention_canonical_url' );
+		delete_post_meta( $post_id, '_webmention_canonical_url' );
 	}
 
 	/**
@@ -237,7 +237,7 @@ class Sender {
 			return;
 		}
 
-		$source = get_post_meta( $post_id, 'webmention_canonical_url', true );
+		$source = get_post_meta( $post_id, '_webmention_canonical_url', true );
 
 		if ( ! $source ) {
 			$source = get_permalink( $post_id );
