@@ -338,6 +338,8 @@ class Receiver {
 			parse_str( $query_string, $query_array );
 			if ( isset( $query_array['replytocom'] ) && get_comment( $query_array['replytocom'] ) ) {
 				$commentdata['comment_parent'] = $query_array['replytocom'];
+			} elseif ( isset( $query_array['c'] ) && get_comment( $query_array['c'] ) ) {
+				$commentdata['comment_parent'] = $query_array['c'];
 			}
 		}
 

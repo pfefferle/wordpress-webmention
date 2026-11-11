@@ -18,6 +18,8 @@ class Comment {
 
 		// Threaded comments support
 		add_filter( 'template_include', array( static::class, 'comment_template_include' ) );
+		// Runs before the ActivityPub plugin, which redirects `?c=` requests to the comment link.
+		add_action( 'template_redirect', array( static::class, 'comment_template_redirect' ), 9 );
 
 		add_filter( 'get_comment_link', array( static::class, 'remote_comment_link' ), 11, 2 );
 
@@ -253,6 +255,10 @@ class Comment {
 	/**
 	 * replace the template for all URLs with a "replytocom" query-param
 	 *
+	 * Browsers following the reply link get the regular template, so the comment form
+	 * can reply to the comment. Everything else, like parsers fetching a Webmention
+	 * source, gets the comment template.
+	 *
 	 * @param string $template the template url
 	 *
 	 * @return string
@@ -260,12 +266,70 @@ class Comment {
 	public static function comment_template_include( $template ) {
 		global $wp_query;
 
-		// replace template
-		if ( isset( $wp_query->query['replytocom'] ) ) {
-			return apply_filters( 'webmention_comment_template', WEBMENTION_PLUGIN_DIR . 'templates/comment.php' );
+		if ( ! isset( $wp_query->query['replytocom'] ) ) {
+			return $template;
 		}
 
-		return $template;
+		self::send_vary_header();
+
+		if ( self::is_navigation_request() ) {
+			return $template;
+		}
+
+		return apply_filters( 'webmention_comment_template', WEBMENTION_PLUGIN_DIR . 'templates/comment.php' );
+	}
+
+	/**
+	 * Handle comment URLs with a "c" query-param
+	 *
+	 * Browsers are redirected to the comment, everything else, like parsers fetching a
+	 * Webmention source, gets the comment template. ActivityPub requests are left to
+	 * the ActivityPub plugin.
+	 *
+	 * @return void
+	 */
+	public static function comment_template_redirect() {
+		$comment_id = \get_query_var( 'c' );
+
+		if ( ! $comment_id ) {
+			return;
+		}
+
+		if ( \function_exists( '\Activitypub\is_activitypub_request' ) && \Activitypub\is_activitypub_request() ) {
+			return;
+		}
+
+		self::send_vary_header();
+
+		$comment = \get_comment( $comment_id );
+
+		if ( $comment && self::is_navigation_request() ) {
+			\wp_safe_redirect( \get_comment_link( $comment ) );
+			exit;
+		}
+
+		include apply_filters( 'webmention_comment_template', WEBMENTION_PLUGIN_DIR . 'templates/comment.php' );
+		exit;
+	}
+
+	/**
+	 * Whether the request is a browser navigation, based on the Fetch Metadata headers.
+	 *
+	 * @return boolean
+	 */
+	private static function is_navigation_request() {
+		return isset( $_SERVER['HTTP_SEC_FETCH_MODE'] ) && 'navigate' === $_SERVER['HTTP_SEC_FETCH_MODE'];
+	}
+
+	/**
+	 * Tell caches that the response depends on the Sec-Fetch-Mode header.
+	 *
+	 * @return void
+	 */
+	private static function send_vary_header() {
+		if ( ! \headers_sent() ) {
+			\header( 'Vary: Sec-Fetch-Mode', false );
+		}
 	}
 
 	/**
@@ -277,6 +341,7 @@ class Comment {
 	 */
 	public static function query_var( $vars ) {
 		$vars[] = 'replytocom';
+		$vars[] = 'c';
 		return $vars;
 	}
 }
