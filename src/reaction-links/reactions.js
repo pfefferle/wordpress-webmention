@@ -2,11 +2,12 @@
  * Microformats Reaction Links logic
  *
  * Adds a friendly picker for microformats2 reaction classes (u-in-reply-to,
- * u-like-of, etc.) to the WordPress block editor link popover.
+ * u-like-of, etc.) and a "Don't send a Webmention" toggle (the `nomention`
+ * class) to the WordPress block editor link popover.
  *
- * The picker drives WordPress core's own "Additional CSS class(es)" link
+ * Both controls drive WordPress core's own "Additional CSS class(es)" link
  * setting instead of editing the anchor directly. That keeps reactions on the
- * native link-editing pipeline: choosing one stages the change, highlights the
+ * native link-editing pipeline: changing one stages the change, highlights the
  * popover's "Apply" button, and is committed to (or discarded from) the anchor
  * exactly like every other link setting.
  */
@@ -47,6 +48,11 @@ export const REACTION_CLASSES = REACTION_TYPES.map( ( t ) => t.value ).filter(
 );
 
 /**
+ * CSS class that excludes a link from sending Webmentions.
+ */
+export const NOMENTION_CLASS = 'nomention';
+
+/**
  * Debounce delay in milliseconds for MutationObserver callbacks.
  */
 export const DEBOUNCE_DELAY = 50;
@@ -76,6 +82,16 @@ export function parseReactionClass( classStr ) {
 		}
 	}
 	return '';
+}
+
+/**
+ * Check whether a class string contains the nomention class.
+ *
+ * @param {string} classStr Class attribute string.
+ * @return {boolean} Whether the link is excluded from sending Webmentions.
+ */
+export function hasNomentionClass( classStr ) {
+	return ( classStr || '' ).trim().split( /\s+/ ).includes( NOMENTION_CLASS );
 }
 
 /**
@@ -184,6 +200,22 @@ export function getCurrentReaction( settings ) {
 }
 
 /**
+ * Read whether the CSS-classes setting currently contains the nomention class.
+ *
+ * @param {HTMLElement} settings Link settings drawer element.
+ * @return {boolean} Whether the link is excluded from sending Webmentions.
+ */
+export function getCurrentNomention( settings ) {
+	const cssRow = getCssClassesRow( settings );
+	if ( ! cssRow ) {
+		return false;
+	}
+
+	const input = getCssClassesInput( cssRow );
+	return input ? hasNomentionClass( input.value ) : false;
+}
+
+/**
  * Build the CSS class string for a link after switching its reaction.
  *
  * Any non-reaction classes the author added are preserved; the reaction token
@@ -207,15 +239,35 @@ export function buildClassValue( currentClasses, reaction ) {
 }
 
 /**
- * Apply a reaction by writing it into core's "Additional CSS class(es)" setting.
+ * Build the CSS class string for a link after toggling the nomention class.
+ *
+ * @param {string}  currentClasses Existing class attribute value.
+ * @param {boolean} enabled        Whether the nomention class should be present.
+ * @return {string} Updated class attribute value.
+ */
+export function buildNomentionClassValue( currentClasses, enabled ) {
+	const tokens = ( currentClasses || '' )
+		.trim()
+		.split( /\s+/ )
+		.filter( ( token ) => token && token !== NOMENTION_CLASS );
+
+	if ( enabled ) {
+		tokens.push( NOMENTION_CLASS );
+	}
+
+	return tokens.join( ' ' );
+}
+
+/**
+ * Update core's "Additional CSS class(es)" setting.
  *
  * Activates the setting on demand, then updates its input. Core takes over from
  * there: the change is staged, the popover's "Apply" button lights up, and the
- * reaction is written to the anchor only when the author applies the link.
+ * classes are written to the anchor only when the author applies the link.
  *
- * @param {string} reaction Reaction class to apply, or empty string for "None".
+ * @param {(currentClasses: string) => string} buildValue Returns the new class value.
  */
-export async function applyReaction( reaction ) {
+export async function updateCssClasses( buildValue ) {
 	const settings = getLinkSettingsDrawer();
 	if ( ! settings ) {
 		return;
@@ -228,7 +280,7 @@ export async function applyReaction( reaction ) {
 
 	let input = getCssClassesInput( cssRow );
 	const currentClasses = input ? input.value : '';
-	const nextValue = buildClassValue( currentClasses, reaction );
+	const nextValue = buildValue( currentClasses );
 
 	// Nothing to write and the setting is inactive: leave it untouched so we do
 	// not needlessly enable the "Apply" button.
@@ -253,6 +305,28 @@ export async function applyReaction( reaction ) {
 	}
 
 	setControlledInputValue( input, nextValue );
+}
+
+/**
+ * Apply a reaction by writing it into core's "Additional CSS class(es)" setting.
+ *
+ * @param {string} reaction Reaction class to apply, or empty string for "None".
+ */
+export function applyReaction( reaction ) {
+	return updateCssClasses( ( currentClasses ) =>
+		buildClassValue( currentClasses, reaction )
+	);
+}
+
+/**
+ * Add or remove the nomention class via core's "Additional CSS class(es)" setting.
+ *
+ * @param {boolean} enabled Whether the link should be excluded from Webmentions.
+ */
+export function applyNomention( enabled ) {
+	return updateCssClasses( ( currentClasses ) =>
+		buildNomentionClassValue( currentClasses, enabled )
+	);
 }
 
 /**
@@ -294,6 +368,49 @@ export function createReactionDropdown( currentReaction ) {
 }
 
 /**
+ * Create the "Don't send a Webmention" toggle
+ *
+ * @param {boolean} checked Whether the link currently has the nomention class.
+ * @return {HTMLElement} Toggle container element.
+ */
+export function createNomentionToggle( checked ) {
+	const container = document.createElement( 'div' );
+	container.className =
+		'block-editor-link-control__setting webmention-nomention-setting';
+
+	// Mirror the markup of core's CheckboxControl so the toggle picks up the
+	// same styles as the native link settings above it.
+	const control = document.createElement( 'div' );
+	control.className = 'components-base-control components-checkbox-control';
+	const field = document.createElement( 'div' );
+	field.className = 'components-base-control__field';
+	const inputContainer = document.createElement( 'span' );
+	inputContainer.className = 'components-checkbox-control__input-container';
+
+	const checkbox = document.createElement( 'input' );
+	checkbox.type = 'checkbox';
+	checkbox.id = 'webmention-nomention-checkbox';
+	checkbox.className = 'components-checkbox-control__input';
+	checkbox.checked = checked;
+	checkbox.addEventListener( 'change', ( event ) => {
+		applyNomention( event.target.checked );
+	} );
+	inputContainer.appendChild( checkbox );
+
+	const label = document.createElement( 'label' );
+	label.className = 'components-checkbox-control__label';
+	label.setAttribute( 'for', 'webmention-nomention-checkbox' );
+	label.textContent = __( "Don't send a Webmention", 'webmention' );
+
+	field.appendChild( inputContainer );
+	field.appendChild( label );
+	control.appendChild( field );
+	container.appendChild( control );
+
+	return container;
+}
+
+/**
  * Inject or refresh the reaction dropdown inside the link settings drawer.
  */
 export function injectReactionDropdown() {
@@ -331,6 +448,40 @@ export function injectReactionDropdown() {
 }
 
 /**
+ * Inject or refresh the nomention toggle inside the link settings drawer.
+ */
+export function injectNomentionToggle() {
+	const settings = getLinkSettingsDrawer();
+	const existingToggle = settings
+		? settings.querySelector( '.webmention-nomention-setting' )
+		: null;
+
+	// Like the reaction picker, the toggle builds on core's CSS-classes setting.
+	if ( ! settings || ! getCssClassesRow( settings ) ) {
+		if ( existingToggle ) {
+			existingToggle.remove();
+		}
+		return;
+	}
+
+	const currentNomention = getCurrentNomention( settings );
+
+	if ( existingToggle ) {
+		const checkbox = existingToggle.querySelector( 'input' );
+		if (
+			checkbox &&
+			checkbox.checked !== currentNomention &&
+			settings.ownerDocument.activeElement !== checkbox
+		) {
+			checkbox.checked = currentNomention;
+		}
+		return;
+	}
+
+	settings.appendChild( createNomentionToggle( currentNomention ) );
+}
+
+/**
  * Debounce helper
  *
  * @param {(...args: unknown[]) => void} func Function to debounce.
@@ -346,13 +497,16 @@ export function debounce( func, wait ) {
 }
 
 /**
- * Watch the editor for the link popover and keep the reaction dropdown in sync.
+ * Watch the editor for the link popover and keep the injected controls in sync.
  */
 export function init() {
-	const debouncedInject = debounce( injectReactionDropdown, DEBOUNCE_DELAY );
+	const debouncedInject = debounce( () => {
+		injectReactionDropdown();
+		injectNomentionToggle();
+	}, DEBOUNCE_DELAY );
 
 	// The link popover mounts and updates as the author edits links; re-run the
-	// injection on DOM changes so the dropdown appears and stays in sync.
+	// injection on DOM changes so the controls appear and stay in sync.
 	const observer = new window.MutationObserver( debouncedInject );
 
 	observer.observe( document.body, {
