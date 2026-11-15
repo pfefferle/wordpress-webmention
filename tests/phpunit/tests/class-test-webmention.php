@@ -27,6 +27,9 @@ class Test_Webmention extends WP_UnitTestCase {
 		// Other tests may have rendered markup that enqueued it.
 		wp_dequeue_style( 'webmention' );
 
+		// Older WordPress versions enqueue the styles of all registered blocks on classic themes.
+		add_filter( 'should_load_separate_core_block_assets', '__return_true' );
+
 		$this->go_to( get_permalink( $post_id ) );
 		do_action( 'wp_enqueue_scripts' );
 
