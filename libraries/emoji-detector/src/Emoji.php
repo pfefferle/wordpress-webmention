@@ -2,53 +2,103 @@
 
 namespace Webmention\Emoji;
 
-\define('LONGEST_EMOJI', 8);
+\define('LONGEST_EMOJI', 10);
 function detect_emoji($string)
 {
     // Find all the emoji in the input string
-    $prevencoding = \mb_internal_encoding();
+    $prev_encoding = \mb_internal_encoding();
     \mb_internal_encoding('UTF-8');
     $data = array();
     static $map;
     if (!isset($map)) {
         $map = _load_map();
     }
-    static $regexp;
-    if (!isset($regexp)) {
-        $regexp = _load_regexp();
+    static $baseCodepoints;
+    if (!isset($baseCodepoints)) {
+        $baseCodepoints = _load_basecodepoints();
     }
-    if (\preg_match_all($regexp, $string, $matches, \PREG_OFFSET_CAPTURE)) {
-        $emojisLength = 0;
-        $lastMbOffset = 0;
-        foreach ($matches[0] as $match) {
-            $ch = $match[0];
-            $offset = $match[1] - $emojisLength;
-            $mbOffset = \mb_strpos($string, $ch, $lastMbOffset);
-            $mbLength = \mb_strlen($ch);
-            $lastMbOffset = $offset + $mbLength;
-            $emojisLength += \strlen($ch) - 1;
-            $points = array();
-            for ($i = 0; $i < $mbLength; $i++) {
-                $points[] = \strtoupper(\dechex(uniord(\mb_substr($ch, $i, 1))));
+    $codepoints = \mb_str_split($string);
+    $emojiChars = [];
+    $currentEmoji = null;
+    $includeNext = \false;
+    foreach ($codepoints as $cp) {
+        if ($currentEmoji == null) {
+            if (\in_array($cp, $baseCodepoints)) {
+                $currentEmoji = $cp;
+            } elseif (_is_country_flag($cp)) {
+                $currentEmoji = $cp;
+                $includeNext = \true;
+                // Flags are always 2 chars so grab the next one
             }
-            $hexstr = \implode('-', $points);
-            if (\array_key_exists($hexstr, $map)) {
-                $short_name = $map[$hexstr];
+        } else {
+            if ($includeNext) {
+                $currentEmoji .= $cp;
+                $includeNext = \false;
+            } elseif (_is_modifier($cp)) {
+                // If this codepoint is a modifier, add it now
+                $currentEmoji .= $cp;
+                $includeNext = \false;
+            } elseif (_is_zwj($cp)) {
+                // If this codepoint is a ZWJ, include the next codepoint in the emoji as well
+                $currentEmoji .= $cp;
+                $includeNext = \true;
             } else {
-                $short_name = null;
-            }
-            $skin_tone = null;
-            $skin_tones = array('1F3FB' => 'skin-tone-2', '1F3FC' => 'skin-tone-3', '1F3FD' => 'skin-tone-4', '1F3FE' => 'skin-tone-5', '1F3FF' => 'skin-tone-6');
-            foreach ($points as $pt) {
-                if (\array_key_exists($pt, $skin_tones)) {
-                    $skin_tone = $skin_tones[$pt];
+                $emojiChars[] = $currentEmoji;
+                $currentEmoji = null;
+                if (\in_array($cp, $baseCodepoints)) {
+                    $currentEmoji = $cp;
+                } elseif (_is_country_flag($cp)) {
+                    $currentEmoji = $cp;
+                    $includeNext = \true;
+                    // Flags are always 2 chars so grab the next one
                 }
             }
-            $data[] = array('emoji' => $ch, 'short_name' => $short_name, 'num_points' => \mb_strlen($ch), 'points_hex' => $points, 'hex_str' => $hexstr, 'skin_tone' => $skin_tone, 'offset' => $offset, 'mb_offset' => $mbOffset, 'mb_length' => $mbLength);
         }
     }
-    if ($prevencoding) {
-        \mb_internal_encoding($prevencoding);
+    if ($currentEmoji) {
+        $emojiChars[] = $currentEmoji;
+    }
+    // Now we have a list of individual completed emoji chars in the order they are in the string.
+    $lastGOffset = 0;
+    $lastOffset = 0;
+    foreach ($emojiChars as $emoji) {
+        $mbLength = \mb_strlen($emoji);
+        // the length of the emoji, mb chars are counted as 1
+        $offset = \strpos($string, $emoji, $lastOffset);
+        $lastOffset = $offset + \strlen($emoji);
+        $gOffset = \grapheme_strpos($string, $emoji, $lastGOffset);
+        $lastGOffset = $gOffset + 1;
+        $points = array();
+        for ($i = 0; $i < $mbLength; $i++) {
+            $points[] = \strtoupper(\dechex(uniord(\mb_substr($emoji, $i, 1))));
+        }
+        $hexstr = \implode('-', $points);
+        if (\array_key_exists($hexstr, $map)) {
+            $short_name = $map[$hexstr];
+        } else {
+            $short_name = null;
+        }
+        $skin_tone = null;
+        $skin_tones = array('1F3FB' => 'skin-tone-2', '1F3FC' => 'skin-tone-3', '1F3FD' => 'skin-tone-4', '1F3FE' => 'skin-tone-5', '1F3FF' => 'skin-tone-6');
+        foreach ($points as $pt) {
+            if (\array_key_exists($pt, $skin_tones)) {
+                $skin_tone = $skin_tones[$pt];
+            }
+        }
+        $data[] = array(
+            'emoji' => $emoji,
+            'short_name' => $short_name,
+            'num_points' => \mb_strlen($emoji),
+            'points_hex' => $points,
+            'hex_str' => $hexstr,
+            'skin_tone' => $skin_tone,
+            'byte_offset' => $offset,
+            // The position of the emoji in the string, counting each byte
+            'grapheme_offset' => $gOffset,
+        );
+    }
+    if ($prev_encoding) {
+        \mb_internal_encoding($prev_encoding);
     }
     return $data;
 }
@@ -63,10 +113,10 @@ function get_first_emoji($string)
 }
 function is_single_emoji($string)
 {
-    $prevencoding = \mb_internal_encoding();
+    $prev_encoding = \mb_internal_encoding();
     \mb_internal_encoding('UTF-8');
     // If the string is longer than the longest emoji, it's not a single emoji
-    if (\mb_strlen($string) >= LONGEST_EMOJI) {
+    if (\mb_strlen($string) >= \LONGEST_EMOJI) {
         return \false;
     }
     $all_emoji = detect_emoji($string);
@@ -82,30 +132,59 @@ function is_single_emoji($string)
             $emoji = \false;
         }
     }
-    if ($prevencoding) {
-        \mb_internal_encoding($prevencoding);
+    if ($prev_encoding) {
+        \mb_internal_encoding($prev_encoding);
     }
     return $emoji;
 }
 function replace_emoji($string, $prefix = '', $suffix = '')
 {
     while ($emoji = get_first_emoji($string)) {
-        $offset = $emoji['mb_offset'];
-        $length = $emoji['mb_length'];
-        $strlen = \mb_strlen($string, 'UTF-8');
-        $start = \mb_substr($string, 0, $offset, 'UTF-8');
-        $end = \mb_substr($string, $offset + $length, $strlen - ($offset + $length), 'UTF-8');
+        $offset = $emoji['byte_offset'];
+        $length = \strlen($emoji['emoji']);
+        $strlen = \strlen($string);
+        $start = \substr($string, 0, $offset);
+        $end = \substr($string, $offset + $length, $strlen - ($offset + $length));
         $string = $start . $prefix . $emoji['short_name'] . $suffix . $end;
     }
     return $string;
 }
+function remove_emoji($string, $opts = [])
+{
+    $emojis = \Webmention\Emoji\detect_emoji($string);
+    foreach (\array_reverse($emojis) as $emoji) {
+        $length = \strlen($emoji['emoji']);
+        $start = \substr($string, 0, $emoji['byte_offset']);
+        $end = \substr($string, $emoji['byte_offset'] + $length, \strlen($string) - ($emoji['byte_offset'] + $length));
+        if (isset($opts['collapse']) && $opts['collapse']) {
+            $end = \trim($end);
+        }
+        $string = $start . $end;
+    }
+    return $string;
+}
+function _is_modifier($cp)
+{
+    $modifiers = ["🏻", "🏼", "🏽", "🏾", "🏿", "️"];
+    // Flag letters for subdivision flags
+    $modifiers = \array_merge($modifiers, ["󠁧", "󠁢", "󠁣", "󠁥", "󠁬", "󠁮", "󠁳", "󠁴", "󠁷", "󠁿"]);
+    return \in_array($cp, $modifiers);
+}
+function _is_zwj($cp)
+{
+    return $cp == "‍";
+}
+function _is_country_flag($cp)
+{
+    return \mb_ord("🇦") <= \mb_ord($cp) && \mb_ord($cp) <= \mb_ord("🇿");
+}
 function _load_map()
 {
-    return \json_decode(\file_get_contents(\dirname(__FILE__) . '/map.json'), \true);
+    return \json_decode(\file_get_contents(__DIR__ . '/map.json'), \true);
 }
-function _load_regexp()
+function _load_basecodepoints()
 {
-    return '/(?:' . \json_decode(\file_get_contents(\dirname(__FILE__) . '/regexp.json')) . ')/u';
+    return \json_decode(\file_get_contents(__DIR__ . '/base-codepoints.json'), \true);
 }
 function uniord($c)
 {

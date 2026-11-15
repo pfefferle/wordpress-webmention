@@ -22,4 +22,14 @@ return [
 			]
 		)
 	],
+	'patchers' => [
+		// php-scoper does not prefix function names inside XPath strings.
+		static function ( string $file_path, string $prefix, string $content ): string {
+			return str_replace(
+				'"\\\\Mf2\\\\classHasMf2RootClassname"',
+				'"' . $prefix . '\\\\Mf2\\\\classHasMf2RootClassname"',
+				$content
+			);
+		},
+	],
 ];

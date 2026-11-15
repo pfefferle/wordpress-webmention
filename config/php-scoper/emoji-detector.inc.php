@@ -23,4 +23,5 @@ return [
 			]
 		)
 	],
+	'exclude-constants' => [ 'LONGEST_EMOJI' ],
 ];
