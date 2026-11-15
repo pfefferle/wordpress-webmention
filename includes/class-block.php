@@ -20,16 +20,11 @@ class Block {
 	}
 
 	/**
-	 * Register the blocks and the shared front end stylesheet they use.
+	 * Register the blocks.
+	 *
+	 * The `webmention` stylesheet they use is registered in Webmention::register_styles().
 	 */
 	public static function register_blocks() {
-		\wp_register_style(
-			'webmention',
-			WEBMENTION_PLUGIN_URL . 'assets/css/webmention.css',
-			array(),
-			version()
-		);
-
 		\register_block_type_from_metadata( WEBMENTION_PLUGIN_DIR . 'build/form' );
 	}
 
@@ -137,7 +132,7 @@ class Block {
 	 * `webmention` stylesheet.
 	 */
 	public static function enqueue_block_assets() {
-		// The front end enqueues this stylesheet itself, see Webmention::enqueue_scripts().
+		// The front end enqueues this stylesheet where Webmention markup renders.
 		if ( ! is_admin() ) {
 			return;
 		}

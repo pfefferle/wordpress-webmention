@@ -149,6 +149,8 @@ class Comment_Walker extends Walker_Comment {
 	 * @param array      $args    An array of arguments.
 	 */
 	protected function avatar_only( $comment, $depth, $args ) {
+		wp_enqueue_style( 'webmention' );
+
 		$tag = ( 'div' === $args['style'] ) ? 'div' : 'li';
 
 		$title  = get_comment_text( $comment, $args );

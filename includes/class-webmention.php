@@ -132,7 +132,8 @@ class Webmention {
 			\add_action( 'init', array( Vouch::class, 'init' ) );
 		}
 
-		\add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+		\add_action( 'init', array( $this, 'register_styles' ) );
+		\add_filter( 'the_content', array( $this, 'enqueue_rsvp_style' ) );
 
 		// Do not add the "webmentions_disabled" meta value if it is set to 0
 		\add_filter( 'update_post_metadata', array( $this, 'maybe_bypass_webmentions_disabled' ), 10, 4 );
@@ -185,12 +186,28 @@ class Webmention {
 	}
 
 	/**
-	 * Enqueue scripts.
+	 * Register the front end stylesheet.
+	 *
+	 * It is enqueued only where Webmention markup is rendered: by the form,
+	 * the reaction list and post content that contains an RSVP.
 	 */
-	public function enqueue_scripts() {
-		if ( is_singular() || is_home() || is_archive() ) {
-			wp_enqueue_style( self::TEXT_DOMAIN, WEBMENTION_PLUGIN_URL . 'assets/css/webmention.css', array(), $this->get_version() );
+	public function register_styles() {
+		wp_register_style( self::TEXT_DOMAIN, WEBMENTION_PLUGIN_URL . 'assets/css/webmention.css', array(), $this->get_version() );
+	}
+
+	/**
+	 * Enqueue the front end stylesheet for post content that contains an RSVP.
+	 *
+	 * @param string $content The post content.
+	 *
+	 * @return string The unchanged post content.
+	 */
+	public function enqueue_rsvp_style( $content ) {
+		if ( str_contains( $content, 'p-rsvp' ) ) {
+			wp_enqueue_style( self::TEXT_DOMAIN );
 		}
+
+		return $content;
 	}
 
 	/**
