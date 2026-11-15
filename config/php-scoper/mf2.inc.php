@@ -10,7 +10,7 @@ return [
 			->files()
 			->in( 'vendor/mf2/mf2' )
 			->ignoreVCS( true )
-			->notName( '/.*\\.xml|.*\\.dist|Makefile|composer\\.json|composer\\.lock/' )
+			->notName( '/.*\\.xml|.*\\.dist|Makefile|composer\\.json|composer\\.lock|.*\\.Dockerfile/' )
 			->exclude( [
 				'doc',
 				'test',
