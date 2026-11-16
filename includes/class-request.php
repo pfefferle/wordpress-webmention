@@ -89,7 +89,7 @@ class Request {
 		$wp_version = get_bloginfo( 'version' );
 		$user_agent = apply_filters( 'http_headers_useragent', 'WordPress/' . $wp_version . '; ' . get_bloginfo( 'url' ) );
 		$args       = array(
-			'timeout'             => 100,
+			'timeout'             => 10,
 			'limit_response_size' => 1048576,
 			'redirection'         => 20,
 			'user-agent'          => "$user_agent; Webmention",
