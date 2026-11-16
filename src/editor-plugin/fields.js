@@ -25,7 +25,10 @@ export const WEBMENTION_FIELDS = [
 	{
 		metaKey: 'webmentions_disabled_pings',
 		label: __( 'Disable outgoing', 'webmention' ),
-		help: __( 'Do not send Webmentions for this post.', 'webmention' ),
+		help: __(
+			'Do not send Webmentions for this post. To skip a single link, add the <code>nomention</code> class to it.',
+			'webmention'
+		),
 	},
 ];
 

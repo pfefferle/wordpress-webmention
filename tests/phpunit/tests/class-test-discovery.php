@@ -420,4 +420,44 @@ class Test_Discovery extends WP_UnitTestCase {
 			)
 		);
 	}
+
+	/**
+	 * Test that links with the nomention class are skipped.
+	 */
+	public function test_webmention_extract_urls_skips_nomention_class() {
+		$urls = webmention_extract_urls( '<a href="https://example.org" class="foo nomention">Test</a><a href="https://example.com" class="nomentions">Test</a><img src="https://example.net/a.jpg" class="nomention">', true );
+
+		$this->assertEquals( array( 'https://example.com' ), array_values( $urls ) );
+	}
+
+	/**
+	 * Test that links with rel-nomention are skipped.
+	 */
+	public function test_webmention_extract_urls_skips_rel_nomention() {
+		$urls = webmention_extract_urls( '<a href="https://example.org" rel="nofollow NoMention">Test</a><a href="https://example.com" rel="nofollow">Test</a>' );
+
+		$this->assertEquals( array( 'https://example.com' ), array_values( $urls ) );
+	}
+
+	/**
+	 * Test that the nomention class can be changed or disabled via filter.
+	 */
+	public function test_webmention_extract_urls_nomention_class_filter() {
+		$content = '<a href="https://example.org" class="nomention">Test</a><a href="https://example.com" class="skip">Test</a>';
+
+		$callback = function () {
+			return 'skip';
+		};
+		add_filter( 'webmention_nomention_class', $callback );
+		$urls = webmention_extract_urls( $content );
+		remove_filter( 'webmention_nomention_class', $callback );
+
+		$this->assertEquals( array( 'https://example.org' ), array_values( $urls ) );
+
+		add_filter( 'webmention_nomention_class', '__return_empty_string' );
+		$urls = webmention_extract_urls( $content );
+		remove_filter( 'webmention_nomention_class', '__return_empty_string' );
+
+		$this->assertEquals( array( 'https://example.org', 'https://example.com' ), array_values( $urls ) );
+	}
 }
