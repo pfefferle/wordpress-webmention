@@ -88,6 +88,56 @@ class Test_Receiver extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Get the comment parent the receiver sets for a target URL.
+	 *
+	 * @param string $target Target URL.
+	 *
+	 * @return int|string The comment parent.
+	 */
+	private function get_comment_parent_for_target( $target ) {
+		$parent = null;
+
+		add_filter(
+			'webmention_comment_data',
+			function ( $commentdata ) use ( &$parent ) {
+				$parent = $commentdata['comment_parent'];
+				// Stop processing, only the parsed comment data is needed.
+				return new WP_Error( 'test_stop' );
+			},
+			0
+		);
+
+		$request = new WP_REST_Request( 'POST', '/webmention/1.0/endpoint' );
+		$request->set_param( 'source', self::SOURCE );
+		$request->set_param( 'target', $target );
+		Receiver::post( $request );
+
+		return $parent;
+	}
+
+	/**
+	 * Test that a reply to a replytocom URL is threaded below that comment.
+	 */
+	public function test_replytocom_target_sets_comment_parent() {
+		$comment_id = self::factory()->comment->create( array( 'comment_post_ID' => $this->post->ID ) );
+
+		$parent = $this->get_comment_parent_for_target( add_query_arg( 'replytocom', $comment_id, get_permalink( $this->post ) ) );
+
+		$this->assertEquals( $comment_id, $parent );
+	}
+
+	/**
+	 * Test that a reply to a c URL is threaded below that comment.
+	 */
+	public function test_c_target_sets_comment_parent() {
+		$comment_id = self::factory()->comment->create( array( 'comment_post_ID' => $this->post->ID ) );
+
+		$parent = $this->get_comment_parent_for_target( add_query_arg( 'c', $comment_id, get_permalink( $this->post ) ) );
+
+		$this->assertEquals( $comment_id, $parent );
+	}
+
+	/**
 	 * Send a Webmention for the test post.
 	 *
 	 * @return WP_REST_Response|WP_Error The result of the request.

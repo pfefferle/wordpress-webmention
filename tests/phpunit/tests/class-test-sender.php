@@ -72,6 +72,46 @@ class Test_Sender extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test that replies to Webmention comments use the c URL as source.
+	 */
+	public function test_comment_post_uses_c_source() {
+		$parent_id = self::factory()->comment->create(
+			array(
+				'comment_post_ID'    => $this->post->ID,
+				'comment_author_url' => 'https://example.org/reply',
+				'comment_meta'       => array(
+					'protocol'              => 'webmention',
+					'webmention_source_url' => 'https://example.org/reply',
+				),
+			)
+		);
+		$comment_id = self::factory()->comment->create(
+			array(
+				'comment_post_ID' => $this->post->ID,
+				'comment_parent'  => $parent_id,
+			)
+		);
+
+		$sent = array();
+		add_action(
+			'send_webmention',
+			function ( $source, $target ) use ( &$sent ) {
+				$sent[] = array( $source, $target );
+			},
+			1,
+			2
+		);
+		remove_action( 'send_webmention', array( Sender::class, 'send_webmention' ) );
+
+		Sender::comment_post( $comment_id );
+
+		$this->assertSame(
+			array( array( add_query_arg( 'c', $comment_id, get_permalink( $this->post ) ), 'https://example.org/reply' ) ),
+			$sent
+		);
+	}
+
+	/**
 	 * Test that links added by shortcodes are sent Webmentions.
 	 */
 	public function test_send_webmentions_includes_shortcode_links() {
