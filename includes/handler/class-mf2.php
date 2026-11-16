@@ -253,6 +253,9 @@ class MF2 extends Base {
 	protected function to_plaintext( $value ) {
 		if ( $this->is_microformat( $value ) || $this->is_embedded_html( $value ) ) {
 			return $value['value'];
+		} elseif ( is_array( $value ) && isset( $value['value'] ) && array_key_exists( 'alt', $value ) ) {
+			// Image with alt text: { "value": "...", "alt": "..." }.
+			return $value['value'];
 		} elseif ( is_array( $value ) && isset( $value['text'] ) ) {
 			return $value['text'];
 		}

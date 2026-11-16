@@ -82,7 +82,7 @@ class Vouch {
 
 		$user_agent = apply_filters( 'http_headers_useragent', 'WordPress/' . $wp_version . '; ' . get_bloginfo( 'url' ) );
 		$args       = array(
-			'timeout'             => 100,
+			'timeout'             => 10,
 			'limit_response_size' => 153600,
 			'redirection'         => 20,
 			'user-agent'          => "$user_agent; verifying Vouch from " . $data['comment_author_IP'],
