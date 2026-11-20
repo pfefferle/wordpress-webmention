@@ -66,6 +66,8 @@ class Meta extends Base {
 		) {
 			$this->webmention_item->add_name( trim( $xpath->query( '//title' )->item( 0 )->textContent ) );
 		}
+
+		$this->add_author_fallback( $xpath, $response->get_url() );
 	}
 
 	/**
@@ -98,5 +100,75 @@ class Meta extends Base {
 		}
 
 		$this->webmention_item->add_meta( apply_filters( 'webmention_handler_meta_set_properties', array(), $this ) );
+	}
+
+	/**
+	 * Lets the page stand in for what no handler found out about the author.
+	 *
+	 * An author without a name is the site itself: it is named after the site and gets its icon as photo.
+	 * An author without a URL links to the page.
+	 *
+	 * @param DOMXPath $xpath The page.
+	 * @param string   $url   The URL of the page.
+	 *
+	 * @return void
+	 */
+	protected function add_author_fallback( DOMXPath $xpath, $url ) {
+		// Without an author, `get_author()` returns a placeholder that already has a name.
+		$author = $this->webmention_item->has_author() ? $this->webmention_item->get_author() : array( 'type' => 'card' );
+
+		if ( empty( $author['name'] ) ) {
+			$site_name      = $this->webmention_item->get_site_name();
+			$author['name'] = $site_name ? $site_name : webmention_extract_domain( $url );
+
+			if ( empty( $author['photo'] ) ) {
+				$author['photo'] = $this->get_icon( $xpath, $url );
+			}
+		}
+
+		if ( empty( $author['url'] ) ) {
+			$author['url'] = $url;
+		}
+
+		$this->webmention_item->set_author( array_filter( $author ) );
+	}
+
+	/**
+	 * Returns the icon of a page: the Apple touch icon, otherwise the largest icon.
+	 *
+	 * @param DOMXPath $xpath The page.
+	 * @param string   $url   The URL of the page.
+	 *
+	 * @return string The icon URL or an empty string.
+	 */
+	protected function get_icon( DOMXPath $xpath, $url ) {
+		$icon = '';
+		$best = array( false, -1 );
+
+		foreach ( $xpath->query( '//link[@rel and @href]' ) as $link ) {
+			$rels = preg_split( '/\s+/', strtolower( trim( $link->getAttribute( 'rel' ) ) ) );
+
+			if ( ! array_intersect( array( 'icon', 'apple-touch-icon', 'apple-touch-icon-precomposed' ), $rels ) ) {
+				continue;
+			}
+
+			// The largest declared size, for example "192x192"; icons without a size count as 0.
+			preg_match_all( '/(\d+)x\d+/i', $link->getAttribute( 'sizes' ), $sizes );
+			$size = $sizes[1] ? max( array_map( 'intval', $sizes[1] ) ) : 0;
+
+			// Apple touch icons are made to be shown at avatar size, so they beat every other icon.
+			$rank = array( ! in_array( 'icon', $rels, true ), $size );
+
+			if ( $rank > $best ) {
+				$best = $rank;
+				$icon = $link->getAttribute( 'href' );
+			}
+		}
+
+		if ( ! $icon ) {
+			return '';
+		}
+
+		return esc_url_raw( \WP_Http::make_absolute_url( $icon, $url ), array( 'http', 'https' ) );
 	}
 }

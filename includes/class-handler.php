@@ -26,15 +26,17 @@ class Handler {
 		// WordPress Handler Class
 		$this->handlers[] = new WP();
 
-		// Meta Handler Class
-		$this->handlers[] = new Meta();
-
 		// JSON-LD Handler  Class
 		$this->handlers[] = new Jsonld();
+
+		// Meta Handler Class. It has to be the last one, because it fills in what is still missing about the author.
+		$this->handlers[] = new Meta();
 	}
 
 	/**
 	 * Appends a Handler to the List.
+	 *
+	 * It runs after the Meta handler, which has already completed the author by then.
 	 *
 	 * @param Webmention\Handler\Base $handler
 	 */
@@ -85,10 +87,6 @@ class Handler {
 
 			if ( ! is_wp_error( $handler->get_webmention_item() ) ) {
 				$item = $handler->get_webmention_item();
-			}
-
-			if ( $item->is_complete() ) {
-				break;
 			}
 		}
 
