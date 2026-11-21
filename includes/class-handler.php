@@ -88,6 +88,10 @@ class Handler {
 			if ( ! is_wp_error( $handler->get_webmention_item() ) ) {
 				$item = $handler->get_webmention_item();
 			}
+
+			if ( $item->is_complete() ) {
+				break;
+			}
 		}
 
 		$item->add_url( $response->get_url() );

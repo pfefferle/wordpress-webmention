@@ -452,13 +452,19 @@ class Item {
 	}
 
 	/**
-	 * Check if all fields are set.
+	 * Check if the item has all a comment needs, so that no other handler has to add to it.
 	 *
-	 * @return boolean true if all fields are set.
+	 * The name and the site name are not needed: they only stand in for a missing content or author name.
+	 *
+	 * @return boolean true if nothing is missing.
 	 */
 	public function is_complete() {
-		$properties = get_object_vars( $this );
-		return ! (bool) in_array( null, array_values( $properties ), true );
+		return $this->published
+			&& $this->url
+			&& $this->response_type
+			&& ( $this->content || $this->summary )
+			&& ! empty( $this->author['name'] )
+			&& ! empty( $this->author['url'] );
 	}
 
 	/**
