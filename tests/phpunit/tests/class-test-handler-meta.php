@@ -167,4 +167,24 @@ class Test_Handler_Meta extends WP_UnitTestCase {
 		$this->assertSame( 'https://jane.example/', $item->get_author( 'url' ) );
 		$this->assertSame( '', $item->get_author( 'photo' ) );
 	}
+
+	/**
+	 * A description is the summary of a page, not its content, so a page with a short description stays a mention.
+	 */
+	public function test_description_is_the_summary() {
+		$item = $this->parse_page( '<meta name="description" content="A short description.">' );
+
+		$this->assertSame( 'A short description.', $item->get_summary() );
+		$this->assertSame( 'A short description.', $item->get_content() );
+		$this->assertSame( 'mention', $item->get_response_type() );
+	}
+
+	/**
+	 * The Dublin Core description is read.
+	 */
+	public function test_dublin_core_description() {
+		$item = $this->parse_page( '<meta name="DC.Description" content="A short description.">' );
+
+		$this->assertSame( 'A short description.', $item->get_summary() );
+	}
 }

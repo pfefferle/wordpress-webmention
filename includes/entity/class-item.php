@@ -76,6 +76,13 @@ class Item {
 	protected $summary;
 
 	/**
+	 * The categories.
+	 *
+	 * @var string|array
+	 */
+	protected $category;
+
+	/**
 	 * The response type.
 	 *
 	 * @example comment-meta
@@ -181,7 +188,7 @@ class Item {
 		} else {
 			try {
 				$this->updated = new \DateTimeImmutable( $updated );
-			} catch ( \Exception $e ) {
+			} catch ( \Throwable $e ) {
 				$this->updated = new \DateTimeImmutable( 'now' );
 			}
 		}
@@ -236,7 +243,7 @@ class Item {
 		} else {
 			try {
 				$this->published = new \DateTimeImmutable( $published );
-			} catch ( \Exception $e ) {
+			} catch ( \Throwable $e ) {
 				$this->published = new \DateTimeImmutable( 'now' );
 			}
 		}

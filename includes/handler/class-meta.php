@@ -60,11 +60,10 @@ class Meta extends Base {
 
 		$this->add_properties( $meta );
 
-		if (
-			! $this->webmention_item->get_name() &&
-			isset( $xpath->query( '//title' )->item( 0 )->textContent )
-		) {
-			$this->webmention_item->add_name( trim( $xpath->query( '//title' )->item( 0 )->textContent ) );
+		$title = $xpath->query( '//title' )->item( 0 );
+
+		if ( $title ) {
+			$this->webmention_item->add_name( trim( $title->textContent ) ); // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 		}
 
 		$this->add_author_fallback( $xpath, $response->get_url() );
@@ -81,8 +80,7 @@ class Meta extends Base {
 		$mapping = array(
 			'url'       => array( 'url', 'og:url' ),
 			'name'      => array( 'og:title', 'twitter:title', 'dc:title', 'DC.Title' ),
-			'content'   => array( 'og:description', 'twitter:description', 'dc:desciption', 'DC.Desciption', 'description' ),
-			'summary'   => array( 'og:description', 'twitter:description', 'dc:desciption', 'DC.Desciption', 'description' ),
+			'summary'   => array( 'og:description', 'twitter:description', 'dc:description', 'DC.Description', 'description' ),
 			'published' => array( 'article:published_time', 'article:published', 'DC.Date', 'dc:date', 'citation_date', 'datePublished' ),
 			'updated'   => array( 'article:modified_time', 'article:modified' ),
 			'site_name' => array( 'og:site_name' ),

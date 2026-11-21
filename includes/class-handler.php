@@ -50,7 +50,7 @@ class Handler {
 	 * @param Webmention\Handler\Base $handler
 	 */
 	public function unshift( $handler ) {
-		array_unshift( $this->handlers[], $handler );
+		array_unshift( $this->handlers, $handler );
 	}
 
 

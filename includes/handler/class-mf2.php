@@ -124,14 +124,21 @@ class MF2 extends Base {
 	 * @param array Author array.
 	 */
 	protected function set_property_author( $properties ) {
-		$author = array( 'type' => 'card' );
-		if ( $this->is_microformat( $properties ) ) {
-			foreach ( array( 'name', 'nickname', 'given-name', 'family-name', 'url', 'email', 'photo' ) as $prop ) {
-				$author[ $prop ] = $this->get_plaintext( $properties, $prop );
-			}
+		if ( ! $this->is_microformat( $properties ) ) {
+			return;
 		}
 
-		$this->webmention_item->add_author( array_filter( $author ) );
+		$author = array();
+		foreach ( array( 'name', 'nickname', 'given-name', 'family-name', 'url', 'email', 'photo' ) as $prop ) {
+			$author[ $prop ] = $this->get_plaintext( $properties, $prop );
+		}
+
+		$author = array_filter( $author );
+
+		// An author without any data is left to the handlers that follow.
+		if ( $author ) {
+			$this->webmention_item->add_author( array_merge( array( 'type' => 'card' ), $author ) );
+		}
 	}
 
 	/**
@@ -209,30 +216,6 @@ class MF2 extends Base {
 	}
 
 	/**
-	 * Verifies if property named $propname is in array $mf_array and is a valid URL.
-	 *
-	 * @param array  $mf_array
-	 * @param string $propname
-	 *
-	 * @return bool
-	 */
-	protected function has_url_property( array $mf_array, $propname ) {
-		return ( $this->has_property( $mf_array, $propname ) && ( $this->is_url( $this->get_plaintext( $mf_array, $propname ) ) ) );
-	}
-
-	/**
-	 * Verifies if rel named $relname is in array $mf_array.
-	 *
-	 * @param array  $mf_array
-	 * @param string $relname
-	 *
-	 * @return bool
-	 */
-	protected function has_rel( array $mf_array, $relname ) {
-		return ! empty( $mf_array['rels'][ $relname ] ) && is_array( $mf_array['rels'][ $relname ] );
-	}
-
-	/**
 	 * Verifies if $property is an array without numeric keys and has key 'value' and 'html' set.
 	 *
 	 * @param $property
@@ -260,21 +243,6 @@ class MF2 extends Base {
 			return $value['text'];
 		}
 		return $value;
-	}
-
-	/**
-	 * Returns property $propname  $fallback.
-	 *
-	 * @param array       $mf Microformats Array.
-	 * @param $propname Property to be retrieved.
-	 * @param null|string $fallback Fallback if not available.
-	 * @return mixed|null Return value.
-	 */
-	protected function get_property( array $mf_array, $propname, $fallback = null ) {
-		if ( ! empty( $mf_array['properties'][ $propname ] ) && is_array( $mf_array['properties'][ $propname ] ) ) {
-			return $mf_array['properties'][ $propname ];
-		}
-		return $fallback;
 	}
 
 	/**
@@ -440,23 +408,8 @@ class MF2 extends Base {
 										return $item;
 									}
 									// Make sure this is a numeric array before checking this.
-									if ( wp_is_numeric_array( $obj_values ) ) {
-										$obj_value = current( $obj_values );
-										// check content for the link
-										if (
-											'content' === $obj_key &&
-											! empty( $obj_value['html'] ) &&
-											is_string( $obj_value['html'] ) &&
-											preg_match_all( '/<a[^>]+?' . preg_quote( $target, '/' ) . '[^>]*>([^>]+?)<\/a>/i', $obj_value['html'], $context )
-										) {
-											return $item;
-										} elseif (
-											'summary' === $obj_key &&
-											is_string( $obj_value ) &&
-											preg_match_all( '/<a[^>]+?' . preg_quote( $target, '/' ) . '[^>]*>([^>]+?)<\/a>/i', $obj_value, $context )
-										) {
-											return $item;
-										}
+									if ( wp_is_numeric_array( $obj_values ) && $this->is_linked_in( $target, $obj_key, current( $obj_values ) ) ) {
+										return $item;
 									}
 								}
 							}
@@ -466,23 +419,8 @@ class MF2 extends Base {
 
 				// check properties if target urls was mentioned
 				foreach ( $item['properties'] as $key => $values ) {
-					if ( wp_is_numeric_array( $values ) ) {
-						$value = current( $values );
-						// check content for the link
-						if (
-							'content' === $key &&
-							! empty( $value['html'] ) &&
-							is_string( $value['html'] ) &&
-							preg_match_all( '/<a[^>]+?' . preg_quote( $target, '/' ) . '[^>]*>([^>]+?)<\/a>/i', $value['html'], $context )
-						) {
-							return $item;
-						} elseif (
-							'summary' === $key &&
-							is_string( $value ) &&
-							preg_match_all( '/<a[^>]+?' . preg_quote( $target, '/' ) . '[^>]*>([^>]+?)<\/a>/i', $value, $context )
-						) {
-							return $item;
-						}
+					if ( wp_is_numeric_array( $values ) && $this->is_linked_in( $target, $key, current( $values ) ) ) {
+						return $item;
 					}
 				}
 			}
@@ -490,6 +428,27 @@ class MF2 extends Base {
 
 		// return first h-entry
 		return false;
+	}
+
+	/**
+	 * Checks if the content or the summary of an entry links to the target.
+	 *
+	 * @param string $target The target URL.
+	 * @param string $key    The name of the property.
+	 * @param mixed  $value  The first value of the property.
+	 *
+	 * @return bool
+	 */
+	protected function is_linked_in( $target, $key, $value ) {
+		if ( 'content' === $key && ! empty( $value['html'] ) && is_string( $value['html'] ) ) {
+			$html = $value['html'];
+		} elseif ( 'summary' === $key && is_string( $value ) ) {
+			$html = $value;
+		} else {
+			return false;
+		}
+
+		return (bool) preg_match( '/<a[^>]+?' . preg_quote( $target, '/' ) . '[^>]*>([^>]+?)<\/a>/i', $html );
 	}
 
 	/**
@@ -607,7 +566,7 @@ class MF2 extends Base {
 		$haystack = array_filter(
 			$haystack,
 			function ( $element ) {
-				return is_string( $element ) && ! is_array( $element );
+				return is_string( $element );
 			}
 		);
 
@@ -771,7 +730,7 @@ class MF2 extends Base {
 		// check properties for target-url
 		foreach ( $entry['properties'] as $key => $values ) {
 			// check u-* params
-			if ( in_array( $key, array_keys( $classes ), true ) ) {
+			if ( isset( $classes[ $key ] ) ) {
 				// check RSVP if available
 				if ( 'rsvp' === $key ) {
 					return 'rsvp:' . $this->get_first_array_item( $values );
@@ -804,21 +763,7 @@ class MF2 extends Base {
 									return $classes[ $key ];
 								}
 
-								$obj_value = current( $obj_values );
-
-								// check content for the link
-								if (
-									'content' === $obj_key &&
-									! empty( $obj_value['html'] ) &&
-									is_string( $obj_value['html'] ) &&
-									preg_match_all( '/<a[^>]+?' . preg_quote( $target, '/' ) . '[^>]*>([^>]+?)<\/a>/i', $obj_value['html'], $context )
-								) {
-									return $classes[ $key ];
-								} elseif (
-									'summary' === $obj_key &&
-									is_string( $obj_value ) &&
-									preg_match_all( '/<a[^>]+?' . preg_quote( $target, '/' ) . '[^>]*>([^>]+?)<\/a>/i', $obj_value, $context )
-								) {
+								if ( $this->is_linked_in( $target, $obj_key, current( $obj_values ) ) ) {
 									return $classes[ $key ];
 								}
 							}
@@ -838,7 +783,7 @@ class MF2 extends Base {
 		// check rels for target-url
 		foreach ( $mf_array['rels'] as $key => $values ) {
 			// check rel params
-			if ( in_array( $key, array_keys( $rels ), true ) ) {
+			if ( isset( $rels[ $key ] ) ) {
 				foreach ( $values as $value ) {
 					if ( $value === $target ) {
 						return $rels[ $key ];
@@ -897,7 +842,7 @@ class MF2 extends Base {
 			),
 		);
 
-		if ( ! empty( $item ) || is_array( $item ) ) {
+		if ( $item ) {
 			foreach ( array( 'name', 'nickname', 'given-name', 'family-name', 'email', 'photo' ) as $prop ) {
 				if ( array_key_exists( $prop, $item['properties'] ) ) {
 					$author['properties'][ $prop ] = $item['properties'][ $prop ];
