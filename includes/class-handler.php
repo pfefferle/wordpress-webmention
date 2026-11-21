@@ -10,7 +10,11 @@ use Webmention\Handler\Meta;
 use Webmention\Handler\Jsonld;
 
 /**
- * Class for handling Webmention handlers
+ * Runs the handlers on a source and collects what they find in one item.
+ *
+ * The handlers run in the order of the list and the first one that provides a property wins, so the order
+ * is also the weighting: Microformats, the WordPress API, JSON-LD and the meta tags. The handlers that are
+ * left are skipped as soon as the item is complete, see `Item::is_complete()`.
  */
 class Handler {
 
@@ -29,14 +33,12 @@ class Handler {
 		// JSON-LD Handler  Class
 		$this->handlers[] = new Jsonld();
 
-		// Meta Handler Class. It has to be the last one, because it fills in what is still missing about the author.
+		// Meta Handler Class. It also collects the site name and the site icon, the fallbacks for the author.
 		$this->handlers[] = new Meta();
 	}
 
 	/**
 	 * Appends a Handler to the List.
-	 *
-	 * It runs after the Meta handler, which has already completed the author by then.
 	 *
 	 * @param Webmention\Handler\Base $handler
 	 */

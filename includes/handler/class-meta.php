@@ -66,7 +66,7 @@ class Meta extends Base {
 			$this->webmention_item->add_name( trim( $title->textContent ) ); // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 		}
 
-		$this->add_author_fallback( $xpath, $response->get_url() );
+		$this->webmention_item->add_site_icon( $this->get_icon( $xpath, $response->get_url() ) );
 	}
 
 	/**
@@ -98,37 +98,6 @@ class Meta extends Base {
 		}
 
 		$this->webmention_item->add_meta( apply_filters( 'webmention_handler_meta_set_properties', array(), $this ) );
-	}
-
-	/**
-	 * Lets the page stand in for what no handler found out about the author.
-	 *
-	 * An author without a name is the site itself: it is named after the site and gets its icon as photo.
-	 * An author without a URL links to the page.
-	 *
-	 * @param DOMXPath $xpath The page.
-	 * @param string   $url   The URL of the page.
-	 *
-	 * @return void
-	 */
-	protected function add_author_fallback( DOMXPath $xpath, $url ) {
-		// Without an author, `get_author()` returns a placeholder that already has a name.
-		$author = $this->webmention_item->has_author() ? $this->webmention_item->get_author() : array( 'type' => 'card' );
-
-		if ( empty( $author['name'] ) ) {
-			$site_name      = $this->webmention_item->get_site_name();
-			$author['name'] = $site_name ? $site_name : webmention_extract_domain( $url );
-
-			if ( empty( $author['photo'] ) ) {
-				$author['photo'] = $this->get_icon( $xpath, $url );
-			}
-		}
-
-		if ( empty( $author['url'] ) ) {
-			$author['url'] = $url;
-		}
-
-		$this->webmention_item->set_author( array_filter( $author ) );
 	}
 
 	/**

@@ -102,7 +102,7 @@ class Test_Handler extends WP_UnitTestCase {
 		$handler = new \Webmention\Handler();
 		$item    = $handler->parse_aggregated(
 			$this->page(
-				$this->entry( '<a class="p-author h-card" href="https://jane.example/">Jane</a>' ),
+				$this->entry( '<span class="p-author h-card"><a class="p-name u-url" href="https://jane.example/">Jane</a><img class="u-photo" src="https://jane.example/jane.png" alt="Jane"></span>' ),
 				'<link rel="https://api.w.org/" href="https://www.example.org/wp-json/" /><link rel="alternate" type="application/json" href="https://www.example.org/wp-json/wp/v2/posts/1" />'
 				. '<meta property="og:site_name" content="The Example">'
 			),
@@ -113,7 +113,26 @@ class Test_Handler extends WP_UnitTestCase {
 		$this->assertSame( array(), $requests );
 		$this->assertSame( 'Jane', $item->get_author( 'name' ) );
 		$this->assertSame( 'https://jane.example/', $item->get_author( 'url' ) );
+		$this->assertSame( 'https://jane.example/jane.png', $item->get_author( 'photo' ) );
 		$this->assertSame( 'comment', $item->get_response_type() );
+	}
+
+	/**
+	 * An item whose author has no photo is not complete, so the icon of the site is used.
+	 */
+	public function test_item_without_author_photo_is_not_complete() {
+		$handler = new \Webmention\Handler();
+		$item    = $handler->parse_aggregated(
+			$this->page(
+				$this->entry( '<a class="p-author h-card" href="https://jane.example/">Jane</a>' ),
+				'<link rel="apple-touch-icon" href="/apple.png">'
+			),
+			'http://example.com/webmention/target/placeholder'
+		);
+
+		$this->assertSame( 'Jane', $item->get_author( 'name' ) );
+		$this->assertSame( 'https://jane.example/', $item->get_author( 'url' ) );
+		$this->assertSame( 'https://www.example.org/apple.png', $item->get_author( 'photo' ) );
 	}
 
 	/**
@@ -143,13 +162,21 @@ class Test_Handler extends WP_UnitTestCase {
 
 		$this->assertFalse( $item->is_complete() );
 
-		$item->set_author(
-			array(
-				'type' => 'card',
-				'name' => 'Jane',
-				'url'  => 'https://jane.example/',
-			)
+		$author = array(
+			'type' => 'card',
+			'name' => 'Jane',
+			'url'  => 'https://jane.example/',
 		);
+
+		$item->set_author( $author );
+		$item->set_site_icon( 'https://www.example.org/icon.png' );
+
+		// The site icon is used, but it does not make the item complete.
+		$this->assertSame( 'https://www.example.org/icon.png', $item->get_author( 'photo' ) );
+		$this->assertSame( $author, $item->to_array()['author'] );
+		$this->assertFalse( $item->is_complete() );
+
+		$item->set_author( $author + array( 'photo' => 'https://jane.example/jane.png' ) );
 
 		$this->assertTrue( $item->is_complete() );
 	}

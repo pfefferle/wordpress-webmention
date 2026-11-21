@@ -144,20 +144,20 @@ class Test_Handler_Meta extends WP_UnitTestCase {
 	}
 
 	/**
-	 * A named author is linked to the page, but does not get the icon of the site.
+	 * A named author without URL and photo is linked to the page and gets the icon of the site.
 	 */
-	public function test_named_author_gets_url_but_not_the_icon() {
+	public function test_named_author_gets_url_and_icon() {
 		$item = $this->parse_page( '<meta name="author" content="Jane"><link rel="icon" href="/icon.png">' );
 
 		$this->assertSame( 'Jane', $item->get_author( 'name' ) );
 		$this->assertSame( 'https://www.example.org/blog/a-post/', $item->get_author( 'url' ) );
-		$this->assertSame( '', $item->get_author( 'photo' ) );
+		$this->assertSame( 'https://www.example.org/icon.png', $item->get_author( 'photo' ) );
 	}
 
 	/**
-	 * The fallback must not take the place of an author that a later handler finds.
+	 * The fallback keeps the name and the URL of an author that another handler found, and only adds the icon.
 	 */
-	public function test_fallback_keeps_author_of_later_handler() {
+	public function test_fallback_keeps_author_of_other_handler() {
 		$item = $this->parse_page(
 			'<link rel="icon" href="/icon.png">',
 			'<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"A post","author":{"@type":"Person","name":"Jane","url":"https://jane.example/"}}</script>'
@@ -165,7 +165,7 @@ class Test_Handler_Meta extends WP_UnitTestCase {
 
 		$this->assertSame( 'Jane', $item->get_author( 'name' ) );
 		$this->assertSame( 'https://jane.example/', $item->get_author( 'url' ) );
-		$this->assertSame( '', $item->get_author( 'photo' ) );
+		$this->assertSame( 'https://www.example.org/icon.png', $item->get_author( 'photo' ) );
 	}
 
 	/**
@@ -186,5 +186,17 @@ class Test_Handler_Meta extends WP_UnitTestCase {
 		$item = $this->parse_page( '<meta name="DC.Description" content="A short description.">' );
 
 		$this->assertSame( 'A short description.', $item->get_summary() );
+	}
+
+	/**
+	 * The photo of an author is not replaced by the icon of the site.
+	 */
+	public function test_fallback_keeps_author_photo() {
+		$item = $this->parse_page(
+			'<link rel="icon" href="/icon.png">',
+			'<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","author":{"@type":"Person","name":"Jane","image":{"@type":"ImageObject","url":"https://jane.example/jane.png"}}}</script>'
+		);
+
+		$this->assertSame( 'https://jane.example/jane.png', $item->get_author( 'photo' ) );
 	}
 }

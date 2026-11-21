@@ -6,7 +6,23 @@ use DateTimeZone;
 use DateTimeImmutable;
 
 /**
- * Represents a Remote Webmention
+ * Represents a Remote Webmention.
+ *
+ * The handlers fill an item one after the other, and the first handler that provides a property wins.
+ * There are two kinds of properties:
+ *
+ * - First class properties are what a comment is made of: the published date, the URL, the response type,
+ *   the content or the summary, and the name, the URL and the photo of the author. As soon as all of them
+ *   are set, the item is complete and the handlers that are left do not run, see `is_complete()`.
+ * - Fallback properties are collected by the handlers, but they are only used when the parsing is done and
+ *   a first class property is still missing. The getters apply them:
+ *     - the name stands in for the content, see `get_content()`.
+ *     - the site name stands in for the name of the author, see `get_author()`.
+ *     - the site icon stands in for the photo of the author, see `get_author()`.
+ *     - the URL stands in for the URL of the author, see `get_author()`.
+ *
+ * A handler only stores what it can identify. An image that belongs to the author is the photo of the author,
+ * the icon of a page is the site icon, and the image of the post is the photo of the item.
  */
 class Item {
 	/**
@@ -31,16 +47,16 @@ class Item {
 	protected $url;
 
 	/**
-	 * Array of authors.
+	 * The author as card with `name`, `url`, `photo` and `email`, as far as the handlers found them.
 	 *
 	 * @var array
 	 */
 	protected $author = array();
 
 	/**
-	 * Array of photos.
+	 * The image of the post. This is not the photo of the author.
 	 *
-	 * @var array
+	 * @var string|array
 	 */
 	protected $photo = array();
 
@@ -53,13 +69,20 @@ class Item {
 
 
 	/**
-	 * The site name, if available.
+	 * The site name, if available. The fallback for the name of the author.
 	 *
 	 * @example comment-meta
 	 *
 	 * @var string
 	 */
 	protected $site_name;
+
+	/**
+	 * The site icon, if available. The fallback for the photo of the author.
+	 *
+	 * @var string
+	 */
+	protected $site_icon;
 
 	/**
 	 * The response content.
@@ -275,36 +298,31 @@ class Item {
 	}
 
 	/**
-	 * Getter for "author".
+	 * Getter for "author" with fallback to the site name, the site icon and the URL.
 	 *
-	 * @param string $propery The author property to return
+	 * @param string $property The author property to return
 	 *
 	 * @return array|string
 	 */
 	public function get_author( $property = null ) {
-		$fallback = 'anonymous';
-		if ( $this->get_site_name() ) {
-			$fallback = $this->get_site_name();
-		}
+		$site_name = $this->get_site_name();
+		$author    = array_filter(
+			array_merge(
+				array(
+					'type'  => 'card',
+					'name'  => $site_name ? $site_name : 'anonymous',
+					'url'   => $this->url,
+					'photo' => $this->site_icon,
+				),
+				array_filter( (array) $this->author )
+			)
+		);
 
 		if ( ! $property ) {
-			if ( $this->author ) {
-				return $this->author;
-			}
-
-			return array(
-				'type' => 'card',
-				'name' => $fallback,
-			);
+			return $author;
 		}
 
-		if ( isset( $this->author[ $property ] ) ) {
-			return $this->author[ $property ];
-		} elseif ( 'name' === $property ) {
-			return $fallback;
-		} else {
-			return '';
-		}
+		return isset( $author[ $property ] ) ? $author[ $property ] : '';
 	}
 
 	/**
@@ -452,9 +470,10 @@ class Item {
 	}
 
 	/**
-	 * Check if the item has all a comment needs, so that no other handler has to add to it.
+	 * Check if all first class properties are set, so that no other handler has to add to the item.
 	 *
-	 * The name and the site name are not needed: they only stand in for a missing content or author name.
+	 * The fallback properties do not count: an author without a photo is not complete, even if there is
+	 * a site icon.
 	 *
 	 * @return boolean true if nothing is missing.
 	 */
@@ -464,7 +483,8 @@ class Item {
 			&& $this->response_type
 			&& ( $this->content || $this->summary )
 			&& ! empty( $this->author['name'] )
-			&& ! empty( $this->author['url'] );
+			&& ! empty( $this->author['url'] )
+			&& ! empty( $this->author['photo'] );
 	}
 
 	/**
