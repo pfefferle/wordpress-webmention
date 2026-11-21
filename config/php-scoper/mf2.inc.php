@@ -10,7 +10,7 @@ return [
 			->files()
 			->in( 'vendor/mf2/mf2' )
 			->ignoreVCS( true )
-			->notName( '/.*\\.xml|.*\\.dist|Makefile|composer\\.json|composer\\.lock/' )
+			->notName( '/.*\\.xml|.*\\.dist|Makefile|composer\\.json|composer\\.lock|.*\\.Dockerfile/' )
 			->exclude( [
 				'doc',
 				'test',
@@ -21,5 +21,15 @@ return [
 				'bin',
 			]
 		)
+	],
+	'patchers' => [
+		// php-scoper does not prefix function names inside XPath strings.
+		static function ( string $file_path, string $prefix, string $content ): string {
+			return str_replace(
+				'"\\\\Mf2\\\\classHasMf2RootClassname"',
+				'"' . $prefix . '\\\\Mf2\\\\classHasMf2RootClassname"',
+				$content
+			);
+		},
 	],
 ];

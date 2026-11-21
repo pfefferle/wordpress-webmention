@@ -3,6 +3,14 @@ Emoji Detection
 
 This library will find all emoji in an input string and return information about each emoji character. It supports emoji with skin tone modifiers, as well as the composite emoji that are made up of multiple people.
 
+The current version supports Emoji version 16.0 (Oct 2024)
+
+You can see a catalog of the emoji data here:
+
+* https://unicode.org/Public/emoji/16.0/emoji-test.txt
+* http://projects.iamcal.com/emoji-data/table.htm
+
+
 Installation
 ------------
 
@@ -41,11 +49,9 @@ Array
                 )
             [hex_str] => 1F44D-1F3FC
             [skin_tone] => skin-tone-3
-            [offset] => 6
-            [mb_offset] => 6
-            [mb_length] => 2
+            [byte_offset] => 6
+            [grapheme_offset] => 6
         )
-
     [1] => Array
         (
             [emoji] => 👨‍👩‍👦‍👦
@@ -63,11 +69,9 @@ Array
                 )
             [hex_str] => 1F468-200D-1F469-200D-1F466-200D-1F466
             [skin_tone] =>
-            [offset] => 14
-            [mb_offset] => 15
-            [mb_length] => 7
+            [byte_offset] => 21
+            [grapheme_offset] => 14
         )
-
 )
 ```
 
@@ -77,9 +81,19 @@ Array
 * `points_hex` - An array of each unicode code point that makes up this emoji. These are returned as hex strings. This will also include "invisible" characters such as the ZWJ character and skin tone modifiers.
 * `hex_str` - A list of all unicode code points in their hex form separated by hyphens. This string is present in the [Slack emoji data](https://github.com/iamcal/emoji-data) array.
 * `skin_tone` - If a skin tone modifier was used in the emoji, this field indicates which skin tone, since the `short_name` will not include the skin tone.
-* `offset` - The position of the emoji in the string as if emojis had length of 1
-* `mb_offset` - The position of the emoji in the multi-byte string
-* `mb_length` - The multi-byte length of the emoji
+* `byte_offset` - The position of the emoji in the string in bytes, used with the plain `str*` functions
+* `grapheme_offset` - The position of the emoji in the string, counting each emoji as 1 char, used with the `grapheme_*` functions
+
+You can use the `grapheme_*` functions to extract parts of the string using the `grapheme_offset` position returned. For example:
+
+```php
+$string = "Trešnja 🍒";
+$emoji = Emoji\detect_emoji($string);
+echo '.'.grapheme_substr($string, 0, $emoji[0]['grapheme_offset']).".\n";
+echo '.'.substr($string, 0, $emoji[0]['byte_offset']).".\n";
+// Both output ".Trešnja ."
+```
+
 
 
 #### Replace emoji with string representations
@@ -119,9 +133,8 @@ Array
 
     [hex_str] => 1F468-200D-1F469-200D-1F466-200D-1F466
     [skin_tone] =>
-    [offset] => 0
-    [mb_offset] => 0
-    [mb_length] => 7
+    [byte_offset] => 0
+    [grapheme_offset] => 0
 )
 ```
 
@@ -130,13 +143,45 @@ $emoji = Emoji\is_single_emoji('😻🐈');
 // false
 ```
 
+### Remove emoji from a string
+
+You can remove all emoji from a string with this function, optionally removing trailing spaces.
+
+```php
+$string = "I like 🌮 and 🌯";
+echo Emoji\remove_emoji($string);
+// "I like  and "
+echo Emoji\remove_emoji($string, ['collapse' => true]);
+// "I like and";
+```
+
+Updates
+-------
+
+When a new emoji set is released, this library will need to be updated with the new unicode points and names. The source of the emoji data is [iamcal/emoji-data](https://github.com/iamcal/emoji-data), so first check there for the latest updates. You can build the new source files this library uses with the following command:
+
+```
+composer build
+```
+
+
+Tests
+-----
+
+A comprehensive set of tests is available to ensure things are working as expected, including tests for the new emoji added in new emoji versions. You can run the tests with the following command:
+
+```
+composer test
+```
+
+
 
 License
 -------
 
-Copyright 2017-2021 by Aaron Parecki.
+Made with ❤️ by Aaron Parecki.
 
-Available under the MIT license.
+Copyright 2017-2026 by Aaron Parecki. Available under the MIT license.
 
 Emoji data sourced from [iamcal/emoji-data](https://github.com/iamcal/emoji-data) under the MIT license.
 

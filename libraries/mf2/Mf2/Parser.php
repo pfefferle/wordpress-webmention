@@ -63,14 +63,28 @@ function parse($input, $url = null, $convertClassic = \true)
  */
 function fetch($url, $convertClassic = \true, &$curlInfo = null)
 {
+    $version = '0';
+    if (\is_array($curl = \curl_version())) {
+        $version = $curl['version'];
+    }
     $ch = \curl_init();
     \curl_setopt($ch, \CURLOPT_URL, $url);
     \curl_setopt($ch, \CURLOPT_RETURNTRANSFER, 1);
     \curl_setopt($ch, \CURLOPT_HEADER, 0);
     \curl_setopt($ch, \CURLOPT_FOLLOWLOCATION, 1);
     \curl_setopt($ch, \CURLOPT_MAXREDIRS, 5);
+    if (\version_compare($version, '7.21.6', '>=')) {
+        // see https://curl.se/libcurl/c/CURLOPT_ACCEPT_ENCODING.html
+        \curl_setopt($ch, \CURLOPT_ACCEPT_ENCODING, '');
+    } elseif (\version_compare($version, '7.10.5', '>=')) {
+        // see https://curl.se/ch/7.10.5.html
+        \curl_setopt($ch, \CURLOPT_ENCODING, '');
+    }
     \curl_setopt($ch, \CURLOPT_HTTPHEADER, array('Accept: text/html'));
     $html = \curl_exec($ch);
+    if ($html === \false) {
+        return null;
+    }
     $info = $curlInfo = \curl_getinfo($ch);
     if (\PHP_VERSION_ID < 80000) {
         \curl_close($ch);
@@ -90,7 +104,9 @@ function fetch($url, $convertClassic = \true, &$curlInfo = null)
  */
 function unicodeToHtmlEntities($input)
 {
-    return \mb_convert_encoding($input, 'HTML-ENTITIES', \mb_detect_encoding($input));
+    // Convert all non-ASCII characters to HTML numeric entities.
+    $convmap = [0x80, 0x1fffff, 0, 0x10ffff];
+    return \mb_encode_numericentity($input, $convmap, \mb_detect_encoding($input), \true);
 }
 /**
  * Collapse Whitespace
@@ -108,10 +124,7 @@ function collapseWhitespace($str)
 }
 function unicodeTrim($str)
 {
-    // this is cheating. TODO: find a better way if this causes any problems
-    $str = \str_replace(\mb_convert_encoding('&nbsp;', 'UTF-8', 'HTML-ENTITIES'), ' ', $str);
-    $str = \preg_replace('/^\\s+/', '', $str);
-    return \preg_replace('/\\s+$/', '', $str);
+    return \preg_replace('/^\\s+|\\s+$/u', '', $str);
 }
 /**
  * Microformat Name From Class string
@@ -139,6 +152,15 @@ function mfNamesFromClass($class, $prefix = 'h-')
     return $matches;
 }
 /**
+ * Registered with the XPath object and used within XPaths for finding root elements.
+ * @param string $class
+ * @return bool
+ */
+function classHasMf2RootClassname($class)
+{
+    return \count(mfNamesFromClass($class, 'h-')) > 0;
+}
+/**
  * Get Nested µf Property Name From Class
  *
  * Returns all the p-, u-, dt- or e- prefixed classnames it finds in a
@@ -151,14 +173,10 @@ function nestedMfPropertyNamesFromClass($class)
 {
     $prefixes = array('p-', 'u-', 'dt-', 'e-');
     $propertyNames = array();
-    $class = \str_replace(array(' ', '	', "\n"), ' ', $class);
-    foreach (\explode(' ', $class) as $classname) {
-        foreach ($prefixes as $prefix) {
-            // Check if $classname is a valid property classname for $prefix.
-            if (\mb_substr($classname, 0, \mb_strlen($prefix)) == $prefix && $classname != $prefix) {
-                $propertyName = \mb_substr($classname, \mb_strlen($prefix));
-                $propertyNames[$propertyName][] = $prefix;
-            }
+    foreach ($prefixes as $prefix) {
+        $classes = mfNamesFromClass($class, $prefix);
+        foreach ($classes as $property) {
+            $propertyNames[$property][] = $prefix;
         }
     }
     foreach ($propertyNames as $property => $prefixes) {
@@ -327,22 +345,29 @@ class Parser
      */
     public function __construct($input, $url = null, $jsonMode = \false)
     {
+        $emptyDocDefault = '<html><body></body></html>';
         \libxml_use_internal_errors(\true);
         if (\is_string($input)) {
+            if (empty($input)) {
+                $input = $emptyDocDefault;
+            }
             if (\class_exists('Webmention\\Masterminds\\HTML5')) {
                 $doc = new \Webmention\Masterminds\HTML5(array('disable_html_ns' => \true));
                 $doc = $doc->loadHTML($input);
             } else {
                 $doc = new DOMDocument();
-                @$doc->loadHTML(unicodeToHtmlEntities($input));
+                @$doc->loadHTML(unicodeToHtmlEntities($input), \LIBXML_NOWARNING);
             }
         } elseif (\is_a($input, 'DOMDocument')) {
             $doc = clone $input;
         } else {
             $doc = new DOMDocument();
-            @$doc->loadHTML('');
+            @$doc->loadHTML($emptyDocDefault);
         }
+        // Create an XPath object and allow some PHP functions to be used within XPath queries.
         $this->xpath = new DOMXPath($doc);
+        $this->xpath->registerNamespace('php', 'http://php.net/xpath');
+        $this->xpath->registerPhpFunctions('Webmention\\Mf2\\classHasMf2RootClassname');
         $baseurl = $url;
         foreach ($this->xpath->query('//base[@href]') as $base) {
             $baseElementUrl = $base->getAttribute('href');
@@ -475,6 +500,19 @@ class Parser
         return $output;
     }
     /**
+     * Given an img property, parse its value and/or alt text
+     * @param DOMElement $el
+     * @access public
+     * @return string|array
+     */
+    public function parseImg(DOMElement $el)
+    {
+        if ($el->hasAttribute('alt')) {
+            return ['value' => $this->resolveUrl($el->getAttribute('src')), 'alt' => $el->getAttribute('alt')];
+        }
+        return $el->getAttribute('src');
+    }
+    /**
      * This method parses the language of an element
      * @param DOMElement $el
      * @access public
@@ -503,6 +541,10 @@ class Parser
     // TODO: figure out if this has problems with sms: and geo: URLs
     public function resolveUrl($url)
     {
+        // If not a string then return.
+        if (!\is_string($url)) {
+            return $url;
+        }
         // If the URL is seriously malformed it’s probably beyond the scope of this
         // parser to try to do anything with it.
         if (\parse_url($url) === \false) {
@@ -528,7 +570,7 @@ class Parser
      */
     public function parseValueClassTitle(\DOMElement $e, $separator = '')
     {
-        $valueClassElements = $this->xpath->query('./*[contains(concat(" ", @class, " "), " value ")]', $e);
+        $valueClassElements = $this->xpath->query('./*[contains(concat(" ", normalize-space(@class), " "), " value ")]', $e);
         if ($valueClassElements->length !== 0) {
             // Process value-class stuff
             $val = '';
@@ -537,7 +579,7 @@ class Parser
             }
             return unicodeTrim($val);
         }
-        $valueTitleElements = $this->xpath->query('./*[contains(concat(" ", @class, " "), " value-title ")]', $e);
+        $valueTitleElements = $this->xpath->query('./*[contains(concat(" ", normalize-space(@class), " "), " value-title ")]', $e);
         if ($valueTitleElements->length !== 0) {
             // Process value-title stuff
             $val = '';
@@ -587,7 +629,9 @@ class Parser
     {
         if (($u->tagName == 'a' or $u->tagName == 'area' or $u->tagName == 'link') and $u->hasAttribute('href')) {
             $uValue = $u->getAttribute('href');
-        } elseif (\in_array($u->tagName, array('img', 'audio', 'video', 'source')) and $u->hasAttribute('src')) {
+        } elseif ($u->tagName == 'img' and $u->hasAttribute('src')) {
+            $uValue = $this->parseImg($u);
+        } elseif (\in_array($u->tagName, array('audio', 'video', 'source', 'iframe')) and $u->hasAttribute('src')) {
             $uValue = $u->getAttribute('src');
         } elseif ($u->tagName == 'video' and !$u->hasAttribute('src') and $u->hasAttribute('poster')) {
             $uValue = $u->getAttribute('poster');
@@ -615,7 +659,7 @@ class Parser
     public function parseDT(\DOMElement $dt, &$dates = array(), &$impliedTimezone = null)
     {
         // Check for value-class pattern
-        $valueClassChildren = $this->xpath->query('./*[contains(concat(" ", @class, " "), " value ") or contains(concat(" ", @class, " "), " value-title ")]', $dt);
+        $valueClassChildren = $this->xpath->query('./*[contains(concat(" ", normalize-space(@class), " "), " value ") or contains(concat(" ", normalize-space(@class), " "), " value-title ")]', $dt);
         $dtValue = \false;
         if ($valueClassChildren->length > 0) {
             // They’re using value-class
@@ -799,14 +843,15 @@ class Parser
         // This way we can DOMDocument::saveHTML on the entire collection at once.
         // Running DOMDocument::saveHTML per node may add whitespace that isn't in source.
         // See https://stackoverflow.com/q/38317903
-        $innerNodes = $e->ownerDocument->createDocumentFragment();
-        while ($e->hasChildNodes()) {
-            $innerNodes->appendChild($e->firstChild);
-        }
-        $html = $e->ownerDocument->saveHtml($innerNodes);
-        // Put the nodes back in place.
-        if ($innerNodes->hasChildNodes()) {
-            $e->appendChild($innerNodes);
+        if ($innerNodes = $e->ownerDocument->createDocumentFragment()) {
+            while ($e->hasChildNodes()) {
+                $innerNodes->appendChild($e->firstChild);
+            }
+            $html = $e->ownerDocument->saveHtml($innerNodes);
+            // Put the nodes back in place.
+            if ($innerNodes->hasChildNodes()) {
+                $e->appendChild($innerNodes);
+            }
         }
         $return = array('html' => unicodeTrim($html), 'value' => $this->textContent($e));
         if ($this->lang) {
@@ -853,7 +898,7 @@ class Parser
             $shape = $e->getAttribute('shape');
         }
         // Handle p-*
-        foreach ($this->xpath->query('.//*[contains(concat(" ", @class) ," p-")]', $e) as $p) {
+        foreach ($this->xpath->query('.//*[contains(concat(" ", normalize-space(@class)) ," p-")]', $e) as $p) {
             // element is already parsed
             if ($this->isElementParsed($p, 'p')) {
                 continue;
@@ -876,7 +921,7 @@ class Parser
             $this->elementPrefixParsed($p, 'p');
         }
         // Handle u-*
-        foreach ($this->xpath->query('.//*[contains(concat(" ",  @class)," u-")]', $e) as $u) {
+        foreach ($this->xpath->query('.//*[contains(concat(" ", normalize-space(@class))," u-")]', $e) as $u) {
             // element is already parsed
             if ($this->isElementParsed($u, 'u')) {
                 continue;
@@ -898,7 +943,7 @@ class Parser
         }
         $temp_dates = array();
         // Handle dt-*
-        foreach ($this->xpath->query('.//*[contains(concat(" ", @class), " dt-")]', $e) as $dt) {
+        foreach ($this->xpath->query('.//*[contains(concat(" ", normalize-space(@class)), " dt-")]', $e) as $dt) {
             // element is already parsed
             if ($this->isElementParsed($dt, 'dt')) {
                 continue;
@@ -930,7 +975,7 @@ class Parser
             }
         }
         // Handle e-*
-        foreach ($this->xpath->query('.//*[contains(concat(" ", @class)," e-")]', $e) as $em) {
+        foreach ($this->xpath->query('.//*[contains(concat(" ", normalize-space(@class))," e-")]', $e) as $em) {
             // element is already parsed
             if ($this->isElementParsed($em, 'e')) {
                 continue;
@@ -954,7 +999,7 @@ class Parser
         }
         // Do we need to imply a name property?
         // if no explicit "name" property, and no other p-* or e-* properties, and no nested microformats,
-        if (!\array_key_exists('name', $return) && !\in_array('p-', $prefixes) && !\in_array('e-', $prefixes) && !$has_nested_mf && !$is_backcompat) {
+        if (!\array_key_exists('name', $return) && !\in_array('p-', $prefixes) && !\in_array('e-', $prefixes) && !$has_nested_mf && !$is_backcompat && empty($this->upgraded[$e])) {
             $name = \false;
             // img.h-x[alt] or area.h-x[alt]
             if (($e->tagName === 'img' || $e->tagName === 'area') && $e->hasAttribute('alt')) {
@@ -996,7 +1041,7 @@ class Parser
             $return['name'][] = unicodeTrim($name);
         }
         // Check for u-photo
-        if (!\array_key_exists('photo', $return) && !$is_backcompat) {
+        if (!\array_key_exists('photo', $return) && !\in_array('u-', $prefixes) && !$has_nested_mf && !$is_backcompat) {
             $photo = $this->parseImpliedPhoto($e);
             if ($photo !== \false) {
                 $return['photo'][] = $photo;
@@ -1037,6 +1082,9 @@ class Parser
         }
         // Phew. Return the final result.
         $parsed = array('type' => $mfTypes, 'properties' => $return);
+        if (\trim($e->getAttribute('id')) !== '') {
+            $parsed['id'] = \trim($e->getAttribute("id"));
+        }
         if ($this->lang) {
             // Language
             if ($html_lang = $this->language($e)) {
@@ -1061,7 +1109,7 @@ class Parser
     {
         // img.h-x[src]
         if ($e->tagName == 'img') {
-            return $this->resolveUrl($e->getAttribute('src'));
+            return $this->resolveUrl($this->parseImg($e));
         }
         // object.h-x[data]
         if ($e->tagName == 'object' && $e->hasAttribute('data')) {
@@ -1082,7 +1130,8 @@ class Parser
             if ($els !== \false && $els->length === 1) {
                 $el = $els->item(0);
                 if ($el->tagName == 'img') {
-                    return $this->resolveUrl($el->getAttribute('src'));
+                    $return = $this->parseImg($el);
+                    return $this->resolveUrl($return);
                 } else {
                     if ($el->tagName == 'object') {
                         return $this->resolveUrl($el->getAttribute('data'));
@@ -1197,7 +1246,7 @@ class Parser
      * @param DOMElement $context optionally specify an element from which to parse microformats
      * @return array An array containing all the microformats found in the current document
      */
-    public function parse($convertClassic = \true, ?DOMElement $context = null)
+    public function parse($convertClassic = \true, DOMElement $context = null)
     {
         $this->convertClassic = $convertClassic;
         $mfs = $this->parse_recursive($context);
@@ -1216,7 +1265,7 @@ class Parser
      * @param int $depth: recursion depth
      * @return array
      */
-    public function parse_recursive(?DOMElement $context = null, $depth = 0)
+    public function parse_recursive(DOMElement $context = null, $depth = 0)
     {
         $mfs = array();
         $mfElements = $this->getRootMF($context);
@@ -1227,7 +1276,7 @@ class Parser
             }
             $recurse = $this->parse_recursive($node, $depth + 1);
             // set bool flag for nested mf
-            $has_nested_mf = $recurse;
+            $has_nested_mf = (bool) $recurse;
             // parse for root mf
             $result = $this->parseH($node, $is_backcompat, $has_nested_mf);
             // TODO: Determine if clearing this is required?
@@ -1262,6 +1311,7 @@ class Parser
                                 $parsed_property = $this->parseDT($node);
                                 $prefixSpecificResult['value'] = $parsed_property ? $parsed_property : '';
                             }
+                            $prefixSpecificResult['value'] = \is_array($prefixSpecificResult['value']) ? $prefixSpecificResult['value']['value'] : $prefixSpecificResult['value'];
                             $mfs['properties'][$property][] = $prefixSpecificResult;
                         }
                         // otherwise, set up in 'children'
@@ -1304,10 +1354,10 @@ class Parser
      * @param DOMElement $context
      * @return DOMNodeList
      */
-    public function getRootMF(?DOMElement $context = null)
+    public function getRootMF(DOMElement $context = null)
     {
         // start with mf2 root class name xpath
-        $xpaths = array('contains(concat(" ",normalize-space(@class)), " h-")');
+        $xpaths = array('(php:function("Webmention\\Mf2\\classHasMf2RootClassname", normalize-space(@class)))');
         // add mf1 root class names
         foreach ($this->classicRootMap as $old => $new) {
             $xpaths[] = '( contains(concat(" ",normalize-space(@class), " "), " ' . $old . ' ") )';
@@ -1348,6 +1398,32 @@ class Parser
                         }
                     }
                     break;
+                case 'hfeed':
+                    $this->upgradeRelTagToCategory($el);
+                    break;
+                case 'hproduct':
+                    $review_and_hreview_aggregate = $this->xpath->query('.//*[contains(concat(" ", normalize-space(@class), " "), " review ") and contains(concat(" ", normalize-space(@class), " "), " hreview-aggregate ")]', $el);
+                    if ($review_and_hreview_aggregate->length) {
+                        foreach ($review_and_hreview_aggregate as $tempEl) {
+                            if (!$this->hasRootMf2($tempEl)) {
+                                $this->backcompat($tempEl, 'hreview-aggregate');
+                                $this->addMfClasses($tempEl, 'p-review h-review-aggregate');
+                                $this->addUpgraded($tempEl, array('review hreview-aggregate'));
+                            }
+                        }
+                    }
+                    $review_and_hreview = $this->xpath->query('.//*[contains(concat(" ", normalize-space(@class), " "), " review ") and contains(concat(" ", normalize-space(@class), " "), " hreview ")]', $el);
+                    if ($review_and_hreview->length) {
+                        foreach ($review_and_hreview as $tempEl) {
+                            if (!$this->hasRootMf2($tempEl)) {
+                                $this->backcompat($tempEl, 'hreview');
+                                $this->addMfClasses($tempEl, 'p-review h-review');
+                                $this->addUpgraded($tempEl, array('review hreview'));
+                            }
+                        }
+                    }
+                    break;
+                case 'hreview-aggregate':
                 case 'hreview':
                     $item_and_vcard = $this->xpath->query('.//*[contains(concat(" ", normalize-space(@class), " "), " item ") and contains(concat(" ", normalize-space(@class), " "), " vcard ")]', $el);
                     if ($item_and_vcard->length) {
@@ -1374,20 +1450,36 @@ class Parser
                         foreach ($item_and_hproduct as $tempEl) {
                             if (!$this->hasRootMf2($tempEl)) {
                                 $this->addMfClasses($tempEl, 'p-item h-product');
-                                $this->backcompat($tempEl, 'vevent');
+                                $this->backcompat($tempEl, 'hproduct');
                                 $this->addUpgraded($tempEl, array('item', 'hproduct'));
+                            }
+                        }
+                    }
+                    $rel_self_bookmark = $this->xpath->query('.//*[contains(concat(" ", normalize-space(@rel), " "), " self ") and contains(concat(" ", normalize-space(@rel), " "), " bookmark ")]', $el);
+                    if ($rel_self_bookmark->length) {
+                        foreach ($rel_self_bookmark as $tempEl) {
+                            $this->addMfClasses($tempEl, 'u-url');
+                            $this->addUpgraded($tempEl, array('self', 'bookmark'));
+                        }
+                    }
+                    $reviewer_nodes = $this->xpath->query('.//*[contains(concat(" ", normalize-space(@class), " "), " reviewer ")]', $el);
+                    if ($reviewer_nodes->length) {
+                        foreach ($reviewer_nodes as $tempEl) {
+                            if (!$this->hasRootMf2($tempEl)) {
+                                $this->addMfClasses($tempEl, 'p-author h-card');
                             }
                         }
                     }
                     $this->upgradeRelTagToCategory($el);
                     break;
                 case 'vevent':
-                    $location = $this->xpath->query('.//*[contains(concat(" ", normalize-space(@class), " "), " location ")]', $el);
-                    if ($location->length) {
-                        foreach ($location as $tempEl) {
+                    $location_and_vcard = $this->xpath->query('.//*[contains(concat(" ", normalize-space(@class), " "), " location ") and contains(concat(" ", normalize-space(@class), " "), " vcard ")]', $el);
+                    if ($location_and_vcard->length) {
+                        foreach ($location_and_vcard as $tempEl) {
                             if (!$this->hasRootMf2($tempEl)) {
-                                $this->addMfClasses($tempEl, 'h-card');
+                                $this->addMfClasses($tempEl, 'p-location h-card');
                                 $this->backcompat($tempEl, 'vcard');
+                                $this->addUpgraded($tempEl, array('location', 'vcard'));
                             }
                         }
                     }
@@ -1456,13 +1548,8 @@ class Parser
     public function hasRootMf2(\DOMElement $el)
     {
         $class = \str_replace(array("\t", "\n"), ' ', $el->getAttribute('class'));
-        $classes = \array_filter(\explode(' ', $class));
-        foreach ($classes as $classname) {
-            if (\strpos($classname, 'h-') === 0) {
-                return \true;
-            }
-        }
-        return \false;
+        // Check for valid mf2 root classnames, not just any classname with a h- prefix.
+        return \count(mfNamesFromClass($class, 'h-')) > 0;
     }
     /**
      * Convert Legacy Classnames
@@ -1478,14 +1565,14 @@ class Parser
         $xp = new DOMXPath($doc);
         // replace all roots
         foreach ($this->classicRootMap as $old => $new) {
-            foreach ($xp->query('//*[contains(concat(" ", @class, " "), " ' . $old . ' ") and not(contains(concat(" ", @class, " "), " ' . $new . ' "))]') as $el) {
+            foreach ($xp->query('//*[contains(concat(" ", normalize-space(@class), " "), " ' . $old . ' ") and not(contains(concat(" ", normalize-space(@class), " "), " ' . $new . ' "))]') as $el) {
                 $el->setAttribute('class', $el->getAttribute('class') . ' ' . $new);
             }
         }
         foreach ($this->classicPropertyMap as $oldRoot => $properties) {
             $newRoot = $this->classicRootMap[$oldRoot];
             foreach ($properties as $old => $data) {
-                foreach ($xp->query('//*[contains(concat(" ", @class, " "), " ' . $oldRoot . ' ")]//*[contains(concat(" ", @class, " "), " ' . $old . ' ") and not(contains(concat(" ", @class, " "), " ' . $data['replace'] . ' "))]') as $el) {
+                foreach ($xp->query('//*[contains(concat(" ", normalize-space(@class), " "), " ' . $oldRoot . ' ")]//*[contains(concat(" ", normalize-space(@class), " "), " ' . $old . ' ") and not(contains(concat(" ", normalize-space(@class), " "), " ' . $data['replace'] . ' "))]') as $el) {
                     $el->setAttribute('class', $el->getAttribute('class') . ' ' . $data['replace']);
                 }
             }
@@ -1510,25 +1597,47 @@ class Parser
      * Classic Root Classname map
      * @var array
      */
-    public $classicRootMap = array('vcard' => 'h-card', 'hfeed' => 'h-feed', 'hentry' => 'h-entry', 'hrecipe' => 'h-recipe', 'hresume' => 'h-resume', 'vevent' => 'h-event', 'hreview' => 'h-review', 'hproduct' => 'h-product', 'adr' => 'h-adr');
+    public $classicRootMap = array('vcard' => 'h-card', 'hfeed' => 'h-feed', 'hentry' => 'h-entry', 'hrecipe' => 'h-recipe', 'hresume' => 'h-resume', 'vevent' => 'h-event', 'hreview' => 'h-review', 'hreview-aggregate' => 'h-review-aggregate', 'hproduct' => 'h-product', 'adr' => 'h-adr', 'geo' => 'h-geo');
     /**
      * Mapping of mf1 properties to mf2 and the context they're parsed with
      * @var array
      */
-    public $classicPropertyMap = array('vcard' => array('fn' => array('replace' => 'p-name'), 'honorific-prefix' => array('replace' => 'p-honorific-prefix'), 'given-name' => array('replace' => 'p-given-name'), 'additional-name' => array('replace' => 'p-additional-name'), 'family-name' => array('replace' => 'p-family-name'), 'honorific-suffix' => array('replace' => 'p-honorific-suffix'), 'nickname' => array('replace' => 'p-nickname'), 'email' => array('replace' => 'u-email'), 'logo' => array('replace' => 'u-logo'), 'photo' => array('replace' => 'u-photo'), 'url' => array('replace' => 'u-url'), 'uid' => array('replace' => 'u-uid'), 'category' => array('replace' => 'p-category'), 'adr' => array('replace' => 'p-adr'), 'extended-address' => array('replace' => 'p-extended-address'), 'street-address' => array('replace' => 'p-street-address'), 'locality' => array('replace' => 'p-locality'), 'region' => array('replace' => 'p-region'), 'postal-code' => array('replace' => 'p-postal-code'), 'country-name' => array('replace' => 'p-country-name'), 'label' => array('replace' => 'p-label'), 'geo' => array('replace' => 'p-geo h-geo'), 'latitude' => array('replace' => 'p-latitude'), 'longitude' => array('replace' => 'p-longitude'), 'tel' => array('replace' => 'p-tel'), 'note' => array('replace' => 'p-note'), 'bday' => array('replace' => 'dt-bday'), 'key' => array('replace' => 'u-key'), 'org' => array('replace' => 'p-org'), 'organization-name' => array('replace' => 'p-organization-name'), 'organization-unit' => array('replace' => 'p-organization-unit'), 'title' => array('replace' => 'p-job-title'), 'role' => array('replace' => 'p-role'), 'tz' => array('replace' => 'p-tz'), 'rev' => array('replace' => 'dt-rev')), 'hfeed' => array(), 'hentry' => array('entry-title' => array('replace' => 'p-name'), 'entry-summary' => array('replace' => 'p-summary'), 'entry-content' => array('replace' => 'e-content'), 'published' => array('replace' => 'dt-published'), 'updated' => array('replace' => 'dt-updated'), 'author' => array('replace' => 'p-author h-card', 'context' => 'vcard'), 'category' => array('replace' => 'p-category')), 'hrecipe' => array('fn' => array('replace' => 'p-name'), 'ingredient' => array('replace' => 'p-ingredient'), 'yield' => array('replace' => 'p-yield'), 'instructions' => array('replace' => 'e-instructions'), 'duration' => array('replace' => 'dt-duration'), 'photo' => array('replace' => 'u-photo'), 'summary' => array('replace' => 'p-summary'), 'author' => array('replace' => 'p-author h-card', 'context' => 'vcard'), 'nutrition' => array('replace' => 'p-nutrition'), 'category' => array('replace' => 'p-category')), 'hresume' => array('summary' => array('replace' => 'p-summary'), 'contact' => array('replace' => 'p-contact h-card', 'context' => 'vcard'), 'education' => array('replace' => 'p-education h-event', 'context' => 'vevent'), 'experience' => array('replace' => 'p-experience h-event', 'context' => 'vevent'), 'skill' => array('replace' => 'p-skill'), 'affiliation' => array('replace' => 'p-affiliation h-card', 'context' => 'vcard')), 'vevent' => array('summary' => array('replace' => 'p-name'), 'dtstart' => array('replace' => 'dt-start'), 'dtend' => array('replace' => 'dt-end'), 'duration' => array('replace' => 'dt-duration'), 'description' => array('replace' => 'p-description'), 'url' => array('replace' => 'u-url'), 'category' => array('replace' => 'p-category'), 'location' => array('replace' => 'h-card', 'context' => 'vcard'), 'geo' => array('replace' => 'p-location h-geo')), 'hreview' => array(
+    public $classicPropertyMap = array('vcard' => array('fn' => array('replace' => 'p-name'), 'honorific-prefix' => array('replace' => 'p-honorific-prefix'), 'given-name' => array('replace' => 'p-given-name'), 'additional-name' => array('replace' => 'p-additional-name'), 'family-name' => array('replace' => 'p-family-name'), 'honorific-suffix' => array('replace' => 'p-honorific-suffix'), 'nickname' => array('replace' => 'p-nickname'), 'email' => array('replace' => 'u-email'), 'logo' => array('replace' => 'u-logo'), 'photo' => array('replace' => 'u-photo'), 'url' => array('replace' => 'u-url'), 'uid' => array('replace' => 'u-uid'), 'category' => array('replace' => 'p-category'), 'adr' => array('replace' => 'p-adr'), 'extended-address' => array('replace' => 'p-extended-address'), 'street-address' => array('replace' => 'p-street-address'), 'locality' => array('replace' => 'p-locality'), 'region' => array('replace' => 'p-region'), 'postal-code' => array('replace' => 'p-postal-code'), 'country-name' => array('replace' => 'p-country-name'), 'label' => array('replace' => 'p-label'), 'geo' => array('replace' => 'p-geo h-geo', 'context' => 'geo'), 'latitude' => array('replace' => 'p-latitude'), 'longitude' => array('replace' => 'p-longitude'), 'tel' => array('replace' => 'p-tel'), 'note' => array('replace' => 'p-note'), 'bday' => array('replace' => 'dt-bday'), 'key' => array('replace' => 'u-key'), 'org' => array('replace' => 'p-org'), 'organization-name' => array('replace' => 'p-organization-name'), 'organization-unit' => array('replace' => 'p-organization-unit'), 'title' => array('replace' => 'p-job-title'), 'role' => array('replace' => 'p-role'), 'tz' => array('replace' => 'p-tz'), 'rev' => array('replace' => 'dt-rev')), 'hfeed' => array('author' => array('replace' => 'p-author h-card', 'context' => 'vcard'), 'url' => array('replace' => 'u-url'), 'photo' => array('replace' => 'u-photo'), 'category' => array('replace' => 'p-category')), 'hentry' => array('entry-title' => array('replace' => 'p-name'), 'entry-summary' => array('replace' => 'p-summary'), 'entry-content' => array('replace' => 'e-content'), 'published' => array('replace' => 'dt-published'), 'updated' => array('replace' => 'dt-updated'), 'author' => array('replace' => 'p-author h-card', 'context' => 'vcard'), 'category' => array('replace' => 'p-category')), 'hrecipe' => array('fn' => array('replace' => 'p-name'), 'ingredient' => array('replace' => 'p-ingredient'), 'yield' => array('replace' => 'p-yield'), 'instructions' => array('replace' => 'e-instructions'), 'duration' => array('replace' => 'dt-duration'), 'photo' => array('replace' => 'u-photo'), 'summary' => array('replace' => 'p-summary'), 'author' => array('replace' => 'p-author h-card', 'context' => 'vcard'), 'nutrition' => array('replace' => 'p-nutrition'), 'category' => array('replace' => 'p-category')), 'hresume' => array('summary' => array('replace' => 'p-summary'), 'contact' => array('replace' => 'p-contact h-card', 'context' => 'vcard'), 'education' => array('replace' => 'p-education h-event', 'context' => 'vevent'), 'experience' => array('replace' => 'p-experience h-event', 'context' => 'vevent'), 'skill' => array('replace' => 'p-skill'), 'affiliation' => array('replace' => 'p-affiliation h-card', 'context' => 'vcard')), 'vevent' => array('summary' => array('replace' => 'p-name'), 'dtstart' => array('replace' => 'dt-start'), 'dtend' => array('replace' => 'dt-end'), 'duration' => array('replace' => 'dt-duration'), 'description' => array('replace' => 'p-description'), 'url' => array('replace' => 'u-url'), 'category' => array('replace' => 'p-category'), 'location' => array('replace' => 'p-location'), 'geo' => array('replace' => 'p-location h-geo'), 'attendee' => array('replace' => 'p-attendee h-card', 'context' => 'vcard')), 'hreview' => array(
         'summary' => array('replace' => 'p-name'),
         # fn: see item.fn below
         # photo: see item.photo below
         # url: see item.url below
         'item' => array('replace' => 'p-item h-item', 'context' => 'item'),
-        'reviewer' => array('replace' => 'p-author h-card', 'context' => 'vcard'),
+        # reviewer: see backcompat()
         'dtreviewed' => array('replace' => 'dt-published'),
         'rating' => array('replace' => 'p-rating'),
         'best' => array('replace' => 'p-best'),
         'worst' => array('replace' => 'p-worst'),
         'description' => array('replace' => 'e-content'),
         'category' => array('replace' => 'p-category'),
-    ), 'hproduct' => array('fn' => array('replace' => 'p-name'), 'photo' => array('replace' => 'u-photo'), 'brand' => array('replace' => 'p-brand'), 'category' => array('replace' => 'p-category'), 'description' => array('replace' => 'p-description'), 'identifier' => array('replace' => 'u-identifier'), 'url' => array('replace' => 'u-url'), 'review' => array('replace' => 'p-review h-review'), 'price' => array('replace' => 'p-price')), 'item' => array('fn' => array('replace' => 'p-name'), 'url' => array('replace' => 'u-url'), 'photo' => array('replace' => 'u-photo')), 'adr' => array('post-office-box' => array('replace' => 'p-post-office-box'), 'extended-address' => array('replace' => 'p-extended-address'), 'street-address' => array('replace' => 'p-street-address'), 'locality' => array('replace' => 'p-locality'), 'region' => array('replace' => 'p-region'), 'postal-code' => array('replace' => 'p-postal-code'), 'country-name' => array('replace' => 'p-country-name')), 'geo' => array('latitude' => array('replace' => 'p-latitude'), 'longitude' => array('replace' => 'p-longitude')));
+    ), 'hreview-aggregate' => array(
+        'summary' => array('replace' => 'p-name'),
+        # fn: see item.fn below
+        # photo: see item.photo below
+        # url: see item.url below
+        'item' => array('replace' => 'p-item h-item', 'context' => 'item'),
+        'rating' => array('replace' => 'p-rating'),
+        'best' => array('replace' => 'p-best'),
+        'worst' => array('replace' => 'p-worst'),
+        'average' => array('replace' => 'p-average'),
+        'count' => array('replace' => 'p-count'),
+        'votes' => array('replace' => 'p-votes'),
+    ), 'hproduct' => array(
+        'fn' => array('replace' => 'p-name'),
+        'photo' => array('replace' => 'u-photo'),
+        'brand' => array('replace' => 'p-brand'),
+        'category' => array('replace' => 'p-category'),
+        'description' => array('replace' => 'p-description'),
+        'identifier' => array('replace' => 'u-identifier'),
+        'url' => array('replace' => 'u-url'),
+        // review is handled in the special processing section to allow for 'review hreview-aggregate'
+        'price' => array('replace' => 'p-price'),
+    ), 'item' => array('fn' => array('replace' => 'p-name'), 'url' => array('replace' => 'u-url'), 'photo' => array('replace' => 'u-photo')), 'adr' => array('post-office-box' => array('replace' => 'p-post-office-box'), 'extended-address' => array('replace' => 'p-extended-address'), 'street-address' => array('replace' => 'p-street-address'), 'locality' => array('replace' => 'p-locality'), 'region' => array('replace' => 'p-region'), 'postal-code' => array('replace' => 'p-postal-code'), 'country-name' => array('replace' => 'p-country-name')), 'geo' => array('latitude' => array('replace' => 'p-latitude'), 'longitude' => array('replace' => 'p-longitude')));
 }
 function parseUriToComponents($uri)
 {
