@@ -13,7 +13,7 @@ import { RichTextToolbarButton } from '@wordpress/block-editor';
 import { useState } from '@wordpress/element';
 import { Popover, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { calendar, cancelCircleFilled } from '@wordpress/icons';
+import { calendar, trash } from '@wordpress/icons';
 
 import './editor.scss';
 import {
@@ -74,7 +74,7 @@ const RsvpFormatEdit = ( { isActive, value, onChange } ) => {
 						) ) }
 						{ isActive && (
 							<Button
-								icon={ cancelCircleFilled }
+								icon={ trash }
 								label={ __( 'Remove', 'webmention' ) }
 								showTooltip
 								onClick={ () => {
