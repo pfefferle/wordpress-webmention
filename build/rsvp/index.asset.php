@@ -8,5 +8,5 @@
 		'wp-primitives',
 		'wp-rich-text'
 	),
-	'version' => 'ec1ee6a9febb2e126888'
+	'version' => 'be86deeb41c86a68fc4a'
 );
