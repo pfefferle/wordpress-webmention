@@ -1,9 +1,9 @@
 <?php
-global $wp_query, $post;
-$comment_id = esc_attr( $wp_query->query['replytocom'] );
+global $wp_query, $post, $comment;
+$comment_id = esc_attr( isset( $wp_query->query['replytocom'] ) ? $wp_query->query['replytocom'] : $wp_query->query['c'] );
 $comment    = get_comment( $comment_id ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
-// load 404 if replytocom is not valid
+// load 404 if the comment ID is not valid
 if ( ! $comment ) {
 	status_header( 404 );
 	nocache_headers();
