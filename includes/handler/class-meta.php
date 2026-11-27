@@ -60,12 +60,13 @@ class Meta extends Base {
 
 		$this->add_properties( $meta );
 
-		if (
-			! $this->webmention_item->get_name() &&
-			isset( $xpath->query( '//title' )->item( 0 )->textContent )
-		) {
-			$this->webmention_item->add_name( trim( $xpath->query( '//title' )->item( 0 )->textContent ) );
+		$title = $xpath->query( '//title' )->item( 0 );
+
+		if ( $title ) {
+			$this->webmention_item->add_name( trim( $title->textContent ) ); // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 		}
+
+		$this->webmention_item->add_site_icon( $this->get_icon( $xpath, $response->get_url() ) );
 	}
 
 	/**
@@ -79,8 +80,7 @@ class Meta extends Base {
 		$mapping = array(
 			'url'       => array( 'url', 'og:url' ),
 			'name'      => array( 'og:title', 'twitter:title', 'dc:title', 'DC.Title' ),
-			'content'   => array( 'og:description', 'twitter:description', 'dc:desciption', 'DC.Desciption', 'description' ),
-			'summary'   => array( 'og:description', 'twitter:description', 'dc:desciption', 'DC.Desciption', 'description' ),
+			'summary'   => array( 'og:description', 'twitter:description', 'dc:description', 'DC.Description', 'description' ),
 			'published' => array( 'article:published_time', 'article:published', 'DC.Date', 'dc:date', 'citation_date', 'datePublished' ),
 			'updated'   => array( 'article:modified_time', 'article:modified' ),
 			'site_name' => array( 'og:site_name' ),
@@ -98,5 +98,44 @@ class Meta extends Base {
 		}
 
 		$this->webmention_item->add_meta( apply_filters( 'webmention_handler_meta_set_properties', array(), $this ) );
+	}
+
+	/**
+	 * Returns the icon of a page: the Apple touch icon, otherwise the largest icon.
+	 *
+	 * @param DOMXPath $xpath The page.
+	 * @param string   $url   The URL of the page.
+	 *
+	 * @return string The icon URL or an empty string.
+	 */
+	protected function get_icon( DOMXPath $xpath, $url ) {
+		$icon = '';
+		$best = array( false, -1 );
+
+		foreach ( $xpath->query( '//link[@rel and @href]' ) as $link ) {
+			$rels = preg_split( '/\s+/', strtolower( trim( $link->getAttribute( 'rel' ) ) ) );
+
+			if ( ! array_intersect( array( 'icon', 'apple-touch-icon', 'apple-touch-icon-precomposed' ), $rels ) ) {
+				continue;
+			}
+
+			// The largest declared size, for example "192x192"; icons without a size count as 0.
+			preg_match_all( '/(\d+)x\d+/i', $link->getAttribute( 'sizes' ), $sizes );
+			$size = $sizes[1] ? max( array_map( 'intval', $sizes[1] ) ) : 0;
+
+			// Apple touch icons are made to be shown at avatar size, so they beat every other icon.
+			$rank = array( ! in_array( 'icon', $rels, true ), $size );
+
+			if ( $rank > $best ) {
+				$best = $rank;
+				$icon = $link->getAttribute( 'href' );
+			}
+		}
+
+		if ( ! $icon ) {
+			return '';
+		}
+
+		return esc_url_raw( \WP_Http::make_absolute_url( $icon, $url ), array( 'http', 'https' ) );
 	}
 }

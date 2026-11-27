@@ -40,17 +40,18 @@ class Test_Receiver extends WP_UnitTestCase {
 	 *
 	 * @param int    $code    HTTP status code.
 	 * @param string $message HTTP status message.
+	 * @param string $body    Optional. The HTML document.
 	 *
 	 * @return array The mocked `wp_remote_get()` return value.
 	 */
-	private function http_response( $code, $message ) {
+	private function http_response( $code, $message, $body = '' ) {
 		return array(
-			'headers'  => array(),
+			'headers'  => array( 'content-type' => 'text/html; charset=utf-8' ),
 			'response' => array(
 				'code'    => $code,
 				'message' => $message,
 			),
-			'body'     => '',
+			'body'     => $body,
 		);
 	}
 
@@ -59,12 +60,13 @@ class Test_Receiver extends WP_UnitTestCase {
 	 *
 	 * @param int    $code    HTTP status code.
 	 * @param string $message HTTP status message.
+	 * @param string $body    Optional. The HTML document.
 	 */
-	private function mock_http_status( $code, $message ) {
+	private function mock_http_status( $code, $message, $body = '' ) {
 		add_filter(
 			'pre_http_request',
-			function () use ( $code, $message ) {
-				return $this->http_response( $code, $message );
+			function () use ( $code, $message, $body ) {
+				return $this->http_response( $code, $message, $body );
 			}
 		);
 	}
@@ -72,17 +74,22 @@ class Test_Receiver extends WP_UnitTestCase {
 	/**
 	 * Create a Webmention comment for the test post.
 	 *
+	 * @param array $args Optional. Comment data to add or override.
+	 *
 	 * @return int The comment ID.
 	 */
-	private function create_webmention_comment() {
+	private function create_webmention_comment( $args = array() ) {
 		return self::factory()->comment->create(
-			array(
-				'comment_post_ID' => $this->post->ID,
-				'comment_type'    => WEBMENTION_COMMENT_TYPE,
-				'comment_meta'    => array(
-					'protocol'              => 'webmention',
-					'webmention_source_url' => self::SOURCE,
+			array_replace_recursive(
+				array(
+					'comment_post_ID' => $this->post->ID,
+					'comment_type'    => WEBMENTION_COMMENT_TYPE,
+					'comment_meta'    => array(
+						'protocol'              => 'webmention',
+						'webmention_source_url' => self::SOURCE,
+					),
 				),
+				$args
 			)
 		);
 	}
@@ -177,5 +184,77 @@ class Test_Receiver extends WP_UnitTestCase {
 
 		$this->assertNotNull( $comment );
 		$this->assertNotSame( 'trash', $comment->comment_approved );
+	}
+
+	/**
+	 * Build a source page that links to the test post.
+	 *
+	 * @param string $author Optional. Author markup to add to the page.
+	 *
+	 * @return string The HTML document.
+	 */
+	private function source_page( $author = '' ) {
+		return sprintf(
+			'<html><head><title>A page</title></head><body><div class="h-entry">%s<a class="u-mention-of" href="%s">a link</a></div></body></html>',
+			$author,
+			get_permalink( $this->post )
+		);
+	}
+
+	/**
+	 * The comment data the receiver builds before the source is parsed.
+	 *
+	 * @return array The comment data.
+	 */
+	private function commentdata() {
+		return array(
+			'source'             => self::SOURCE,
+			'target'             => get_permalink( $this->post ),
+			'comment_author_url' => self::SOURCE,
+		);
+	}
+
+	/**
+	 * A source without author data uses the source URL as author URL.
+	 */
+	public function test_source_without_author_uses_source_url() {
+		$this->mock_http_status( 200, 'OK', $this->source_page() );
+
+		$commentdata = Receiver::default_commentdata( $this->commentdata() );
+
+		$this->assertSame( self::SOURCE, $commentdata['comment_author_url'] );
+	}
+
+	/**
+	 * An author URL on the source page replaces the source URL.
+	 */
+	public function test_source_author_url_replaces_source_url() {
+		$this->mock_http_status(
+			200,
+			'OK',
+			$this->source_page( '<a class="p-author h-card" href="https://example.org/author/">Jane</a>' )
+		);
+
+		$commentdata = Receiver::default_commentdata( $this->commentdata() );
+
+		$this->assertSame( 'https://example.org/author/', $commentdata['comment_author_url'] );
+	}
+
+	/**
+	 * Refreshing a Webmention whose source has no author data does not empty the author URL.
+	 */
+	public function test_refresh_keeps_author_url() {
+		$comment_id = $this->create_webmention_comment(
+			array(
+				'comment_author_url' => self::SOURCE,
+				'comment_meta'       => array( 'webmention_target_url' => get_permalink( $this->post ) ),
+			)
+		);
+
+		$this->mock_http_status( 200, 'OK', $this->source_page() );
+
+		webmention_refresh( $comment_id );
+
+		$this->assertSame( self::SOURCE, get_comment( $comment_id )->comment_author_url );
 	}
 }

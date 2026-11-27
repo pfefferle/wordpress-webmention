@@ -4,7 +4,6 @@ namespace Webmention\Handler;
 
 use DOMXPath;
 use WP_Error;
-use DateTimeImmutable;
 use Webmention\Response;
 
 /**
@@ -34,11 +33,9 @@ class JSONLD extends Base {
 		}
 		$xpath = new DOMXPath( $dom );
 
-		$jsonld  = array();
-		$content = '';
+		$jsonld = array();
 		foreach ( $xpath->query( "//script[@type='application/ld+json']" ) as $script ) {
-			$content  = $script->textContent; // phpcs:ignore
-			$jsonld[] = json_decode( $content, true );
+			$jsonld[] = json_decode( $script->textContent, true ); // phpcs:ignore
 		}
 		$jsonld = array_filter( $jsonld );
 		if ( 1 === count( $jsonld ) && wp_is_numeric_array( $jsonld[0] ) ) {
@@ -69,10 +66,10 @@ class JSONLD extends Base {
 			}
 
 			if ( isset( $json['datePublished'] ) ) {
-				$this->webmention_item->add_published( new DateTimeImmutable( $json['datePublished'] ) );
+				$this->webmention_item->add_published( $json['datePublished'] );
 			}
 			if ( isset( $json['dateModified'] ) ) {
-				$this->webmention_item->add_updated( new DateTimeImmutable( $json['dateModified'] ) );
+				$this->webmention_item->add_updated( $json['dateModified'] );
 			}
 			if ( isset( $json['url'] ) ) {
 				$this->webmention_item->add_url( $json['url'] );
@@ -98,7 +95,7 @@ class JSONLD extends Base {
 				}
 				if ( is_string( $json['image'] ) ) {
 					$this->webmention_item->add_photo( $json['image'] );
-				} elseif ( ! $this->is_jsonld( $json['image'] ) && $this->is_jsonld_type( $json['image'], 'ImageObject' ) ) {
+				} elseif ( $this->is_jsonld_type( $json['image'], 'ImageObject' ) && isset( $json['image']['url'] ) ) {
 					$this->webmention_item->add_photo( $json['image']['url'] );
 				}
 			}
@@ -111,11 +108,11 @@ class JSONLD extends Base {
 				if ( $this->is_jsonld( $json['author'] ) ) {
 					$author = array(
 						'type'  => 'card',
-						'name'  => isset( $json['author']['name'] ) ? $json['author']['name'] : null,
-						'photo' => isset( $json['author']['image']['url'] ) ? $json['author']['image']['url'] : null,
-						'url'   => isset( $json['author']['url'] ) ? $json['author']['url'] : null,
-						'me'    => isset( $json['author']['sameAs'] ) ? $json['author']['sameAs'] : null,
-						'email' => isset( $json['author']['email'] ) ? $json['author']['email'] : null,
+						'name'  => $json['author']['name'] ?? null,
+						'photo' => $json['author']['image']['url'] ?? null,
+						'url'   => $json['author']['url'] ?? null,
+						'me'    => $json['author']['sameAs'] ?? null,
+						'email' => $json['author']['email'] ?? null,
 					);
 					$this->webmention_item->add_author( array_filter( $author ) );
 				}
@@ -135,10 +132,6 @@ class JSONLD extends Base {
 	}
 
 	protected function is_jsonld_type( $jsonld, $type ) {
-		if ( $jsonld ) {
-			return ( array_key_exists( '@type', $jsonld ) && $type === $jsonld['@type'] );
-		} else {
-			return false;
-		}
+		return $this->is_jsonld( $jsonld ) && $type === $jsonld['@type'];
 	}
 }
