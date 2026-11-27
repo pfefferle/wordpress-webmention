@@ -662,6 +662,8 @@ function get_webmention_form( $args = array() ) {
 
 	$rendered[ $post->ID ] = true;
 
+	wp_enqueue_style( 'webmention' );
+
 	++$instance;
 
 	// The first form keeps the legacy IDs, later ones get a unique suffix.
