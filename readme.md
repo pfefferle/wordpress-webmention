@@ -4,8 +4,8 @@
 - Donate link: https://notiz.blog/donate/
 - Tags: webmention, pingback, trackback, linkback, indieweb
 - Requires at least: 6.2
-- Tested up to: 7.1
-- Stable tag: 5.11.0
+- Tested up to: 7.2
+- Stable tag: 5.12.0
 - Requires PHP: 7.4
 - License: MIT
 - License URI: https://opensource.org/licenses/MIT
@@ -118,6 +118,18 @@ While not all display options can be settings, we are looking to provide some si
 ## Changelog
 
 Project and support maintained on github at [pfefferle/wordpress-webmention](https://github.com/pfefferle/wordpress-webmention).
+
+### 5.12.0
+
+* Exclude links from Webmentions with the `nomention` CSS class (filterable with `webmention_nomention_class`) or `rel="nomention"`, with a "Don't send a Webmention" option in the link settings of the editor and a pre-publish hint for posts whose links are not annotated yet
+* Fall back to the site name, icon and URL when a Webmention has no author name, photo or URL
+* Only load `webmention.css` on pages where Webmention markup renders
+* Prefix the `webmention_canonical_url` post meta with an underscore, so it no longer shows up in the Custom Fields UI; existing meta is migrated
+* Find links in blocks and shortcodes: the content is rendered before the links are extracted, so Webmentions are sent for them too
+* Make the default help text of the Webmention form editable with a "Use default text" button
+* Lower the request timeout for fetching sources and vouches from 100 to 10 seconds
+* Update mf2 to 0.5.1 and emoji-detector to 1.3.0
+* Update dependencies
 
 ### 5.11.0
 
