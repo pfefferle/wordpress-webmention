@@ -8,7 +8,11 @@ test.each( [ 'editor-plugin/plugin', 'rsvp/index' ] )(
 	( entry ) => {
 		let registration;
 		const wp = {
-			element: { ...React, useState: () => [ false, jest.fn() ] },
+			element: {
+				...React,
+				useState: () => [ false, jest.fn() ],
+				createInterpolateElement: ( text ) => text,
+			},
 			i18n: { __: ( text ) => text, sprintf: ( text ) => text },
 			primitives: { SVG: 'svg', Path: 'path' },
 			components: {
@@ -17,10 +21,16 @@ test.each( [ 'editor-plugin/plugin', 'rsvp/index' ] )(
 				Button: 'button',
 			},
 			blockEditor: { RichTextToolbarButton: 'button' },
-			editor: { PluginDocumentSettingPanel: 'section' },
+			editor: {
+				PluginDocumentSettingPanel: 'section',
+				PluginPrePublishPanel: 'section',
+			},
 			data: {
 				useSelect: ( callback ) =>
-					callback( () => ( { getCurrentPostType: () => 'post' } ) ),
+					callback( () => ( {
+						getCurrentPostType: () => 'post',
+						isPublishSidebarOpened: () => false,
+					} ) ),
 			},
 			coreData: { useEntityProp: () => [ {}, jest.fn() ] },
 			plugins: {

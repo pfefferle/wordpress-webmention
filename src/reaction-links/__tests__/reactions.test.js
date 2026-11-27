@@ -8,6 +8,11 @@ import {
 	applyReaction,
 	createReactionDropdown,
 	injectReactionDropdown,
+	hasNomentionClass,
+	buildNomentionClassValue,
+	getCurrentNomention,
+	applyNomention,
+	injectNomentionToggle,
 } from '../reactions';
 
 /**
@@ -321,5 +326,124 @@ describe( 'injectReactionDropdown', () => {
 		injectReactionDropdown( drawer );
 
 		expect( select.value ).toBe( 'u-like-of' );
+	} );
+} );
+
+describe( 'hasNomentionClass', () => {
+	it( 'detects the nomention token among other classes', () => {
+		expect( hasNomentionClass( 'u-like-of  nomention' ) ).toBe( true );
+	} );
+
+	it( 'does not match partial tokens or empty input', () => {
+		expect( hasNomentionClass( 'nomentions no-mention' ) ).toBe( false );
+		expect( hasNomentionClass( undefined ) ).toBe( false );
+	} );
+} );
+
+describe( 'buildNomentionClassValue', () => {
+	it( 'adds the class while keeping other classes', () => {
+		expect( buildNomentionClassValue( 'u-like-of', true ) ).toBe(
+			'u-like-of nomention'
+		);
+	} );
+
+	it( 'does not duplicate the class', () => {
+		expect( buildNomentionClassValue( 'nomention', true ) ).toBe(
+			'nomention'
+		);
+	} );
+
+	it( 'removes the class while keeping other classes', () => {
+		expect( buildNomentionClassValue( 'nomention u-like-of', false ) ).toBe(
+			'u-like-of'
+		);
+	} );
+} );
+
+describe( 'getCurrentNomention', () => {
+	it( 'reads the nomention class from the active CSS-classes input', () => {
+		const drawer = buildDrawer( { active: true, value: 'x nomention' } );
+		expect( getCurrentNomention( drawer ) ).toBe( true );
+	} );
+
+	it( 'returns false when the setting is inactive', () => {
+		const drawer = buildDrawer( { active: false } );
+		expect( getCurrentNomention( drawer ) ).toBe( false );
+	} );
+} );
+
+describe( 'applyNomention', () => {
+	it( 'activates the setting on demand and adds the class', async () => {
+		const drawer = buildDrawer( { active: false } );
+		await applyNomention( true );
+		expect( getCssClassesInput( getCssClassesRow( drawer ) ).value ).toBe(
+			'nomention'
+		);
+	} );
+
+	it( 'keeps an existing reaction when toggling', async () => {
+		const drawer = buildDrawer( {
+			active: true,
+			value: 'u-like-of nomention',
+		} );
+		await applyNomention( false );
+		expect( getCssClassesInput( getCssClassesRow( drawer ) ).value ).toBe(
+			'u-like-of'
+		);
+	} );
+} );
+
+describe( 'injectNomentionToggle', () => {
+	it( 'injects a checked toggle for a nomention link', () => {
+		const drawer = buildDrawer( { active: true, value: 'nomention' } );
+		injectNomentionToggle();
+		const checkbox = drawer.querySelector(
+			'.webmention-nomention-setting input'
+		);
+		expect( checkbox ).not.toBeNull();
+		expect( checkbox.checked ).toBe( true );
+	} );
+
+	it( 'does not inject when there is no CSS-classes setting', () => {
+		const drawer = buildDrawer( null );
+		injectNomentionToggle();
+		expect(
+			drawer.querySelector( '.webmention-nomention-setting' )
+		).toBeNull();
+	} );
+
+	it( 'is not mistaken for the CSS-classes row', () => {
+		const drawer = buildDrawer( { active: true, value: '' } );
+		injectNomentionToggle();
+		expect(
+			getCssClassesRow( drawer ).classList.contains(
+				'webmention-nomention-setting'
+			)
+		).toBe( false );
+	} );
+
+	it( 'writes the class when the toggle changes', async () => {
+		const drawer = buildDrawer( { active: true, value: 'u-like-of' } );
+		injectNomentionToggle();
+		const checkbox = drawer.querySelector(
+			'.webmention-nomention-setting input'
+		);
+		checkbox.checked = true;
+		checkbox.dispatchEvent( new Event( 'change', { bubbles: true } ) );
+		await Promise.resolve();
+		expect( getCssClassesInput( getCssClassesRow( drawer ) ).value ).toBe(
+			'u-like-of nomention'
+		);
+	} );
+
+	it( 'syncs an existing toggle to the current classes', () => {
+		const drawer = buildDrawer( { active: true, value: '' } );
+		injectNomentionToggle();
+		getCssClassesInput( getCssClassesRow( drawer ) ).value = 'nomention';
+		injectNomentionToggle();
+		expect(
+			drawer.querySelector( '.webmention-nomention-setting input' )
+				.checked
+		).toBe( true );
 	} );
 } );
